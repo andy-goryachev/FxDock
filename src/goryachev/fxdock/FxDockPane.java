@@ -1,9 +1,9 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
+import goryachev.fxdock.internal.FxDockBorderPane;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.layout.BorderPane;
 
 
 /**
@@ -13,7 +13,7 @@ import javafx.scene.layout.BorderPane;
  * implementation.
  */
 public abstract class FxDockPane
-	extends BorderPane
+	extends FxDockBorderPane
 {
 	private final String type;
 	private ReadOnlyBooleanWrapper tabMode;

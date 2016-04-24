@@ -3,20 +3,38 @@ package goryachev.fxdock.internal;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.Node;
-import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
 
 
 /**
- * FxDockSplitPane.
+ * FxDockRootPane.
  */
-public class FxDockSplitPane
-	extends SplitPane
+public class FxDockBorderPane
+	extends BorderPane
 {
 	protected final ReadOnlyObjectWrapper<Node> parent = new ReadOnlyObjectWrapper<Node>();
 
 	
-	public FxDockSplitPane()
+	public FxDockBorderPane()
 	{
+		setContent(new FxDockEmptyPane());
+	}
+	
+	
+	public final void setContent(Node n)
+	{
+		if(n == null)
+		{
+			n = new FxDockEmptyPane();
+		}
+		setCenter(n);
+		DockTools.setParent(n, this);
+	}
+	
+	
+	public final Node getContent()
+	{
+		return getCenter();
 	}
 	
 	
