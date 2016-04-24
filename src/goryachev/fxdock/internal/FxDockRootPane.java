@@ -23,7 +23,12 @@ public class FxDockRootPane
 	
 	public void setContent(Node n)
 	{
+		if(n == null)
+		{
+			n = new FxDockEmptyPane();
+		}
 		setCenter(n);
+		DockTools.setParent(n, this);
 	}
 	
 	

@@ -4,6 +4,7 @@ import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.fxdock.internal.FxDockSchema;
 import java.util.List;
+import javafx.application.Platform;
 
 
 /**
@@ -65,5 +66,13 @@ public class FxDockFramework
 			}
 		}
 		return rv;
+	}
+	
+	
+	public static void exit()
+	{
+		// TODO confirm exiting
+		// TODO save settings
+		Platform.exit();
 	}
 }
