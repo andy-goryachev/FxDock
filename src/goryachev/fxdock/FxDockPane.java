@@ -1,6 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
 
 
 /**
@@ -10,7 +10,7 @@ import javafx.scene.layout.Pane;
  * implementation.
  */
 public abstract class FxDockPane
-	extends Pane
+	extends BorderPane
 {
 	private final String type;
 	

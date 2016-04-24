@@ -93,12 +93,18 @@ public class Hex
 	/** returns hex value of a char in the range 0..15, throws an exception if not a hex char */
 	public static int parseHexChar(char c) throws Exception
 	{
-		int x = HEX.indexOf(Character.toUpperCase(c));
+		int x = parseHexCharPrivate(c);
 		if(x < 0)
 		{
 			throw new Exception("not a hexadecimal character: " + c);
 		}
 		return x;
+	}
+	
+	
+	public static int parseHexCharPrivate(char c)
+	{
+		return HEX.indexOf(Character.toUpperCase(c));
 	}
 	
 	
@@ -283,6 +289,44 @@ public class Hex
 			
 			char c = s.charAt(i);
 			int nibble = parseHexChar(c);
+			d |= nibble;
+		}
+		return d;
+	}
+	
+	
+	/** parses hex-encoded int value */
+	public static int parseInt(String s) throws Exception
+	{
+		return parseInt(s, 0, s.length());
+	}
+	
+	
+	/** parses hex-encoded int value */
+	public static int parseInt(String s, int defaultValue)
+	{
+		try
+		{
+			return parseInt(s, 0, s.length());
+		}
+		catch(Exception e)
+		{
+			return defaultValue;
+		}
+	}
+	
+	
+	/** parses hex-encoded int value */
+	public static int parseInt(String s, int off, int len) throws Exception
+	{
+		int d = 0;
+		int sz = Math.min(len, 4);
+		for(int i=0; i<sz; i++)
+		{
+			char c = s.charAt(i);
+			int nibble = parseHexChar(c);
+
+			d <<= 4;
 			d |= nibble;
 		}
 		return d;
