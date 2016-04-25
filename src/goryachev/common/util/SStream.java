@@ -1,13 +1,16 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import java.util.Iterator;
 
 
 /**
  * String Stream.
  */
 public class SStream
+	implements Iterable<String>
 {
 	private final CList<String> list;
+	private int pos;
 	
 	
 	public SStream()
@@ -19,6 +22,12 @@ public class SStream
 	public SStream(String[] ss)
 	{
 		list = new CList<String>(ss);
+	}
+	
+	
+	public int size()
+	{
+		return list.size();
 	}
 	
 	
@@ -38,5 +47,33 @@ public class SStream
 		{
 			list.add(Double.toString(x));
 		}
+	}
+
+
+	public Iterator<String> iterator()
+	{
+		return list.iterator();
+	}
+	
+	
+	public String nextString()
+	{
+		if(pos < (list.size() - 1))
+		{
+			return list.get(pos++);
+		}
+		return null;
+	}
+	
+	
+	public double nextDouble(double defaultValue)
+	{
+		return Parsers.parseDouble(nextString(), defaultValue);
+	}
+	
+	
+	public double nextDouble()
+	{
+		return nextDouble(-1.0);
 	}
 }

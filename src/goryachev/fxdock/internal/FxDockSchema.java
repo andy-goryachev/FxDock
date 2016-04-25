@@ -13,7 +13,9 @@ import javafx.stage.Window;
 public class FxDockSchema
 {
 	public static final String PREFIX_DOCK = "fxdock.";
-	public static final String PREFIX_WINDOW = PREFIX_DOCK + "w.";
+	public static final String PREFIX_WINDOW = PREFIX_DOCK + "window.";
+	
+	public static final String SUFFIX_WINDOW = ".window";
 	
 	public static final String KEY_WINDOW_COUNT = PREFIX_DOCK + "window.count";
 	
@@ -69,12 +71,44 @@ public class FxDockSchema
 				s.add(STAGE_NORMAL);
 			}
 		}
+		
+		GlobalSettings.setStream(id + SUFFIX_WINDOW, s);
 	}
 	
 	
-	public static void restoreWindow(Window w, String id)
+	public static void restoreWindow(String id, Window w)
 	{
-		
+		SStream s = GlobalSettings.getStream(id + SUFFIX_WINDOW);
+		if(s.size() == 5)
+		{
+			double x = s.nextDouble();
+			double y = s.nextDouble();
+			double width = s.nextDouble();
+			double h = s.nextDouble();
+			String t = s.nextString();
+			
+			w.setX(x);
+			w.setY(y);
+			w.setWidth(width);
+			w.setHeight(h);
+			
+			if(w instanceof Stage)
+			{
+				Stage st = (Stage)w;
+				if(STAGE_FULL_SCEEN.equals(t))
+				{
+					st.setFullScreen(true);
+				}
+				else if(STAGE_MAXIMIZED.equals(t))
+				{
+					st.setMaximized(true);
+				}
+				else if(STAGE_ICONIFIED.equals(t))
+				{
+					st.setIconified(true);
+				}
+			}
+		}
 	}
 
 

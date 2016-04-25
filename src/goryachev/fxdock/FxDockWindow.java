@@ -27,6 +27,8 @@ public abstract class FxDockWindow
 		root = new FxDockRootPane(this);
 		Scene s = new Scene(root);
 		setScene(s);
+		
+		// TODO add listeners for maximized/iconified/fullscreen mode to record size and location
 	}
 	
 	

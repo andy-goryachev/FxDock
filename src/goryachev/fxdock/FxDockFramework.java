@@ -32,7 +32,7 @@ public class FxDockFramework
 				Node n = FxDockSchema.restoreNode(id);
 				w.setContent(n);
 				
-				FxDockSchema.restoreWindow(w, id);
+				FxDockSchema.restoreWindow(id, w);
 				openPrivate(w, id);
 			}
 			catch(Exception e)
@@ -94,7 +94,7 @@ public class FxDockFramework
 		int i = 0;
 		for( ; i<100000; i++)
 		{
-			String id = FxDockSchema.PREFIX_WINDOW + i;
+			String id = FxDockSchema.windowID(i);
 			if(!windows.containsKey(id))
 			{
 				return id;

@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import java.util.List;
 
 
 /**
@@ -13,6 +14,12 @@ public class GlobalSettings
 		public String getString(String key);
 		
 		public void setString(String key, String val);
+		
+		public SStream getStream(String key);
+		
+		public void setStream(String key, SStream s);
+		
+		public List<String> getKeys();
 		
 		public void save();
 	}
@@ -35,6 +42,18 @@ public class GlobalSettings
 			throw new NullPointerException("GlobalSettings.setProvider()");
 		}
 		return provider;
+	}
+	
+	
+	public static void save()
+	{
+		provider().save();
+	}
+	
+	
+	public static List<String> getKeys()
+	{
+		return provider().getKeys();
 	}
 	
 	
@@ -66,5 +85,17 @@ public class GlobalSettings
 	public static void setInt(String key, int val)
 	{
 		set(key, val);
+	}
+	
+	
+	public static SStream getStream(String key)
+	{
+		return provider().getStream(key);
+	}
+	
+	
+	public static void setStream(String key, SStream s)
+	{
+		provider().setStream(key, s);
 	}
 }
