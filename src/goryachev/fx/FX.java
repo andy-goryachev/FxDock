@@ -55,7 +55,6 @@ public class FX
 	}
 	
 	
-	
 	public static void restoreSettings(Node n)
 	{
 		FxSettings.restore(n);

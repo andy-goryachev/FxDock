@@ -1,6 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
-import goryachev.fxdock.FxDockPane;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.Node;
 
@@ -13,18 +12,6 @@ public class DockTools
 	public static void setParent(Node parent, Node child)
 	{
 		parentProperty(child).set(parent);
-		
-		if(child instanceof FxDockPane)
-		{
-			if(parent instanceof FxDockTabPane)
-			{
-				
-			}
-			else
-			{
-				
-			}
-		}
 	}
 	
 	
@@ -32,6 +19,12 @@ public class DockTools
 	{
 		ReadOnlyObjectWrapper<Node> p = parentProperty(n);
 		return p == null ? null : p.get();
+	}
+	
+	
+	public static boolean isDockableElement(Node n)
+	{
+		return (parentProperty(n) != null);
 	}
 	
 	

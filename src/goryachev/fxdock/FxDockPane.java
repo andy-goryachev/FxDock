@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
+import goryachev.fxdock.dnd.DragAndDropHandler;
 import goryachev.fxdock.internal.FxDockBorderPane;
 import goryachev.fxdock.internal.FxDockTabPane;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -21,7 +22,7 @@ public abstract class FxDockPane
 	extends FxDockBorderPane
 {
 	private final String type;
-	private ReadOnlyBooleanWrapper tabMode;
+	private final ReadOnlyBooleanWrapper tabMode = new ReadOnlyBooleanWrapper();
 	private final SimpleStringProperty title = new SimpleStringProperty();
 	
 	
@@ -42,7 +43,7 @@ public abstract class FxDockPane
 	
 	protected final void setTabMode(boolean on)
 	{
-		tabModePropertyPrivate().set(on);
+		tabMode.set(on);
 	}
 	
 	
@@ -60,35 +61,7 @@ public abstract class FxDockPane
 	
 	public final ReadOnlyBooleanProperty tabModeProperty()
 	{
-		 return tabModePropertyPrivate().getReadOnlyProperty();
-	}
-	
-	
-	protected final ReadOnlyBooleanWrapper tabModePropertyPrivate()
-	{
-		if(tabMode == null)
-		{
-			tabMode = new ReadOnlyBooleanWrapper()
-			{
-				protected void invalidated()
-				{
-					updateToolBar();
-				}
-
-
-				public Object getBean()
-				{
-					return FxDockPane.this;
-				}
-
-
-				public String getName()
-				{
-					return "tabMode";
-				}
-			};
-		}
-		return tabMode;
+		 return tabMode.getReadOnlyProperty();
 	}
 	
 	
@@ -103,6 +76,7 @@ public abstract class FxDockPane
 		{
 			Label label = new Label();
 			label.textProperty().bindBidirectional(titleProperty());
+			new DragAndDropHandler().attach(label);
 			
 			Button close = new Button("x");
 			// TODO close
