@@ -28,7 +28,7 @@ public class FxDockBorderPane
 			n = new FxDockEmptyPane();
 		}
 		setCenter(n);
-		DockTools.setParent(n, this);
+		DockTools.setParent(this, n);
 	}
 	
 	
