@@ -1,7 +1,5 @@
 // Copyright (c) 2004-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
-import java.awt.Component;
-import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -9,17 +7,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.StyledDocument;
 
 
 /** converts various objects to their printable user-friendly representation for debugging purposes */
@@ -425,101 +417,6 @@ public class Dump
 		return new String(ch);
 	}
 
-
-	public static String dumpDocument(Document doc, boolean inclideText)
-	{
-		try
-		{
-			StyledDocument d = (StyledDocument)doc;
-
-			SB b = new SB();
-			b.a("<\n");
-
-			int len = d.getLength();
-			int pos = 0;
-			while(pos < len)
-			{
-				Element em = d.getCharacterElement(pos);
-				b.a(pos).a(' ');
-				int end = em.getEndOffset();
-
-				if(inclideText)
-				{
-					String text;
-					try
-					{
-						text = d.getText(pos, end - pos);
-					}
-					catch(Exception e)
-					{
-						text = "?ERR" + pos + "," + end;
-					}
-					b.a("[").a(text).a("] ");
-				}
-
-				AttributeSet a = em.getAttributes();
-				Enumeration<?> en = a.getAttributeNames();
-				CList<Object> names = new CList();
-				while(en.hasMoreElements())
-				{
-					names.add(en.nextElement());
-				}
-				Collections.sort(names, new Comparator<Object>()
-				{
-					public int compare(Object a, Object b)
-					{
-						return a.toString().compareTo(b.toString());
-					}
-				});
-
-				for(Object name: names)
-				{
-					b.a(name).a("=").a(a.getAttribute(name)).a(" ");
-				}
-				b.a("\n");
-
-				pos = end;
-			}
-			b.a(">\n");
-
-			return b.toString();
-		}
-		catch(Exception e)
-		{
-			return CKit.stackTrace(e);
-		}
-	}
-
-
-	public static String documentStructure(Document d)
-	{
-		SB sb = new SB("\n");
-		Element root = d.getDefaultRootElement();
-		dump(root, 0, sb); 
-		return sb.toString();
-	}
-	
-	
-	private static void dump(Element em, int indent, SB sb)
-	{
-		for(int i=0; i<indent; i++)
-		{
-			sb.a("  ");
-		}
-		
-		sb.a(em.getClass().getSimpleName()).a(" ");
-		sb.a("start=").a(em.getStartOffset());
-		sb.a(" end=").a(em.getEndOffset());
-		sb.nl();
-		
-		int sz = em.getElementCount();
-		indent++;
-		for(int i=0; i<sz; i++)
-		{
-			dump(em.getElement(i), indent, sb); 
-		}
-	}
-	
 	
 	public static String toHexString(byte[] b)
 	{
@@ -602,12 +499,6 @@ public class Dump
 			else if(x instanceof Map)
 			{
 				describeMap((Map)x, sb, indent + 1);
-			}
-			else if(x instanceof Rectangle2D)
-			{
-				Rectangle2D r = (Rectangle2D)x;
-				sb.a(CKit.simpleName(x)).a("[").a(r.getX()).a(",").a(r.getY()).a(",").a(r.getWidth()).a(",").a(r.getHeight());
-				//.nl();
 			}
 			else if(isPrimitive(x.getClass()))
 			{
@@ -865,26 +756,5 @@ public class Dump
 			return s.substring(0, max);
 		}
 		return s;
-	}
-	
-	
-	public static String componentHierarchy(Component c)
-	{
-		if(c == null)
-		{
-			return "<null>";
-		}
-		
-		SB sb = new SB();
-		while(c != null)
-		{
-			if(sb.isNotEmpty())
-			{
-				sb.a("\n  ");
-			}
-			sb.a(simpleName(c));
-			c = c.getParent();
-		}
-		return sb.toString();
 	}
 }

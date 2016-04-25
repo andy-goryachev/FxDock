@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.io;
 import goryachev.common.util.CList;
-import java.awt.Color;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -128,12 +127,6 @@ public class PrimitiveListInput
 	public Double readDouble() throws Exception
 	{
 		return (Double)readObject();
-	}
-
-
-	public Color readColor() throws Exception
-	{
-		return (Color)readObject();
 	}
 
 

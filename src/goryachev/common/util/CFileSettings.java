@@ -10,7 +10,7 @@ import java.util.Properties;
 
 
 public class CFileSettings
-	implements CSettingsProvider
+	implements CSettings.Provider
 {
 	private File file;
 	private Properties properties;

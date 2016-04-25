@@ -10,11 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Stack;
-import javax.swing.ImageIcon;
 
 
 public class FileTools
@@ -335,20 +333,6 @@ public class FileTools
 			close(out);
 		}
 	}
-
-	
-	// get image from either JAR path or a file
-	/** @deprecated - use Img.load() or Img.get() */
-	public static ImageIcon loadImageIcon(String name)
-	{
-		// try jar first
-		URL url = ClassLoader.getSystemResource(name);
-		if(url != null)
-		{
-			return new ImageIcon(url);
-		}
-		return new ImageIcon(name);
-	}		
 
 	
 	// get input stream from either a JAR or a file

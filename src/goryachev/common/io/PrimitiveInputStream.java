@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.io;
-import java.awt.Color;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
@@ -239,12 +238,6 @@ public class PrimitiveInputStream
 	public Double readDouble() throws Exception
 	{
 		return (Double)readObject();
-	}
-	
-	
-	public Color readColor() throws Exception
-	{
-		return (Color)readObject();
 	}
 	
 	

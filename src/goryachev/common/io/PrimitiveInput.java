@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.io;
-import java.awt.Color;
 import java.io.Closeable;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -34,8 +33,6 @@ public interface PrimitiveInput
 	
 	public Double readDouble() throws Exception;
 	
-	public Color readColor() throws Exception;
-
 	public String readString() throws Exception;
 	
 	public BigInteger readBigInteger() throws Exception;

@@ -1,6 +1,5 @@
 // Copyright (c) 2005-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
-import java.awt.ComponentOrientation;
 import java.util.Locale;
 
 
@@ -530,11 +529,5 @@ public class CLanguage
 	public static boolean isLeftToRight(CLanguage la)
 	{
 		return la == null ? true : la.isLeftToRight();
-	}
-	
-	
-	public ComponentOrientation getComponentOrientation()
-	{
-		return isLeftToRight() ? ComponentOrientation.LEFT_TO_RIGHT : ComponentOrientation.RIGHT_TO_LEFT;
 	}
 }

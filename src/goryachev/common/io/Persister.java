@@ -8,7 +8,6 @@ import goryachev.common.util.Hex;
 import goryachev.common.util.PTable;
 import goryachev.common.util.Rex;
 import goryachev.common.util.SKey;
-import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -777,20 +776,20 @@ public class Persister
 			}
 		});
 		
-		// Color
-		add(m, Color.class, new PrimitiveHandler(Persister.COLOR)
-		{
-			public Object read(PrimitiveInputStream in) throws Exception
-			{
-				return new Color(in.readRawInt(), true);
-			}
-
-			public void write(Object x, PrimitiveOutputStream out) throws Exception
-			{
-				Color c = (Color)x;
-				out.writeRawInt(c.getRGB());
-			}
-		});
+		// Color - was a mistake
+//		add(m, Color.class, new PrimitiveHandler(Persister.COLOR)
+//		{
+//			public Object read(PrimitiveInputStream in) throws Exception
+//			{
+//				return new Color(in.readRawInt(), true);
+//			}
+//
+//			public void write(Object x, PrimitiveOutputStream out) throws Exception
+//			{
+//				Color c = (Color)x;
+//				out.writeRawInt(c.getRGB());
+//			}
+//		});
 		
 		// Object[]
 		add(m, Object[].class, new PrimitiveHandler(Persister.OBJECTS)

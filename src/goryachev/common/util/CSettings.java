@@ -7,21 +7,34 @@ import java.util.Hashtable;
 /** utility class helps storing/restoring various binary values */
 public class CSettings
 {
-	public static final CSettingsProvider NONE = new CSettingsProvider()
+	public interface Provider
+	{
+		public String getProperty(String key);
+
+		public void setProperty(String key, String value);
+
+		public CList<String> getPropertyNames();
+
+		public void save() throws Exception;
+	}
+	
+	//
+	
+	public static final Provider NONE = new Provider()
 	{
 		public String getProperty(String key) { return null; }
 		public void setProperty(String key, String value) { }
 		public CList<String> getPropertyNames() { return new CList(0); }
 		public void save() throws Exception { }
 	};
-	private CSettingsProvider provider = NONE;
+	private Provider provider = NONE;
 	
 	/** in-memory settings based on hashtable*/
 	public static class CMAP extends CSettings
 	{		
 		public CMAP()
 		{
-			super(new CSettingsProvider()
+			super(new Provider()
 			{
 				protected final Hashtable<String,Object> settings = new Hashtable();
 
@@ -42,19 +55,19 @@ public class CSettings
 	}
 	
 	
-	public CSettings(CSettingsProvider p)
+	public CSettings(Provider p)
 	{
 		setProvider(p);
 	}
 	
 	
-	public void setProvider(CSettingsProvider p)
+	public void setProvider(Provider p)
 	{
 		this.provider = p;
 	}
 	
 	
-	public CSettingsProvider getProvider()
+	public CSettings.Provider getProvider()
 	{
 		return provider;
 	}

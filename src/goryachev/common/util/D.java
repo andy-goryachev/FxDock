@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Map;
-import javax.swing.text.AttributeSet;
 
 
 /** debug printing */
@@ -118,10 +117,6 @@ public class D
 		{
 			listLongArray((long[])x);
 		}
-		else if(x instanceof AttributeSet)
-		{
-			listAttributeSet((AttributeSet)x);
-		}
 		else 
 		{
 			print(x);
@@ -227,24 +222,6 @@ public class D
 		log(sb.toString(), 2);
 	}
 	
-	
-	private static void listAttributeSet(AttributeSet as)
-	{
-		SB sb = new SB();
-		sb.append(as.getAttributeCount());
-		
-		Enumeration en = as.getAttributeNames();
-		while(en.hasMoreElements())
-		{
-			Object att = en.nextElement();
-			sb.append("\n");
-			sb.append("    ");
-			sb.append(att);
-		}
-
-		log(sb.toString(), 2);
-	}
-
 	
 	public static void trace()
 	{
