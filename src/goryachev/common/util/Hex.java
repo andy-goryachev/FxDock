@@ -320,7 +320,7 @@ public class Hex
 	public static int parseInt(String s, int off, int len) throws Exception
 	{
 		int d = 0;
-		int sz = Math.min(len, 4);
+		int sz = Math.min(len, 8);
 		for(int i=0; i<sz; i++)
 		{
 			char c = s.charAt(i);
