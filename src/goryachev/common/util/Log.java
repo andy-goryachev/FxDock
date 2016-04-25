@@ -11,6 +11,19 @@ import java.io.File;
 
 /**
  * Global logging subsystem.
+ * 
+ * Log.configFromFile(File);
+ * Log.reset();
+ * Log. FIX connect loggers to appenders
+ * 
+ * Log.conf("ChannelName", Log.Level.INFO);
+ * 
+ * Log log = Log.get("ChannelName");
+ * log.err(...);
+ * log.warn(...);
+ * log.info(...);
+ * log.debug(...);
+ * 
  */
 public class Log
 {
@@ -180,6 +193,12 @@ public class Log
 		}
 		return ch;
 	}
+	
+	
+	public static CLog get(String name)
+	{
+		return getLog(name);
+	}
 
 
 	public static void init(File dir)
@@ -310,5 +329,12 @@ public class Log
 	public static void removeErrorChannelMonitor(ErrorLogWriter.Monitor m)
 	{
 		ErrorLogWriter.instance.removeMonitor(m);
+	}
+	
+	
+	public static void conf(String name, boolean on)
+	{
+		CLog log = get(name);
+		log.setEnabled(on);
 	}
 }

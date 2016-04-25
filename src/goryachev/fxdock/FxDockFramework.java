@@ -1,10 +1,13 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.common.util.CList;
+import goryachev.common.util.CLog;
 import goryachev.common.util.CMap;
+import goryachev.common.util.Log;
 import goryachev.fxdock.internal.FxDockSchema;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.scene.Node;
 
 
 /**
@@ -12,18 +15,58 @@ import javafx.application.Platform;
  */
 public class FxDockFramework
 {
+	protected static final CLog log = Log.get("FxDockFramework");
 	private static final CMap<Object,Object> windows = new CMap();
 	
 	
 	public static int loadLayout(Class<? extends FxDockWindow> appWindowClass)
 	{
-		return 0;
+		int ct = FxDockSchema.getWindowCount();
+		for(int i=0; i<ct; i++)
+		{
+			try
+			{
+				FxDockWindow w = appWindowClass.newInstance();
+				String id = FxDockSchema.windowID(i);
+				
+				Node n = FxDockSchema.restoreNode(id);
+				w.setContent(n);
+				
+				FxDockSchema.restoreWindow(w, id);
+				openPrivate(w, id);
+			}
+			catch(Exception e)
+			{
+				log.err(e);
+			}
+		}
+		return ct;
+	}
+	
+	
+	public static void saveLayout()
+	{
+		List<FxDockWindow> ws = getWindows();
+		FxDockSchema.setWindowCount(ws.size());
+		
+		for(FxDockWindow w: ws)
+		{
+			String id = getWindowID(w);
+			FxDockSchema.storeNode(id, w.getContent());
+			FxDockSchema.storeWindow(id, w);
+		}
 	}
 
 
 	public static void open(FxDockWindow w)
 	{
 		String id = newWindowID();
+		openPrivate(w, id);
+	}
+	
+	
+	private static void openPrivate(FxDockWindow w, String id)
+	{
 		windows.put(id, w);
 		windows.put(w, id);
 		
@@ -37,6 +80,12 @@ public class FxDockFramework
 		});
 		
 		w.show();
+	}
+	
+	
+	private static String getWindowID(FxDockWindow w)
+	{
+		return (String)windows.get(w);
 	}
 	
 	
@@ -72,7 +121,9 @@ public class FxDockFramework
 	public static void exit()
 	{
 		// TODO confirm exiting
-		// TODO save settings
+		
+		saveLayout();
+		
 		Platform.exit();
 	}
 }

@@ -47,4 +47,10 @@ public abstract class FxDockWindow
 	{
 		root.setContent(n);
 	}
+	
+	
+	public Node getContent()
+	{
+		return root.getContent();
+	}
 }

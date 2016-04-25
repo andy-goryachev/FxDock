@@ -5,6 +5,8 @@ import goryachev.common.util.log.LogEntry;
 
 /** 
  * An individual named logger channel.
+ * 
+ * TODO combine with Log
  */
 public class CLog
 {
@@ -56,6 +58,20 @@ public class CLog
 			if(printCallingMethod)
 			{
 				en.setCaller(e, level);
+			}
+			add(en);
+		}
+	}
+	
+	
+	public void print()
+	{
+		if(enabled)
+		{
+			LogEntry en = new LogEntry("");
+			if(printCallingMethod)
+			{
+				en.setCaller(new Throwable(), 1);
 			}
 			add(en);
 		}
