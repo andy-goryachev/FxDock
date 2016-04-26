@@ -1,7 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.scene.control.Menu;
-import javafx.scene.control.Separator;
+import javafx.scene.control.SeparatorMenuItem;
 
 
 /**
@@ -16,11 +16,11 @@ public class CMenu
 	}
 	
 	
-	public Separator addSeparator()
+	public SeparatorMenuItem addSeparator()
 	{
-		Separator s = new Separator();
-		// FIX getItems().add(s);
-		return s;
+		SeparatorMenuItem m = new SeparatorMenuItem();
+		getItems().add(m);
+		return m;
 	}
 	
 	
