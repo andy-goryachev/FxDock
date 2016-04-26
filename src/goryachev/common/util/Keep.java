@@ -8,11 +8,11 @@ import java.lang.annotation.Target;
 
 
 /**
- * Signals the obfuscator to let it be.
+ * Prevents obfuscation of an annotated constructor, field, method, or class name.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = { CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, PARAMETER, TYPE })
-public @interface Noobfuscate
+@Target(value = { CONSTRUCTOR, FIELD, METHOD, TYPE })
+public @interface Keep
 {
 }
