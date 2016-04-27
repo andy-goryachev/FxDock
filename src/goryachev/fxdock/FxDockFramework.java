@@ -4,6 +4,7 @@ import goryachev.common.util.CList;
 import goryachev.common.util.CLog;
 import goryachev.common.util.CMap;
 import goryachev.common.util.Log;
+import goryachev.common.util.WeakList;
 import goryachev.fxdock.internal.FxDockSchema;
 import java.util.List;
 import javafx.application.Platform;
@@ -16,7 +17,8 @@ import javafx.scene.Node;
 public class FxDockFramework
 {
 	protected static final CLog log = Log.get("FxDockFramework");
-	private static final CMap<Object,Object> windows = new CMap();
+	private static final CMap<Object,Object> windows = new CMap<>();
+	private static final WeakList<FxDockWindow> windowStack = new WeakList<>(); // top window last 
 	
 	
 	public static int loadLayout(Class<? extends FxDockWindow> appWindowClass)
@@ -115,6 +117,35 @@ public class FxDockFramework
 			}
 		}
 		return rv;
+	}
+	
+	
+	// FX cannot tell us which window is on top, so we have to do the dirty work ourselves
+	protected static void addFocusListener(FxDockWindow w)
+	{
+		w.focusedProperty().addListener((src,old,v) ->
+		{
+			if(v)
+			{
+				onWindowFocused(w);
+			}
+		});
+	}
+	
+	
+	private static void onWindowFocused(FxDockWindow win)
+	{
+		int ix = 0;
+		while(ix < windowStack.size())
+		{
+			FxDockWindow w = windowStack.get(ix);
+			if((w == null) || (w == win))
+			{
+				windowStack.remove(ix);
+				continue;
+			}
+		}
+		windowStack.add(win);
 	}
 	
 	

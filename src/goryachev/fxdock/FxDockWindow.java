@@ -29,6 +29,8 @@ public abstract class FxDockWindow
 		setScene(s);
 		
 		// TODO add listeners for maximized/iconified/fullscreen mode to record size and location
+		
+		FxDockFramework.addFocusListener(this);
 	}
 	
 	
