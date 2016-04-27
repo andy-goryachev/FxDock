@@ -142,10 +142,38 @@ public class FxDockFramework
 			if((w == null) || (w == win))
 			{
 				windowStack.remove(ix);
-				continue;
+			}
+			else
+			{
+				ix++;
 			}
 		}
 		windowStack.add(win);
+	}
+	
+	
+	public static FxDockWindow findTopWindow(List<FxDockWindow> ws)
+	{
+		int sz = ws.size();
+		for(int i=windowStack.size()-1; i>=0; --i)
+		{
+			FxDockWindow w = windowStack.get(i);
+			if(w == null)
+			{
+				windowStack.remove(i);
+			}
+			else
+			{
+				for(int j=0; j<sz; j++)
+				{
+					if(w == ws.get(j))
+					{
+						return w;
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	

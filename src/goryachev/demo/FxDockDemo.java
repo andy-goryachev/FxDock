@@ -6,6 +6,7 @@ import goryachev.common.util.Log;
 import goryachev.fxdock.FxDockFramework;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 
 /**
@@ -36,6 +37,15 @@ public class FxDockDemo
 		{
 			// no saved layout, open initial window
 			DemoWindow.newWindow();
+			move(DemoWindow.newWindow(), 200);
+			move(DemoWindow.newWindow(), 400);
 		}
+	}
+
+
+	protected void move(Window w, int d)
+	{
+		w.setX(w.getX() + d);
+		w.setY(w.getY() + d);
 	}
 }

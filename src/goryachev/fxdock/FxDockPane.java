@@ -76,7 +76,7 @@ public abstract class FxDockPane
 		{
 			Label label = new Label();
 			label.textProperty().bindBidirectional(titleProperty());
-			new DragAndDropHandler().attach(label);
+			DragAndDropHandler.attach(label, this);
 			
 			Button close = new Button("x");
 			// TODO close
