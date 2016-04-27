@@ -153,10 +153,10 @@ public abstract class Range<T extends Comparable<T>>
 	{
 		T count = null;
 		
-		IntervalStream it = getIntervalStream();
+		IntervalStream<T> it = getIntervalStream();
 		while(it.hasNext())
 		{
-			Interval n = it.next();
+			Interval<T> n = it.next();
 			count = addPrivate(count, getItemCount(n));
 		}
 		
