@@ -3,6 +3,8 @@ package goryachev.fxdock.dnd;
 import goryachev.common.util.D;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
+import goryachev.fxdock.internal.FxDockRootPane;
+import goryachev.fxdock.internal.FxDockSplitPane;
 import goryachev.fxdock.internal.FxDockTools;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -25,6 +27,8 @@ import javafx.stage.StageStyle;
 public class DragAndDropHandler
 {
 	public static final double DRAG_WINDOW_OPACITY = 0.5;
+	public static final double WINDOW_EDGE_HORIZONTAL = 40;
+	public static final double WINDOW_EDGE_VERTICAL = 40;
 	private static double deltax;
 	private static double deltay;
 	private static Stage dragWindow;
@@ -160,13 +164,155 @@ public class DragAndDropHandler
 	}
 	
 	
+	protected static DropOp checkWindowEdge(FxDockRootPane nd, double screenx, double screeny)
+	{
+		double w = nd.getWidth();
+		if(w <= WINDOW_EDGE_HORIZONTAL + WINDOW_EDGE_HORIZONTAL)
+		{
+			// too narrow
+			return null;
+		}
+		
+		double h = nd.getHeight();
+		if(w <= WINDOW_EDGE_VERTICAL + WINDOW_EDGE_VERTICAL)
+		{
+			// too short
+			return null;
+		}
+		
+		Point2D p = nd.screenToLocal(screenx, screeny);
+		double x = p.getX();
+		if(x < WINDOW_EDGE_HORIZONTAL)
+		{
+			DropOp op = new DropOp(nd, Where.LEFT)
+			{
+				public void execute()
+				{
+					D.print(); // TODO
+				}
+			};
+			op.addRect(nd, 0, 0, WINDOW_EDGE_HORIZONTAL, h);
+			return op;
+		}
+		else if(x > (w - WINDOW_EDGE_HORIZONTAL))
+		{
+			DropOp op = new DropOp(nd, Where.RIGHT)
+			{
+				public void execute()
+				{
+					D.print(); // TODO
+				}
+			};
+			op.addRect(nd, w - WINDOW_EDGE_HORIZONTAL, 0, WINDOW_EDGE_HORIZONTAL, h);
+			return op;
+		}
+		
+		double y = p.getY();
+		if(y < WINDOW_EDGE_VERTICAL)
+		{
+			DropOp op = new DropOp(nd, Where.TOP)
+			{
+				public void execute()
+				{
+					D.print(); // TODO
+				}
+			};
+			op.addRect(nd, 0, 0, w, WINDOW_EDGE_VERTICAL);
+			return op;
+		}
+		else if(y > (h - WINDOW_EDGE_VERTICAL))
+		{
+			DropOp op = new DropOp(nd, Where.BOTTOM)
+			{
+				public void execute()
+				{
+					D.print(); // TODO
+				}
+			};
+			op.addRect(nd, 0, h - WINDOW_EDGE_VERTICAL, w, WINDOW_EDGE_VERTICAL);
+			return op;
+		}
+
+		return null;
+	}
+	
+	
+	protected static Where determineWhere(Node nd, double screenx, double screeny)
+	{
+		// TODO
+		return null;
+	}
+	
+	
+	protected static DropOp createDropOnSplitDivider(FxDockSplitPane sp, double screenx, double screeny)
+	{
+		// TODO
+		return null;
+	}
+	
+	
 	protected static DropOp createDropOp(double screenx, double screeny)
 	{
 		FxDockWindow w = FxDockTools.findWindow(screenx, screeny);
-		if(w != null)
+		if(w == null)
 		{
-			Object em = FxDockTools.findDockElement(w.getContent(), screenx, screeny);
-			D.print(em);
+			return null;
+		}
+		
+		DropOp op = checkWindowEdge(w.root, screenx, screeny);
+		if(op != null)
+		{
+			return op;
+//			DropOp op = new DropOp(w.root, where)
+//			{
+//				public void execute()
+//				{
+//					D.print(); // TODO
+//				}
+//			};
+//			createWindowEdgeHighlight(op);
+//			return op;
+		}
+		
+		Node nd = FxDockTools.findDockElement(w.getContent(), screenx, screeny);
+		if(nd == null)
+		{
+			return null;
+		}
+		
+		if(nd instanceof FxDockSplitPane)
+		{
+			// TODO check if split divider
+			return createDropOnSplitDivider((FxDockSplitPane)nd,  screenx, screeny);
+//			if(where != null)
+//			{
+//				DropOp op = new DropOp(w.root, where)
+//				{
+//					public void execute()
+//					{
+//						D.print(); // TODO
+//					}
+//				};
+//				//op.addHighlight();
+//				return op;
+//			}
+		}
+		
+		if(nd instanceof Pane)
+		{
+			Object where = determineWhere(nd, screenx, screeny);
+			if(where != null)
+			{
+				op = new DropOp((Pane)nd, where)
+				{
+					public void execute()
+					{
+						D.print(); // TODO
+					}
+				};
+				//op.addHighlight();
+				return op;
+			}
 		}
 		return null;
 	}

@@ -18,7 +18,7 @@ public abstract class FxDockWindow
 	//
 	
 	public final CAction closeWindowAction = new CAction() { public void action() { close(); } };
-	
+	// TODO two panels: outer and dock root
 	public final FxDockRootPane root;
 	
 	
