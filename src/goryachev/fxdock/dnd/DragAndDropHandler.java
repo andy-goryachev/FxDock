@@ -4,6 +4,7 @@ import goryachev.common.util.D;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.internal.FxDockTools;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -21,8 +22,9 @@ import javafx.stage.StageStyle;
  */
 public class DragAndDropHandler
 {
-	private static double startx;
-	private static double starty;
+	public static final double DRAG_WINDOW_OPACITY = 0.5;
+	private static double deltax;
+	private static double deltay;
 	private static Stage dragWindow;
 	
 	
@@ -45,20 +47,21 @@ public class DragAndDropHandler
 	
 	protected static void onMouseDragged(MouseEvent ev, FxDockPane client)
 	{
+		double x = ev.getScreenX();
+		double y = ev.getScreenY();
+
 		if(dragWindow == null)
 		{
-			startx = ev.getScreenX();
-			starty = ev.getScreenY();
+			Point2D p = client.screenToLocal(x, y);
+			deltax = p.getX();
+			deltay = p.getY();
 
 			dragWindow = createDragWindow(client);
 			dragWindow.show();
 		}
 		
-		double x = ev.getScreenX();
-		double y = ev.getScreenY();
-		
-		dragWindow.setX(x);
-		dragWindow.setY(y);
+		dragWindow.setX(x - deltax);
+		dragWindow.setY(y - deltay);
 		
 		DropOp op = createDropOp(x, y);
 	}
@@ -93,6 +96,7 @@ public class DragAndDropHandler
 		Pane p = new Pane(new ImageView(im));
 		Stage s = new Stage(StageStyle.UNDECORATED);
 		s.setScene(new Scene(p, w, h));
+		s.setOpacity(DRAG_WINDOW_OPACITY);
 		return s;
 	}
 	
