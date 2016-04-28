@@ -26,8 +26,7 @@ public class DemoWindow
 	
 	public DemoWindow()
 	{
-		root.setTop(createMenu());
-		//root.setBottom();
+		setTop(createMenu());
 		setMinSize(500, 300);
 		setTitle("FxDock Framework Demo");
 	}
@@ -53,7 +52,7 @@ public class DemoWindow
 	}
 
 
-	public FxDockPane createPane(String type)
+	public FxDockPane createDockPane(String type)
 	{
 		return new DemoDockPane(type);
 	}

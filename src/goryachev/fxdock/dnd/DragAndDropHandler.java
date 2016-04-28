@@ -259,7 +259,7 @@ public class DragAndDropHandler
 			return null;
 		}
 		
-		DropOp op = checkWindowEdge(w.root, screenx, screeny);
+		DropOp op = checkWindowEdge(w.getDockRootPane(), screenx, screeny);
 		if(op != null)
 		{
 			return op;
