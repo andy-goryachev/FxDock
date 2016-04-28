@@ -10,6 +10,7 @@ import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
+import goryachev.fxdock.WindowListMenuItem;
 import java.util.Random;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -50,7 +51,7 @@ public class DemoWindow
 		// window
 		mb.add(m = new CMenu("Window"));
 		m.add("New Window", newWindowAction);
-		m.addSeparator();
+		m.add(new WindowListMenuItem(m));
 		// TODO list windows
 		return mb;
 	}
