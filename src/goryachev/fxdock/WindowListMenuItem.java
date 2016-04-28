@@ -4,19 +4,23 @@ import java.util.List;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.stage.Window;
 
 
 /**
- * WindowListMenuItem.
+ * SeparatorMenuItem which automatically inserts a list of window selection menu items after itself,
+ * and updates this list dynamically.
  */
 public class WindowListMenuItem
 	extends SeparatorMenuItem
 {
+	private final Window owner;
 	private final Menu menu;
 	
 	
-	public WindowListMenuItem(Menu m)
+	public WindowListMenuItem(Window owner, Menu m)
 	{
+		this.owner = owner;
 		this.menu = m;
 		m.addEventHandler(Menu.ON_SHOWING, (ev) -> updateMenu());
 	}
@@ -26,9 +30,9 @@ public class WindowListMenuItem
 	{
 		List<MenuItem> ms = menu.getItems();
 		
-		int ix = -1;
-		int sz = ms.size();
-		for(int i=0; i<sz; )
+		int index = -1;
+		int i = 0;
+		while(i < ms.size())
 		{
 			MenuItem x = ms.get(i); 
 			if(x instanceof WindowMenuItem)
@@ -39,15 +43,15 @@ public class WindowListMenuItem
 			{
 				if(x == this)
 				{
-					ix = i + 1;
+					index = i + 1;
 				}
 				i++;
 			}
 		}
 		
-		if(ix < 0)
+		if(index < 0)
 		{
-			ix = ms.size() - 1;
+			index = ms.size() - 1;
 		}
 		
 		int ct = 1;
@@ -55,10 +59,11 @@ public class WindowListMenuItem
 		{
 			WindowMenuItem mi = new WindowMenuItem(ct + ": " + w.getTitle());
 			mi.setOnAction((ev) -> w.toFront());
+			mi.setDisable(w == owner);
 			
-			ms.add(ix, mi);
+			ms.add(index, mi);
 			ct++;
-			ix++;
+			index++;
 		}
 	}
 	

@@ -51,8 +51,7 @@ public class DemoWindow
 		// window
 		mb.add(m = new CMenu("Window"));
 		m.add("New Window", newWindowAction);
-		m.add(new WindowListMenuItem(m));
-		// TODO list windows
+		m.add(new WindowListMenuItem(this, m));
 		return mb;
 	}
 
