@@ -76,7 +76,7 @@ public class DragAndDropHandler
 			dragWindow.setX(x - deltax);
 			dragWindow.setY(y - deltay);
 			
-			DropOp op = createDropOp(x, y);
+			DropOp op = createDropOp(client, x, y);
 			setDropOp(op);
 		}
 	}
@@ -164,72 +164,72 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp checkWindowEdge(FxDockRootPane nd, double screenx, double screeny)
+	protected static DropOp checkWindowEdge(FxDockPane client, FxDockRootPane root, double screenx, double screeny)
 	{
-		double w = nd.getWidth();
+		double w = root.getWidth();
 		if(w <= WINDOW_EDGE_HORIZONTAL + WINDOW_EDGE_HORIZONTAL)
 		{
 			// too narrow
 			return null;
 		}
 		
-		double h = nd.getHeight();
+		double h = root.getHeight();
 		if(w <= WINDOW_EDGE_VERTICAL + WINDOW_EDGE_VERTICAL)
 		{
 			// too short
 			return null;
 		}
 		
-		Point2D p = nd.screenToLocal(screenx, screeny);
+		Point2D p = root.screenToLocal(screenx, screeny);
 		double x = p.getX();
 		if(x < WINDOW_EDGE_HORIZONTAL)
 		{
-			DropOp op = new DropOp(nd, Where.LEFT)
+			DropOp op = new DropOp(root, Where.LEFT)
 			{
 				public void execute()
 				{
-					D.print(); // TODO
+					FxDockTools.insertPane(root, getWhere(), client);
 				}
 			};
-			op.addRect(nd, 0, 0, WINDOW_EDGE_HORIZONTAL, h);
+			op.addRect(root, 0, 0, WINDOW_EDGE_HORIZONTAL, h);
 			return op;
 		}
 		else if(x > (w - WINDOW_EDGE_HORIZONTAL))
 		{
-			DropOp op = new DropOp(nd, Where.RIGHT)
+			DropOp op = new DropOp(root, Where.RIGHT)
 			{
 				public void execute()
 				{
-					D.print(); // TODO
+					FxDockTools.insertPane(root, getWhere(), client);
 				}
 			};
-			op.addRect(nd, w - WINDOW_EDGE_HORIZONTAL, 0, WINDOW_EDGE_HORIZONTAL, h);
+			op.addRect(root, w - WINDOW_EDGE_HORIZONTAL, 0, WINDOW_EDGE_HORIZONTAL, h);
 			return op;
 		}
 		
 		double y = p.getY();
 		if(y < WINDOW_EDGE_VERTICAL)
 		{
-			DropOp op = new DropOp(nd, Where.TOP)
+			DropOp op = new DropOp(root, Where.TOP)
 			{
 				public void execute()
 				{
-					D.print(); // TODO
+					FxDockTools.insertPane(root, getWhere(), client);
 				}
 			};
-			op.addRect(nd, 0, 0, w, WINDOW_EDGE_VERTICAL);
+			op.addRect(root, 0, 0, w, WINDOW_EDGE_VERTICAL);
 			return op;
 		}
 		else if(y > (h - WINDOW_EDGE_VERTICAL))
 		{
-			DropOp op = new DropOp(nd, Where.BOTTOM)
+			DropOp op = new DropOp(root, Where.BOTTOM)
 			{
 				public void execute()
 				{
-					D.print(); // TODO
+					FxDockTools.insertPane(root, getWhere(), client);
 				}
 			};
-			op.addRect(nd, 0, h - WINDOW_EDGE_VERTICAL, w, WINDOW_EDGE_VERTICAL);
+			op.addRect(root, 0, h - WINDOW_EDGE_VERTICAL, w, WINDOW_EDGE_VERTICAL);
 			return op;
 		}
 
@@ -251,7 +251,7 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp createDropOp(double screenx, double screeny)
+	protected static DropOp createDropOp(FxDockPane client, double screenx, double screeny)
 	{
 		FxDockWindow w = FxDockTools.findWindow(screenx, screeny);
 		if(w == null)
@@ -259,7 +259,7 @@ public class DragAndDropHandler
 			return null;
 		}
 		
-		DropOp op = checkWindowEdge(w.getDockRootPane(), screenx, screeny);
+		DropOp op = checkWindowEdge(client, w.getDockRootPane(), screenx, screeny);
 		if(op != null)
 		{
 			return op;

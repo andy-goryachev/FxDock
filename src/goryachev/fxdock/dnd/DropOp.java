@@ -44,6 +44,12 @@ public abstract class DropOp
 	}
 	
 	
+	public Object getWhere()
+	{
+		return where;
+	}
+	
+	
 	public void addRect(Node ref, double x, double y, double w, double h)
 	{
 		BoundingBox screenr = new BoundingBox(x, y, w, h);

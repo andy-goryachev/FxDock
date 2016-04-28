@@ -4,7 +4,9 @@ import goryachev.common.util.CList;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
+import goryachev.fxdock.dnd.Where;
 import java.util.List;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -104,5 +106,45 @@ public class FxDockTools
 			}
 		}
 		return null;
+	}
+	
+	
+	private static FxDockSplitPane makeSplit(Node old, Node client, Object where)
+	{
+		if(where instanceof Where)
+		{
+			switch((Where)where)
+			{
+			case BOTTOM:
+				return new FxDockSplitPane(Orientation.VERTICAL, old, client);
+			case LEFT:
+				return new FxDockSplitPane(Orientation.HORIZONTAL, client, old);
+			case RIGHT:
+				return new FxDockSplitPane(Orientation.HORIZONTAL, old, client);
+			case TOP:
+				return new FxDockSplitPane(Orientation.VERTICAL, client, old);
+			default:
+				throw new Error("?" + where);
+			}
+		}
+		
+		throw new Error("?" + where);
+	}
+
+
+	public static void insertPane(Node target, Object where, FxDockPane client)
+	{
+		if(target instanceof FxDockRootPane)
+		{
+			FxDockRootPane rp = (FxDockRootPane)target;
+			Node old = rp.getContent();
+			rp.setContent(makeSplit(old, client, where));
+			// TODO collapse empty space
+		}
+		else
+		{
+			// TODO
+			throw new Error("?" + target);
+		}
 	}
 }
