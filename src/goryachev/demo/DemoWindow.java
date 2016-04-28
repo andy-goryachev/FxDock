@@ -6,11 +6,14 @@ import goryachev.common.util.SB;
 import goryachev.fx.CAction;
 import goryachev.fx.CMenu;
 import goryachev.fx.CMenuBar;
+import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import java.util.Random;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 
 
 /**
@@ -27,6 +30,7 @@ public class DemoWindow
 	public DemoWindow()
 	{
 		setTop(createMenu());
+		setBottom(createStatusBar());
 		setMinSize(500, 300);
 		setTitle("FxDock Framework Demo");
 	}
@@ -49,6 +53,14 @@ public class DemoWindow
 		m.addSeparator();
 		// TODO list windows
 		return mb;
+	}
+
+
+	protected Node createStatusBar()
+	{
+		BorderPane p = new BorderPane();
+		p.setRight(FX.label("copyright © 2016 andy goryachev", new Insets(1, 20, 1, 10)));
+		return p;
 	}
 
 
