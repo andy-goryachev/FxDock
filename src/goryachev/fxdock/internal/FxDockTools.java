@@ -2,8 +2,12 @@
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.fxdock.FxDockFramework;
+import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import java.util.List;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.stage.Window;
 
 
@@ -67,5 +71,38 @@ public class FxDockTools
 		}
 		
 		return true;
+	}
+
+
+	public static Node findDockElement(Node n, double screenx, double screeny)
+	{
+		if(n != null)
+		{
+			Point2D p = n.screenToLocal(screenx, screeny);
+			if(n.contains(p))
+			{
+				if(n instanceof FxDockPane)
+				{
+					return n;
+				}
+				else if(n instanceof FxDockEmptyPane)
+				{
+					return n;
+				}
+				
+				if(n instanceof Parent)
+				{
+					for(Node ch: ((Parent)n).getChildrenUnmodifiable())
+					{
+						Node found = findDockElement(ch, screenx, screeny);
+						if(found != null)
+						{
+							return found;
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

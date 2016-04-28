@@ -97,10 +97,14 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp createDropOp(double x, double y)
+	protected static DropOp createDropOp(double screenx, double screeny)
 	{
-		FxDockWindow w = FxDockTools.findWindow(x, y);
-		D.print(w);
+		FxDockWindow w = FxDockTools.findWindow(screenx, screeny);
+		if(w != null)
+		{
+			Object em = FxDockTools.findDockElement(w.getContent(), screenx, screeny);
+			D.print(em);
+		}
 		return null;
 	}
 }
