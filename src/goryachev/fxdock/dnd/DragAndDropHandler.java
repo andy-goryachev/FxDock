@@ -10,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -26,6 +28,7 @@ public class DragAndDropHandler
 	private static double deltax;
 	private static double deltay;
 	private static Stage dragWindow;
+	private static DropOp dropOp;
 	
 	
 	public static void attach(Node n, FxDockPane client)
@@ -38,47 +41,103 @@ public class DragAndDropHandler
 
 	protected static void onDragDetected(MouseEvent ev, FxDockPane client)
 	{
-		D.print(ev);
-		
-//		ev.setDragDetect(false);
-//		ev.consume();
-	}
-	
-	
-	protected static void onMouseDragged(MouseEvent ev, FxDockPane client)
-	{
-		double x = ev.getScreenX();
-		double y = ev.getScreenY();
-
 		if(dragWindow == null)
 		{
+			double x = ev.getScreenX();
+			double y = ev.getScreenY();
 			Point2D p = client.screenToLocal(x, y);
 			deltax = p.getX();
 			deltay = p.getY();
 
 			dragWindow = createDragWindow(client);
+			dragWindow.addEventHandler(KeyEvent.KEY_PRESSED, (ke) -> onKeyPress(ke.getCode()));
+			
+			dragWindow.setX(x - deltax);
+			dragWindow.setY(y - deltay);
+			
 			dragWindow.show();
+			
+			ev.consume();
 		}
-		
-		dragWindow.setX(x - deltax);
-		dragWindow.setY(y - deltay);
-		
-		DropOp op = createDropOp(x, y);
+	}
+	
+	
+	protected static void onMouseDragged(MouseEvent ev, FxDockPane client)
+	{
+		if(dragWindow != null)
+		{
+			double x = ev.getScreenX();
+			double y = ev.getScreenY();
+			
+			dragWindow.setX(x - deltax);
+			dragWindow.setY(y - deltay);
+			
+			DropOp op = createDropOp(x, y);
+			setDropOp(op);
+		}
+	}
+	
+	
+	protected static void setDropOp(DropOp op)
+	{
+		if(dropOp != null)
+		{
+			if(dropOp.isSame(op))
+			{
+				return;
+			}
+			else
+			{
+				dropOp.removeHighlights();
+			}
+		}
+
+		dropOp = op;
+
+		if(op != null)
+		{
+			op.installHighlights();
+		}
 	}
 	
 
 	protected static void onMouseReleased()
 	{
-		hideDragWindow();
+		// remove drag window
+		stopDrag();
+		
+		if(dropOp != null)
+		{
+			dropOp.execute();
+			dropOp = null;
+		}
 	}
 	
 	
-	protected static void hideDragWindow()
+	protected static void onKeyPress(KeyCode k)
 	{
+		// ESCAPE key cancels the drag operation
+		if(k == KeyCode.ESCAPE)
+		{
+			stopDrag();
+			dropOp = null;
+		}
+	}
+	
+	
+	protected static void stopDrag()
+	{
+		// delete the drag window
 		if(dragWindow != null)
 		{
 			dragWindow.hide();
 			dragWindow = null;
+		}
+		
+		// remove the highlights but not the op
+		if(dropOp != null)
+		{
+			dropOp.removeHighlights();
 		}
 	}
 	
@@ -94,7 +153,7 @@ public class DragAndDropHandler
 		client.snapshot(sp, im);
 		
 		Pane p = new Pane(new ImageView(im));
-		Stage s = new Stage(StageStyle.UNDECORATED);
+		Stage s = new Stage(StageStyle.UTILITY);
 		s.setScene(new Scene(p, w, h));
 		s.setOpacity(DRAG_WINDOW_OPACITY);
 		return s;
