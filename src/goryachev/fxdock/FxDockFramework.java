@@ -120,6 +120,20 @@ public class FxDockFramework
 	}
 	
 	
+	public static int getWindowCount()
+	{
+		int ct = 0;
+		for(Object x: windows.keySet())
+		{
+			if(x instanceof FxDockWindow)
+			{
+				ct++;
+			}
+		}
+		return ct;
+	}
+	
+	
 	// FX cannot tell us which window is on top, so we have to do the dirty work ourselves
 	protected static void addFocusListener(FxDockWindow w)
 	{

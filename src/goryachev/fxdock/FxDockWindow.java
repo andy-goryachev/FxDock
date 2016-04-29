@@ -2,17 +2,17 @@
 package goryachev.fxdock;
 import goryachev.fx.CAction;
 import goryachev.fxdock.internal.FxDockRootPane;
+import goryachev.fxdock.internal.FxWindowBase;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 
 /**
  * FxDockWindow.
  */
 public abstract class FxDockWindow
-	extends Stage
+	extends FxWindowBase
 {
 	public abstract FxDockPane createDockPane(String type);
 	

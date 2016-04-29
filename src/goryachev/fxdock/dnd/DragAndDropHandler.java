@@ -166,6 +166,12 @@ public class DragAndDropHandler
 	
 	protected static DropOp checkWindowEdge(FxDockPane client, FxDockRootPane root, double screenx, double screeny)
 	{
+		if(root.getContent() == client)
+		{
+			// don't drop on itself
+			return null;
+		}
+		
 		double w = root.getWidth();
 		if(w <= WINDOW_EDGE_HORIZONTAL + WINDOW_EDGE_HORIZONTAL)
 		{

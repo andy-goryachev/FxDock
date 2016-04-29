@@ -1,6 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
+import goryachev.common.util.D;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -10,6 +11,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Window;
 
 
@@ -46,6 +48,38 @@ public class FxDockTools
 		else
 		{
 			return FxDockFramework.findTopWindow(list);
+		}
+	}
+	
+	
+	public static FxDockWindow getWindow(Node n)
+	{
+		if(n != null)
+		{
+			Scene sc = n.getScene();
+			if(sc != null)
+			{
+				Window w = sc.getWindow();
+				if(w instanceof FxDockWindow)
+				{
+					return (FxDockWindow)w;
+				}
+			}
+		}
+		return null;	
+	}
+	
+	
+	public static void closeWindowUnlessLast(Node n)
+	{
+		FxDockWindow w = getWindow(n);
+		if(w != null)
+		{
+			if(FxDockFramework.getWindowCount() > 1)
+			{
+				w.discardSettings = true;
+				w.close();
+			}
 		}
 	}
 	
@@ -130,16 +164,69 @@ public class FxDockTools
 		
 		throw new Error("?" + where);
 	}
+	
+	
+	public static int indexInParent(Node n)
+	{
+		Parent p = n.getParent();
+		if(p instanceof FxDockSplitPane)
+		{
+			return ((FxDockSplitPane)p).indexOfPane(n);
+		}
+		else if(p instanceof FxDockTabPane)
+		{
+			return ((FxDockTabPane)p).indexOfTab(n);
+		}
+		return -1;
+	}
+	
+	
+	public static void setParent(Node parent, Node child)
+	{
+		if(child instanceof FxDockPane)
+		{
+			((FxDockPane)child).parent.set(parent);
+		}
+		else if(child instanceof FxDockSplitPane)
+		{
+			((FxDockSplitPane)child).parent.set(parent);
+		}
+		else if(child instanceof FxDockTabPane)
+		{
+			((FxDockTabPane)child).parent.set(parent);
+		}
+		else if(child instanceof FxDockEmptyPane)
+		{
+			((FxDockEmptyPane)child).parent.set(parent);
+		}
+	}
+	
+
+	public static void collapseEmptySpace(Node parent, int ix, Node client)
+	{
+		if(parent instanceof FxDockRootPane)
+		{
+			D.print(((FxDockRootPane)parent).getContent());
+			if(((FxDockRootPane)parent).getContent() == null)
+			{
+				closeWindowUnlessLast(parent);
+			}
+		}
+	}
 
 
 	public static void insertPane(Node target, Object where, FxDockPane client)
 	{
 		if(target instanceof FxDockRootPane)
 		{
+			Node p = client.dockParentProperty().getValue();
+			int ix = indexInParent(client);
+			
 			FxDockRootPane rp = (FxDockRootPane)target;
 			Node old = rp.getContent();
 			rp.setContent(makeSplit(old, client, where));
-			// TODO collapse empty space
+			
+			collapseEmptySpace(p, ix, client);
 		}
 		else
 		{

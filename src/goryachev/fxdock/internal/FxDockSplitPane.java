@@ -39,4 +39,10 @@ public class FxDockSplitPane
 	{
 		getItems().add(n);
 	}
+
+
+	public int indexOfPane(Node n)
+	{
+		return getItems().indexOf(n);
+	}
 }
