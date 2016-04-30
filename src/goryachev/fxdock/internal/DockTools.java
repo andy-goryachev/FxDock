@@ -80,13 +80,17 @@ public class DockTools
 	
 	public static void setParent(Node p, Node child)
 	{
-		ParentProperty prop = getParentProperty(p);
+		ParentProperty prop = getParentProperty(child);
 		if(prop != null)
 		{
 			Node old = prop.get();
 			if(old != null)
 			{
-				if(old != p) // FIX ???
+				if(old == p)
+				{
+					D.print("same parent", p); // FIX ???
+				}
+				else
 				{
 					remove(old, child);
 				}
@@ -352,7 +356,11 @@ public class DockTools
 	
 	private static void replacePane(Node parent, int ix, Node client)
 	{
-		if(parent instanceof FxDockRootPane)
+		if(parent instanceof FxDockPane)
+		{
+			
+		}
+		else if(parent instanceof FxDockRootPane)
 		{
 			((FxDockRootPane)parent).setContent(client);
 		}
