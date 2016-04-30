@@ -262,7 +262,13 @@ public class DragAndDropHandler
 		FxDockWindow w = DockTools.findWindow(screenx, screeny);
 		if(w == null)
 		{
-			return null;
+			return new DropOp(null, new WhereScreen(screenx, screeny))
+			{
+				public void execute()
+				{
+					D.print(); // TODO
+				}
+			};
 		}
 		
 		DropOp op = checkWindowEdge(client, w.getDockRootPane(), screenx, screeny);
