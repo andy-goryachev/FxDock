@@ -1,11 +1,10 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.dnd;
 import goryachev.common.util.CList;
+import goryachev.fx.FX;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -59,7 +58,22 @@ public abstract class DropOp
 		Region r = new Region();
 		r.relocate(b.getMinX(), b.getMinY());
 		r.resize(b.getWidth(), b.getHeight());
-		r.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.3), null, null)));
+		r.setBackground(FX.background(Color.color(0, 0, 0, 0.3)));
+		
+		add(r);
+	}
+	
+	
+	public void addOutline(Node ref, double x, double y, double w, double h)
+	{
+		BoundingBox screenr = new BoundingBox(x, y, w, h);
+		Bounds b = ref.localToScreen(screenr);
+		b = target.screenToLocal(b);
+		
+		Region r = new Region();
+		r.relocate(b.getMinX(), b.getMinY());
+		r.resize(b.getWidth(), b.getHeight());
+		r.setBackground(FX.background(Color.color(0, 0, 0, 0.1)));
 		
 		add(r);
 	}

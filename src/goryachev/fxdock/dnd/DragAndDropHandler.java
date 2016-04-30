@@ -365,9 +365,11 @@ public class DragAndDropHandler
 			break;
 		case BOTTOM_LEFT:
 			op.addRect(target, 0, y2, x1, h - y2);
+			op.addOutline(target, 0, 0, w, y2);
 			break;
 		case BOTTOM_RIGHT:
 			op.addRect(target, x2, y2, x2, h - y2);
+			op.addOutline(target, 0, 0, w, y2);
 			break;
 		case CENTER:
 			op.addRect(target, 0, 0, w, h);
@@ -377,27 +379,33 @@ public class DragAndDropHandler
 			break;
 		case LEFT_BOTTOM: 
 			op.addRect(target, 0, y2, x1, h - y2);
+			op.addOutline(target, x1, 0, w - x1, h);
 			break;
 		case LEFT_TOP:
 			op.addRect(target, x2, 0, w - x2, y1);
+			op.addOutline(target, x1, 0, w - x1, h);
 			break;
 		case RIGHT:
 			op.addRect(target, x2, 0, w - x2, h);
 			break;
 		case RIGHT_BOTTOM:
 			op.addRect(target, x2, y2, w - x2, h - y2);
+			op.addOutline(target, x2, 0, w - x2, h);
 			break;
 		case RIGHT_TOP:
 			op.addRect(target, x2, 0, w - x2, y1);
+			op.addOutline(target, x2, 0, w - x2, h);
 			break;
 		case TOP:
 			op.addRect(target, 0, 0, w, y1);
 			break;
 		case TOP_LEFT:
 			op.addRect(target, 0, 0, x1, y1);
+			op.addOutline(target, 0, y1, w, h - y1);
 			break;
 		case TOP_RIGHT:
 			op.addRect(target, x2, 0, w - x2, y1);
+			op.addOutline(target, 0, y1, w, h - y1);
 			break;
 		}
 		return op;
