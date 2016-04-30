@@ -75,6 +75,16 @@ public class FxDockSplitPane
 	}
 	
 	
+	public void removePane(Node n)
+	{
+		int ix = indexOfPane(n);
+		if(ix >= 0)
+		{
+			removePane(ix);
+		}
+	}
+	
+	
 	public int getPaneCount()
 	{
 		return getItems().size();

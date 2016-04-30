@@ -132,6 +132,14 @@ public class DockTools
 				D.print("no removed: " + parent);
 			}
 		}
+		else if(parent instanceof FxDockTabPane)
+		{
+			((FxDockTabPane)parent).removeTab(child);
+		}
+		else if(parent instanceof FxDockSplitPane)
+		{
+			((FxDockSplitPane)parent).removePane(child);
+		}
 		else
 		{
 			throw new Error("?" + parent);

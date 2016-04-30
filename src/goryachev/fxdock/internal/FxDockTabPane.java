@@ -2,6 +2,7 @@
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.fxdock.FxDockPane;
+import goryachev.fxdock.dnd.DragAndDropHandler;
 import java.util.List;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
@@ -51,6 +52,9 @@ public class FxDockTabPane
 		{
 			FxDockPane p = (FxDockPane)n;
 			t.textProperty().bindBidirectional(p.titleProperty());
+			// TODO dnd
+			//DragAndDropHandler.attach(label, p);
+			// TODO close button
 		}
 		return t;
 	}
@@ -78,6 +82,16 @@ public class FxDockTabPane
 		Node n = t.getContent();
 		DockTools.setParent(null, n);
 		return n;
+	}
+	
+	
+	public void removeTab(Node n)
+	{
+		int ix = indexOfTab(n);
+		if(ix >= 0)
+		{
+			removeTab(ix);
+		}
 	}
 	
 	
