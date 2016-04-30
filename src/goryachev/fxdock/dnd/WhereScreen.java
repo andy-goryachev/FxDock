@@ -41,6 +41,6 @@ public class WhereScreen
 	
 	public int hashCode()
 	{
-		return CKit.hashCode(WhereTab.class, screenx, screeny);
+		return CKit.hashCode(WhereScreen.class, screenx, screeny);
 	}
 }
