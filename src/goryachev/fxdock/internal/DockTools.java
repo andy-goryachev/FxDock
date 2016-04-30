@@ -52,9 +52,13 @@ public class DockTools
 		{
 			return true;
 		}
+		else if(n instanceof FxDockRootPane)
+		{
+			return isEmpty(((FxDockRootPane)n).getContent());
+		}
 		else if(n instanceof FxDockBorderPane)
 		{
-			return isEmpty(((FxDockBorderPane)n).getCenter());
+			return false;
 		}
 		else if(n instanceof FxDockEmptyPane)
 		{
@@ -68,11 +72,50 @@ public class DockTools
 		{
 			return (((FxDockTabPane)n).getTabCount() == 0);
 		}
-		else if(n instanceof FxDockRootPane)
+		return true;
+	}
+	
+	
+	public static void setParent(Node p, Node child)
+	{
+		if(child instanceof FxDockBorderPane)
 		{
-			return isEmpty(((FxDockRootPane)n).getContent());
+			((FxDockBorderPane)child).parent.set(p);
 		}
-		throw new Error("?" + n);
+		else if(child instanceof FxDockSplitPane)
+		{
+			((FxDockSplitPane)child).parent.set(p);
+		}
+		else if(child instanceof FxDockTabPane)
+		{
+			((FxDockTabPane)child).parent.set(p);
+		}
+		else if(child instanceof FxDockEmptyPane)
+		{
+			((FxDockEmptyPane)child).parent.set(p);
+		}
+	}
+	
+	
+	public static Node getParent(Node n)
+	{
+		if(n instanceof FxDockBorderPane)
+		{
+			return ((FxDockBorderPane)n).parent.get();
+		}
+		else if(n instanceof FxDockSplitPane)
+		{
+			return ((FxDockSplitPane)n).parent.get();
+		}
+		else if(n instanceof FxDockTabPane)
+		{
+			return ((FxDockTabPane)n).parent.get();
+		}
+		else if(n instanceof FxDockEmptyPane)
+		{
+			return ((FxDockEmptyPane)n).parent.get();
+		}
+		return null;
 	}
 	
 	
@@ -224,7 +267,7 @@ public class DockTools
 	
 	public static int indexInParent(Node n)
 	{
-		Parent p = n.getParent();
+		Node p = getParent(n);
 		if(p instanceof FxDockSplitPane)
 		{
 			return ((FxDockSplitPane)p).indexOfPane(n);
@@ -237,46 +280,16 @@ public class DockTools
 	}
 	
 	
-	public static void setParent(Node parent, Node child)
+	private static void replacePane(Node p, int ix, Node client)
 	{
-		if(child instanceof FxDockBorderPane)
+		if(p instanceof FxDockRootPane)
 		{
-			((FxDockBorderPane)child).parent.set(parent);
+			((FxDockRootPane)p).setContent(client);
 		}
-		else if(child instanceof FxDockSplitPane)
+		else
 		{
-			((FxDockSplitPane)child).parent.set(parent);
+			throw new Error("?" + p);
 		}
-		else if(child instanceof FxDockTabPane)
-		{
-			((FxDockTabPane)child).parent.set(parent);
-		}
-		else if(child instanceof FxDockEmptyPane)
-		{
-			((FxDockEmptyPane)child).parent.set(parent);
-		}
-	}
-	
-	
-	public static Node getParent(Node n)
-	{
-		if(n instanceof FxDockBorderPane)
-		{
-			return ((FxDockBorderPane)n).parent.get();
-		}
-		else if(n instanceof FxDockSplitPane)
-		{
-			return ((FxDockSplitPane)n).parent.get();
-		}
-		else if(n instanceof FxDockTabPane)
-		{
-			return ((FxDockTabPane)n).parent.get();
-		}
-		else if(n instanceof FxDockEmptyPane)
-		{
-			return ((FxDockEmptyPane)n).parent.get();
-		}
-		return null;
 	}
 	
 
@@ -287,23 +300,43 @@ public class DockTools
 			FxDockSplitPane sp = (FxDockSplitPane)parent;
 			if(ix >= 0)
 			{
-				Node n = sp.getPane(ix + 1);
-				if(isEmpty(n))
+				sp.removePane(ix);
+
+				Node n = sp.getPane(ix);
+				if(n != null)
 				{
-					sp.removePane(ix + 1);
+					if(isEmpty(n))
+					{
+						sp.removePane(ix);
+					}
 				}
 				
 				n = sp.getPane(ix - 1);
-				if(isEmpty(n))
+				if(n != null)
 				{
-					sp.removePane(ix - 1);
+					if(isEmpty(n))
+					{
+						sp.removePane(ix - 1);
+					}
 				}
 			}
 			
-			if(sp.getPaneCount() == 0)
+			int ct = sp.getPaneCount();
+			if(ct < 2)
 			{
 				ix = indexInParent(sp);
-				collapseEmptySpace(sp.getParent(), ix, sp);
+				Node p2 = getParent(sp); 
+				
+				switch(ct)
+				{
+				case 0:				
+					collapseEmptySpace(getParent(sp), ix, sp);
+					break;
+				case 1:
+					client = sp.getPane(0);
+					replacePane(p2, ix, client);
+					break;
+				}
 			}
 		}
 		else if(parent instanceof FxDockRootPane)
@@ -316,16 +349,70 @@ public class DockTools
 	}
 
 
+	private static boolean insertSplit(FxDockSplitPane sp, Object where, FxDockPane client)
+	{
+		if(where instanceof Where)
+		{
+			Orientation or = sp.getOrientation();
+			switch((Where)where)
+			{
+			case LEFT:
+				if(or == Orientation.HORIZONTAL)
+				{
+					sp.addPane(0, client);
+					return true;
+				}
+				break;
+			case RIGHT:
+				if(or == Orientation.HORIZONTAL)
+				{
+					sp.addPane(client);
+					return true;
+				}
+				break;
+			case TOP:
+				if(or == Orientation.VERTICAL)
+				{
+					sp.addPane(0, client);
+					return true;
+				}
+				break;
+			case BOTTOM:
+				if(or == Orientation.VERTICAL)
+				{
+					sp.addPane(client);
+					return true;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
+
 	public static void insertPane(Node target, Object where, FxDockPane client)
 	{
 		if(target instanceof FxDockRootPane)
 		{
+			FxDockRootPane rp = (FxDockRootPane)target;
+			
 			Node p = getParent(client);
 			int ix = indexInParent(client);
-			
-			FxDockRootPane rp = (FxDockRootPane)target;
+
+			boolean makesplit = true;
 			Node old = rp.getContent();
-			rp.setContent(makeSplit(old, client, where));
+			if(old instanceof FxDockSplitPane)
+			{
+				if(insertSplit((FxDockSplitPane)old, where, client))
+				{
+					makesplit = false;
+				}
+			}
+			
+			if(makesplit)
+			{
+				rp.setContent(makeSplit(old, client, where));
+			}
 			
 			collapseEmptySpace(p, ix, client);
 		}
