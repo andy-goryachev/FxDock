@@ -20,9 +20,6 @@ public abstract class CAction
 	/** simple action event */
 	protected abstract void action();
 
-	/** override to obtain the actual event */
-	public void handle(ActionEvent ev) { action(); }
-	
 	//
 	
 	private final BooleanProperty selectedProperty = new SimpleBooleanProperty(this, "selected");
@@ -42,6 +39,7 @@ public abstract class CAction
 		if(b instanceof ToggleButton)
 		{
 			((ToggleButton)b).selectedProperty().bindBidirectional(selectedProperty());
+			b.setOnAction(this);
 		}
 	}
 
@@ -54,10 +52,12 @@ public abstract class CAction
 		if(m instanceof CheckMenuItem)
 		{
 			((CheckMenuItem)m).selectedProperty().bindBidirectional(selectedProperty());
+			m.setOnAction(this);
 		}
 		else if(m instanceof RadioMenuItem)
 		{
 			((RadioMenuItem)m).selectedProperty().bindBidirectional(selectedProperty());
+			m.setOnAction(this);
 		}
 	}
 
@@ -107,5 +107,15 @@ public abstract class CAction
 	public final void setEnabled(boolean on)
 	{
 		disabledProperty.set(!on);
+	}
+
+
+	/** override to obtain the actual event */
+	public void handle(ActionEvent ev)
+	{
+		if(isEnabled())
+		{
+			action();
+		}
 	}
 }

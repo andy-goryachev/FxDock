@@ -28,13 +28,50 @@ public class FxDockTabPane
 	}
 	
 	
+	public Node getTab(int ix)
+	{
+		if(ix >= 0)
+		{
+			ObservableList<Tab> ps = getTabs();
+			if(ix < ps.size())
+			{
+				return ps.get(ix).getContent();
+			}
+		}
+		return null;
+	}
+	
+	
 	public void addTab(Node n)
 	{
 		Tab t = new Tab(null, n);
 		getTabs().add(t);
-		FxDockTools.setParent(this, n);
+		DockTools.setParent(this, n);
 	}
 	
+	
+	public void addTab(int ix, Node n)
+	{
+		Tab t = new Tab(null, n);
+		getTabs().add(ix, t);
+		DockTools.setParent(this, n);
+	}
+	
+	
+	public Node removePane(int ix)
+	{
+		Tab t = getTabs().remove(ix);
+		Node n = t.getContent();
+		DockTools.setParent(null, n);
+		return n;
+	}
+	
+	
+	public int getTabCount()
+	{
+		return getTabs().size();
+	}
+
 
 	public int indexOfTab(Node n)
 	{

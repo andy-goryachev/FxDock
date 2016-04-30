@@ -15,11 +15,16 @@ import javafx.scene.layout.Region;
 public class DemoPane
     extends FxDockPane
 {
+	private static int seq = 1;
+	private int __seq;
+	
+	
 	public DemoPane(String type)
 	{
 		super(type);
 		setCenter(createColorNode(type));
-		setTitle(type);
+		this.__seq = seq++;
+		setTitle("pane " + __seq);
 	}
 	
 	

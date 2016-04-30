@@ -2,6 +2,7 @@
 package goryachev.fxdock.internal;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
@@ -35,9 +36,45 @@ public class FxDockSplitPane
 	}
 	
 	
+	public Node getPane(int ix)
+	{
+		if(ix >= 0)
+		{
+			ObservableList<Node> ps = getItems();
+			if(ix < ps.size())
+			{
+				return ps.get(ix);
+			}
+		}
+		return null;
+	}
+	
+	
 	public void addPane(Node n)
 	{
 		getItems().add(n);
+		DockTools.setParent(this, n);
+	}
+	
+	
+	public void addPane(int ix, Node n)
+	{
+		getItems().add(ix, n);
+		DockTools.setParent(this, n);
+	}
+	
+	
+	public Node removePane(int ix)
+	{
+		Node n = getItems().remove(ix);
+		DockTools.setParent(null, n);
+		return n;
+	}
+	
+	
+	public int getPaneCount()
+	{
+		return getItems().size();
 	}
 
 

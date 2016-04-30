@@ -3,9 +3,9 @@ package goryachev.fxdock.dnd;
 import goryachev.common.util.D;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
+import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.FxDockRootPane;
 import goryachev.fxdock.internal.FxDockSplitPane;
-import goryachev.fxdock.internal.FxDockTools;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -194,7 +194,7 @@ public class DragAndDropHandler
 			{
 				public void execute()
 				{
-					FxDockTools.insertPane(root, getWhere(), client);
+					DockTools.insertPane(root, getWhere(), client);
 				}
 			};
 			op.addRect(root, 0, 0, WINDOW_EDGE_HORIZONTAL, h);
@@ -206,7 +206,7 @@ public class DragAndDropHandler
 			{
 				public void execute()
 				{
-					FxDockTools.insertPane(root, getWhere(), client);
+					DockTools.insertPane(root, getWhere(), client);
 				}
 			};
 			op.addRect(root, w - WINDOW_EDGE_HORIZONTAL, 0, WINDOW_EDGE_HORIZONTAL, h);
@@ -220,7 +220,7 @@ public class DragAndDropHandler
 			{
 				public void execute()
 				{
-					FxDockTools.insertPane(root, getWhere(), client);
+					DockTools.insertPane(root, getWhere(), client);
 				}
 			};
 			op.addRect(root, 0, 0, w, WINDOW_EDGE_VERTICAL);
@@ -232,7 +232,7 @@ public class DragAndDropHandler
 			{
 				public void execute()
 				{
-					FxDockTools.insertPane(root, getWhere(), client);
+					DockTools.insertPane(root, getWhere(), client);
 				}
 			};
 			op.addRect(root, 0, h - WINDOW_EDGE_VERTICAL, w, WINDOW_EDGE_VERTICAL);
@@ -259,7 +259,7 @@ public class DragAndDropHandler
 	
 	protected static DropOp createDropOp(FxDockPane client, double screenx, double screeny)
 	{
-		FxDockWindow w = FxDockTools.findWindow(screenx, screeny);
+		FxDockWindow w = DockTools.findWindow(screenx, screeny);
 		if(w == null)
 		{
 			return null;
@@ -280,7 +280,7 @@ public class DragAndDropHandler
 //			return op;
 		}
 		
-		Node nd = FxDockTools.findDockElement(w.getContent(), screenx, screeny);
+		Node nd = DockTools.findDockElement(w.getContent(), screenx, screeny);
 		if(nd == null)
 		{
 			return null;
