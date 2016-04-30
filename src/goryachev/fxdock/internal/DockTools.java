@@ -186,7 +186,8 @@ public class DockTools
 
 	public static boolean aboveDiagonal(double x, double y, double x0, double y0, double x1, double y1)
 	{
-		return (x * (y - y0) / (x1 - x0)) < y;
+		double liney = y0 + (y1 - y0) * (x - x0) / (x1 - x0);
+		return y < liney;
 	}
 
 

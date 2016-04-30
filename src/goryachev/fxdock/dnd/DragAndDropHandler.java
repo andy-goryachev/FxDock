@@ -18,7 +18,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -382,7 +381,7 @@ public class DragAndDropHandler
 			op.addOutline(target, x1, 0, w - x1, h);
 			break;
 		case LEFT_TOP:
-			op.addRect(target, x2, 0, w - x2, y1);
+			op.addRect(target, 0, 0, x1, y1);
 			op.addOutline(target, x1, 0, w - x1, h);
 			break;
 		case RIGHT:
@@ -390,11 +389,11 @@ public class DragAndDropHandler
 			break;
 		case RIGHT_BOTTOM:
 			op.addRect(target, x2, y2, w - x2, h - y2);
-			op.addOutline(target, x2, 0, w - x2, h);
+			op.addOutline(target, 0, 0, x2, h);
 			break;
 		case RIGHT_TOP:
 			op.addRect(target, x2, 0, w - x2, y1);
-			op.addOutline(target, x2, 0, w - x2, h);
+			op.addOutline(target, 0, 0, x2, h);
 			break;
 		case TOP:
 			op.addRect(target, 0, 0, w, y1);
