@@ -1,5 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.demo;
+package goryachev.demo.dock;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SB;

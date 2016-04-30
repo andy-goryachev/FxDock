@@ -1,5 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.demo;
+package goryachev.demo.dock;
 import goryachev.common.util.DebugSettingsProvider;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
@@ -14,7 +14,7 @@ import javafx.stage.Window;
 /**
  * FxDockDemo.
  */
-public class FxDockDemo
+public class DockDemo
 	extends Application
 {
 	public static void main(String[] args)
@@ -27,7 +27,7 @@ public class FxDockDemo
 		GlobalSettings.setProvider(new DebugSettingsProvider());
 		
 		// launch ui
-		new FxDockDemo().launch(args);
+		new DockDemo().launch(args);
 	}
 	
 
