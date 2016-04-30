@@ -313,15 +313,15 @@ public class DockTools
 	}
 	
 	
-	private static void replacePane(Node p, int ix, Node client)
+	private static void replacePane(Node parent, int ix, Node client)
 	{
-		if(p instanceof FxDockRootPane)
+		if(parent instanceof FxDockRootPane)
 		{
-			((FxDockRootPane)p).setContent(client);
+			((FxDockRootPane)parent).setContent(client);
 		}
 		else
 		{
-			throw new Error("?" + p);
+			throw new Error("?" + parent);
 		}
 	}
 	
@@ -382,7 +382,7 @@ public class DockTools
 	}
 
 
-	private static boolean insertSplit(FxDockSplitPane sp, Object where, FxDockPane client)
+	private static boolean insertSplit(FxDockPane client, FxDockSplitPane sp, Object where)
 	{
 		if(where instanceof Where)
 		{
@@ -423,7 +423,7 @@ public class DockTools
 	}
 
 
-	public static void insertPane(Node target, Object where, FxDockPane client)
+	public static void insertPane(FxDockPane client, Node target, Object where)
 	{
 		if(target instanceof FxDockRootPane)
 		{
@@ -436,7 +436,7 @@ public class DockTools
 			Node old = rp.getContent();
 			if(old instanceof FxDockSplitPane)
 			{
-				if(insertSplit((FxDockSplitPane)old, where, client))
+				if(insertSplit(client, (FxDockSplitPane)old, where))
 				{
 					makesplit = false;
 				}
@@ -474,7 +474,7 @@ public class DockTools
 	}
 
 
-	public static void moveToSplit(FxDockSplitPane sp, int index, FxDockPane client)
+	public static void moveToSplit(FxDockPane client, FxDockSplitPane sp, int index)
 	{
 		Node p = getParent(client);
 		int ix = indexInParent(client);
@@ -482,5 +482,11 @@ public class DockTools
 		sp.addPane(index, client);
 		
 		collapseEmptySpace(p, ix, client);
+	}
+
+
+	public static void moveToPanel(FxDockPane client, Pane target, Where where)
+	{
+		// TODO
 	}
 }

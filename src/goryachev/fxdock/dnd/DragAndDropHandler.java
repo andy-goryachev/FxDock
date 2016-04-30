@@ -198,7 +198,7 @@ public class DragAndDropHandler
 			{
 				public void execute()
 				{
-					DockTools.insertPane(root, getWhere(), client);
+					DockTools.insertPane(client, root, getWhere());
 				}
 			};
 			op.addRect(root, 0, 0, WINDOW_EDGE_HORIZONTAL, h);
@@ -210,7 +210,7 @@ public class DragAndDropHandler
 			{
 				public void execute()
 				{
-					DockTools.insertPane(root, getWhere(), client);
+					DockTools.insertPane(client, root, getWhere());
 				}
 			};
 			op.addRect(root, w - WINDOW_EDGE_HORIZONTAL, 0, WINDOW_EDGE_HORIZONTAL, h);
@@ -224,7 +224,7 @@ public class DragAndDropHandler
 			{
 				public void execute()
 				{
-					DockTools.insertPane(root, getWhere(), client);
+					DockTools.insertPane(client, root, getWhere());
 				}
 			};
 			op.addRect(root, 0, 0, w, WINDOW_EDGE_VERTICAL);
@@ -236,7 +236,7 @@ public class DragAndDropHandler
 			{
 				public void execute()
 				{
-					DockTools.insertPane(root, getWhere(), client);
+					DockTools.insertPane(client, root, getWhere());
 				}
 			};
 			op.addRect(root, 0, h - WINDOW_EDGE_VERTICAL, w, WINDOW_EDGE_VERTICAL);
@@ -263,7 +263,7 @@ public class DragAndDropHandler
 				{
 					public void execute()
 					{
-						DockTools.moveToSplit(sp, ix, client);
+						DockTools.moveToSplit(client, sp, ix);
 					}
 				};
 				op.addRect(n, 0, 0, n.getWidth(), n.getHeight());
@@ -353,7 +353,7 @@ public class DragAndDropHandler
 		{
 			public void execute()
 			{
-				D.print(); // TODO
+				DockTools.moveToPanel(client, target, where);
 			}
 		};
 		
