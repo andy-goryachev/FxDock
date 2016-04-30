@@ -3,6 +3,7 @@ package goryachev.fxdock;
 import goryachev.common.util.CList;
 import goryachev.common.util.CLog;
 import goryachev.common.util.CMap;
+import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
 import goryachev.common.util.WeakList;
 import goryachev.fxdock.internal.FxDockSchema;
@@ -12,7 +13,7 @@ import javafx.scene.Node;
 
 
 /**
- * FxDock Framework.
+ * Docking Framework for JavaFX.
  */
 public class FxDockFramework
 {
@@ -96,6 +97,8 @@ public class FxDockFramework
 			FxDockSchema.saveContent(id, w.getContent());
 			FxDockSchema.storeWindow(id, w);
 		}
+		
+		GlobalSettings.save();
 	}
 
 
@@ -115,12 +118,20 @@ public class FxDockFramework
 		{
 			if(!cur)
 			{
-				windows.remove(w);
-				windows.remove(id);
+				unlink(w, id);
 			}
 		});
 		
 		w.show();
+	}
+	
+	
+	private static void unlink(FxDockWindow w, String id)
+	{
+		windows.remove(w);
+		windows.remove(id);
+		
+		saveLayout();
 	}
 	
 	
@@ -237,5 +248,6 @@ public class FxDockFramework
 		saveLayout();
 		
 		Platform.exit();
+		System.exit(0);
 	}
 }

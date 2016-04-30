@@ -45,6 +45,19 @@ public class FileSettingsProvider
 	}
 	
 	
+	public void loadQuiet()
+	{
+		try
+		{
+			load();
+		}
+		catch(Exception e)
+		{
+			log.err(e);
+		}
+	}
+	
+	
 	public void load(File f) throws Exception
 	{
 		setFile(f);

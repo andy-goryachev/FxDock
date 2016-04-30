@@ -26,7 +26,9 @@ public class DockDemo
 		
 		// init non-ui subsystems
 		File settingsFile = new File("settings.conf");
-		GlobalSettings.setProvider(new FileSettingsProvider(settingsFile));
+		FileSettingsProvider fs = new FileSettingsProvider(settingsFile);
+		fs.loadQuiet();
+		GlobalSettings.setProvider(fs);
 		
 		// launch ui
 		new DockDemo().launch(args);
@@ -54,9 +56,7 @@ public class DockDemo
 		if(ct == 0)
 		{
 			// no saved layout, open initial window
-			DemoWindow.newWindow();
-			move(DemoWindow.newWindow(), 200);
-			move(DemoWindow.newWindow(), 400);
+			DemoWindow.newWindow().setTitle("Initial Window");
 		}
 	}
 

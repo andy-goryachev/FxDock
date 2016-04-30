@@ -6,4 +6,5 @@
 .settings/
 /credentials*.dat
 /*.log
+/*.conf
 hs_err_pid*

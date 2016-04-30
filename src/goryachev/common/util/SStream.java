@@ -58,7 +58,7 @@ public class SStream
 	
 	public String nextString()
 	{
-		if(pos < (list.size() - 1))
+		if(pos < list.size())
 		{
 			return list.get(pos++);
 		}

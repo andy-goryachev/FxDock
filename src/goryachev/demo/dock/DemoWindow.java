@@ -74,7 +74,7 @@ public class DemoWindow
 		String type = sb.toString();
 			
 		DemoWindow w = new DemoWindow();
-		w.setContent(new FxDockSplitPane(Orientation.HORIZONTAL, new DemoPane(type), new DemoPane(type)));
+		w.setContent(new DemoPane(type));
 		w.open();
 		return w;
 	}
