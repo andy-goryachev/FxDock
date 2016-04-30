@@ -67,11 +67,10 @@ public class FxDockFramework
 		{
 			try
 			{
-				String type = null; // TODO
 				FxDockWindow w = createWindow();
 				String id = FxDockSchema.windowID(i);
 				
-				Node n = FxDockSchema.restoreNode(id);
+				Node n = FxDockSchema.loadContent(id);
 				w.setContent(n);
 				
 				FxDockSchema.restoreWindow(id, w);
@@ -94,7 +93,7 @@ public class FxDockFramework
 		for(FxDockWindow w: ws)
 		{
 			String id = getWindowID(w);
-			FxDockSchema.storeNode(id, w.getContent());
+			FxDockSchema.saveContent(id, w.getContent());
 			FxDockSchema.storeWindow(id, w);
 		}
 	}

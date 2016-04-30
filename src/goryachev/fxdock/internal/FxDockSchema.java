@@ -1,7 +1,9 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
+import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
+import goryachev.fxdock.FxDockPane;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -15,6 +17,7 @@ public class FxDockSchema
 	public static final String PREFIX_DOCK = "fxdock.";
 	public static final String PREFIX_WINDOW = PREFIX_DOCK + "window.";
 	
+	public static final String SUFFIX_LAYOUT = ".layout";
 	public static final String SUFFIX_WINDOW = ".window";
 	
 	public static final String KEY_WINDOW_COUNT = PREFIX_DOCK + "window.count";
@@ -23,6 +26,11 @@ public class FxDockSchema
 	public static final String STAGE_ICONIFIED = "I";
 	public static final String STAGE_MAXIMIZED = "X";
 	public static final String STAGE_NORMAL = "N";
+	
+	public static final String TYPE_EMPTY = "E";
+	public static final String TYPE_PANE = "P";
+	public static final String TYPE_SPLIT = "S";
+	public static final String TYPE_TAB = "T";
 	
 	
 	public static int getWindowCount()
@@ -112,13 +120,62 @@ public class FxDockSchema
 	}
 
 
-	public static Node restoreNode(String id)
+	public static Node loadContent(String id)
 	{
 		return null;
 	}
 
 
-	public static void storeNode(String id, Node content)
+	public static void saveContent(String id, Node content)
 	{
+		SStream s = new SStream();
+		saveContentPrivate(s, content);
+		GlobalSettings.setStream(id + SUFFIX_LAYOUT, s);
+	}
+
+
+	private static void saveContentPrivate(SStream s, Node n)
+	{
+		if(n == null)
+		{
+			return;
+		}
+		else if(n instanceof FxDockPane)
+		{
+			String type = ((FxDockPane)n).getDockPaneType();
+			
+			s.add(TYPE_PANE);
+			s.add(type);
+		}
+		else if(n instanceof FxDockRootPane)
+		{
+			D.print("root");
+		}
+		else if(n instanceof FxDockSplitPane)
+		{
+			FxDockSplitPane sp = (FxDockSplitPane)n;
+			int ct = sp.getPaneCount();
+			
+			s.add(TYPE_SPLIT);
+			s.add(ct);
+			
+			for(Node ch: sp.getPanes())
+			{
+				saveContentPrivate(s, ch);
+			}
+		}
+		else if(n instanceof FxDockTabPane)
+		{
+			FxDockTabPane tp = (FxDockTabPane)n;
+			int ct = tp.getTabCount();
+			
+			s.add(TYPE_TAB);
+			s.add(ct);
+			
+			for(Node ch: tp.getPanes())
+			{
+				saveContentPrivate(s, ch);
+			}
+		}
 	}
 }

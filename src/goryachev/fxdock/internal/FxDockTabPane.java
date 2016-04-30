@@ -1,5 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
+import goryachev.common.util.CList;
+import java.util.List;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
@@ -58,7 +60,7 @@ public class FxDockTabPane
 	}
 	
 	
-	public Node removePane(int ix)
+	public Node removeTab(int ix)
 	{
 		Tab t = getTabs().remove(ix);
 		Node n = t.getContent();
@@ -70,6 +72,17 @@ public class FxDockTabPane
 	public int getTabCount()
 	{
 		return getTabs().size();
+	}
+	
+	
+	public List<Node> getPanes()
+	{
+		CList<Node> rv = new CList(getTabCount());
+		for(Tab t: getTabs())
+		{
+			rv.add(t.getContent());
+		}
+		return rv;
 	}
 
 
