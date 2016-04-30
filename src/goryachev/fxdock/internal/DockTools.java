@@ -182,8 +182,14 @@ public class DockTools
 			}
 		}
 	}
-	
-	
+
+
+	public static boolean aboveDiagonal(double x, double y, double x0, double y0, double x1, double y1)
+	{
+		return (x * (y - y0) / (x1 - x0)) < y;
+	}
+
+
 	public static boolean contains(Window w, double screenx, double screeny)
 	{
 		double x = w.getX();

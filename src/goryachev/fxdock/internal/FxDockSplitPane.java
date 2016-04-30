@@ -80,6 +80,12 @@ public class FxDockSplitPane
 	{
 		return getItems().size();
 	}
+	
+	
+	public ObservableList<Node> getPanes()
+	{
+		return getItems();
+	}
 
 
 	public int indexOfPane(Node n)

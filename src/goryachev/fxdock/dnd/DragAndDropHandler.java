@@ -18,6 +18,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -31,8 +32,8 @@ public class DragAndDropHandler
 	public static final double DRAG_WINDOW_OPACITY = 0.5;
 	public static final double PANE_EDGE_HORIZONTAL = 0.3;
 	public static final double PANE_EDGE_VERTICAL = 0.3;
-	public static final double WINDOW_EDGE_HORIZONTAL = 40;
-	public static final double WINDOW_EDGE_VERTICAL = 40;
+	public static final double WINDOW_EDGE_HORIZONTAL = 30;
+	public static final double WINDOW_EDGE_VERTICAL = 30;
 	private static double deltax;
 	private static double deltay;
 	private static Stage dragWindow;
@@ -247,7 +248,7 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp createDropOnSplitDivider(FxDockPane client, FxDockSplitPane sp, double screenx, double screeny)
+	protected static DropOp createDropOnSplitPane(FxDockPane client, FxDockSplitPane sp, double screenx, double screeny)
 	{
 		// TODO what if parent is the same as target? - allow only if not adjacent
 		
@@ -270,6 +271,17 @@ public class DragAndDropHandler
 				return op;
 			}
 		}
+		
+		for(Node n: sp.getPanes())
+		{
+			if(n instanceof Pane)
+			{
+				if(FX.contains(n, screenx, screeny))
+				{
+					return createDropOnPane(client, (Pane)n, screenx, screeny);
+				}
+			}
+		}
 		return null;
 	}
 	
@@ -286,12 +298,13 @@ public class DragAndDropHandler
 		double y1 = h * PANE_EDGE_VERTICAL;
 		double y2 = h - h * PANE_EDGE_VERTICAL;
 		
-		Object where = null; // FIX
+		Where where;
 		if(x < x1)
 		{
 			if(y < y1)
 			{
 				// TL or LT
+				where = DockTools.aboveDiagonal(x, y, 0, 0, x1, y1) ? Where.TOP_LEFT : Where.LEFT_TOP;
 			}
 			else if(y < y2)
 			{
@@ -300,6 +313,7 @@ public class DragAndDropHandler
 			else
 			{
 				// BL or LB
+				where = DockTools.aboveDiagonal(x, y, 0, h, x1, y2) ? Where.LEFT_BOTTOM : Where.BOTTOM_LEFT;
 			}
 		}
 		else if(x < x2)
@@ -311,6 +325,7 @@ public class DragAndDropHandler
 			else if(y < y2)
 			{
 				// center
+				where = Where.CENTER;
 			}
 			else
 			{
@@ -322,6 +337,7 @@ public class DragAndDropHandler
 			if(y < y1)
 			{
 				// TR or RT
+				where = DockTools.aboveDiagonal(x, y, x2, y1, w, 0) ? Where.TOP_RIGHT : Where.RIGHT_TOP;
 			}
 			else if(y < y2)
 			{
@@ -330,6 +346,7 @@ public class DragAndDropHandler
 			else
 			{
 				// BR or RB
+				where = DockTools.aboveDiagonal(x, y, x2, y2, w, h) ? Where.RIGHT_BOTTOM : Where.BOTTOM_RIGHT;
 			}
 		}
 		
@@ -340,7 +357,49 @@ public class DragAndDropHandler
 				D.print(); // TODO
 			}
 		};
-		//op.addHighlight();
+		
+		switch(where)
+		{
+		case BOTTOM:
+			op.addRect(target, 0, y2, w, h - y2);
+			break;
+		case BOTTOM_LEFT:
+			op.addRect(target, 0, y2, x1, h - y2);
+			break;
+		case BOTTOM_RIGHT:
+			op.addRect(target, x2, y2, x2, h - y2);
+			break;
+		case CENTER:
+			op.addRect(target, 0, 0, w, h);
+			break;
+		case LEFT:
+			op.addRect(target, 0, 0, x1, h);
+			break;
+		case LEFT_BOTTOM: 
+			op.addRect(target, 0, y2, x1, h - y2);
+			break;
+		case LEFT_TOP:
+			op.addRect(target, x2, 0, w - x2, y1);
+			break;
+		case RIGHT:
+			op.addRect(target, x2, 0, w - x2, h);
+			break;
+		case RIGHT_BOTTOM:
+			op.addRect(target, x2, y2, w - x2, h - y2);
+			break;
+		case RIGHT_TOP:
+			op.addRect(target, x2, 0, w - x2, y1);
+			break;
+		case TOP:
+			op.addRect(target, 0, 0, w, y1);
+			break;
+		case TOP_LEFT:
+			op.addRect(target, 0, 0, x1, y1);
+			break;
+		case TOP_RIGHT:
+			op.addRect(target, x2, 0, w - x2, y1);
+			break;
+		}
 		return op;
 	}
 	
@@ -373,13 +432,15 @@ public class DragAndDropHandler
 		
 		if(p instanceof FxDockSplitPane)
 		{
-			op = createDropOnSplitDivider(client, (FxDockSplitPane)p, screenx, screeny);
-			if(op != null)
-			{
-				return op;
-			}
+			return createDropOnSplitPane(client, (FxDockSplitPane)p, screenx, screeny);
 		}
-		
-		return createDropOnPane(client, (Pane)p, screenx, screeny);
+		else if(p instanceof Pane)
+		{
+			return createDropOnPane(client, (Pane)p, screenx, screeny);
+		}
+		else
+		{
+			return null;
+		}
 	}
 }

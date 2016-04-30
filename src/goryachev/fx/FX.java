@@ -13,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -251,10 +250,17 @@ public class FX
 	}
 
 
-	public static boolean contains(Pane n, double screenx, double screeny)
+	public static boolean contains(Node n, double screenx, double screeny)
 	{
-		Point2D p = n.screenToLocal(screenx, screeny);
-		return n.contains(p);
+		if(n != null)
+		{
+			Point2D p = n.screenToLocal(screenx, screeny);
+			if(p != null)
+			{
+				return n.contains(p);
+			}
+		}
+		return false;
 	}
 
 
