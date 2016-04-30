@@ -1,6 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
@@ -12,7 +11,7 @@ import javafx.scene.layout.BorderPane;
 public class FxDockBorderPane
 	extends BorderPane
 {
-	protected final ReadOnlyObjectWrapper<Node> parent = new ReadOnlyObjectWrapper<Node>();
+	protected final ParentProperty parent = new ParentProperty();
 
 	
 	public FxDockBorderPane()

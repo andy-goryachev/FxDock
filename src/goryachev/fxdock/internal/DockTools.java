@@ -1,6 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
+import goryachev.common.util.D;
 import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
@@ -79,21 +80,57 @@ public class DockTools
 	
 	public static void setParent(Node p, Node child)
 	{
-		if(child instanceof FxDockBorderPane)
+		ParentProperty prop = getParentProperty(p);
+		if(prop != null)
 		{
-			((FxDockBorderPane)child).parent.set(p);
+			Node old = prop.get();
+			if(old != null)
+			{
+				if(old != p) // FIX ???
+				{
+					remove(old, child);
+				}
+			}
+			prop.set(p);
 		}
-		else if(child instanceof FxDockSplitPane)
+	}
+	
+	
+	private static ParentProperty getParentProperty(Node n)
+	{
+		if(n instanceof FxDockBorderPane)
 		{
-			((FxDockSplitPane)child).parent.set(p);
+			return ((FxDockBorderPane)n).parent;
 		}
-		else if(child instanceof FxDockTabPane)
+		else if(n instanceof FxDockSplitPane)
 		{
-			((FxDockTabPane)child).parent.set(p);
+			return ((FxDockSplitPane)n).parent;
 		}
-		else if(child instanceof FxDockEmptyPane)
+		else if(n instanceof FxDockTabPane)
 		{
-			((FxDockEmptyPane)child).parent.set(p);
+			return ((FxDockTabPane)n).parent;
+		}
+		else if(n instanceof FxDockEmptyPane)
+		{
+			return ((FxDockEmptyPane)n).parent;
+		}
+		return null;
+	}
+	
+	
+	private static void remove(Node parent, Node child)
+	{
+		if(parent instanceof Pane)
+		{
+			boolean rv = ((Pane)parent).getChildren().remove(child);
+			if(!rv)
+			{
+				D.print("no removed: " + parent);
+			}
+		}
+		else
+		{
+			throw new Error("?" + parent);
 		}
 	}
 	

@@ -287,6 +287,12 @@ public class DragAndDropHandler
 	
 	protected static DropOp createDropOnPane(FxDockPane client, Pane target, double screenx, double screeny)
 	{
+		Node pp = DockTools.getParent(client);
+		if(pp == target)
+		{
+			return createDropToNewWindow(client, screenx, screeny);
+		}
+		
 		Point2D p = target.screenToLocal(screenx, screeny);
 		double x = p.getX();
 		double y = p.getY();
@@ -411,18 +417,24 @@ public class DragAndDropHandler
 	}
 	
 	
+	protected static DropOp createDropToNewWindow(FxDockPane client, double screenx, double screeny)
+	{
+		return new DropOp(null, new WhereScreen(screenx, screeny))
+		{
+			public void execute()
+			{
+				DockTools.moveToNewWindow(client, screenx, screeny);
+			}
+		};
+	}
+	
+	
 	protected static DropOp createDropOp(FxDockPane client, double screenx, double screeny)
 	{
 		FxDockWindow w = DockTools.findWindow(screenx, screeny);
 		if(w == null)
 		{
-			return new DropOp(null, new WhereScreen(screenx, screeny))
-			{
-				public void execute()
-				{
-					DockTools.moveToNewWindow(client, screenx, screeny);
-				}
-			};
+			return createDropToNewWindow(client, screenx, screeny);
 		}
 		
 		DropOp op = checkWindowEdge(client, w.getDockRootPane(), screenx, screeny);

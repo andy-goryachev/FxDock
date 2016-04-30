@@ -1,6 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
@@ -14,7 +13,7 @@ import javafx.scene.control.SplitPane;
 public class FxDockSplitPane
 	extends SplitPane
 {
-	protected final ReadOnlyObjectWrapper<Node> parent = new ReadOnlyObjectWrapper<Node>();
+	protected final ParentProperty parent = new ParentProperty();
 
 	
 	public FxDockSplitPane()
