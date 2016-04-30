@@ -22,7 +22,7 @@ public abstract class DropOp
 	
 	private final Pane target;
 	private final Object where;
-	private CList<Node> highlights = new CList();
+	private CList<Node> highlights;
 	
 	
 	public DropOp(Pane target, Object where)
@@ -60,18 +60,35 @@ public abstract class DropOp
 		r.relocate(b.getMinX(), b.getMinY());
 		r.resize(b.getWidth(), b.getHeight());
 		r.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0.3), null, null)));
-		highlights.add(r);
+		
+		add(r);
+	}
+	
+	
+	protected void add(Node n)
+	{
+		if(highlights == null)
+		{
+			highlights = new CList();
+		}
+		highlights.add(n);
 	}
 
 
 	public void installHighlights()
 	{
-		target.getChildren().addAll(highlights);
+		if(highlights != null)
+		{
+			target.getChildren().addAll(highlights);
+		}
 	}
 
 
 	public void removeHighlights()
 	{
-		target.getChildren().removeAll(highlights);
+		if(highlights != null)
+		{
+			target.getChildren().removeAll(highlights);
+		}
 	}
 }

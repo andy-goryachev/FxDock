@@ -275,15 +275,6 @@ public class DragAndDropHandler
 		if(op != null)
 		{
 			return op;
-//			DropOp op = new DropOp(w.root, where)
-//			{
-//				public void execute()
-//				{
-//					D.print(); // TODO
-//				}
-//			};
-//			createWindowEdgeHighlight(op);
-//			return op;
 		}
 		
 		Node nd = DockTools.findDockElement(w.getContent(), screenx, screeny);
@@ -296,18 +287,6 @@ public class DragAndDropHandler
 		{
 			// TODO check if split divider
 			return createDropOnSplitDivider((FxDockSplitPane)nd,  screenx, screeny);
-//			if(where != null)
-//			{
-//				DropOp op = new DropOp(w.root, where)
-//				{
-//					public void execute()
-//					{
-//						D.print(); // TODO
-//					}
-//				};
-//				//op.addHighlight();
-//				return op;
-//			}
 		}
 		
 		if(nd instanceof Pane)
