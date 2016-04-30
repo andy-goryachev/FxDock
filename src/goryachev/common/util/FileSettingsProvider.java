@@ -4,16 +4,16 @@ import java.util.List;
 
 
 /**
- * Debug Settings Provider.
+ * File-based Settings Provider.
  */
-public class DebugSettingsProvider
+public class FileSettingsProvider
     extends SettingsProviderBase
 {
-	protected static final CLog log = Log.get("DebugSettingsProvider");
+	protected static final CLog log = Log.get("FileSettingsProvider");
 	private CMap<String,String> data = new CMap();
 	
 	
-	public DebugSettingsProvider()
+	public FileSettingsProvider()
 	{
 	}
 	
@@ -41,19 +41,6 @@ public class DebugSettingsProvider
 	}
 
 
-	public SStream getStream(String key)
-	{
-		String s = getString(key);
-		return parseStream(s);
-	}
-
-
-	public void setStream(String key, SStream s)
-	{
-		setString(key, asString(s));
-	}
-	
-	
 	public List<String> getKeys()
 	{
 		return data.keys();
