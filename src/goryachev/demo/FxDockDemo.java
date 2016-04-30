@@ -36,7 +36,7 @@ public class FxDockDemo
 		// init docking framework
 		FxDockFramework.setGenerator(new FxDockFramework.Generator()
 		{
-			public FxDockWindow createWindow(String type)
+			public FxDockWindow createWindow()
 			{
 				return new DemoWindow();
 			}

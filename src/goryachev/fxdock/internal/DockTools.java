@@ -1,7 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
-import goryachev.common.util.D;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -421,5 +420,22 @@ public class DockTools
 			// TODO
 			throw new Error("?" + target);
 		}
+	}
+
+
+	public static void moveToNewWindow(FxDockPane client, double screenx, double screeny)
+	{
+		Node p = getParent(client);
+		int ix = indexInParent(client);
+		
+		FxDockWindow w = FxDockFramework.createWindow();
+		w.setContent(client);
+		w.setX(screenx);
+		w.setY(screeny);
+		w.setWidth(client.getWidth());
+		w.setHeight(client.getHeight());
+		FxDockFramework.open(w);
+		
+		collapseEmptySpace(p, ix, client);
 	}
 }

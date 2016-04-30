@@ -18,7 +18,7 @@ public class FxDockFramework
 {
 	public static interface Generator
 	{
-		public FxDockWindow createWindow(String type);
+		public FxDockWindow createWindow();
 		
 		public FxDockPane createPane(String type);
 	}
@@ -38,9 +38,9 @@ public class FxDockFramework
 	}
 	
 	
-	public static FxDockWindow createWindow(String type)
+	public static FxDockWindow createWindow()
 	{
-		return  generator().createWindow(type);
+		return  generator().createWindow();
 	}
 	
 	
@@ -68,7 +68,7 @@ public class FxDockFramework
 			try
 			{
 				String type = null; // TODO
-				FxDockWindow w = createWindow(type);
+				FxDockWindow w = createWindow();
 				String id = FxDockSchema.windowID(i);
 				
 				Node n = FxDockSchema.restoreNode(id);

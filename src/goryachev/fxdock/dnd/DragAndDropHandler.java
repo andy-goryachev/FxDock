@@ -266,7 +266,7 @@ public class DragAndDropHandler
 			{
 				public void execute()
 				{
-					D.print(); // TODO
+					DockTools.moveToNewWindow(client, screenx, screeny);
 				}
 			};
 		}
