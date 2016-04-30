@@ -347,6 +347,16 @@ public class DockTools
 	}
 	
 	
+	private static FxDockTabPane makeTab(Node old, Node client)
+	{
+		FxDockTabPane t = new FxDockTabPane();
+		t.addTab(old);
+		t.addTab(client);
+		t.select(client);
+		return t;
+	}
+	
+	
 	public static int indexInParent(Node n)
 	{
 		Node p = getParent(n);
@@ -362,11 +372,12 @@ public class DockTools
 	}
 	
 	
+	// without checking
 	private static void replacePane(Node parent, int ix, Node client)
 	{
 		if(parent instanceof FxDockPane)
 		{
-			
+			throw new Error("?" + parent);
 		}
 		else if(parent instanceof FxDockRootPane)
 		{
@@ -537,13 +548,113 @@ public class DockTools
 		
 		collapseEmptySpace(p, ix, client);
 	}
-
-
-	public static void moveToPanel(FxDockPane client, Pane target, Where where)
+	
+	
+	// adds without checking
+	private static void createSplit(FxDockPane client, Node target, Where where)
 	{
-		Node p = getParent(client);
-		int ix = indexInParent(client);
+		Node p = getParent(target);
+		int ix = indexInParent(target);
 		
+		Node n;
+		switch(where)
+		{
+		case BOTTOM:
+			n = new FxDockSplitPane(Orientation.VERTICAL, target, client);
+			break;
+		case BOTTOM_LEFT:
+			n = new FxDockSplitPane(Orientation.VERTICAL, target, new FxDockSplitPane(Orientation.HORIZONTAL, client, null));
+			break;
+		case BOTTOM_RIGHT:
+			n = new FxDockSplitPane(Orientation.VERTICAL, target, new FxDockSplitPane(Orientation.HORIZONTAL, null, client));
+			break;
+		case LEFT:
+			n = new FxDockSplitPane(Orientation.HORIZONTAL, client, target);
+			break;
+		case LEFT_BOTTOM:
+			n = new FxDockSplitPane(Orientation.HORIZONTAL, new FxDockSplitPane(Orientation.VERTICAL, null, client), target);
+			break;
+		case LEFT_TOP:
+			n = new FxDockSplitPane(Orientation.HORIZONTAL, new FxDockSplitPane(Orientation.VERTICAL, client, null), target);
+			break;
+		case RIGHT:
+			n = new FxDockSplitPane(Orientation.HORIZONTAL, target, client);
+			break;
+		case RIGHT_BOTTOM:
+			n = new FxDockSplitPane(Orientation.HORIZONTAL, target, new FxDockSplitPane(Orientation.VERTICAL, null, client));
+			break;
+		case RIGHT_TOP:
+			n = new FxDockSplitPane(Orientation.HORIZONTAL, target, new FxDockSplitPane(Orientation.VERTICAL, client, null));
+			break;
+		case TOP:
+			n = new FxDockSplitPane(Orientation.VERTICAL, client, target);
+			break;
+		case TOP_LEFT:
+			n = new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, client, null), target);
+			break;
+		case TOP_RIGHT:
+			n = new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, null, client), target);
+			break;
+		default:
+			throw new Error("?" + where);
+		}
+		
+		replacePane(p, ix, n);
+	}
+	
+	
+	// without checking
+//	private static void insert(FxDockPane client, FxDockSplitPane sp, int index, Where where)
+//	{
+//		
+//	}
+	
+	
+	private static void addToSplitPane(FxDockPane client, FxDockSplitPane sp, int index, Where where)
+	{
+		// determine index from where and sp orientation
+		int ix;
+		if(sp.getOrientation() == Orientation.HORIZONTAL)
+		{
+			switch(where)
+			{
+			case LEFT:
+				ix = 0;
+				break;
+			case RIGHT:
+				ix = sp.getPaneCount() - 1;
+				break;
+			default:
+				ix = -1;
+				break;
+			}
+		}
+		else
+		{
+			switch(where)
+			{
+			case BOTTOM:
+				ix = sp.getPaneCount() - 1;
+				break;
+			case TOP:
+				ix = 0;
+				break;
+			default:
+				ix = -1;
+				break;
+			}
+		}
+		
+		if(ix < 0)
+		{
+			createSplit(client, sp, where);
+		}
+		else
+		{
+			sp.addPane(ix, client);
+		}
+		
+		/*
 		switch(where)
 		{
 		case BOTTOM:
@@ -553,24 +664,24 @@ public class DockTools
 		case BOTTOM_RIGHT:
 			break;
 		case CENTER:
-			Node p2 = getParent(target);
-			if(p2 instanceof FxDockTabPane)
-			{
-				// adding to a tab pane
-				((FxDockTabPane)p2).addTab(client);
-			}
-			else
-			{
-				int ix2 = indexInParent(target);
-
-				FxDockTabPane tp = new FxDockTabPane();
-				tp.addTab(target);
-				tp.addTab(client);
-				tp.select(client);
-				replacePane(p2, ix2, tp);
-				
-				collapseEmptySpace(p2, ix2, target);
-			}
+//			Node p2 = getParent(target);
+//			if(p2 instanceof FxDockTabPane)
+//			{
+//				// adding to a tab pane
+//				((FxDockTabPane)p2).addTab(client);
+//			}
+//			else
+//			{
+//				int ix2 = indexInParent(target);
+//
+//				FxDockTabPane tp = new FxDockTabPane();
+//				tp.addTab(target);
+//				tp.addTab(client);
+//				tp.select(client);
+//				replacePane(p2, ix2, tp);
+//				
+//				collapseEmptySpace(p2, ix2, target);
+//			}
 			break;
 		case LEFT:
 			break;
@@ -590,6 +701,69 @@ public class DockTools
 			break;
 		case TOP_RIGHT:
 			break;
+		}
+		*/
+	}
+	
+	
+	private static void addToTabPane(FxDockPane client, FxDockTabPane tp, int index, Where where)
+	{
+		switch(where)
+		{
+		case CENTER:
+			tp.addTab(client);
+			break;
+		default:
+			createSplit(client, tp, where);
+			break;			
+		}
+	}
+
+	
+	private static void addToRootPane(FxDockPane client, FxDockRootPane rp, Where where)
+	{
+		Node old = rp.getContent();
+
+		switch(where)
+		{
+		case CENTER:
+			if(old instanceof FxDockEmptyPane)
+			{
+				rp.setCenter(client);
+			}
+			else
+			{
+				rp.setCenter(makeTab(old, client));
+			}
+			break;
+		default:
+			createSplit(client, rp, where);
+			break;			
+		}
+	}
+
+
+	public static void moveToPane(FxDockPane client, Pane target, Where where)
+	{
+		Node p = getParent(client);
+		int ix = indexInParent(client);
+		
+		Node pt = getParent(target);
+		if(pt instanceof FxDockTabPane)
+		{
+			addToTabPane(client, (FxDockTabPane)pt, ix, where);
+		}
+		else if(pt instanceof FxDockSplitPane)
+		{
+			addToSplitPane(client, (FxDockSplitPane)pt, ix, where);
+		}
+		else if(pt instanceof FxDockRootPane)
+		{
+			addToRootPane(client, (FxDockRootPane)pt, where);
+		}
+		else
+		{
+			throw new Error("?" + pt);
 		}
 		
 		collapseEmptySpace(p, ix, client);

@@ -359,7 +359,7 @@ public class DragAndDropHandler
 		{
 			public void execute()
 			{
-				DockTools.moveToPanel(client, target, where);
+				DockTools.moveToPane(client, target, where);
 			}
 		};
 		
