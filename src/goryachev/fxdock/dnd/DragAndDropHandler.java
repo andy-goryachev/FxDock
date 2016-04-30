@@ -1,11 +1,13 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.dnd;
 import goryachev.common.util.D;
+import goryachev.fx.FX;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.FxDockRootPane;
 import goryachev.fxdock.internal.FxDockSplitPane;
+import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -250,9 +252,29 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp createDropOnSplitDivider(FxDockSplitPane sp, double screenx, double screeny)
+	protected static DropOp createDropOnSplitDivider(FxDockPane client, FxDockSplitPane sp, double screenx, double screeny)
 	{
-		// TODO
+		// TODO what if parent is the same as target? - allow only if not adjacent
+		
+		List<Pane> splits = DockTools.collectDividers(sp);
+		for(int i=splits.size()-1; i>=0; i--)
+		{
+			Pane n = splits.get(i);
+			
+			int ix = i + 1;
+			if(FX.contains(n, screenx, screeny))
+			{
+				DropOp op = new DropOp(n, ix)
+				{
+					public void execute()
+					{
+						DockTools.moveToSplit(sp, ix, client);
+					}
+				};
+				op.addRect(n, 0, 0, n.getWidth(), n.getHeight());
+				return op;
+			}
+		}
 		return null;
 	}
 	
@@ -277,24 +299,27 @@ public class DragAndDropHandler
 			return op;
 		}
 		
-		Node nd = DockTools.findDockElement(w.getContent(), screenx, screeny);
-		if(nd == null)
+		Node p = DockTools.findDockElement(w.getContent(), screenx, screeny);
+		if(p == null)
 		{
 			return null;
 		}
 		
-		if(nd instanceof FxDockSplitPane)
+		if(p instanceof FxDockSplitPane)
 		{
-			// TODO check if split divider
-			return createDropOnSplitDivider((FxDockSplitPane)nd,  screenx, screeny);
+			op = createDropOnSplitDivider(client, (FxDockSplitPane)p,  screenx, screeny);
+			if(op != null)
+			{
+				return op;
+			}
 		}
 		
-		if(nd instanceof Pane)
+		if(p instanceof Pane)
 		{
-			Object where = determineWhere(nd, screenx, screeny);
+			Object where = determineWhere(p, screenx, screeny);
 			if(where != null)
 			{
-				op = new DropOp((Pane)nd, where)
+				op = new DropOp((Pane)p, where)
 				{
 					public void execute()
 					{

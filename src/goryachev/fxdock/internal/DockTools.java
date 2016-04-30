@@ -1,6 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
+import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -11,6 +12,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 
 
@@ -208,6 +210,23 @@ public class DockTools
 	}
 
 
+	public static List<Pane> collectDividers(FxDockSplitPane sp)
+	{
+		CList<Pane> rv = new CList<>();
+		for(Node n: sp.lookupAll(".split-pane-divider"))
+		{
+			if(FX.isParent(sp, n))
+			{
+				if(n instanceof Pane)
+				{
+					rv.add((Pane)n);
+				}
+			}
+		}
+		return rv;
+	}
+
+
 	public static Node findDockElement(Node n, double screenx, double screeny)
 	{
 		if(n != null)
@@ -220,6 +239,14 @@ public class DockTools
 					return n;
 				}
 				else if(n instanceof FxDockEmptyPane)
+				{
+					return n;
+				}
+				else if(n instanceof FxDockSplitPane)
+				{
+					return n;
+				}
+				else if(n instanceof FxDockTabPane)
 				{
 					return n;
 				}
@@ -435,6 +462,17 @@ public class DockTools
 		w.setWidth(client.getWidth());
 		w.setHeight(client.getHeight());
 		FxDockFramework.open(w);
+		
+		collapseEmptySpace(p, ix, client);
+	}
+
+
+	public static void moveToSplit(FxDockSplitPane sp, int index, FxDockPane client)
+	{
+		Node p = getParent(client);
+		int ix = indexInParent(client);
+		
+		sp.addPane(index, client);
 		
 		collapseEmptySpace(p, ix, client);
 	}

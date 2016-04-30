@@ -1,8 +1,9 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import java.io.File;
 import goryachev.common.util.Log;
+import java.io.File;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
@@ -12,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -246,5 +248,27 @@ public class FX
 		int g = (rgb >>  8) & 0xff;
 		int b = (rgb      ) & 0xff;
 		return Color.rgb(r, g, b);
+	}
+
+
+	public static boolean contains(Pane n, double screenx, double screeny)
+	{
+		Point2D p = n.screenToLocal(screenx, screeny);
+		return n.contains(p);
+	}
+
+
+	public static boolean isParent(Node parent, Node child)
+	{
+		while(child != null)
+		{
+			if(child == parent)
+			{
+				return true;
+			}
+			
+			child = child.getParent();
+		}
+		return false;
 	}
 }
