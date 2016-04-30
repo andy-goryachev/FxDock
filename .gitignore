@@ -1,6 +1,5 @@
 /build/
 /out/
-/test/
 /user.home*/
 ~*
 /*.jar

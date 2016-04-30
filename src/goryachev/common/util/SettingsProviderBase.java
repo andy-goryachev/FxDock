@@ -14,7 +14,8 @@ public abstract class SettingsProviderBase
 
 	//
 	
-	protected CMap<String,String> data = new CMap();
+	// stores String or String[]
+	protected CMap<String,Object> data = new CMap();
 	protected static final CLog log = Log.get("SettingsProviderBase");
 
 	
@@ -23,15 +24,55 @@ public abstract class SettingsProviderBase
 	}
 	
 	
-	public List<String> getKeys()
+	public synchronized List<String> getKeys()
 	{
 		return data.keys();
 	}
 	
 	
-	public synchronized String getString(String key)
+	public synchronized boolean containsKey(String k)
 	{
-		String v = data.get(key);
+		return data.containsKey(k);
+	}
+	
+	
+	public synchronized int size()
+	{
+		return data.size();
+	}
+	
+	
+	protected synchronized Object getValue(String key)
+	{
+		return data.get(key);
+	}
+	
+	
+	protected String getStringPrivate(String key)
+	{
+		Object x = getValue(key);
+		if(x instanceof String)
+		{
+			return (String)x;
+		}
+		return null;
+	}
+	
+	
+	protected String[] getArrayPrivate(String key)
+	{
+		Object x = getValue(key);
+		if(x instanceof String[])
+		{
+			return (String[])x;
+		}
+		return null;
+	}
+	
+	
+	public String getString(String key)
+	{
+		String v = getStringPrivate(key);
 		//log.debug(key, v);
 		return v;
 	}
@@ -46,29 +87,67 @@ public abstract class SettingsProviderBase
 
 	public SStream getStream(String key)
 	{
-		String s = getString(key);
-		return parseStream(s);
+		String[] ss = getArrayPrivate(key);
+		return new SStream(ss);
 	}
 
 
-	public void setStream(String key, SStream s)
+	public synchronized void setStream(String key, SStream s)
 	{
-		setString(key, asString(s));
+		data.put(key, s.toArray());
 	}
 	
 	
-	public synchronized String asString()
+	public String asString()
+	{
+		return asString(true);
+	}
+	
+	
+	public synchronized String asString(boolean sort)
 	{
 		List<String> keys = getKeys();
-		CSorter.sort(keys);
+		if(sort)
+		{
+			CSorter.sort(keys);
+		}
 		
 		SB sb = new SB(keys.size() * 128);
 		for(String k: keys)
 		{
-			String v = data.get(k);
+			Object x = data.get(k);
 			sb.a(encode(k));
 			sb.a('=');
-			sb.a(v);
+			
+			if(x == null)
+			{
+				sb.a("\\");
+			}
+			else if(x instanceof String)
+			{
+				sb.a(encode((String)x));
+			}
+			else if(x instanceof String[])
+			{
+				boolean comma = false;
+				for(String s: (String[])x)
+				{
+					if(comma)
+					{
+						sb.a(',');
+					}
+					else
+					{
+						comma = true;
+					}
+					
+					sb.a(encode(s));
+				}
+			}
+			else
+			{
+				throw new Error("?" + x);
+			}
 			sb.nl();
 		}
 		return sb.toString();
@@ -89,12 +168,24 @@ public abstract class SettingsProviderBase
 					continue;
 				}
 				
-				String k = s.substring(0, ix);
+				String k = line.substring(0, ix);
 				k = decode(k);
 				
-				String v = s.substring(ix + 1);
-				// TODO
-				D.print(k, v);
+				String v = line.substring(ix + 1);
+				if(v.contains(","))
+				{
+					String[] ss = CKit.split(v, ',');
+					for(int i=0; i<ss.length; i++)
+					{
+						ss[i] = decode(ss[i]);
+					}
+					data.put(k, ss);
+				}
+				else
+				{
+					v = decode(v);
+					data.put(k, v);
+				}
 			}
 		}
 		finally
@@ -104,7 +195,7 @@ public abstract class SettingsProviderBase
 	}
 	
 	
-	private static SStream parseStream(String text)
+	protected static SStream parseStream(String text)
 	{
 		SStream rv = new SStream();
 		if(text != null)
@@ -119,30 +210,13 @@ public abstract class SettingsProviderBase
 	}
 	
 	
-	private static String asString(SStream ss)
+	protected static String decode(String s)
 	{
-		SB sb = new SB();
-		
-		boolean comma = false;
-		for(String s: ss)
+		if("\\".equals(s))
 		{
-			if(comma)
-			{
-				sb.a(",");
-			}
-			else
-			{
-				comma = true;
-			}
-			
-			sb.a(encode(s));
+			return null;
 		}
-		return sb.toString();
-	}
-	
-	
-	private static String decode(String s)
-	{
+		
 		try
 		{
 			SB sb = new SB();
@@ -153,7 +227,7 @@ public abstract class SettingsProviderBase
 				if(c == '\\')
 				{
 					i++;
-					String sub = sb.substring(i, i + 2);
+					String sub = s.substring(i, i + 2);
 					sb.append((char)Hex.parseByte(sub));
 					i++;
 				}
@@ -168,16 +242,16 @@ public abstract class SettingsProviderBase
 		{
 			Log.err(e);
 		}
-		return "";
+		return null;
 	}
 	
 	
 	// replaces commas, \, and non-printable chars with hex values \HH
-	private static String encode(String s)
+	protected static String encode(String s)
 	{
 		if(s == null)
 		{
-			return "";
+			return "\\";
 		}
 		
 		int sz = s.length();
@@ -207,7 +281,7 @@ public abstract class SettingsProviderBase
 	}
 	
 	
-	private static void encode(char c, SB sb)
+	protected static void encode(char c, SB sb)
 	{
 		sb.a('\\');
 		sb.a(Hex.toHexByte(c));

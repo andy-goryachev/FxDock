@@ -88,4 +88,10 @@ public class SStream
 	{
 		return nextInt(-1);
 	}
+	
+	
+	public String[] toArray()
+	{
+		return list.toArray(new String[list.size()]);
+	}
 }
