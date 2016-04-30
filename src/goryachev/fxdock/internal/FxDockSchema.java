@@ -1,9 +1,10 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
-import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
+import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -29,7 +30,8 @@ public class FxDockSchema
 	
 	public static final String TYPE_EMPTY = "E";
 	public static final String TYPE_PANE = "P";
-	public static final String TYPE_SPLIT = "S";
+	public static final String TYPE_HSPLIT = "H";
+	public static final String TYPE_VSPLIT = "V";
 	public static final String TYPE_TAB = "T";
 	
 	
@@ -122,7 +124,64 @@ public class FxDockSchema
 
 	public static Node loadContent(String id)
 	{
-		return null;
+		SStream s = GlobalSettings.getStream(id + SUFFIX_LAYOUT);
+		return loadNodePrivate(s);
+	}
+	
+	
+	private static FxDockSplitPane loadSplit(SStream s, Orientation or)
+	{
+		FxDockSplitPane sp = new FxDockSplitPane();
+		sp.setOrientation(or);
+		int sz = s.nextInt();
+		for(int i=0; i<sz; i++)
+		{
+			Node ch = loadNodePrivate(s);
+			sp.addPane(ch);
+		}
+		return sp;
+	}
+	
+	
+	private static Node loadNodePrivate(SStream s)
+	{
+		String t = s.nextString();
+		if(t == null)
+		{
+			return null;
+		}
+		else if(TYPE_PANE.equals(t))
+		{
+			String type = s.nextString();
+			return FxDockFramework.createPane(type);
+		}
+		else if(TYPE_HSPLIT.equals(t))
+		{
+			return loadSplit(s, Orientation.HORIZONTAL);
+		}
+		else if(TYPE_VSPLIT.equals(t))
+		{
+			return loadSplit(s, Orientation.VERTICAL);
+		}
+		else if(TYPE_TAB.equals(t))
+		{
+			FxDockTabPane tp = new FxDockTabPane();
+			int sz = s.nextInt();
+			for(int i=0; i<sz; i++)
+			{
+				Node ch = loadNodePrivate(s);
+				tp.addTab(ch);
+			}
+			return tp;
+		}
+		else if(TYPE_EMPTY.equals(t))
+		{
+			return new FxDockEmptyPane();
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 
@@ -147,16 +206,13 @@ public class FxDockSchema
 			s.add(TYPE_PANE);
 			s.add(type);
 		}
-		else if(n instanceof FxDockRootPane)
-		{
-			D.print("root");
-		}
 		else if(n instanceof FxDockSplitPane)
 		{
 			FxDockSplitPane sp = (FxDockSplitPane)n;
 			int ct = sp.getPaneCount();
+			Orientation or = sp.getOrientation();
 			
-			s.add(TYPE_SPLIT);
+			s.add(or == Orientation.HORIZONTAL ? TYPE_HSPLIT : TYPE_VSPLIT);
 			s.add(ct);
 			
 			for(Node ch: sp.getPanes())

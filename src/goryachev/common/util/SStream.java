@@ -76,4 +76,16 @@ public class SStream
 	{
 		return nextDouble(-1.0);
 	}
+	
+	
+	public int nextInt(int defaultValue)
+	{
+		return Parsers.parseInt(nextString(), defaultValue);
+	}
+	
+	
+	public int nextInt()
+	{
+		return nextInt(-1);
+	}
 }
