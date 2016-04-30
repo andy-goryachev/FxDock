@@ -1,6 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
+import goryachev.fxdock.FxDockPane;
 import java.util.List;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
@@ -44,9 +45,21 @@ public class FxDockTabPane
 	}
 	
 	
-	public void addTab(Node n)
+	protected Tab newTab(Node n)
 	{
 		Tab t = new Tab(null, n);
+		if(n instanceof FxDockPane)
+		{
+			FxDockPane p = (FxDockPane)n;
+			t.textProperty().bindBidirectional(p.titleProperty());
+		}
+		return t;
+	}
+	
+	
+	public void addTab(Node n)
+	{
+		Tab t = newTab(n);
 		getTabs().add(t);
 		DockTools.setParent(this, n);
 	}
@@ -54,7 +67,7 @@ public class FxDockTabPane
 	
 	public void addTab(int ix, Node n)
 	{
-		Tab t = new Tab(null, n);
+		Tab t = newTab(n);
 		getTabs().add(ix, t);
 		DockTools.setParent(this, n);
 	}
@@ -98,5 +111,15 @@ public class FxDockTabPane
 			}
 		}
 		return -1;
+	}
+	
+	
+	public void select(Node n)
+	{
+		int ix = indexOfTab(n);
+		if(ix >= 0)
+		{
+			getSelectionModel().select(ix);
+		}
 	}
 }

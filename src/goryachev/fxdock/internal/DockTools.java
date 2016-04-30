@@ -374,7 +374,8 @@ public class DockTools
 		}
 		else if(parent instanceof FxDockRootPane)
 		{
-			if(((FxDockRootPane)parent).getContent() == null)
+			Node n = ((FxDockRootPane)parent).getContent();
+			if(n == null)
 			{
 				closeWindowUnlessLast(parent);
 			}
@@ -487,6 +488,57 @@ public class DockTools
 
 	public static void moveToPanel(FxDockPane client, Pane target, Where where)
 	{
-		// TODO
+		Node p = getParent(client);
+		int ix = indexInParent(client);
+		
+		switch(where)
+		{
+		case BOTTOM:
+			break;
+		case BOTTOM_LEFT:
+			break;
+		case BOTTOM_RIGHT:
+			break;
+		case CENTER:
+			Node p2 = getParent(target);
+			if(p2 instanceof FxDockTabPane)
+			{
+				// adding to a tab pane
+				((FxDockTabPane)p2).addTab(client);
+			}
+			else
+			{
+				int ix2 = indexInParent(target);
+
+				FxDockTabPane tp = new FxDockTabPane();
+				tp.addTab(target);
+				tp.addTab(client);
+				tp.select(client);
+				replacePane(p2, ix2, tp);
+				
+				collapseEmptySpace(p2, ix2, target);
+			}
+			break;
+		case LEFT:
+			break;
+		case LEFT_BOTTOM:
+			break;
+		case LEFT_TOP:
+			break;
+		case RIGHT:
+			break;
+		case RIGHT_BOTTOM:
+			break;
+		case RIGHT_TOP:
+			break;
+		case TOP:
+			break;
+		case TOP_LEFT:
+			break;
+		case TOP_RIGHT:
+			break;
+		}
+		
+		collapseEmptySpace(p, ix, client);
 	}
 }
