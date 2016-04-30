@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.io.CReader;
 import java.util.List;
 
 
@@ -65,12 +66,41 @@ public abstract class SettingsProviderBase
 		for(String k: keys)
 		{
 			String v = data.get(k);
-			sb.a(k);
+			sb.a(encode(k));
 			sb.a('=');
 			sb.a(v);
 			sb.nl();
 		}
 		return sb.toString();
+	}
+	
+	
+	public synchronized void loadFromString(String s) throws Exception
+	{
+		CReader rd = new CReader(s);
+		try
+		{
+			String line;
+			while((line = rd.readLine()) != null)
+			{
+				int ix = line.indexOf('=');
+				if(ix < 0)
+				{
+					continue;
+				}
+				
+				String k = s.substring(0, ix);
+				k = decode(k);
+				
+				String v = s.substring(ix + 1);
+				// TODO
+				D.print(k, v);
+			}
+		}
+		finally
+		{
+			CKit.close(rd);
+		}
 	}
 	
 	

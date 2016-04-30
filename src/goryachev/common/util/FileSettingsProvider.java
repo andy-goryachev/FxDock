@@ -9,20 +9,46 @@ import java.io.File;
 public class FileSettingsProvider
     extends SettingsProviderBase
 {
-	public FileSettingsProvider()
+	private File file;
+	
+	
+	public FileSettingsProvider(File f)
 	{
+		setFile(f);
+	}
+	
+	
+	public void setFile(File f)
+	{
+		file = f;
 	}
 	
 
 	public void save()
 	{
-		// TODO
+		try
+		{
+			String s = asString();
+			CKit.write(file, s);
+		}
+		catch(Exception e)
+		{
+			log.err(e);
+		}
+	}
+	
+	
+	public void load() throws Exception
+	{
+		String s = CKit.readString(file);
+		loadFromString(s);
 	}
 	
 	
 	public void load(File f) throws Exception
 	{
-		// TODO
+		setFile(f);
+		load();
 	}
 	
 	

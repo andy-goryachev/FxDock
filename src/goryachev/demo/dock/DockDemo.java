@@ -1,11 +1,12 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.demo.dock;
-import goryachev.common.util.DebugSettingsProvider;
+import goryachev.common.util.FileSettingsProvider;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
+import java.io.File;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -24,7 +25,8 @@ public class DockDemo
 		Log.conf("DebugSettingsProvider", true);
 		
 		// init non-ui subsystems
-		GlobalSettings.setProvider(new DebugSettingsProvider());
+		File settingsFile = new File("settings.conf");
+		GlobalSettings.setProvider(new FileSettingsProvider(settingsFile));
 		
 		// launch ui
 		new DockDemo().launch(args);
