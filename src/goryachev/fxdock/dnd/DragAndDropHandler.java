@@ -29,6 +29,8 @@ import javafx.stage.StageStyle;
 public class DragAndDropHandler
 {
 	public static final double DRAG_WINDOW_OPACITY = 0.5;
+	public static final double PANE_EDGE_HORIZONTAL = 0.3;
+	public static final double PANE_EDGE_VERTICAL = 0.3;
 	public static final double WINDOW_EDGE_HORIZONTAL = 40;
 	public static final double WINDOW_EDGE_VERTICAL = 40;
 	private static double deltax;
@@ -245,13 +247,6 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static Where determineWhere(Node nd, double screenx, double screeny)
-	{
-		// TODO
-		return null;
-	}
-	
-	
 	protected static DropOp createDropOnSplitDivider(FxDockPane client, FxDockSplitPane sp, double screenx, double screeny)
 	{
 		// TODO what if parent is the same as target? - allow only if not adjacent
@@ -276,6 +271,77 @@ public class DragAndDropHandler
 			}
 		}
 		return null;
+	}
+	
+	
+	protected static DropOp createDropOnPane(FxDockPane client, Pane target, double screenx, double screeny)
+	{
+		Point2D p = target.screenToLocal(screenx, screeny);
+		double x = p.getX();
+		double y = p.getY();
+		double w = target.getWidth();
+		double h = target.getHeight();
+		double x1 = w * PANE_EDGE_HORIZONTAL;
+		double x2 = w - w * PANE_EDGE_HORIZONTAL;
+		double y1 = h * PANE_EDGE_VERTICAL;
+		double y2 = h - h * PANE_EDGE_VERTICAL;
+		
+		Object where = null; // FIX
+		if(x < x1)
+		{
+			if(y < y1)
+			{
+				// TL or LT
+			}
+			else if(y < y2)
+			{
+				where = Where.LEFT;
+			}
+			else
+			{
+				// BL or LB
+			}
+		}
+		else if(x < x2)
+		{
+			if(y < y1)
+			{
+				where = Where.TOP;
+			}
+			else if(y < y2)
+			{
+				// center
+			}
+			else
+			{
+				where = Where.BOTTOM;
+			}
+		}
+		else
+		{
+			if(y < y1)
+			{
+				// TR or RT
+			}
+			else if(y < y2)
+			{
+				where = Where.RIGHT;
+			}
+			else
+			{
+				// BR or RB
+			}
+		}
+		
+		DropOp op = new DropOp(target, where)
+		{
+			public void execute()
+			{
+				D.print(); // TODO
+			}
+		};
+		//op.addHighlight();
+		return op;
 	}
 	
 	
@@ -307,29 +373,13 @@ public class DragAndDropHandler
 		
 		if(p instanceof FxDockSplitPane)
 		{
-			op = createDropOnSplitDivider(client, (FxDockSplitPane)p,  screenx, screeny);
+			op = createDropOnSplitDivider(client, (FxDockSplitPane)p, screenx, screeny);
 			if(op != null)
 			{
 				return op;
 			}
 		}
 		
-		if(p instanceof Pane)
-		{
-			Object where = determineWhere(p, screenx, screeny);
-			if(where != null)
-			{
-				op = new DropOp((Pane)p, where)
-				{
-					public void execute()
-					{
-						D.print(); // TODO
-					}
-				};
-				//op.addHighlight();
-				return op;
-			}
-		}
-		return null;
+		return createDropOnPane(client, (Pane)p, screenx, screeny);
 	}
 }
