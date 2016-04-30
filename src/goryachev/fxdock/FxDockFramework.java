@@ -16,19 +16,59 @@ import javafx.scene.Node;
  */
 public class FxDockFramework
 {
+	public static interface Generator
+	{
+		public FxDockWindow createWindow(String type);
+		
+		public FxDockPane createPane(String type);
+	}
+	
+	//
+	
 	protected static final CLog log = Log.get("FxDockFramework");
 	private static final CMap<Object,Object> windows = new CMap<>();
-	private static final WeakList<FxDockWindow> windowStack = new WeakList<>(); // top window last 
+	private static final WeakList<FxDockWindow> windowStack = new WeakList<>(); // top window last
+	private static Generator generator;
 	
 	
-	public static int loadLayout(Class<? extends FxDockWindow> appWindowClass)
+	/** generator allows for creation of custom docking Stages and docking Panes */ 
+	public static void setGenerator(Generator g)
+	{
+		generator = g;
+	}
+	
+	
+	public static FxDockWindow createWindow(String type)
+	{
+		return  generator().createWindow(type);
+	}
+	
+	
+	public static FxDockPane createPane(String type)
+	{
+		return  generator().createPane(type);
+	}
+	
+	
+	private static Generator generator()
+	{
+		if(generator == null)
+		{
+			throw new Error("Please configure generator");
+		}
+		return generator;
+	}
+	
+	
+	public static int loadLayout()
 	{
 		int ct = FxDockSchema.getWindowCount();
 		for(int i=0; i<ct; i++)
 		{
 			try
 			{
-				FxDockWindow w = appWindowClass.newInstance();
+				String type = null; // TODO
+				FxDockWindow w = createWindow(type);
 				String id = FxDockSchema.windowID(i);
 				
 				Node n = FxDockSchema.restoreNode(id);

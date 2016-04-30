@@ -4,6 +4,8 @@ import goryachev.common.util.DebugSettingsProvider;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
 import goryachev.fxdock.FxDockFramework;
+import goryachev.fxdock.FxDockPane;
+import goryachev.fxdock.FxDockWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -31,8 +33,22 @@ public class FxDockDemo
 
 	public void start(Stage s) throws Exception
 	{
+		// init docking framework
+		FxDockFramework.setGenerator(new FxDockFramework.Generator()
+		{
+			public FxDockWindow createWindow(String type)
+			{
+				return new DemoWindow();
+			}
+			
+			public FxDockPane createPane(String type)
+			{
+				return new DemoPane(type);
+			}
+		});
+		
 		// load saved layout
-		int ct = FxDockFramework.loadLayout(DemoWindow.class);
+		int ct = FxDockFramework.loadLayout();
 		if(ct == 0)
 		{
 			// no saved layout, open initial window

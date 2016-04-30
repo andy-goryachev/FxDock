@@ -14,10 +14,6 @@ import javafx.scene.layout.BorderPane;
 public abstract class FxDockWindow
 	extends FxWindowBase
 {
-	public abstract FxDockPane createDockPane(String type);
-	
-	//
-	
 	public final CAction closeWindowAction = new CAction() { public void action() { close(); } };
 	private final BorderPane frame;
 	private final FxDockRootPane root;

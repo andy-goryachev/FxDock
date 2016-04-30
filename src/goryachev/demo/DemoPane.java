@@ -12,10 +12,10 @@ import javafx.scene.layout.Region;
 /**
  * DemoDockPane.
  */
-public class DemoDockPane
+public class DemoPane
     extends FxDockPane
 {
-	public DemoDockPane(String type)
+	public DemoPane(String type)
 	{
 		super(type);
 		setCenter(createColorNode(type));

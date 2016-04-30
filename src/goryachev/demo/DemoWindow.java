@@ -8,7 +8,6 @@ import goryachev.fx.CMenu;
 import goryachev.fx.CMenuBar;
 import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
-import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.WindowListMenuItem;
 import java.util.Random;
@@ -63,12 +62,6 @@ public class DemoWindow
 		return p;
 	}
 
-
-	public FxDockPane createDockPane(String type)
-	{
-		return new DemoDockPane(type);
-	}
-	
 	
 	public static DemoWindow newWindow()
 	{
@@ -79,7 +72,7 @@ public class DemoWindow
 		String type = sb.toString();
 			
 		DemoWindow w = new DemoWindow();
-		w.setContent(new DemoDockPane(type));
+		w.setContent(new DemoPane(type));
 		w.open();
 		return w;
 	}
