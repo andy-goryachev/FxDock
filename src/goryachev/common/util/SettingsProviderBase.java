@@ -4,25 +4,42 @@ import java.util.List;
 
 
 /**
- * Base class for Settings Provider.
+ * In-memory map-based Settings Provider.
  */
 public abstract class SettingsProviderBase
     implements GlobalSettings.Provider
 {
-	public abstract String getString(String key);
-
-	public abstract void setString(String key, String val);
-	
-	public abstract List<String> getKeys();
-	
-	public abstract String asString();
-	
 	public abstract void save();
-	
+
 	//
+	
+	protected CMap<String,String> data = new CMap();
+	protected static final CLog log = Log.get("SettingsProviderBase");
+
 	
 	public SettingsProviderBase()
 	{
+	}
+	
+	
+	public List<String> getKeys()
+	{
+		return data.keys();
+	}
+	
+	
+	public synchronized String getString(String key)
+	{
+		String v = data.get(key);
+		//log.debug(key, v);
+		return v;
+	}
+
+
+	public synchronized void setString(String key, String val)
+	{
+		data.put(key, val);
+		//log.debug(key, val);
 	}
 
 
@@ -39,7 +56,25 @@ public abstract class SettingsProviderBase
 	}
 	
 	
-	public static SStream parseStream(String text)
+	public synchronized String asString()
+	{
+		List<String> keys = getKeys();
+		CSorter.sort(keys);
+		
+		SB sb = new SB(keys.size() * 128);
+		for(String k: keys)
+		{
+			String v = data.get(k);
+			sb.a(k);
+			sb.a('=');
+			sb.a(v);
+			sb.nl();
+		}
+		return sb.toString();
+	}
+	
+	
+	private static SStream parseStream(String text)
 	{
 		SStream rv = new SStream();
 		if(text != null)
@@ -54,7 +89,7 @@ public abstract class SettingsProviderBase
 	}
 	
 	
-	public static String asString(SStream ss)
+	private static String asString(SStream ss)
 	{
 		SB sb = new SB();
 		
@@ -76,7 +111,7 @@ public abstract class SettingsProviderBase
 	}
 	
 	
-	public static String decode(String s)
+	private static String decode(String s)
 	{
 		try
 		{
@@ -108,7 +143,7 @@ public abstract class SettingsProviderBase
 	
 	
 	// replaces commas, \, and non-printable chars with hex values \HH
-	public static String encode(String s)
+	private static String encode(String s)
 	{
 		if(s == null)
 		{
