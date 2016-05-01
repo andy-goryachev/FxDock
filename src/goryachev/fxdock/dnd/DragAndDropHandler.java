@@ -291,12 +291,12 @@ public class DragAndDropHandler
 		Node pp = DockTools.getParent(client);
 		if(pp == target)
 		{
-			D.print("p(client) == target");
+//			D.print("p(client) == target");
 			return createDropToNewWindow(client, screenx, screeny);
 		}
 		else if(pp == DockTools.getParent(target))
 		{
-			D.print("p(client) == p(target)");
+//			D.print("p(client) == p(target)");
 			return createDropToNewWindow(client, screenx, screeny);
 		}
 		
