@@ -626,6 +626,7 @@ public class DockTools
 		
 		if(ix < 0)
 		{
+			// FIX also handle center case
 			addSplit(client, sp, where);
 		}
 		else
