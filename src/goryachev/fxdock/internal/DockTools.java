@@ -2,7 +2,6 @@
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.D;
-import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -717,6 +716,10 @@ public class DockTools
 	}
 	
 	
+	// ------------------------------ new code ----------------------------------
+	
+	
+	/** moves client pane to new position, creating necessary splits or tabs */
 	public static void moveToPane_NEW(FxDockPane client, Pane target, Where where)
 	{
 		Node p = getParent(client);

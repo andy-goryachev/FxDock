@@ -1,14 +1,11 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.dnd;
-import goryachev.common.util.D;
 import goryachev.fx.FX;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.internal.DockTools;
-import goryachev.fxdock.internal.FxDockEmptyPane;
 import goryachev.fxdock.internal.FxDockRootPane;
 import goryachev.fxdock.internal.FxDockSplitPane;
-import goryachev.fxdock.internal.FxDockTabPane;
 import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -250,196 +247,6 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp createDropOnSplitPane_OLD(FxDockPane client, FxDockSplitPane sp, double screenx, double screeny)
-	{
-		// TODO what if parent is the same as target? - allow only if not adjacent
-		
-		List<Pane> splits = DockTools.collectDividers(sp);
-		for(int i=splits.size()-1; i>=0; i--)
-		{
-			Pane n = splits.get(i);
-			
-			int ix = i + 1;
-			if(FX.contains(n, screenx, screeny))
-			{
-				DropOp op = new DropOp(n, ix)
-				{
-					public void executePrivate()
-					{
-						DockTools.moveToSplit(client, sp, ix);
-					}
-				};
-				op.addRect(n, 0, 0, n.getWidth(), n.getHeight());
-				return op;
-			}
-		}
-		
-		for(Node n: sp.getPanes())
-		{
-			if(FX.contains(n, screenx, screeny))
-			{
-				if(n instanceof FxDockSplitPane)
-				{
-					return createDropOnSplitPane_OLD(client, (FxDockSplitPane)n, screenx, screeny);
-				}
-				else if(n instanceof FxDockEmptyPane)
-				{
-					return createDropOnPane_OLD(client, (FxDockEmptyPane)n, screenx, screeny);
-				}
-				else if(n instanceof Pane)
-				{
-					return createDropOnPane_OLD(client, (Pane)n, screenx, screeny);
-				}
-				else
-				{
-					throw new Error("?" + n);
-				}
-			}
-		}
-		
-		throw new Error("?" + sp);
-		//return null;
-	}
-	
-	
-	protected static DropOp createDropOnPane_OLD(FxDockPane client, Pane target, double screenx, double screeny)
-	{
-		Node pp = DockTools.getParent(client);
-		if(pp == target)
-		{
-//			D.print("p(client) == target");
-			return createDropToNewWindow(client, screenx, screeny);
-		}
-		else if(pp == DockTools.getParent(target))
-		{
-//			D.print("p(client) == p(target)");
-			return createDropToNewWindow(client, screenx, screeny);
-		}
-		
-		Point2D p = target.screenToLocal(screenx, screeny);
-		double x = p.getX();
-		double y = p.getY();
-		double w = target.getWidth();
-		double h = target.getHeight();
-		double x1 = w * PANE_EDGE_HORIZONTAL;
-		double x2 = w - w * PANE_EDGE_HORIZONTAL;
-		double y1 = h * PANE_EDGE_VERTICAL;
-		double y2 = h - h * PANE_EDGE_VERTICAL;
-		
-		Where where;
-		if(x < x1)
-		{
-			if(y < y1)
-			{
-				// TL or LT
-				where = DockTools.aboveDiagonal(x, y, 0, 0, x1, y1) ? Where.TOP_LEFT : Where.LEFT_TOP;
-			}
-			else if(y < y2)
-			{
-				where = Where.LEFT;
-			}
-			else
-			{
-				// BL or LB
-				where = DockTools.aboveDiagonal(x, y, 0, h, x1, y2) ? Where.LEFT_BOTTOM : Where.BOTTOM_LEFT;
-			}
-		}
-		else if(x < x2)
-		{
-			if(y < y1)
-			{
-				where = Where.TOP;
-			}
-			else if(y < y2)
-			{
-				// center
-				where = Where.CENTER;
-			}
-			else
-			{
-				where = Where.BOTTOM;
-			}
-		}
-		else
-		{
-			if(y < y1)
-			{
-				// TR or RT
-				where = DockTools.aboveDiagonal(x, y, x2, y1, w, 0) ? Where.TOP_RIGHT : Where.RIGHT_TOP;
-			}
-			else if(y < y2)
-			{
-				where = Where.RIGHT;
-			}
-			else
-			{
-				// BR or RB
-				where = DockTools.aboveDiagonal(x, y, x2, y2, w, h) ? Where.RIGHT_BOTTOM : Where.BOTTOM_RIGHT;
-			}
-		}
-		
-		DropOp op = new DropOp(target, where)
-		{
-			public void executePrivate()
-			{
-				DockTools.moveToPane(client, target, where);
-			}
-		};
-		
-		switch(where)
-		{
-		case BOTTOM:
-			op.addRect(target, 0, y2, w, h - y2);
-			break;
-		case BOTTOM_LEFT:
-			op.addRect(target, 0, y2, x1, h - y2);
-			op.addOutline(target, 0, 0, w, y2);
-			break;
-		case BOTTOM_RIGHT:
-			op.addRect(target, x2, y2, x2, h - y2);
-			op.addOutline(target, 0, 0, w, y2);
-			break;
-		case CENTER:
-			op.addRect(target, 0, 0, w, h);
-			break;
-		case LEFT:
-			op.addRect(target, 0, 0, x1, h);
-			break;
-		case LEFT_BOTTOM: 
-			op.addRect(target, 0, y2, x1, h - y2);
-			op.addOutline(target, x1, 0, w - x1, h);
-			break;
-		case LEFT_TOP:
-			op.addRect(target, 0, 0, x1, y1);
-			op.addOutline(target, x1, 0, w - x1, h);
-			break;
-		case RIGHT:
-			op.addRect(target, x2, 0, w - x2, h);
-			break;
-		case RIGHT_BOTTOM:
-			op.addRect(target, x2, y2, w - x2, h - y2);
-			op.addOutline(target, 0, 0, x2, h);
-			break;
-		case RIGHT_TOP:
-			op.addRect(target, x2, 0, w - x2, y1);
-			op.addOutline(target, 0, 0, x2, h);
-			break;
-		case TOP:
-			op.addRect(target, 0, 0, w, y1);
-			break;
-		case TOP_LEFT:
-			op.addRect(target, 0, 0, x1, y1);
-			op.addOutline(target, 0, y1, w, h - y1);
-			break;
-		case TOP_RIGHT:
-			op.addRect(target, x2, 0, w - x2, y1);
-			op.addOutline(target, 0, y1, w, h - y1);
-			break;
-		}
-		return op;
-	}
-	
-	
 	protected static DropOp createDropToNewWindow(FxDockPane client, double screenx, double screeny)
 	{
 		return new DropOp(null, new WhereScreen(screenx, screeny))
@@ -450,53 +257,6 @@ public class DragAndDropHandler
 			}
 		};
 	}
-	
-	
-	@Deprecated // FIX kill
-	public static DropOp createDropOp_OLD(FxDockPane client, double screenx, double screeny)
-	{
-		FxDockWindow w = DockTools.findWindow(screenx, screeny);
-		if(w == null)
-		{
-			return createDropToNewWindow(client, screenx, screeny);
-		}
-		
-		DropOp op = checkWindowEdge(client, w.getDockRootPane(), screenx, screeny);
-		if(op != null)
-		{
-			return op;
-		}
-		
-		Node p = DockTools.findDockElement(w.getContent(), screenx, screeny);
-		if(p == null)
-		{
-			D.print("?");
-			return createDropToNewWindow(client, screenx, screeny);
-		}
-		
-		D.print(p);
-		
-		if(p instanceof FxDockSplitPane)
-		{
-			return createDropOnSplitPane_OLD(client, (FxDockSplitPane)p, screenx, screeny);
-		}
-		else if(p instanceof FxDockTabPane)
-		{
-			throw new Error();
-		}
-		else if(p instanceof Pane)
-		{
-			return createDropOnPane_OLD(client, (Pane)p, screenx, screeny);
-		}
-		else
-		{
-			D.print("no panes");
-			return null;
-		}
-	}
-	
-	
-	// --------------------- new code ---------------------------------------------------
 	
 	
 	protected static DropOp createDropOnPane(FxDockPane client, Pane target, double screenx, double screeny)
@@ -567,9 +327,7 @@ public class DragAndDropHandler
 		{
 			public void executePrivate()
 			{
-				// TODO
-				D.print(where, target);
-				//DockTools.moveToPane_NEW(client, target, where);
+				DockTools.moveToPane_NEW(client, target, where);
 			}
 		};
 		
@@ -669,34 +427,6 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp createDropOnSplitPane(FxDockPane client, Node target, FxDockSplitPane parent, int index, double screenx, double screeny)
-	{
-		if(client == target)
-		{
-			// dropping pane on itself pops it up in a new window
-			return createDropToNewWindow(client, screenx, screeny);
-		}
-		
-		// TODO can simply add a pane?
-		
-		return createDropOnPane(client, (Pane)target, screenx, screeny);
-	}
-	
-	
-	protected static DropOp createDropOnTabPane(FxDockPane client, FxDockTabPane parent, int index, double screenx, double screeny)
-	{
-		D.print(); // TODO
-		return null;
-	}
-	
-	
-	protected static DropOp createDropOnRootPane(FxDockPane client, FxDockRootPane parent, double screenx, double screeny)
-	{
-		D.print(); // TODO
-		return null;
-	}
-	
-	
 	public static DropOp createDropOp(FxDockPane client, double screenx, double screeny)
 	{
 		// first, check if we are outside of any window
@@ -724,28 +454,13 @@ public class DragAndDropHandler
 			// drop on a divider
 			return createDropOnDivider(client, (FxDockSplitPane)n, screenx, screeny);
 		}
-		
-		// drop logic depends on the parent of the target node
-		Node p = DockTools.getParent(n);
-		int ix = DockTools.indexInParent(n);
-		
-		D.print("n", n, "p", p);
-		
-		if(p instanceof FxDockSplitPane)
+		else if(n instanceof Pane)
 		{
-			return createDropOnSplitPane(client, n, (FxDockSplitPane)p, ix, screenx, screeny);
-		}
-		else if(p instanceof FxDockTabPane)
-		{
-			return createDropOnTabPane(client, (FxDockTabPane)p, ix, screenx, screeny);
-		}
-		else if(p instanceof FxDockRootPane)
-		{
-			return createDropOnRootPane(client, (FxDockRootPane)p, screenx, screeny);
+			return createDropOnPane(client, (Pane)n, screenx, screeny);
 		}
 		else
 		{
-			throw new Error("?" + p);
+			throw new Error("?" + n);
 		}
 	}
 }
