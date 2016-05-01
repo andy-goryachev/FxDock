@@ -715,4 +715,39 @@ public class DockTools
 		
 		collapseEmptySpace(p, ix, client);
 	}
+	
+	
+	public static void moveToPane_NEW(FxDockPane client, Pane target, Where where)
+	{
+		Node p = getParent(client);
+		int ix = indexInParent(client);
+		
+		Node pt = getParent(target);
+		if(pt instanceof FxDockTabPane)
+		{
+			addToTabPane(client, (FxDockTabPane)pt, ix, where);
+		}
+		else if(pt instanceof FxDockSplitPane)
+		{
+			int ix2 = indexInParent(target);
+			if(target instanceof FxDockEmptyPane)
+			{
+				replacePane(pt, ix2, client);
+			}
+			else
+			{
+				addToSplitPane(client, (FxDockSplitPane)pt, ix2, where);
+			}
+		}
+		else if(pt instanceof FxDockRootPane)
+		{
+			addToRootPane(client, (FxDockRootPane)pt, where);
+		}
+		else
+		{
+			throw new Error("?" + pt);
+		}
+		
+		collapseEmptySpace(p, ix, client);
+	}
 }

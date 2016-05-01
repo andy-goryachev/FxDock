@@ -284,11 +284,11 @@ public class DragAndDropHandler
 				}
 				else if(n instanceof FxDockEmptyPane)
 				{
-					return createDropOnPane(client, (FxDockEmptyPane)n, screenx, screeny);
+					return createDropOnPane_OLD(client, (FxDockEmptyPane)n, screenx, screeny);
 				}
 				else if(n instanceof Pane)
 				{
-					return createDropOnPane(client, (Pane)n, screenx, screeny);
+					return createDropOnPane_OLD(client, (Pane)n, screenx, screeny);
 				}
 				else
 				{
@@ -302,7 +302,7 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp createDropOnPane(FxDockPane client, Pane target, double screenx, double screeny)
+	protected static DropOp createDropOnPane_OLD(FxDockPane client, Pane target, double screenx, double screeny)
 	{
 		Node pp = DockTools.getParent(client);
 		if(pp == target)
@@ -486,7 +486,7 @@ public class DragAndDropHandler
 		}
 		else if(p instanceof Pane)
 		{
-			return createDropOnPane(client, (Pane)p, screenx, screeny);
+			return createDropOnPane_OLD(client, (Pane)p, screenx, screeny);
 		}
 		else
 		{
@@ -498,6 +498,134 @@ public class DragAndDropHandler
 	
 	// --------------------- new code ---------------------------------------------------
 	
+	
+	protected static DropOp createDropOnPane(FxDockPane client, Pane target, double screenx, double screeny)
+	{
+		Point2D p = target.screenToLocal(screenx, screeny);
+		double x = p.getX();
+		double y = p.getY();
+		double w = target.getWidth();
+		double h = target.getHeight();
+		double x1 = w * PANE_EDGE_HORIZONTAL;
+		double x2 = w - w * PANE_EDGE_HORIZONTAL;
+		double y1 = h * PANE_EDGE_VERTICAL;
+		double y2 = h - h * PANE_EDGE_VERTICAL;
+		
+		Where where;
+		if(x < x1)
+		{
+			if(y < y1)
+			{
+				// TL or LT
+				where = DockTools.aboveDiagonal(x, y, 0, 0, x1, y1) ? Where.TOP_LEFT : Where.LEFT_TOP;
+			}
+			else if(y < y2)
+			{
+				where = Where.LEFT;
+			}
+			else
+			{
+				// BL or LB
+				where = DockTools.aboveDiagonal(x, y, 0, h, x1, y2) ? Where.LEFT_BOTTOM : Where.BOTTOM_LEFT;
+			}
+		}
+		else if(x < x2)
+		{
+			if(y < y1)
+			{
+				where = Where.TOP;
+			}
+			else if(y < y2)
+			{
+				// center
+				where = Where.CENTER;
+			}
+			else
+			{
+				where = Where.BOTTOM;
+			}
+		}
+		else
+		{
+			if(y < y1)
+			{
+				// TR or RT
+				where = DockTools.aboveDiagonal(x, y, x2, y1, w, 0) ? Where.TOP_RIGHT : Where.RIGHT_TOP;
+			}
+			else if(y < y2)
+			{
+				where = Where.RIGHT;
+			}
+			else
+			{
+				// BR or RB
+				where = DockTools.aboveDiagonal(x, y, x2, y2, w, h) ? Where.RIGHT_BOTTOM : Where.BOTTOM_RIGHT;
+			}
+		}
+		
+		DropOp op = new DropOp(target, where)
+		{
+			public void executePrivate()
+			{
+				// TODO
+				D.print(where, target);
+				//DockTools.moveToPane_NEW(client, target, where);
+			}
+		};
+		
+		switch(where)
+		{
+		case BOTTOM:
+			op.addRect(target, 0, y2, w, h - y2);
+			break;
+		case BOTTOM_LEFT:
+			op.addRect(target, 0, y2, x1, h - y2);
+			op.addOutline(target, 0, 0, w, y2);
+			break;
+		case BOTTOM_RIGHT:
+			op.addRect(target, x2, y2, x2, h - y2);
+			op.addOutline(target, 0, 0, w, y2);
+			break;
+		case CENTER:
+			op.addRect(target, 0, 0, w, h);
+			break;
+		case LEFT:
+			op.addRect(target, 0, 0, x1, h);
+			break;
+		case LEFT_BOTTOM: 
+			op.addRect(target, 0, y2, x1, h - y2);
+			op.addOutline(target, x1, 0, w - x1, h);
+			break;
+		case LEFT_TOP:
+			op.addRect(target, 0, 0, x1, y1);
+			op.addOutline(target, x1, 0, w - x1, h);
+			break;
+		case RIGHT:
+			op.addRect(target, x2, 0, w - x2, h);
+			break;
+		case RIGHT_BOTTOM:
+			op.addRect(target, x2, y2, w - x2, h - y2);
+			op.addOutline(target, 0, 0, x2, h);
+			break;
+		case RIGHT_TOP:
+			op.addRect(target, x2, 0, w - x2, y1);
+			op.addOutline(target, 0, 0, x2, h);
+			break;
+		case TOP:
+			op.addRect(target, 0, 0, w, y1);
+			break;
+		case TOP_LEFT:
+			op.addRect(target, 0, 0, x1, y1);
+			op.addOutline(target, 0, y1, w, h - y1);
+			break;
+		case TOP_RIGHT:
+			op.addRect(target, x2, 0, w - x2, y1);
+			op.addOutline(target, 0, y1, w, h - y1);
+			break;
+		}
+		return op;
+	}
+
 	
 	protected static DropOp createDropOnDivider(FxDockPane client, FxDockSplitPane parent, double screenx, double screeny)
 	{
@@ -517,7 +645,6 @@ public class DragAndDropHandler
 				{
 					// do not allow to drop on adjacent split
 					int d = ix - DockTools.indexInParent(client);
-					D.print(d);
 					switch(d)
 					{
 					case 0:
@@ -544,12 +671,15 @@ public class DragAndDropHandler
 	
 	protected static DropOp createDropOnSplitPane(FxDockPane client, Node target, FxDockSplitPane parent, int index, double screenx, double screeny)
 	{
-		if(target instanceof FxDockSplitPane)
+		if(client == target)
 		{
+			// dropping pane on itself pops it up in a new window
+			return createDropToNewWindow(client, screenx, screeny);
 		}
 		
-		D.print(); // TODO
-		return null;
+		// TODO can simply add a pane?
+		
+		return createDropOnPane(client, (Pane)target, screenx, screeny);
 	}
 	
 	
