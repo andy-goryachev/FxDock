@@ -249,11 +249,12 @@ public class DockTools
 		CList<Pane> rv = new CList<>();
 		for(Node n: sp.lookupAll(".split-pane-divider"))
 		{
-			if(FX.isParent(sp, n))
+			if(n instanceof Pane)
 			{
-				if(n instanceof Pane)
+				Pane p = (Pane)n;
+				if(p.getParent() == sp)
 				{
-					rv.add((Pane)n);
+					rv.add(p);
 				}
 			}
 		}

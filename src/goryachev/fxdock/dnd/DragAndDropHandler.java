@@ -499,8 +499,38 @@ public class DragAndDropHandler
 	// --------------------- new code ---------------------------------------------------
 	
 	
-	protected static DropOp createDropOnSplitPane(FxDockPane client, FxDockSplitPane parent, int index, double screenx, double screeny)
+	protected static DropOp createDropOnDivider(FxDockPane client, FxDockSplitPane parent, double screenx, double screeny)
 	{
+		List<Pane> splits = DockTools.collectDividers(parent);
+		int sz = splits.size();
+		for(int i=0; i<sz; i++)
+		{
+			Pane n = splits.get(i);
+			if(FX.contains(n, screenx, screeny))
+			{
+				int ix = i + 1;
+				
+				DropOp op = new DropOp(n, ix)
+				{
+					public void executePrivate()
+					{
+						DockTools.moveToSplit(client, parent, ix);
+					}
+				};
+				op.addRect(n, 0, 0, n.getWidth(), n.getHeight());
+				return op;
+			}
+		}
+		throw new Error("?div");
+	}
+	
+	
+	protected static DropOp createDropOnSplitPane(FxDockPane client, Node target, FxDockSplitPane parent, int index, double screenx, double screeny)
+	{
+		if(target instanceof FxDockSplitPane)
+		{
+		}
+		
 		D.print(); // TODO
 		return null;
 	}
@@ -542,6 +572,11 @@ public class DragAndDropHandler
 		{
 			return createDropToNewWindow(client, screenx, screeny);
 		}
+		else if(n instanceof FxDockSplitPane)
+		{
+			// drop on a divider
+			return createDropOnDivider(client, (FxDockSplitPane)n, screenx, screeny);
+		}
 		
 		// drop logic depends on the parent of the target node
 		Node p = DockTools.getParent(n);
@@ -551,7 +586,7 @@ public class DragAndDropHandler
 		
 		if(p instanceof FxDockSplitPane)
 		{
-			return createDropOnSplitPane(client, (FxDockSplitPane)p, ix, screenx, screeny);
+			return createDropOnSplitPane(client, n, (FxDockSplitPane)p, ix, screenx, screeny);
 		}
 		else if(p instanceof FxDockTabPane)
 		{
