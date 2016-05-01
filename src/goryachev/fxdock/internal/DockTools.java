@@ -538,6 +538,11 @@ public class DockTools
 			
 			collapseEmptySpace(p, ix, client);
 		}
+		else if(target instanceof FxDockPane)
+		{
+			// FIX
+			throw new Error("replace with split or tab");
+		}
 		else
 		{
 			// TODO
@@ -626,11 +631,13 @@ public class DockTools
 		
 		if(ix < 0)
 		{
-			// FIX also handle center case
-			addSplit(client, sp, where);
+			//addSplit(client, sp, where);
+			Node target = sp.getPane(index);
+			insertPane(client, target, where);
 		}
 		else
 		{
+			// simply insert another pane into this split pane
 			sp.addPane(ix, client);
 		}
 	}
@@ -688,14 +695,14 @@ public class DockTools
 		}
 		else if(pt instanceof FxDockSplitPane)
 		{
+			int ix2 = indexInParent(target);
 			if(target instanceof FxDockEmptyPane)
 			{
-				int ix2 = indexInParent(target);
 				replacePane(pt, ix2, client);
 			}
 			else
 			{
-				addToSplitPane(client, (FxDockSplitPane)pt, ix, where);
+				addToSplitPane(client, (FxDockSplitPane)pt, ix2, where);
 			}
 		}
 		else if(pt instanceof FxDockRootPane)
