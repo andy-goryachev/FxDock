@@ -92,7 +92,8 @@ public class DockTools
 		{
 			return ((FxDockEmptyPane)n).parent;
 		}
-		return null;
+//		return null;
+		throw new Error("?" + n);
 	}
 	
 	
@@ -193,7 +194,8 @@ public class DockTools
 	}
 	
 	
-	public static void closeWindowUnlessLast(Node n)
+	// returns true if the window has been closed
+	public static boolean closeWindowUnlessLast(Node n)
 	{
 		FxDockWindow w = getWindow(n);
 		if(w != null)
@@ -202,8 +204,10 @@ public class DockTools
 			{
 				w.discardSettings = true;
 				w.close();
+				return true;
 			}
 		}
+		return false;
 	}
 
 
@@ -447,11 +451,14 @@ public class DockTools
 		}
 		else if(parent instanceof FxDockRootPane)
 		{
-			Node n = ((FxDockRootPane)parent).getContent();
+			FxDockRootPane rp = (FxDockRootPane)parent;
+			Node n = rp.getContent();
 			if(n == null)
 			{
-				// TODO check last here
-				closeWindowUnlessLast(parent);
+				if(!closeWindowUnlessLast(parent))
+				{
+					rp.setContent(null);
+				}
 			}
 		}
 	}
@@ -648,11 +655,11 @@ public class DockTools
 		case CENTER:
 			if(old instanceof FxDockEmptyPane)
 			{
-				rp.setCenter(client);
+				rp.setContent(client);
 			}
 			else
 			{
-				rp.setCenter(makeTab(old, client));
+				rp.setContent(makeTab(old, client));
 			}
 			break;
 		default:

@@ -197,7 +197,7 @@ public class DragAndDropHandler
 		{
 			DropOp op = new DropOp(root, Where.LEFT)
 			{
-				public void execute()
+				public void executePrivate()
 				{
 					DockTools.insertPane(client, root, getWhere());
 				}
@@ -209,7 +209,7 @@ public class DragAndDropHandler
 		{
 			DropOp op = new DropOp(root, Where.RIGHT)
 			{
-				public void execute()
+				public void executePrivate()
 				{
 					DockTools.insertPane(client, root, getWhere());
 				}
@@ -223,7 +223,7 @@ public class DragAndDropHandler
 		{
 			DropOp op = new DropOp(root, Where.TOP)
 			{
-				public void execute()
+				public void executePrivate()
 				{
 					DockTools.insertPane(client, root, getWhere());
 				}
@@ -235,7 +235,7 @@ public class DragAndDropHandler
 		{
 			DropOp op = new DropOp(root, Where.BOTTOM)
 			{
-				public void execute()
+				public void executePrivate()
 				{
 					DockTools.insertPane(client, root, getWhere());
 				}
@@ -262,7 +262,7 @@ public class DragAndDropHandler
 			{
 				DropOp op = new DropOp(n, ix)
 				{
-					public void execute()
+					public void executePrivate()
 					{
 						DockTools.moveToSplit(client, sp, ix);
 					}
@@ -364,7 +364,7 @@ public class DragAndDropHandler
 		
 		DropOp op = new DropOp(target, where)
 		{
-			public void execute()
+			public void executePrivate()
 			{
 				DockTools.moveToPane(client, target, where);
 			}
@@ -428,7 +428,7 @@ public class DragAndDropHandler
 	{
 		return new DropOp(null, new WhereScreen(screenx, screeny))
 		{
-			public void execute()
+			public void executePrivate()
 			{
 				DockTools.moveToNewWindow(client, screenx, screeny);
 			}
@@ -453,8 +453,7 @@ public class DragAndDropHandler
 		Node p = DockTools.findDockElement(w.getContent(), screenx, screeny);
 		if(p == null)
 		{
-			D.print("no dock element");
-			return null;
+			return createDropToNewWindow(client, screenx, screeny);
 		}
 		
 		if(p instanceof FxDockSplitPane)
@@ -467,7 +466,6 @@ public class DragAndDropHandler
 		}
 		else if(p instanceof Pane)
 		{
-			D.print("pane", p);
 			return createDropOnPane(client, (Pane)p, screenx, screeny);
 		}
 		else

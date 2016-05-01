@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
  */
 public abstract class DropOp
 {
-	public abstract void execute();
+	protected abstract void executePrivate();
 	
 	//
 	
@@ -28,6 +28,12 @@ public abstract class DropOp
 	{
 		this.target = target;
 		this.where = where;
+	}
+	
+	
+	public void execute()
+	{
+		executePrivate();
 	}
 
 
