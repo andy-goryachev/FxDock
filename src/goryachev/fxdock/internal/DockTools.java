@@ -321,10 +321,28 @@ public class DockTools
 		}
 		return null;
 	}
+	
+	
+	private static void unlink(Node n)
+	{
+		Node p = getParent(n);
+		if(p instanceof FxDockSplitPane)
+		{
+			// make sure an empty pane is left in place
+			int ix = indexInParent(n);
+			if(ix >= 0)
+			{
+				((FxDockSplitPane)p).setPane(ix, new FxDockEmptyPane());
+			}
+		}
+	}
 
 
 	private static Node makeSplit(Node client, Node old, Where where)
 	{
+		unlink(client);
+		unlink(old);
+		
 		switch(where)
 		{
 		case BOTTOM:
@@ -360,6 +378,9 @@ public class DockTools
 	
 	private static FxDockTabPane makeTab(Node old, Node client)
 	{
+		unlink(client);
+		unlink(old);
+
 		FxDockTabPane t = new FxDockTabPane();
 		t.addTab(old);
 		t.addTab(client);
@@ -407,13 +428,18 @@ public class DockTools
 	
 
 	// TODO if last window - create empty pane
-	public static void collapseEmptySpace(Node parent, int ix, Node client)
+	public static void collapseEmptySpace(Node client, Node parent, int ix)
 	{
 		if(parent instanceof FxDockSplitPane)
 		{
 			FxDockSplitPane sp = (FxDockSplitPane)parent;
 			if(ix >= 0)
 			{
+				Node old = sp.getPane(ix);
+				if(!isEmpty(old))
+				{
+					return;
+				}
 				sp.removePane(ix);
 
 				Node n = sp.getPane(ix);
@@ -444,9 +470,10 @@ public class DockTools
 				switch(ct)
 				{
 				case 0:				
-					collapseEmptySpace(getParent(sp), ix, sp);
+					collapseEmptySpace(sp, p2, ix);
 					break;
 				case 1:
+					// FIX not sure
 					client = sp.getPane(0);
 					replacePane_OLD(p2, ix, client);
 					break;
@@ -533,7 +560,7 @@ public class DockTools
 				rp.setContent(makeSplit(client, old, (Where)where));
 			}
 			
-			collapseEmptySpace(p, ix, client);
+			collapseEmptySpace(client, p, ix);
 		}
 		else if(target instanceof FxDockPane)
 		{
@@ -561,7 +588,7 @@ public class DockTools
 		w.setHeight(client.getHeight());
 		FxDockFramework.open(w);
 		
-		collapseEmptySpace(p, ix, client);
+		collapseEmptySpace(client, p, ix);
 	}
 
 
@@ -572,7 +599,7 @@ public class DockTools
 		
 		sp.addPane(index, client);
 		
-		collapseEmptySpace(p, ix, client);
+		collapseEmptySpace(client, p, ix);
 	}
 	
 	
@@ -687,6 +714,7 @@ public class DockTools
 			case CENTER:
 				if(target instanceof FxDockEmptyPane)
 				{
+					unlink(client);
 					sp.setPane(ip, client);
 				}
 				else
@@ -735,6 +763,6 @@ public class DockTools
 			throw new Error("?" + targetParent);
 		}
 		
-		collapseEmptySpace(clientParent, clientIndex, client);
+		collapseEmptySpace(client, clientParent, clientIndex);
 	}
 }
