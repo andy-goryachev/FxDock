@@ -508,7 +508,23 @@ public class DragAndDropHandler
 			Pane n = splits.get(i);
 			if(FX.contains(n, screenx, screeny))
 			{
+				// new pane index
 				int ix = i + 1;
+
+				// found the divider, check if it's adjacent
+				Node pc = DockTools.getParent(client);
+				if(pc == parent)
+				{
+					// do not allow to drop on adjacent split
+					int d = ix - DockTools.indexInParent(client);
+					D.print(d);
+					switch(d)
+					{
+					case 0:
+					case 1:
+						return null;
+					}
+				}
 				
 				DropOp op = new DropOp(n, ix)
 				{
@@ -521,6 +537,7 @@ public class DragAndDropHandler
 				return op;
 			}
 		}
+		
 		throw new Error("?div");
 	}
 	
