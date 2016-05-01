@@ -395,6 +395,10 @@ public class DockTools
 		{
 			((FxDockRootPane)parent).setContent(client);
 		}
+		else if(parent instanceof FxDockSplitPane)
+		{
+			((FxDockSplitPane)parent).setPane(ix, client);
+		}
 		else
 		{
 			throw new Error("?" + parent);
@@ -683,7 +687,15 @@ public class DockTools
 		}
 		else if(pt instanceof FxDockSplitPane)
 		{
-			addToSplitPane(client, (FxDockSplitPane)pt, ix, where);
+			if(target instanceof FxDockEmptyPane)
+			{
+				int ix2 = indexInParent(target);
+				replacePane(pt, ix2, client);
+			}
+			else
+			{
+				addToSplitPane(client, (FxDockSplitPane)pt, ix, where);
+			}
 		}
 		else if(pt instanceof FxDockRootPane)
 		{

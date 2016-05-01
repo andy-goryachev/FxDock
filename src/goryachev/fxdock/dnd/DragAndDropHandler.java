@@ -5,6 +5,7 @@ import goryachev.fx.FX;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.internal.DockTools;
+import goryachev.fxdock.internal.FxDockEmptyPane;
 import goryachev.fxdock.internal.FxDockRootPane;
 import goryachev.fxdock.internal.FxDockSplitPane;
 import goryachev.fxdock.internal.FxDockTabPane;
@@ -274,15 +275,29 @@ public class DragAndDropHandler
 		
 		for(Node n: sp.getPanes())
 		{
-			if(n instanceof Pane)
+			if(FX.contains(n, screenx, screeny))
 			{
-				if(FX.contains(n, screenx, screeny))
+				if(n instanceof FxDockSplitPane)
+				{
+					return createDropOnSplitPane(client, (FxDockSplitPane)n, screenx, screeny);
+				}
+				else if(n instanceof FxDockEmptyPane)
+				{
+					return createDropOnPane(client, (FxDockEmptyPane)n, screenx, screeny);
+				}
+				else if(n instanceof Pane)
 				{
 					return createDropOnPane(client, (Pane)n, screenx, screeny);
 				}
+				else
+				{
+					throw new Error("?" + n);
+				}
 			}
 		}
-		return null;
+		
+		throw new Error("?" + sp);
+		//return null;
 	}
 	
 	
@@ -453,8 +468,11 @@ public class DragAndDropHandler
 		Node p = DockTools.findDockElement(w.getContent(), screenx, screeny);
 		if(p == null)
 		{
+			D.print("?");
 			return createDropToNewWindow(client, screenx, screeny);
 		}
+		
+		D.print(p);
 		
 		if(p instanceof FxDockSplitPane)
 		{

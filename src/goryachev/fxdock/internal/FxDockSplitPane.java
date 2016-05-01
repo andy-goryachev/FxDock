@@ -67,6 +67,13 @@ public class FxDockSplitPane
 	}
 	
 	
+	public void setPane(int ix, Node n)
+	{
+		getItems().set(ix, n);
+		DockTools.setParent(this, n);
+	}
+	
+	
 	public Node removePane(int ix)
 	{
 		Node n = getItems().remove(ix);
