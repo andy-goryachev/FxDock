@@ -7,6 +7,7 @@ import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.FxDockRootPane;
 import goryachev.fxdock.internal.FxDockSplitPane;
+import goryachev.fxdock.internal.FxDockTabPane;
 import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -290,10 +291,12 @@ public class DragAndDropHandler
 		Node pp = DockTools.getParent(client);
 		if(pp == target)
 		{
+			D.print("p(client) == target");
 			return createDropToNewWindow(client, screenx, screeny);
 		}
 		else if(pp == DockTools.getParent(target))
 		{
+			D.print("p(client) == p(target)");
 			return createDropToNewWindow(client, screenx, screeny);
 		}
 		
@@ -450,6 +453,7 @@ public class DragAndDropHandler
 		Node p = DockTools.findDockElement(w.getContent(), screenx, screeny);
 		if(p == null)
 		{
+			D.print("no dock element");
 			return null;
 		}
 		
@@ -457,12 +461,18 @@ public class DragAndDropHandler
 		{
 			return createDropOnSplitPane(client, (FxDockSplitPane)p, screenx, screeny);
 		}
+		else if(p instanceof FxDockTabPane)
+		{
+			throw new Error();
+		}
 		else if(p instanceof Pane)
 		{
+			D.print("pane", p);
 			return createDropOnPane(client, (Pane)p, screenx, screeny);
 		}
 		else
 		{
+			D.print("no panes");
 			return null;
 		}
 	}

@@ -44,6 +44,7 @@ public abstract class FxDockPane
 	protected final void setTabMode(boolean on)
 	{
 		tabMode.set(on);
+		updateToolBar();
 	}
 	
 	

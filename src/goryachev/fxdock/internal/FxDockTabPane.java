@@ -43,8 +43,15 @@ public class FxDockTabPane
 		}
 		return null;
 	}
-	
-	
+
+
+	public Node getSelectedTab()
+	{
+		int ix = getSelectionModel().getSelectedIndex();
+		return getTab(ix);
+	}
+
+
 	protected Tab newTab(Node n)
 	{
 		Tab t = new Tab(null, n);

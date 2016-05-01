@@ -257,6 +257,8 @@ public class DockTools
 	}
 
 
+	// FIX must find topmost tab
+	// FIX must find splitpane's pane or divider
 	public static Node findDockElement(Node n, double screenx, double screeny)
 	{
 		if(n != null)
@@ -274,30 +276,51 @@ public class DockTools
 				}
 				else if(n instanceof FxDockSplitPane)
 				{
-					return n;
+					Node ch = findDockElement(((FxDockSplitPane)n).getPanes(), screenx, screeny);
+					if(ch == null)
+					{
+						return n;
+					}
+					else
+					{
+						// on a divider
+						return n;
+					}
 				}
 				else if(n instanceof FxDockTabPane)
 				{
-					return n;
+					FxDockTabPane t = (FxDockTabPane)n;
+					return t.getSelectedTab();
 				}
 				
 				if(n instanceof Parent)
 				{
-					for(Node ch: ((Parent)n).getChildrenUnmodifiable())
+					Node ch = findDockElement(((Parent)n).getChildrenUnmodifiable(), screenx, screeny);
+					if(ch != null)
 					{
-						Node found = findDockElement(ch, screenx, screeny);
-						if(found != null)
-						{
-							return found;
-						}
+						return ch;
 					}
 				}
 			}
 		}
 		return null;
 	}
-	
-	
+
+
+	private static Node findDockElement(List<Node> ns, double screenx, double screeny)
+	{
+		for(Node ch: ns)
+		{
+			Node found = findDockElement(ch, screenx, screeny);
+			if(found != null)
+			{
+				return found;
+			}
+		}
+		return null;
+	}
+
+
 	private static FxDockSplitPane makeSplit(Node client, Node old, Where where)
 	{
 		switch(where)
@@ -375,6 +398,7 @@ public class DockTools
 	}
 	
 
+	// TODO if last window - create empty pane
 	public static void collapseEmptySpace(Node parent, int ix, Node client)
 	{
 		if(parent instanceof FxDockSplitPane)
@@ -426,6 +450,7 @@ public class DockTools
 			Node n = ((FxDockRootPane)parent).getContent();
 			if(n == null)
 			{
+				// TODO check last here
 				closeWindowUnlessLast(parent);
 			}
 		}
@@ -605,6 +630,7 @@ public class DockTools
 		{
 		case CENTER:
 			tp.addTab(client);
+			tp.select(client);
 			break;
 		default:
 			addSplit(client, tp, where);
