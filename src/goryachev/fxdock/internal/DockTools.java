@@ -384,7 +384,8 @@ public class DockTools
 	
 	
 	// without checking
-	private static void replacePane(Node parent, int ix, Node client)
+	@Deprecated
+	private static void replacePane_OLD(Node parent, int ix, Node client)
 	{
 		if(parent instanceof FxDockPane)
 		{
@@ -447,7 +448,7 @@ public class DockTools
 					break;
 				case 1:
 					client = sp.getPane(0);
-					replacePane(p2, ix, client);
+					replacePane_OLD(p2, ix, client);
 					break;
 				}
 			}
@@ -575,7 +576,7 @@ public class DockTools
 	}
 	
 	
-	private static void addToRootPane2(FxDockPane client, FxDockRootPane rp, Where where)
+	private static void addToRootPane(FxDockPane client, FxDockRootPane rp, Where where)
 	{
 		Node old = rp.getContent();
 
@@ -598,7 +599,7 @@ public class DockTools
 	}
 	
 	
-	private static void replacePane2(Node old, Node newPane)
+	private static void replacePane(Node old, Node newPane)
 	{
 		Node p = getParent(old);
 		if(p instanceof FxDockSplitPane)
@@ -625,7 +626,7 @@ public class DockTools
 	}
 	
 	
-	private static void addToTabPane2(FxDockPane client, FxDockTabPane tp, int index, Where where)
+	private static void addToTabPane(FxDockPane client, FxDockTabPane tp, int index, Where where)
 	{
 		switch(where)
 		{
@@ -635,13 +636,13 @@ public class DockTools
 			break;
 		default:
 			Node n = makeSplit(client, tp, where);
-			replacePane2(tp, n);
+			replacePane(tp, n);
 			break;			
 		}
 	}
 	
 	
-	private static void addToSplitPane2(FxDockPane client, Pane target, FxDockSplitPane sp, int index, Where where)
+	private static void addToSplitPane(FxDockPane client, Pane target, FxDockSplitPane sp, int index, Where where)
 	{
 		// determine index from where and sp orientation
 		int ix;
@@ -683,17 +684,17 @@ public class DockTools
 			case CENTER:
 				if(target instanceof FxDockEmptyPane)
 				{
-					replacePane2(target, client);
+					replacePane(target, client);
 				}
 				else
 				{
 					Node n = makeTab(target, client);
-					replacePane2(target, n);
+					replacePane(target, n);
 				}
 				break;
 			default:
 				Node n = makeSplit(client, target, where);
-				replacePane2(target, n);
+				replacePane(target, n);
 				break;
 			}
 		}
@@ -716,15 +717,15 @@ public class DockTools
 		
 		if(targetParent instanceof FxDockSplitPane)
 		{
-			addToSplitPane2(client, target, (FxDockSplitPane)targetParent, targetIndex, where);
+			addToSplitPane(client, target, (FxDockSplitPane)targetParent, targetIndex, where);
 		}
 		else if(targetParent instanceof FxDockTabPane)
 		{
-			addToTabPane2(client, (FxDockTabPane)targetParent, targetIndex, where);
+			addToTabPane(client, (FxDockTabPane)targetParent, targetIndex, where);
 		}
 		else if(targetParent instanceof FxDockRootPane)
 		{
-			addToRootPane2(client, (FxDockRootPane)targetParent, where);
+			addToRootPane(client, (FxDockRootPane)targetParent, where);
 		}
 		else
 		{
