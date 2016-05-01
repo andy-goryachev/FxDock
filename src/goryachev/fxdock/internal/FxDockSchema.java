@@ -233,5 +233,13 @@ public class FxDockSchema
 				saveContentPrivate(s, ch);
 			}
 		}
+		else if(n instanceof FxDockEmptyPane)
+		{
+			s.add(TYPE_EMPTY);
+		}
+		else
+		{
+			throw new Error("?" + n);
+		}
 	}
 }
