@@ -103,7 +103,7 @@ public class DockTools
 			boolean rv = ((Pane)parent).getChildren().remove(child);
 			if(!rv)
 			{
-				D.print("no removed: " + parent);
+				D.print("not removed: p=", parent, "c=", child);
 			}
 		}
 		else if(parent instanceof FxDockTabPane)
@@ -687,12 +687,12 @@ public class DockTools
 			case CENTER:
 				if(target instanceof FxDockEmptyPane)
 				{
-					replacePane(p, ip, target, client);
+					sp.setPane(ip, client);
 				}
 				else
 				{
-					Node n = makeTab(target, client);
-					replacePane(p, ip, target, n);
+					Node t = makeTab(target, client);
+					replacePane(p, ip, target, t);
 				}
 				break;
 			default:
