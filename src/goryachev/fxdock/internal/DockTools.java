@@ -22,32 +22,6 @@ import javafx.stage.Window;
  */
 public class DockTools
 {
-	public static boolean isDockableElement(Node n)
-	{
-		if(n instanceof FxDockBorderPane)
-		{
-			return true;
-		}
-		else if(n instanceof FxDockEmptyPane)
-		{
-			return true;
-		}
-		else if(n instanceof FxDockSplitPane)
-		{
-			return true;
-		}
-		else if(n instanceof FxDockTabPane)
-		{
-			return true;
-		}
-		else if(n instanceof FxDockRootPane)
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	
 	private static boolean isEmpty(Node n)
 	{
 		if(n == null)
