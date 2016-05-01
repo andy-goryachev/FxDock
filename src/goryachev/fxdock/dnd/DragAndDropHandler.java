@@ -172,6 +172,7 @@ public class DragAndDropHandler
 	
 	protected static DropOp checkWindowEdge(FxDockPane client, FxDockRootPane root, double screenx, double screeny)
 	{
+		// TODO allow to create a split
 		if(root.getContent() == client)
 		{
 			// don't drop on itself
@@ -249,7 +250,7 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp createDropOnSplitPane(FxDockPane client, FxDockSplitPane sp, double screenx, double screeny)
+	protected static DropOp createDropOnSplitPane_OLD(FxDockPane client, FxDockSplitPane sp, double screenx, double screeny)
 	{
 		// TODO what if parent is the same as target? - allow only if not adjacent
 		
@@ -279,7 +280,7 @@ public class DragAndDropHandler
 			{
 				if(n instanceof FxDockSplitPane)
 				{
-					return createDropOnSplitPane(client, (FxDockSplitPane)n, screenx, screeny);
+					return createDropOnSplitPane_OLD(client, (FxDockSplitPane)n, screenx, screeny);
 				}
 				else if(n instanceof FxDockEmptyPane)
 				{
@@ -451,7 +452,8 @@ public class DragAndDropHandler
 	}
 	
 	
-	public static DropOp createDropOp(FxDockPane client, double screenx, double screeny)
+	@Deprecated // FIX kill
+	public static DropOp createDropOp_OLD(FxDockPane client, double screenx, double screeny)
 	{
 		FxDockWindow w = DockTools.findWindow(screenx, screeny);
 		if(w == null)
@@ -476,7 +478,7 @@ public class DragAndDropHandler
 		
 		if(p instanceof FxDockSplitPane)
 		{
-			return createDropOnSplitPane(client, (FxDockSplitPane)p, screenx, screeny);
+			return createDropOnSplitPane_OLD(client, (FxDockSplitPane)p, screenx, screeny);
 		}
 		else if(p instanceof FxDockTabPane)
 		{
@@ -490,6 +492,78 @@ public class DragAndDropHandler
 		{
 			D.print("no panes");
 			return null;
+		}
+	}
+	
+	
+	// --------------------- new code ---------------------------------------------------
+	
+	
+	protected static DropOp createDropOnSplitPane(FxDockPane client, FxDockSplitPane parent, int index, double screenx, double screeny)
+	{
+		D.print(); // TODO
+		return null;
+	}
+	
+	
+	protected static DropOp createDropOnTabPane(FxDockPane client, FxDockTabPane parent, int index, double screenx, double screeny)
+	{
+		D.print(); // TODO
+		return null;
+	}
+	
+	
+	protected static DropOp createDropOnRootPane(FxDockPane client, FxDockRootPane parent, double screenx, double screeny)
+	{
+		D.print(); // TODO
+		return null;
+	}
+	
+	
+	public static DropOp createDropOp(FxDockPane client, double screenx, double screeny)
+	{
+		// first, check if we are outside of any window
+		FxDockWindow w = DockTools.findWindow(screenx, screeny);
+		if(w == null)
+		{
+			return createDropToNewWindow(client, screenx, screeny);
+		}
+		
+		// check if we can drop to window edge
+		DropOp op = checkWindowEdge(client, w.getDockRootPane(), screenx, screeny);
+		if(op != null)
+		{
+			return op;
+		}
+		
+		// find the topmost docking element to accept the drop
+		Node n = DockTools.findDockElement(w.getContent(), screenx, screeny);
+		if(n == null)
+		{
+			return createDropToNewWindow(client, screenx, screeny);
+		}
+		
+		// drop logic depends on the parent of the target node
+		Node p = DockTools.getParent(n);
+		int ix = DockTools.indexInParent(n);
+		
+		D.print("n", n, "p", p);
+		
+		if(p instanceof FxDockSplitPane)
+		{
+			return createDropOnSplitPane(client, (FxDockSplitPane)p, ix, screenx, screeny);
+		}
+		else if(p instanceof FxDockTabPane)
+		{
+			return createDropOnTabPane(client, (FxDockTabPane)p, ix, screenx, screeny);
+		}
+		else if(p instanceof FxDockRootPane)
+		{
+			return createDropOnRootPane(client, (FxDockRootPane)p, screenx, screeny);
+		}
+		else
+		{
+			throw new Error("?" + p);
 		}
 	}
 }

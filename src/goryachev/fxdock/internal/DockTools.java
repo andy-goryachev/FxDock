@@ -261,8 +261,6 @@ public class DockTools
 	}
 
 
-	// FIX must find topmost tab
-	// FIX must find splitpane's pane or divider
 	public static Node findDockElement(Node n, double screenx, double screeny)
 	{
 		if(n != null)
@@ -288,7 +286,7 @@ public class DockTools
 					else
 					{
 						// on a divider
-						return n;
+						return ch;
 					}
 				}
 				else if(n instanceof FxDockTabPane)
