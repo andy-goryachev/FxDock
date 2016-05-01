@@ -324,7 +324,7 @@ public class DockTools
 	}
 	
 	
-	private static FxDockSplitPane makeSplit(Node old, Node client, Object where)
+	private static FxDockSplitPane makeSplit(Node client, Node old, Object where)
 	{
 		if(where instanceof Where)
 		{
@@ -509,7 +509,7 @@ public class DockTools
 			
 			if(makesplit)
 			{
-				rp.setContent(makeSplit(old, client, where));
+				rp.setContent(makeSplit(client, old, where));
 			}
 			
 			collapseEmptySpace(p, ix, client);
@@ -551,7 +551,7 @@ public class DockTools
 	
 	
 	// adds without checking
-	private static void createSplit(FxDockPane client, Node target, Where where)
+	private static void addSplit(FxDockPane client, Node target, Where where)
 	{
 		Node p = getParent(target);
 		int ix = indexInParent(target);
@@ -599,7 +599,14 @@ public class DockTools
 			throw new Error("?" + where);
 		}
 		
-		replacePane(p, ix, n);
+		if(p == null)
+		{
+			throw new Error();
+		}
+		else
+		{
+			replacePane(p, ix, n);
+		}
 	}
 	
 	
@@ -647,7 +654,7 @@ public class DockTools
 		
 		if(ix < 0)
 		{
-			createSplit(client, sp, where);
+			addSplit(client, sp, where);
 		}
 		else
 		{
@@ -714,7 +721,7 @@ public class DockTools
 			tp.addTab(client);
 			break;
 		default:
-			createSplit(client, tp, where);
+			addSplit(client, tp, where);
 			break;			
 		}
 	}
@@ -737,7 +744,9 @@ public class DockTools
 			}
 			break;
 		default:
-			createSplit(client, rp, where);
+			// FIX
+			insertPane(client, rp, where);
+			//createSplit(client, rp, where);
 			break;			
 		}
 	}

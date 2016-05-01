@@ -292,6 +292,10 @@ public class DragAndDropHandler
 		{
 			return createDropToNewWindow(client, screenx, screeny);
 		}
+		else if(pp == DockTools.getParent(target))
+		{
+			return createDropToNewWindow(client, screenx, screeny);
+		}
 		
 		Point2D p = target.screenToLocal(screenx, screeny);
 		double x = p.getX();
@@ -429,7 +433,7 @@ public class DragAndDropHandler
 	}
 	
 	
-	protected static DropOp createDropOp(FxDockPane client, double screenx, double screeny)
+	public static DropOp createDropOp(FxDockPane client, double screenx, double screeny)
 	{
 		FxDockWindow w = DockTools.findWindow(screenx, screeny);
 		if(w == null)
