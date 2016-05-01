@@ -2,14 +2,14 @@
 package goryachev.fxdock.internal;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
 
 
 /**
  * FxDockEmptyPane.
  */
 public class FxDockEmptyPane
-	extends Pane
+	extends BorderPane
 {
 	protected final ParentProperty parent = new ParentProperty();
 	
