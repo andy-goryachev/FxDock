@@ -325,7 +325,7 @@ public class DockTools
 	}
 
 
-	private static FxDockSplitPane makeSplit(Node client, Node old, Where where)
+	private static Node makeSplit(Node client, Node old, Where where)
 	{
 		switch(where)
 		{
@@ -353,6 +353,9 @@ public class DockTools
 			return new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, client, null), old);
 		case TOP_RIGHT:
 			return new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, null, client), old);
+		case CENTER:
+			// FIX isn't right!
+//			return makeTab(old, client);
 		default:
 			throw new Error("?" + where);
 		}
@@ -575,17 +578,14 @@ public class DockTools
 	private static void addSplit(FxDockPane client, Node target, Where where)
 	{
 		Node p = getParent(target);
-		int ix = indexInParent(target);
-		
-		Node n = makeSplit(client, target, where);		
 		if(p == null)
 		{
 			throw new Error();
 		}
-		else
-		{
-			replacePane(p, ix, n);
-		}
+		
+		int ix = indexInParent(target);
+		Node n = makeSplit(client, target, where);		
+		replacePane(p, ix, n);
 	}
 	
 	
