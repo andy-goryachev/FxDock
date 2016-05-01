@@ -599,29 +599,27 @@ public class DockTools
 	}
 	
 	
-	private static void replacePane(Node old, Node newPane)
+	private static void replacePane(Node oldParent, int index, Node old, Node newPane)
 	{
-		Node p = getParent(old);
-		if(p instanceof FxDockSplitPane)
+		if(oldParent instanceof FxDockSplitPane)
 		{
-			FxDockSplitPane sp = (FxDockSplitPane)p;
-			int ix = sp.indexOfPane(old);
-			if(ix < 0)
+			FxDockSplitPane sp = (FxDockSplitPane)oldParent;
+			if(index < 0)
 			{
 				throw new Error();
 			}
 			else
 			{
-				sp.setPane(ix, newPane);
+				sp.addPane(index, newPane);
 			}
 		}
-		else if(p instanceof FxDockRootPane)
+		else if(oldParent instanceof FxDockRootPane)
 		{
-			((FxDockRootPane)p).setContent(newPane);
+			((FxDockRootPane)oldParent).setContent(newPane);
 		}
 		else
 		{
-			throw new Error("?" + p);
+			throw new Error("?" + oldParent);
 		}
 	}
 	
@@ -635,8 +633,10 @@ public class DockTools
 			tp.select(client);
 			break;
 		default:
+			Node p = getParent(tp);
+			int ix = indexInParent(tp);
 			Node n = makeSplit(client, tp, where);
-			replacePane(tp, n);
+			replacePane(p, ix, tp, n);
 			break;			
 		}
 	}
@@ -679,22 +679,25 @@ public class DockTools
 		
 		if(ix < 0)
 		{
+			Node p = getParent(target);
+			int ip = indexInParent(target);
+			
 			switch(where)
 			{
 			case CENTER:
 				if(target instanceof FxDockEmptyPane)
 				{
-					replacePane(target, client);
+					replacePane(p, ip, target, client);
 				}
 				else
 				{
 					Node n = makeTab(target, client);
-					replacePane(target, n);
+					replacePane(p, ip, target, n);
 				}
 				break;
 			default:
 				Node n = makeSplit(client, target, where);
-				replacePane(target, n);
+				replacePane(p, ip, target, n);
 				break;
 			}
 		}
