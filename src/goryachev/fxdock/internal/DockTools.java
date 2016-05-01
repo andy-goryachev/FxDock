@@ -324,26 +324,37 @@ public class DockTools
 	}
 	
 	
-	private static FxDockSplitPane makeSplit(Node client, Node old, Object where)
+	private static FxDockSplitPane makeSplit(Node client, Node old, Where where)
 	{
-		if(where instanceof Where)
+		switch(where)
 		{
-			switch((Where)where)
-			{
-			case BOTTOM:
-				return new FxDockSplitPane(Orientation.VERTICAL, old, client);
-			case LEFT:
-				return new FxDockSplitPane(Orientation.HORIZONTAL, client, old);
-			case RIGHT:
-				return new FxDockSplitPane(Orientation.HORIZONTAL, old, client);
-			case TOP:
-				return new FxDockSplitPane(Orientation.VERTICAL, client, old);
-			default:
-				throw new Error("?" + where);
-			}
+		case BOTTOM:
+			return new FxDockSplitPane(Orientation.VERTICAL, old, client);
+		case BOTTOM_LEFT:
+			return new FxDockSplitPane(Orientation.VERTICAL, old, new FxDockSplitPane(Orientation.HORIZONTAL, client, null));
+		case BOTTOM_RIGHT:
+			return new FxDockSplitPane(Orientation.VERTICAL, old, new FxDockSplitPane(Orientation.HORIZONTAL, null, client));
+		case LEFT:
+			return new FxDockSplitPane(Orientation.HORIZONTAL, client, old);
+		case LEFT_BOTTOM:
+			return new FxDockSplitPane(Orientation.HORIZONTAL, new FxDockSplitPane(Orientation.VERTICAL, null, client), old);
+		case LEFT_TOP:
+			return new FxDockSplitPane(Orientation.HORIZONTAL, new FxDockSplitPane(Orientation.VERTICAL, client, null), old);
+		case RIGHT:
+			return new FxDockSplitPane(Orientation.HORIZONTAL, old, client);
+		case RIGHT_BOTTOM:
+			return new FxDockSplitPane(Orientation.HORIZONTAL, old, new FxDockSplitPane(Orientation.VERTICAL, null, client));
+		case RIGHT_TOP:
+			return new FxDockSplitPane(Orientation.HORIZONTAL, old, new FxDockSplitPane(Orientation.VERTICAL, client, null));
+		case TOP:
+			return new FxDockSplitPane(Orientation.VERTICAL, client, old);
+		case TOP_LEFT:
+			return new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, client, null), old);
+		case TOP_RIGHT:
+			return new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, null, client), old);
+		default:
+			throw new Error("?" + where);
 		}
-		
-		throw new Error("?" + where);
 	}
 	
 	
@@ -509,7 +520,7 @@ public class DockTools
 			
 			if(makesplit)
 			{
-				rp.setContent(makeSplit(client, old, where));
+				rp.setContent(makeSplit(client, old, (Where)where));
 			}
 			
 			collapseEmptySpace(p, ix, client);
@@ -556,49 +567,7 @@ public class DockTools
 		Node p = getParent(target);
 		int ix = indexInParent(target);
 		
-		Node n;
-		switch(where)
-		{
-		case BOTTOM:
-			n = new FxDockSplitPane(Orientation.VERTICAL, target, client);
-			break;
-		case BOTTOM_LEFT:
-			n = new FxDockSplitPane(Orientation.VERTICAL, target, new FxDockSplitPane(Orientation.HORIZONTAL, client, null));
-			break;
-		case BOTTOM_RIGHT:
-			n = new FxDockSplitPane(Orientation.VERTICAL, target, new FxDockSplitPane(Orientation.HORIZONTAL, null, client));
-			break;
-		case LEFT:
-			n = new FxDockSplitPane(Orientation.HORIZONTAL, client, target);
-			break;
-		case LEFT_BOTTOM:
-			n = new FxDockSplitPane(Orientation.HORIZONTAL, new FxDockSplitPane(Orientation.VERTICAL, null, client), target);
-			break;
-		case LEFT_TOP:
-			n = new FxDockSplitPane(Orientation.HORIZONTAL, new FxDockSplitPane(Orientation.VERTICAL, client, null), target);
-			break;
-		case RIGHT:
-			n = new FxDockSplitPane(Orientation.HORIZONTAL, target, client);
-			break;
-		case RIGHT_BOTTOM:
-			n = new FxDockSplitPane(Orientation.HORIZONTAL, target, new FxDockSplitPane(Orientation.VERTICAL, null, client));
-			break;
-		case RIGHT_TOP:
-			n = new FxDockSplitPane(Orientation.HORIZONTAL, target, new FxDockSplitPane(Orientation.VERTICAL, client, null));
-			break;
-		case TOP:
-			n = new FxDockSplitPane(Orientation.VERTICAL, client, target);
-			break;
-		case TOP_LEFT:
-			n = new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, client, null), target);
-			break;
-		case TOP_RIGHT:
-			n = new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, null, client), target);
-			break;
-		default:
-			throw new Error("?" + where);
-		}
-		
+		Node n = makeSplit(client, target, where);		
 		if(p == null)
 		{
 			throw new Error();
@@ -608,13 +577,6 @@ public class DockTools
 			replacePane(p, ix, n);
 		}
 	}
-	
-	
-	// without checking
-//	private static void insert(FxDockPane client, FxDockSplitPane sp, int index, Where where)
-//	{
-//		
-//	}
 	
 	
 	private static void addToSplitPane(FxDockPane client, FxDockSplitPane sp, int index, Where where)
@@ -660,56 +622,6 @@ public class DockTools
 		{
 			sp.addPane(ix, client);
 		}
-		
-		/*
-		switch(where)
-		{
-		case BOTTOM:
-			break;
-		case BOTTOM_LEFT:
-			break;
-		case BOTTOM_RIGHT:
-			break;
-		case CENTER:
-//			Node p2 = getParent(target);
-//			if(p2 instanceof FxDockTabPane)
-//			{
-//				// adding to a tab pane
-//				((FxDockTabPane)p2).addTab(client);
-//			}
-//			else
-//			{
-//				int ix2 = indexInParent(target);
-//
-//				FxDockTabPane tp = new FxDockTabPane();
-//				tp.addTab(target);
-//				tp.addTab(client);
-//				tp.select(client);
-//				replacePane(p2, ix2, tp);
-//				
-//				collapseEmptySpace(p2, ix2, target);
-//			}
-			break;
-		case LEFT:
-			break;
-		case LEFT_BOTTOM:
-			break;
-		case LEFT_TOP:
-			break;
-		case RIGHT:
-			break;
-		case RIGHT_BOTTOM:
-			break;
-		case RIGHT_TOP:
-			break;
-		case TOP:
-			break;
-		case TOP_LEFT:
-			break;
-		case TOP_RIGHT:
-			break;
-		}
-		*/
 	}
 	
 	
