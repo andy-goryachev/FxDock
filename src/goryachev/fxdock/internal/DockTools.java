@@ -719,38 +719,162 @@ public class DockTools
 	// ------------------------------ new code ----------------------------------
 	
 	
-	/** moves client pane to new position, creating necessary splits or tabs */
-	public static void moveToPane_NEW(FxDockPane client, Pane target, Where where)
+	private static void addToRootPane2(FxDockPane client, FxDockRootPane rp, Where where)
 	{
-		Node p = getParent(client);
-		int ix = indexInParent(client);
-		
-		Node pt = getParent(target);
-		if(pt instanceof FxDockTabPane)
+		Node old = rp.getContent();
+
+		switch(where)
 		{
-			addToTabPane(client, (FxDockTabPane)pt, ix, where);
-		}
-		else if(pt instanceof FxDockSplitPane)
-		{
-			int ix2 = indexInParent(target);
-			if(target instanceof FxDockEmptyPane)
+		case CENTER:
+			if(old instanceof FxDockEmptyPane)
 			{
-				replacePane(pt, ix2, client);
+				rp.setContent(client);
 			}
 			else
 			{
-				addToSplitPane(client, (FxDockSplitPane)pt, ix2, where);
+				rp.setContent(makeTab(old, client));
+			}
+			break;
+		default:
+			rp.setContent(makeSplit(client, old, where));
+			break;			
+		}
+	}
+	
+	
+	private static void replacePane2(Node old, Node newPane)
+	{
+		Node p = getParent(old);
+		if(p instanceof FxDockSplitPane)
+		{
+			FxDockSplitPane sp = (FxDockSplitPane)p;
+			int ix = sp.indexOfPane(old);
+			if(ix < 0)
+			{
+				throw new Error();
+			}
+			else
+			{
+				sp.setPane(ix, newPane);
 			}
 		}
-		else if(pt instanceof FxDockRootPane)
+		else if(p instanceof FxDockRootPane)
 		{
-			addToRootPane(client, (FxDockRootPane)pt, where);
+			((FxDockRootPane)p).setContent(newPane);
 		}
 		else
 		{
-			throw new Error("?" + pt);
+			throw new Error("?" + p);
+		}
+	}
+	
+	
+	private static void addToTabPane2(FxDockPane client, FxDockTabPane tp, int index, Where where)
+	{
+		switch(where)
+		{
+		case CENTER:
+			tp.addTab(client);
+			tp.select(client);
+			break;
+		default:
+			Node n = makeSplit(client, tp, where);
+			replacePane2(tp, n);
+			break;			
+		}
+	}
+	
+	
+	private static void addToSplitPane2(FxDockPane client, Pane target, FxDockSplitPane sp, int index, Where where)
+	{
+		// determine index from where and sp orientation
+		int ix;
+		if(sp.getOrientation() == Orientation.HORIZONTAL)
+		{
+			switch(where)
+			{
+			case LEFT:
+				ix = 0;
+				break;
+			case RIGHT:
+				ix = sp.getPaneCount() - 1;
+				break;
+			default:
+				ix = -1;
+				break;
+			}
+		}
+		else
+		{
+			switch(where)
+			{
+			case BOTTOM:
+				ix = sp.getPaneCount() - 1;
+				break;
+			case TOP:
+				ix = 0;
+				break;
+			default:
+				ix = -1;
+				break;
+			}
 		}
 		
-		collapseEmptySpace(p, ix, client);
+		if(ix < 0)
+		{
+			switch(where)
+			{
+			case CENTER:
+				if(target instanceof FxDockEmptyPane)
+				{
+					replacePane2(target, client);
+				}
+				else
+				{
+					Node n = makeTab(target, client);
+					replacePane2(target, n);
+				}
+				break;
+			default:
+				Node n = makeSplit(client, target, where);
+				replacePane2(target, n);
+				break;
+			}
+		}
+		else
+		{
+			// simply insert another pane into this split pane
+			sp.addPane(ix, client);
+		}
+	}
+	
+	
+	/** moves client pane to new position, creating necessary splits or tabs */
+	public static void moveToPane_NEW(FxDockPane client, Pane target, Where where)
+	{
+		Node clientParent = getParent(client);
+		int clientIndex = indexInParent(client);
+		
+		Node targetParent = getParent(target);
+		int targetIndex = indexInParent(target);
+		
+		if(targetParent instanceof FxDockSplitPane)
+		{
+			addToSplitPane2(client, target, (FxDockSplitPane)targetParent, targetIndex, where);
+		}
+		else if(targetParent instanceof FxDockTabPane)
+		{
+			addToTabPane2(client, (FxDockTabPane)targetParent, targetIndex, where);
+		}
+		else if(targetParent instanceof FxDockRootPane)
+		{
+			addToRootPane2(client, (FxDockRootPane)targetParent, where);
+		}
+		else
+		{
+			throw new Error("?" + targetParent);
+		}
+		
+		collapseEmptySpace(clientParent, clientIndex, client);
 	}
 }
