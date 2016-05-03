@@ -96,6 +96,13 @@ public class DockTools
 	}
 	
 	
+	public static void remove(Node n)
+	{
+		// TODO 
+		D.print();
+	}
+	
+	
 	private static void remove(Node parent, Node child)
 	{
 		if(parent instanceof Pane)
@@ -323,6 +330,7 @@ public class DockTools
 	}
 	
 	
+	@Deprecated // instead, use code in split pane to replace nulls with empty
 	private static void unlink(Node n)
 	{
 		Node p = getParent(n);

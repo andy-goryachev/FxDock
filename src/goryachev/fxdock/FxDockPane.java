@@ -1,6 +1,8 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
+import goryachev.fx.CAction;
 import goryachev.fxdock.dnd.DragAndDropHandler;
+import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.FxDockBorderPane;
 import goryachev.fxdock.internal.FxDockTabPane;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -21,14 +23,20 @@ import javafx.scene.control.ToolBar;
 public abstract class FxDockPane
 	extends FxDockBorderPane
 {
-	private final String type;
+	public final CAction closeAction = new CAction() { public void action() { actionClose(); }}; 
+	public final Label titleField = new Label();;
 	private final ReadOnlyBooleanWrapper tabMode = new ReadOnlyBooleanWrapper();
 	private final SimpleStringProperty title = new SimpleStringProperty();
+	private final String type;
 	
 	
 	public FxDockPane(String type)
 	{
 		this.type = type;
+		
+		titleField.textProperty().bindBidirectional(titleProperty());
+		DragAndDropHandler.attach(titleField, this);
+
 		updateToolBar();
 		
 		parent.addListener((s,old,cur) -> setTabMode(cur instanceof FxDockTabPane));
@@ -71,23 +79,28 @@ public abstract class FxDockPane
 		Node tb;
 		if(isTabMode())
 		{
+			// TODO custom toolbar components
 			tb = null;
 		}
 		else
 		{
-			Label label = new Label();
-			label.textProperty().bindBidirectional(titleProperty());
-			DragAndDropHandler.attach(label, this);
+			Button b = new Button("x");
+			closeAction.attach(b);
 			
-			Button close = new Button("x");
-			// TODO close
-			
+			// TODO HPane
+			// TODO custom toolbar components
 			ToolBar t = new ToolBar();
-			t.getItems().addAll(label, close);
+			t.getItems().addAll(titleField, b);
 			tb = t;
 		}
 		
 		setTop(tb);
+	}
+	
+	
+	public void actionClose()
+	{
+		DockTools.remove(this);
 	}
 	
 	

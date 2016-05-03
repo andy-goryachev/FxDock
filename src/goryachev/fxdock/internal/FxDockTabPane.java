@@ -59,9 +59,8 @@ public class FxDockTabPane
 		{
 			FxDockPane p = (FxDockPane)n;
 			t.textProperty().bindBidirectional(p.titleProperty());
-			// TODO dnd
-			//DragAndDropHandler.attach(label, p);
-			// TODO close button
+			t.setGraphic(p.titleField);
+			t.setOnClosed((ev) -> DockTools.remove(n));
 		}
 		return t;
 	}
