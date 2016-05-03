@@ -56,16 +56,17 @@ public class DockTools
 		ParentProperty prop = getParentProperty(child);
 		if(prop != null)
 		{
-			Node old = prop.get();
-			if(old != null)
+			Node oldp = prop.get();
+			if(oldp != null)
 			{
-				if(old == p)
+				if(oldp == p)
 				{
 					D.print("same parent", p); // FIX ???
 				}
 				else
 				{
-					remove(old, child);
+					int ix = indexInParent(child);
+					replaceChild(oldp, ix, new DeletedPane());
 				}
 			}
 			prop.set(p);
@@ -91,6 +92,10 @@ public class DockTools
 		{
 			return ((FxDockEmptyPane)n).parent;
 		}
+		else if(n instanceof DeletedPane)
+		{
+			return null;
+		}
 //		return null;
 		throw new Error("?" + n);
 	}
@@ -98,28 +103,25 @@ public class DockTools
 	
 	public static void remove(Node n)
 	{
-		// TODO 
-		D.print();
+		Node p = getParent(n);
+		remove(p, n);
+		collapseEmptySpace(p);
 	}
 	
 	
 	private static void remove(Node parent, Node child)
 	{
-		if(parent instanceof Pane)
-		{
-			boolean rv = ((Pane)parent).getChildren().remove(child);
-			if(!rv)
-			{
-				D.print("not removed: p=", parent, "c=", child);
-			}
-		}
-		else if(parent instanceof FxDockTabPane)
+		if(parent instanceof FxDockTabPane)
 		{
 			((FxDockTabPane)parent).removeTab(child);
 		}
 		else if(parent instanceof FxDockSplitPane)
 		{
 			((FxDockSplitPane)parent).removePane(child);
+		}
+		else if(parent instanceof Pane)
+		{
+			((Pane)parent).getChildren().remove(child);
 		}
 		else
 		{
@@ -328,28 +330,59 @@ public class DockTools
 		}
 		return null;
 	}
-	
-	
-	@Deprecated // instead, use code in split pane to replace nulls with empty
+
+
 	private static void unlink(Node n)
 	{
 		Node p = getParent(n);
-		if(p instanceof FxDockSplitPane)
+		if(p == null)
+		{
+			// ok
+		}
+		else if(p instanceof FxDockSplitPane)
 		{
 			// make sure an empty pane is left in place
 			int ix = indexInParent(n);
-			if(ix >= 0)
-			{
-				((FxDockSplitPane)p).setPane(ix, new FxDockEmptyPane());
-			}
+			((FxDockSplitPane)p).setPane(ix, new DeletedPane());
+		}
+		else if(p instanceof FxDockTabPane)
+		{
+			// make sure an empty pane is left in place
+			int ix = indexInParent(n);
+			((FxDockTabPane)p).setTab(ix, new DeletedPane());
+		}
+		else if(p instanceof FxDockRootPane)
+		{
+			((FxDockRootPane)p).setContent(new DeletedPane());
+		}
+		else if(p instanceof DeletedPane)
+		{
+			// no problemo
+		}
+		else
+		{
+			throw new Error("?" + p);
 		}
 	}
 
 
+	public static Node prepareToAdd(Node n)
+	{
+		if(n == null)
+		{
+			return new FxDockEmptyPane();
+		}
+		else
+		{
+			unlink(n);
+			return n;
+		}
+	}
+	
+
 	private static Node makeSplit(Node client, Node old, Where where)
 	{
-		unlink(client);
-		unlink(old);
+		// TODO check split pane to see if can add a pane instead
 		
 		switch(where)
 		{
@@ -386,9 +419,6 @@ public class DockTools
 	
 	private static FxDockTabPane makeTab(Node old, Node client)
 	{
-		unlink(client);
-		unlink(old);
-
 		FxDockTabPane t = new FxDockTabPane();
 		t.addTab(old);
 		t.addTab(client);
@@ -412,21 +442,20 @@ public class DockTools
 	}
 	
 	
-	// without checking
-	@Deprecated
-	private static void replacePane_OLD(Node parent, int ix, Node client)
+	/** replaces a child at the specified index in the parent */
+	private static void replaceChild(Node parent, int index, Node newPane)
 	{
-		if(parent instanceof FxDockPane)
+		if(parent instanceof FxDockSplitPane)
 		{
-			throw new Error("?" + parent);
+			((FxDockSplitPane)parent).setPane(index, newPane);
+		}
+		if(parent instanceof FxDockTabPane)
+		{
+			((FxDockTabPane)parent).setTab(index, newPane);
 		}
 		else if(parent instanceof FxDockRootPane)
 		{
-			((FxDockRootPane)parent).setContent(client);
-		}
-		else if(parent instanceof FxDockSplitPane)
-		{
-			((FxDockSplitPane)parent).setPane(ix, client);
+			((FxDockRootPane)parent).setContent(newPane);
 		}
 		else
 		{
@@ -435,55 +464,116 @@ public class DockTools
 	}
 	
 
-	// TODO if last window - create empty pane
-	public static void collapseEmptySpace(Node client, Node parent, int ix)
+	public static void collapseEmptySpace(Node parent)
 	{
 		if(parent instanceof FxDockSplitPane)
 		{
-			FxDockSplitPane sp = (FxDockSplitPane)parent;
-			if(ix >= 0)
+			FxDockSplitPane p = (FxDockSplitPane)parent;
+			
+			// remove deleted panes
+			for(int i=p.getPaneCount()-1; i>=0; --i)
 			{
-				Node old = sp.getPane(ix);
-				if(!isEmpty(old))
+				Node n = p.getPane(i);
+				if(n instanceof DeletedPane)
 				{
-					return;
-				}
-				sp.removePane(ix);
-
-				Node n = sp.getPane(ix);
-				if(n != null)
-				{
-					if(isEmpty(n))
-					{
-						sp.removePane(ix);
-					}
-				}
-				
-				n = sp.getPane(ix - 1);
-				if(n != null)
-				{
-					if(isEmpty(n))
-					{
-						sp.removePane(ix - 1);
-					}
+					p.removePane(i);
 				}
 			}
 			
-			int ct = sp.getPaneCount();
+			// combine empty panes
+			boolean empty = false;
+			for(int i=p.getPaneCount()-1; i>=0; --i)
+			{
+				Node n = p.getPane(i);
+				if(isEmpty(n))
+				{
+					if(empty)
+					{
+						p.removePane(i);
+					}
+					else
+					{
+						empty = true;
+					}
+				}
+				else
+				{
+					empty = false;
+				}
+			}
+			
+			int ct = p.getPaneCount();
 			if(ct < 2)
 			{
-				ix = indexInParent(sp);
-				Node p2 = getParent(sp); 
+				int ix = indexInParent(p);
+				Node p2 = getParent(p); 
 				
 				switch(ct)
 				{
-				case 0:				
-					collapseEmptySpace(sp, p2, ix);
+				case 0:
+					replaceChild(p2, ix, new DeletedPane());
+					collapseEmptySpace(p2);
 					break;
 				case 1:
-					// FIX not sure
-					client = sp.getPane(0);
-					replacePane_OLD(p2, ix, client);
+					// no need to have split pane with a single pane
+					Node n = p.getPane(0);
+					replaceChild(p2, ix, n);
+					break;
+				}
+			}
+		}
+		else if(parent instanceof FxDockTabPane)
+		{
+			FxDockTabPane p = (FxDockTabPane)parent;
+			
+			// remove deleted panes
+			for(int i=p.getTabCount()-1; i>=0; --i)
+			{
+				Node n = p.getTab(i);
+				if(n instanceof DeletedPane)
+				{
+					p.removeTab(i);
+				}
+			}
+			
+			// combine empty panes
+			boolean empty = false;
+			for(int i=p.getTabCount()-1; i>=0; --i)
+			{
+				Node n = p.getTab(i);
+				if(isEmpty(n))
+				{
+					if(empty)
+					{
+						p.removeTab(i);
+					}
+					else
+					{
+						empty = true;
+					}
+				}
+				else
+				{
+					empty = false;
+				}
+			}
+			
+			int ct = p.getTabCount();
+			if(ct < 2)
+			{
+				int ix = indexInParent(p);
+				Node p2 = getParent(p); 
+				
+				switch(ct)
+				{
+				case 0:
+					replaceChild(p2, ix, new DeletedPane());
+					collapseEmptySpace(p2);
+					break;
+				case 1:
+					// no need to have tab pane with a single tab
+					Node n = p.getTab(0);
+					replaceChild(p2, ix, n);
 					break;
 				}
 			}
@@ -551,8 +641,6 @@ public class DockTools
 			FxDockRootPane rp = (FxDockRootPane)target;
 			
 			Node p = getParent(client);
-			int ix = indexInParent(client);
-
 			boolean makesplit = true;
 			Node old = rp.getContent();
 			if(old instanceof FxDockSplitPane)
@@ -568,7 +656,7 @@ public class DockTools
 				rp.setContent(makeSplit(client, old, (Where)where));
 			}
 			
-			collapseEmptySpace(client, p, ix);
+			collapseEmptySpace(p);
 		}
 		else if(target instanceof FxDockPane)
 		{
@@ -586,7 +674,6 @@ public class DockTools
 	public static void moveToNewWindow(FxDockPane client, double screenx, double screeny)
 	{
 		Node p = getParent(client);
-		int ix = indexInParent(client);
 		
 		FxDockWindow w = FxDockFramework.createWindow();
 		w.setContent(client);
@@ -596,18 +683,15 @@ public class DockTools
 		w.setHeight(client.getHeight());
 		FxDockFramework.open(w);
 		
-		collapseEmptySpace(client, p, ix);
+		collapseEmptySpace(p);
 	}
 
 
 	public static void moveToSplit(FxDockPane client, FxDockSplitPane sp, int index)
 	{
 		Node p = getParent(client);
-		int ix = indexInParent(client);
-		
 		sp.addPane(index, client);
-		
-		collapseEmptySpace(client, p, ix);
+		collapseEmptySpace(p);
 	}
 	
 	
@@ -634,31 +718,6 @@ public class DockTools
 	}
 	
 	
-	private static void replacePane(Node oldParent, int index, Node old, Node newPane)
-	{
-		if(oldParent instanceof FxDockSplitPane)
-		{
-			FxDockSplitPane sp = (FxDockSplitPane)oldParent;
-			if(index < 0)
-			{
-				throw new Error();
-			}
-			else
-			{
-				sp.addPane(index, newPane);
-			}
-		}
-		else if(oldParent instanceof FxDockRootPane)
-		{
-			((FxDockRootPane)oldParent).setContent(newPane);
-		}
-		else
-		{
-			throw new Error("?" + oldParent);
-		}
-	}
-	
-	
 	private static void addToTabPane(FxDockPane client, FxDockTabPane tp, int index, Where where)
 	{
 		switch(where)
@@ -671,7 +730,7 @@ public class DockTools
 			Node p = getParent(tp);
 			int ix = indexInParent(tp);
 			Node n = makeSplit(client, tp, where);
-			replacePane(p, ix, tp, n);
+			replaceChild(p, ix, n);
 			break;			
 		}
 	}
@@ -722,18 +781,17 @@ public class DockTools
 			case CENTER:
 				if(target instanceof FxDockEmptyPane)
 				{
-					unlink(client);
 					sp.setPane(ip, client);
 				}
 				else
 				{
 					Node t = makeTab(target, client);
-					replacePane(p, ip, target, t);
+					replaceChild(p, ip, t);
 				}
 				break;
 			default:
 				Node n = makeSplit(client, target, where);
-				replacePane(p, ip, target, n);
+				replaceChild(p, ip, n);
 				break;
 			}
 		}
@@ -743,23 +801,23 @@ public class DockTools
 			sp.addPane(ix, client);
 		}
 	}
-	
-	
+
+
 	/** moves client pane to new position, creating necessary splits or tabs */
-	public static void moveToPane_NEW(FxDockPane client, Pane target, Where where)
+	public static void moveToPane(FxDockPane client, Pane target, Where where)
 	{
-		Node clientParent = getParent(client);
-		int clientIndex = indexInParent(client);
-		
+		Node p = getParent(client);
+
 		Node targetParent = getParent(target);
-		int targetIndex = indexInParent(target);
-		
+
 		if(targetParent instanceof FxDockSplitPane)
 		{
+			int targetIndex = indexInParent(target);
 			addToSplitPane(client, target, (FxDockSplitPane)targetParent, targetIndex, where);
 		}
 		else if(targetParent instanceof FxDockTabPane)
 		{
+			int targetIndex = indexInParent(target);
 			addToTabPane(client, (FxDockTabPane)targetParent, targetIndex, where);
 		}
 		else if(targetParent instanceof FxDockRootPane)
@@ -770,7 +828,7 @@ public class DockTools
 		{
 			throw new Error("?" + targetParent);
 		}
-		
-		collapseEmptySpace(client, clientParent, clientIndex);
+
+		collapseEmptySpace(p);
 	}
 }

@@ -52,13 +52,15 @@ public class FxDockTabPane
 	}
 
 
-	protected Tab newTab(Node n)
+	protected Tab newTab(Node nd)
 	{
+		Node n = DockTools.prepareToAdd(nd);
+			
 		Tab t = new Tab(null, n);
 		if(n instanceof FxDockPane)
 		{
 			FxDockPane p = (FxDockPane)n;
-			t.textProperty().bindBidirectional(p.titleProperty());
+			//t.textProperty().bindBidirectional(p.titleProperty());
 			t.setGraphic(p.titleField);
 			t.setOnClosed((ev) -> DockTools.remove(n));
 		}
@@ -98,6 +100,13 @@ public class FxDockTabPane
 		{
 			removeTab(ix);
 		}
+	}
+	
+	
+	public void setTab(int ix, Node n)
+	{
+		removeTab(ix);
+		addTab(ix, n);
 	}
 	
 	

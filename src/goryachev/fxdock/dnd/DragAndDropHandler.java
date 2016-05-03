@@ -327,7 +327,7 @@ public class DragAndDropHandler
 		{
 			public void executePrivate()
 			{
-				DockTools.moveToPane_NEW(client, target, where);
+				DockTools.moveToPane(client, target, where);
 			}
 		};
 		

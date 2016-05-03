@@ -51,10 +51,7 @@ public class FxDockSplitPane
 	
 	public void addPane(Node n)
 	{
-		if(n == null)
-		{
-			n = new FxDockEmptyPane();
-		}
+		n = DockTools.prepareToAdd(n);
 		getItems().add(n);
 		DockTools.setParent(this, n);
 	}
@@ -62,6 +59,7 @@ public class FxDockSplitPane
 	
 	public void addPane(int ix, Node n)
 	{
+		n = DockTools.prepareToAdd(n);
 		getItems().add(ix, n);
 		DockTools.setParent(this, n);
 	}
@@ -69,8 +67,8 @@ public class FxDockSplitPane
 	
 	public void setPane(int ix, Node n)
 	{
-		getItems().set(ix, n);
-		DockTools.setParent(this, n);
+		removePane(ix);
+		addPane(ix, n);
 	}
 	
 	

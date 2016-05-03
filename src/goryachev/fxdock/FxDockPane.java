@@ -24,7 +24,7 @@ public abstract class FxDockPane
 	extends FxDockBorderPane
 {
 	public final CAction closeAction = new CAction() { public void action() { actionClose(); }}; 
-	public final Label titleField = new Label();;
+	public final Label titleField = new Label();
 	private final ReadOnlyBooleanWrapper tabMode = new ReadOnlyBooleanWrapper();
 	private final SimpleStringProperty title = new SimpleStringProperty();
 	private final String type;
