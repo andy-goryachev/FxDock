@@ -66,7 +66,10 @@ public class DockTools
 				else
 				{
 					int ix = indexInParent(child);
-					replaceChild(oldp, ix, new DeletedPane());
+					if(ix >= 0)
+					{
+						replaceChild(oldp, ix, new DeletedPane());
+					}
 				}
 			}
 			prop.set(p);
@@ -443,23 +446,23 @@ public class DockTools
 	
 	
 	/** replaces a child at the specified index in the parent */
-	private static void replaceChild(Node parent, int index, Node newPane)
+	private static void replaceChild(Node p, int index, Node newChild)
 	{
-		if(parent instanceof FxDockSplitPane)
+		if(p instanceof FxDockSplitPane)
 		{
-			((FxDockSplitPane)parent).setPane(index, newPane);
+			((FxDockSplitPane)p).setPane(index, newChild);
 		}
-		if(parent instanceof FxDockTabPane)
+		else if(p instanceof FxDockTabPane)
 		{
-			((FxDockTabPane)parent).setTab(index, newPane);
+			((FxDockTabPane)p).setTab(index, newChild);
 		}
-		else if(parent instanceof FxDockRootPane)
+		else if(p instanceof FxDockRootPane)
 		{
-			((FxDockRootPane)parent).setContent(newPane);
+			((FxDockRootPane)p).setContent(newChild);
 		}
 		else
 		{
-			throw new Error("?" + parent);
+			throw new Error("?" + p);
 		}
 	}
 	
@@ -530,7 +533,11 @@ public class DockTools
 			for(int i=p.getTabCount()-1; i>=0; --i)
 			{
 				Node n = p.getTab(i);
-				if(n instanceof DeletedPane)
+				if(n == null)
+				{
+					p.removeTab(i);
+				}
+				else if(n instanceof DeletedPane)
 				{
 					p.removeTab(i);
 				}

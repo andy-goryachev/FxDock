@@ -60,9 +60,12 @@ public class FxDockTabPane
 		if(n instanceof FxDockPane)
 		{
 			FxDockPane p = (FxDockPane)n;
-			//t.textProperty().bindBidirectional(p.titleProperty());
 			t.setGraphic(p.titleField);
-			t.setOnClosed((ev) -> DockTools.remove(n));
+			t.setOnClosed((ev) -> 
+			{
+				Node pp = DockTools.getParent(this);
+				DockTools.collapseEmptySpace(pp);
+			});
 		}
 		return t;
 	}
