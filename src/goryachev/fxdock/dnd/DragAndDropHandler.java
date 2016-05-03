@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.dnd;
+import goryachev.common.util.D;
 import goryachev.fx.FX;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -87,6 +88,8 @@ public class DragAndDropHandler
 	
 	protected static void setDropOp(DropOp op)
 	{
+		D.print(op);
+		
 		if(dropOp != null)
 		{
 			if(dropOp.isSame(op))
@@ -173,6 +176,7 @@ public class DragAndDropHandler
 		if(root.getContent() == client)
 		{
 			// don't drop on itself
+			D.print("null client");
 			return null;
 		}
 		
@@ -194,11 +198,11 @@ public class DragAndDropHandler
 		double x = p.getX();
 		if(x < WINDOW_EDGE_HORIZONTAL)
 		{
-			DropOp op = new DropOp(root, Where.LEFT)
+			DropOp op = new DropOp(root, WhereEdge.LEFT)
 			{
 				public void executePrivate()
 				{
-					DockTools.insertPane(client, root, getWhere());
+					DockTools.insertPane(client, root, Where.LEFT);
 				}
 			};
 			op.addRect(root, 0, 0, WINDOW_EDGE_HORIZONTAL, h);
@@ -206,11 +210,11 @@ public class DragAndDropHandler
 		}
 		else if(x > (w - WINDOW_EDGE_HORIZONTAL))
 		{
-			DropOp op = new DropOp(root, Where.RIGHT)
+			DropOp op = new DropOp(root, WhereEdge.RIGHT)
 			{
 				public void executePrivate()
 				{
-					DockTools.insertPane(client, root, getWhere());
+					DockTools.insertPane(client, root,  Where.RIGHT);
 				}
 			};
 			op.addRect(root, w - WINDOW_EDGE_HORIZONTAL, 0, WINDOW_EDGE_HORIZONTAL, h);
@@ -220,11 +224,11 @@ public class DragAndDropHandler
 		double y = p.getY();
 		if(y < WINDOW_EDGE_VERTICAL)
 		{
-			DropOp op = new DropOp(root, Where.TOP)
+			DropOp op = new DropOp(root, WhereEdge.TOP)
 			{
 				public void executePrivate()
 				{
-					DockTools.insertPane(client, root, getWhere());
+					DockTools.insertPane(client, root, Where.TOP);
 				}
 			};
 			op.addRect(root, 0, 0, w, WINDOW_EDGE_VERTICAL);
@@ -232,11 +236,11 @@ public class DragAndDropHandler
 		}
 		else if(y > (h - WINDOW_EDGE_VERTICAL))
 		{
-			DropOp op = new DropOp(root, Where.BOTTOM)
+			DropOp op = new DropOp(root, WhereEdge.BOTTOM)
 			{
 				public void executePrivate()
 				{
-					DockTools.insertPane(client, root, getWhere());
+					DockTools.insertPane(client, root, Where.BOTTOM);
 				}
 			};
 			op.addRect(root, 0, h - WINDOW_EDGE_VERTICAL, w, WINDOW_EDGE_VERTICAL);

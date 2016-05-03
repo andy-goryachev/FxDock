@@ -43,4 +43,10 @@ public class WhereScreen
 	{
 		return CKit.hashCode(WhereScreen.class, screenx, screeny);
 	}
+	
+	
+	public String toString()
+	{
+		return "(" + screenx + "," + screeny + ")";
+	}
 }

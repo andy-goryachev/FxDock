@@ -385,7 +385,36 @@ public class DockTools
 
 	private static Node makeSplit(Node client, Node old, Where where)
 	{
-		// TODO check split pane to see if can add a pane instead
+		// check if nested splits are not needed
+		Node p = getParent(old);
+		if(p instanceof FxDockSplitPane)
+		{
+			FxDockSplitPane sp = (FxDockSplitPane)p;
+			if(sp.getOrientation() == Orientation.HORIZONTAL)
+			{
+				switch(where)
+				{
+				case LEFT:
+					sp.addPane(0, client);
+					return sp;
+				case RIGHT:
+					sp.addPane(client);
+					return sp;
+				}
+			}
+			else
+			{
+				switch(where)
+				{
+				case TOP:
+					sp.addPane(0, client);
+					return sp;
+				case BOTTOM:
+					sp.addPane(client);
+					return sp;
+				}
+			}
+		}
 		
 		switch(where)
 		{
@@ -589,7 +618,7 @@ public class DockTools
 		{
 			FxDockRootPane rp = (FxDockRootPane)parent;
 			Node n = rp.getContent();
-			if(n == null)
+			if(isEmpty(n))
 			{
 				if(!closeWindowUnlessLast(parent))
 				{
