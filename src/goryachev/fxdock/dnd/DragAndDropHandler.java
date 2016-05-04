@@ -29,6 +29,7 @@ import javafx.stage.StageStyle;
 public class DragAndDropHandler
 {
 	public static final double DRAG_WINDOW_OPACITY = 0.5;
+	public static final double SPLIT_COLLAPSE_THRESHOLD = 6;
 	public static final double PANE_EDGE_HORIZONTAL = 0.3;
 	public static final double PANE_EDGE_VERTICAL = 0.3;
 	public static final double WINDOW_EDGE_HORIZONTAL = 30;

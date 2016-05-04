@@ -1,10 +1,12 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
+import goryachev.fxdock.dnd.DragAndDropHandler;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.MouseEvent;
 
 
 /**
@@ -18,14 +20,50 @@ public class FxDockSplitPane
 	
 	public FxDockSplitPane()
 	{
+		init();
 	}
 	
 	
 	public FxDockSplitPane(Orientation or, Node a, Node b)
 	{
 		setOrientation(or);
+		init();
+		
 		addPane(a);
 		addPane(b);
+	}
+	
+	
+	private void init()
+	{
+		addEventFilter(MouseEvent.MOUSE_RELEASED, (ev) -> updateDividers());
+	}
+	
+	
+	protected void updateDividers()
+	{
+		Orientation ori = getOrientation();
+		for(int i=getPaneCount()-1; i>=0; i--)
+		{
+			Node n = getPane(i);
+			if(n instanceof FxDockEmptyPane)
+			{
+				double sz;
+				if(ori == Orientation.HORIZONTAL)
+				{
+					sz = ((FxDockEmptyPane)n).getWidth();
+				}
+				else
+				{
+					sz = ((FxDockEmptyPane)n).getHeight();
+				}
+				
+				if(sz < DragAndDropHandler.SPLIT_COLLAPSE_THRESHOLD)
+				{
+					removePane(i);
+				}
+			}
+		}
 	}
 	
 	
