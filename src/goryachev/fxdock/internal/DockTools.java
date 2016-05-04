@@ -378,7 +378,7 @@ public class DockTools
 		else
 		{
 			// TODO this does not look right - use unlink before starting the move
-			//unlink(n);
+			unlink(n);
 			return n;
 		}
 	}

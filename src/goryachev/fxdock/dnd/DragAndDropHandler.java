@@ -1,6 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.dnd;
-import goryachev.common.util.D;
 import goryachev.fx.FX;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -89,8 +88,6 @@ public class DragAndDropHandler
 	
 	protected static void setDropOp(DropOp op)
 	{
-		D.print(op);
-		
 		if(dropOp != null)
 		{
 			if(dropOp.isSame(op))
@@ -177,7 +174,6 @@ public class DragAndDropHandler
 		if(root.getContent() == client)
 		{
 			// don't drop on itself
-			D.print("null client");
 			return null;
 		}
 		
