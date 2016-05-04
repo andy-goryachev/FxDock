@@ -388,7 +388,7 @@ public class DockTools
 	{
 		if(client == old)
 		{
-			client = new FxDockEmptyPane();
+			old = new FxDockEmptyPane();
 		}
 		
 		// check if nested splits are not needed
@@ -520,6 +520,8 @@ public class DockTools
 			
 			// combine empty panes
 			boolean empty = false;
+			int ct = 0;
+			int index = -1;
 			for(int i=p.getPaneCount()-1; i>=0; --i)
 			{
 				Node n = p.getPane(i);
@@ -537,25 +539,26 @@ public class DockTools
 				else
 				{
 					empty = false;
+					index = i;
+					ct++;
 				}
 			}
 			
-			int ct = p.getPaneCount();
 			if(ct < 2)
 			{
 				int ix = indexInParent(p);
-				Node p2 = getParent(p); 
+				Node pp = getParent(p); 
 				
 				switch(ct)
 				{
 				case 0:
-					replaceChild(p2, ix, new DeletedPane());
-					collapseEmptySpace(p2);
+					replaceChild(pp, ix, new DeletedPane());
+					collapseEmptySpace(pp);
 					break;
 				case 1:
 					// no need to have split pane with a single pane
-					Node n = p.getPane(0);
-					replaceChild(p2, ix, n);
+					Node n = p.getPane(index);
+					replaceChild(pp, ix, n);
 					break;
 				}
 			}
@@ -580,6 +583,8 @@ public class DockTools
 			
 			// combine empty panes
 			boolean empty = false;
+			int ct = 0;
+			int index = -1;
 			for(int i=p.getTabCount()-1; i>=0; --i)
 			{
 				Node n = p.getTab(i);
@@ -597,10 +602,11 @@ public class DockTools
 				else
 				{
 					empty = false;
+					index = i;
+					ct++;
 				}
 			}
 			
-			int ct = p.getTabCount();
 			if(ct < 2)
 			{
 				int ix = indexInParent(p);
@@ -614,7 +620,7 @@ public class DockTools
 					break;
 				case 1:
 					// no need to have tab pane with a single tab
-					Node n = p.getTab(0);
+					Node n = p.getTab(index);
 					replaceChild(p2, ix, n);
 					break;
 				}
@@ -849,7 +855,6 @@ public class DockTools
 	public static void moveToPane(FxDockPane client, Pane target, Where where)
 	{
 		Node p = getParent(client);
-
 		Node targetParent = getParent(target);
 
 		if(targetParent instanceof FxDockSplitPane)
