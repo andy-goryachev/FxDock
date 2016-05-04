@@ -377,7 +377,8 @@ public class DockTools
 		}
 		else
 		{
-			unlink(n);
+			// TODO this does not look right - use unlink before starting the move
+			//unlink(n);
 			return n;
 		}
 	}
@@ -385,6 +386,11 @@ public class DockTools
 
 	private static Node makeSplit(Node client, Node old, Where where)
 	{
+		if(client == old)
+		{
+			client = new FxDockEmptyPane();
+		}
+		
 		// check if nested splits are not needed
 		Node p = getParent(old);
 		if(p instanceof FxDockSplitPane)
