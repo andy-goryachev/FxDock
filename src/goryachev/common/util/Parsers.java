@@ -321,7 +321,7 @@ public class Parsers
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			Log.fail(e);
 		}
 		
 		return null;
@@ -380,7 +380,7 @@ public class Parsers
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				Log.fail(e);
 			}
 		}
 		return null;
@@ -411,13 +411,13 @@ public class Parsers
 					}
 					catch(Exception e)
 					{
-						Log.err(e);
+						Log.fail(e);
 					}
 				}
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				Log.fail(e);
 			}
 		}
 		return null;

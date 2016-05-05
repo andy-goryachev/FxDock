@@ -1,7 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.common.util.CList;
-import goryachev.common.util.CLog;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
@@ -26,7 +25,7 @@ public class FxDockFramework
 	
 	//
 	
-	protected static final CLog log = Log.get("FxDockFramework");
+	protected static final Log log = Log.get("FxDockFramework");
 	private static final CMap<Object,Object> windows = new CMap<>();
 	private static final WeakList<FxDockWindow> windowStack = new WeakList<>(); // top window last
 	private static Generator generator;

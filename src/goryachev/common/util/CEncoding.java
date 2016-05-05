@@ -83,7 +83,7 @@ public class CEncoding
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				Log.fail(e);
 			}
 		}
 		

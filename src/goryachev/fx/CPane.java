@@ -410,7 +410,7 @@ public class CPane
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			Log.fail(e);
 		}
 	}
 

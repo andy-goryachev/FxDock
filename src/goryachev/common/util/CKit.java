@@ -411,7 +411,7 @@ public class CKit
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			Log.fail(e);
 			return null;
 		}
 	}
@@ -2025,7 +2025,7 @@ public class CKit
 				}
 				catch(Exception e)
 				{
-					Log.err(e);
+					Log.fail(e);
 				}
 			}
 		}

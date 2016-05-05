@@ -121,7 +121,7 @@ public class RFileFilter
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				Log.fail(e);
 			}
 		}
 		
@@ -223,7 +223,7 @@ public class RFileFilter
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			Log.fail(e);
 		}
 		
 		RFileFilter f = new RFileFilter();

@@ -53,7 +53,7 @@ public abstract class LocalizedPromptsProvider
 				}
 				catch(Exception e)
 				{
-					Log.err(new Exception("failed to load prompts for " + language + " from path " + path, e));
+					Log.fail(new Exception("failed to load prompts for " + language + " from path " + path, e));
 					prompts = null;
 				}
 			}
@@ -74,7 +74,7 @@ public abstract class LocalizedPromptsProvider
 				}
 				catch(Exception e)
 				{
-					Log.err(new Exception("failed to load prompts for " + language + " from file " + f, e));
+					Log.fail(new Exception("failed to load prompts for " + language + " from file " + f, e));
 					prompts = null;
 				}
 			}

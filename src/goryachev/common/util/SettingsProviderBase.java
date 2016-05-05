@@ -16,7 +16,7 @@ public abstract class SettingsProviderBase
 	
 	// stores String or String[]
 	protected CMap<String,Object> data = new CMap();
-	protected static final CLog log = Log.get("SettingsProviderBase");
+	protected static final Log log = Log.get("SettingsProviderBase");
 
 	
 	public SettingsProviderBase()
@@ -240,7 +240,7 @@ public abstract class SettingsProviderBase
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.err(e);
 		}
 		return null;
 	}

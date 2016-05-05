@@ -79,7 +79,7 @@ public class CssLoader
 		catch(Throwable e)
 		{
 			// css will be disabled
-			Log.err(e);
+			Log.fail(e);
 		}
 	}
 	
@@ -149,7 +149,7 @@ public class CssLoader
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			Log.fail(e);
 		}
 	}
 		

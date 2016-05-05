@@ -57,7 +57,7 @@ public class ParallelExecutor
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				Log.fail(e);
 			}
 			closed = true;
 		}

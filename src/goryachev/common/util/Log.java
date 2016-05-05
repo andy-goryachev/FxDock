@@ -12,9 +12,11 @@ import java.io.File;
 /**
  * Global logging subsystem.
  * 
+ *   static methods
  * Log.configFromFile(File);
  * Log.reset();
- * Log. FIX connect loggers to appenders
+ * Log. TODO connect loggers to appenders
+ * Log.fail()
  * 
  * Log.conf("ChannelName", Log.Level.INFO);
  * 
@@ -27,31 +29,238 @@ import java.io.File;
  */
 public class Log
 {
-	private static final CMap<String,CLog> channels = new CMap();
-	private static final CMap<String,LogWriter> writers = new CMap();
-	private static volatile CLog errorChannel = initErrorChannel();
+	private String name;
+	private volatile boolean enabled = true;
+	private volatile boolean printCallingMethod = true;
+	// using unsynchronized list, which will be replaced with a new instance on any change
+	private volatile CList<ILogWriter> writers = new CList(0);
+
+	private static final CMap<String,Log> channels = new CMap();
+	private static final CMap<String,LogWriter> writerByName = new CMap();
+	private static volatile Log errorChannel = initErrorChannel();
 	
 	
-	private Log()
+	public Log(String name)
 	{
+		this.name = name;
 	}
 	
 	
-	private static CLog initErrorChannel()
+	public String getName()
 	{
-		CLog ch = getLog(null);
+		return name;
+	}
+	
+	
+	public void err(Throwable e)
+	{
+		if(enabled)
+		{
+			LogEntry en = new LogEntry(e, null, 0);
+			if(printCallingMethod)
+			{
+				en.setCaller(e, 0);
+			}
+			add(en);
+		}
+	}
+	
+	
+	public void err(String message)
+	{
+		err(message, 2);
+	}
+	
+	
+	protected void err(String message, int level)
+	{
+		if(enabled)
+		{
+			Throwable e = new Throwable(message);
+			LogEntry en = new LogEntry(e, null, level);
+			if(printCallingMethod)
+			{
+				en.setCaller(e, level);
+			}
+			add(en);
+		}
+	}
+	
+	
+	public void print()
+	{
+		if(enabled)
+		{
+			LogEntry en = new LogEntry("");
+			if(printCallingMethod)
+			{
+				en.setCaller(new Throwable(), 1);
+			}
+			add(en);
+		}
+	}
+	
+	
+	public void print(Object a)
+	{
+		if(enabled)
+		{
+			SB sb = new SB();
+			Log.append(sb, a);
+			
+			LogEntry en = new LogEntry(sb.toString());
+			if(printCallingMethod)
+			{
+				en.setCaller(new Throwable(), 1);
+			}
+			add(en);
+		}
+	}
+	
+	
+	public void print(Object a, Object b)
+	{
+		if(enabled)
+		{
+			SB sb = new SB();
+			Log.append(sb, a);
+			Log.append(sb, b);
+			
+			LogEntry en = new LogEntry(sb.toString());
+			if(printCallingMethod)
+			{
+				en.setCaller(new Throwable(), 1);
+			}
+			add(en);
+		}
+	}
+	
+	
+	public void print(Object a, Object b, Object c)
+	{
+		if(enabled)
+		{
+			SB sb = new SB();
+			Log.append(sb, a);
+			Log.append(sb, b);
+			Log.append(sb, c);
+			
+			LogEntry en = new LogEntry(sb.toString());
+			if(printCallingMethod)
+			{
+				en.setCaller(new Throwable(), 1);
+			}
+			add(en);
+		}
+	}
+	
+	
+	public void print(Object a, Object b, Object c, Object d)
+	{
+		if(enabled)
+		{
+			SB sb = new SB();
+			Log.append(sb, a);
+			Log.append(sb, b);
+			Log.append(sb, c);
+			Log.append(sb, d);
+			
+			LogEntry en = new LogEntry(sb.toString());
+			if(printCallingMethod)
+			{
+				en.setCaller(new Throwable(), 1);
+			}
+			add(en);
+		}
+	}
+	
+	
+	public void print(Object a, Object b, Object c, Object d, Object e)
+	{
+		if(enabled)
+		{
+			SB sb = new SB();
+			Log.append(sb, a);
+			Log.append(sb, b);
+			Log.append(sb, c);
+			Log.append(sb, d);
+			Log.append(sb, e);
+			
+			LogEntry en = new LogEntry(sb.toString());
+			if(printCallingMethod)
+			{
+				en.setCaller(new Throwable(), 1);
+			}
+			add(en);
+		}
+	}
+	
+	
+	protected void add(LogEntry en)
+	{
+		CList<ILogWriter> ws = writers;
+		for(int i=ws.size()-1; i>=0; i--)
+		{
+			ws.get(i).write(en);
+		}
+	}
+	
+	
+	public void setEnabled(boolean on)
+	{
+		enabled = on;
+	}
+	
+	
+	public boolean isEnabled()
+	{
+		return enabled;
+	}
+	
+	
+	public boolean getPrintCallingMethod()
+	{
+		return printCallingMethod;
+	}
+	
+	
+	public void setPrintCallingMethod(boolean on)
+	{
+		printCallingMethod = on;
+	}
+
+
+	public synchronized void addWriter(ILogWriter wr)
+	{
+		CList<ILogWriter> ws = new CList(writers);
+		ws.add(wr);
+		writers = ws;
+	}
+	
+	
+	public synchronized void removeWriter(ILogWriter wr)
+	{
+		CList<ILogWriter> ws = new CList(writers);
+		ws.remove(wr);
+		writers = ws;
+	}
+	
+	
+	private static Log initErrorChannel()
+	{
+		Log ch = get(null);
 		ch.addWriter(ErrorLogWriter.instance);
 		return ch;
 	}
 	
 	
-	public static void err(Throwable e)
+	public static void fail(Throwable e)
 	{
 		errorChannel.err(e);
 	}
 	
 	
-	public static void err(String message)
+	public static void fail(String message)
 	{
 		errorChannel.err(message, 2);
 	}
@@ -68,99 +277,99 @@ public class Log
 	}
 	
 	
-	public static void print(Object a)
-	{
-		if(errorChannel.isEnabled())
-		{
-			SB sb = new SB();
-			append(sb, a);
-			
-			LogEntry en = new LogEntry(sb.toString());
-			if(errorChannel.getPrintCallingMethod())
-			{
-				en.setCaller(new Throwable(), 1);
-			}
-			errorChannel.add(en);
-		}
-	}
-	
-	
-	public static void print(Object a, Object b)
-	{
-		if(errorChannel.isEnabled())
-		{
-			SB sb = new SB();
-			append(sb, a);
-			append(sb, b);
-			
-			LogEntry en = new LogEntry(sb.toString());
-			if(errorChannel.getPrintCallingMethod())
-			{
-				en.setCaller(new Throwable(), 1);
-			}
-			errorChannel.add(en);
-		}
-	}
-	
-	
-	public static void print(Object a, Object b, Object c)
-	{
-		if(errorChannel.isEnabled())
-		{
-			SB sb = new SB();
-			append(sb, a);
-			append(sb, b);
-			append(sb, c);
-			
-			LogEntry en = new LogEntry(sb.toString());
-			if(errorChannel.getPrintCallingMethod())
-			{
-				en.setCaller(new Throwable(), 1);
-			}
-			errorChannel.add(en);
-		}
-	}
-	
-	
-	public static void print(Object a, Object b, Object c, Object d)
-	{
-		if(errorChannel.isEnabled())
-		{
-			SB sb = new SB();
-			append(sb, a);
-			append(sb, b);
-			append(sb, c);
-			append(sb, d);
-			
-			LogEntry en = new LogEntry(sb.toString());
-			if(errorChannel.getPrintCallingMethod())
-			{
-				en.setCaller(new Throwable(), 1);
-			}
-			errorChannel.add(en);
-		}
-	}
-	
-	
-	public static void print(Object a, Object b, Object c, Object d, Object e)
-	{
-		if(errorChannel.isEnabled())
-		{
-			SB sb = new SB();
-			append(sb, a);
-			append(sb, b);
-			append(sb, c);
-			append(sb, d);
-			append(sb, e);
-			
-			LogEntry en = new LogEntry(sb.toString());
-			if(errorChannel.getPrintCallingMethod())
-			{
-				en.setCaller(new Throwable(), 1);
-			}
-			errorChannel.add(en);
-		}
-	}
+//	public static void print(Object a)
+//	{
+//		if(errorChannel.isEnabled())
+//		{
+//			SB sb = new SB();
+//			append(sb, a);
+//			
+//			LogEntry en = new LogEntry(sb.toString());
+//			if(errorChannel.getPrintCallingMethod())
+//			{
+//				en.setCaller(new Throwable(), 1);
+//			}
+//			errorChannel.add(en);
+//		}
+//	}
+//	
+//	
+//	public static void print(Object a, Object b)
+//	{
+//		if(errorChannel.isEnabled())
+//		{
+//			SB sb = new SB();
+//			append(sb, a);
+//			append(sb, b);
+//			
+//			LogEntry en = new LogEntry(sb.toString());
+//			if(errorChannel.getPrintCallingMethod())
+//			{
+//				en.setCaller(new Throwable(), 1);
+//			}
+//			errorChannel.add(en);
+//		}
+//	}
+//	
+//	
+//	public static void print(Object a, Object b, Object c)
+//	{
+//		if(errorChannel.isEnabled())
+//		{
+//			SB sb = new SB();
+//			append(sb, a);
+//			append(sb, b);
+//			append(sb, c);
+//			
+//			LogEntry en = new LogEntry(sb.toString());
+//			if(errorChannel.getPrintCallingMethod())
+//			{
+//				en.setCaller(new Throwable(), 1);
+//			}
+//			errorChannel.add(en);
+//		}
+//	}
+//	
+//	
+//	public static void print(Object a, Object b, Object c, Object d)
+//	{
+//		if(errorChannel.isEnabled())
+//		{
+//			SB sb = new SB();
+//			append(sb, a);
+//			append(sb, b);
+//			append(sb, c);
+//			append(sb, d);
+//			
+//			LogEntry en = new LogEntry(sb.toString());
+//			if(errorChannel.getPrintCallingMethod())
+//			{
+//				en.setCaller(new Throwable(), 1);
+//			}
+//			errorChannel.add(en);
+//		}
+//	}
+//	
+//	
+//	public static void print(Object a, Object b, Object c, Object d, Object e)
+//	{
+//		if(errorChannel.isEnabled())
+//		{
+//			SB sb = new SB();
+//			append(sb, a);
+//			append(sb, b);
+//			append(sb, c);
+//			append(sb, d);
+//			append(sb, e);
+//			
+//			LogEntry en = new LogEntry(sb.toString());
+//			if(errorChannel.getPrintCallingMethod())
+//			{
+//				en.setCaller(new Throwable(), 1);
+//			}
+//			errorChannel.add(en);
+//		}
+//	}
 	
 	
 	public static void writeStartupLog(File f)
@@ -183,23 +392,17 @@ public class Log
 	}
 
 
-	public synchronized static CLog getLog(String name)
+	public synchronized static Log get(String name)
 	{
-		CLog ch = channels.get(name);
+		Log ch = channels.get(name);
 		if(ch == null)
 		{
-			ch = new CLog(name);
+			ch = new Log(name);
 			channels.put(name, ch);
 		}
 		return ch;
 	}
 	
-	
-	public static CLog get(String name)
-	{
-		return getLog(name);
-	}
-
 
 	public static void init(File dir)
 	{
@@ -220,7 +423,7 @@ public class Log
 		
 		LogWriter wr = new FileLogWriter("file", new File(dir, "error.log"), 5000000L, 5);
 		wr.setAsync(true);
-		writers.put(wr.getName(), wr);
+		writerByName.put(wr.getName(), wr);
 		errorChannel.addWriter(wr);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread("waiting for logger shutdown...")
@@ -237,21 +440,21 @@ public class Log
 	{
 		LogWriter wr = new ConsoleLogWriter("console");
 		wr.setAsync(true);
-		writers.put(wr.getName(), wr);
+		writerByName.put(wr.getName(), wr);
 		errorChannel.addWriter(wr);
 	}
 	
 	
 	public static synchronized void addErrorWriter(LogWriter wr)
 	{
-		writers.put(wr.getName(), wr);
+		writerByName.put(wr.getName(), wr);
 		errorChannel.addWriter(wr);
 	}
 	
 	
 	public static synchronized void addWriter(LogWriter wr)
 	{
-		writers.put(wr.getName(), wr);
+		writerByName.put(wr.getName(), wr);
 	}
 	
 	
@@ -279,7 +482,7 @@ public class Log
 	
 	public synchronized static void addMonitor(ILogWriter wr)
 	{
-		for(CLog ch: channels.values())
+		for(Log ch: channels.values())
 		{
 			ch.addWriter(wr);
 		}
@@ -288,7 +491,7 @@ public class Log
 	
 	public synchronized static void removeMonitor(ILogWriter wr)
 	{
-		for(CLog ch: channels.values())
+		for(Log ch: channels.values())
 		{
 			ch.removeWriter(wr);
 		}
@@ -308,14 +511,14 @@ public class Log
 	{
 		try
 		{
-			CLog ch = getLog(channelName);
-			LogWriter wr = writers.get(writerName);
+			Log ch = get(channelName);
+			LogWriter wr = writerByName.get(writerName);
 			wr.getName();
 			ch.addWriter(wr);
 		}
 		catch(Exception e)
 		{
-			err(e);
+			fail(e);
 		}
 	}
 	
@@ -334,7 +537,7 @@ public class Log
 	
 	public static void conf(String name, boolean on)
 	{
-		CLog log = get(name);
+		Log log = get(name);
 		log.setEnabled(on);
 	}
 }

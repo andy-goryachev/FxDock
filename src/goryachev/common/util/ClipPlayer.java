@@ -37,7 +37,7 @@ public class ClipPlayer
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			Log.fail(e);
 		}
 	}
 	

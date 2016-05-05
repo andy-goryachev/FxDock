@@ -74,7 +74,7 @@ public class PRecord
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			Log.fail(e);
 		}
 	}
 	
