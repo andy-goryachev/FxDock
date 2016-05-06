@@ -2,10 +2,12 @@
 package goryachev.demo.dock;
 import goryachev.common.util.Hex;
 import goryachev.fx.FX;
+import goryachev.fx.HPane;
 import goryachev.fxdock.FxDockPane;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 
 
@@ -16,15 +18,25 @@ public class DemoPane
     extends FxDockPane
 {
 	private static int seq = 1;
-	private int __seq;
+	private int pseq;
 	
 	
 	public DemoPane(String type)
 	{
 		super(type);
-		setCenter(createColorNode(type));
-		this.__seq = seq++;
-		setTitle("pane " + __seq);
+		
+		HPane hp = new HPane();
+		hp.add(FX.label( "PREF"), HPane.PREF);
+		hp.fill(FX.label("FILL"));
+		hp.add(FX.label("PREF"), HPane.PREF);
+		
+		BorderPane bp = new BorderPane();
+		bp.setCenter(createColorNode(type));;
+		bp.setBottom(hp);
+		
+		setCenter(bp);
+		this.pseq = seq++;
+		setTitle("pane " + pseq);
 	}
 	
 	

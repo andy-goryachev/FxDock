@@ -1,6 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.fxdock.FxDockWindow;
+import javafx.scene.Node;
 
 
 /**
@@ -16,5 +17,22 @@ public class FxDockRootPane
 	{
 		this.window = w;
 		setContent(new FxDockEmptyPane());
+	}
+	
+	
+	public final void setContent(Node n)
+	{
+		if(n == null)
+		{
+			n = new FxDockEmptyPane();
+		}
+		setCenter(n);
+		DockTools.setParent(this, n);
+	}
+	
+	
+	public final Node getContent()
+	{
+		return getCenter();
 	}
 }

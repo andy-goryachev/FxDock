@@ -16,24 +16,7 @@ public class FxDockBorderPane
 	
 	public FxDockBorderPane()
 	{
-		setContent(new FxDockEmptyPane());
-	}
-	
-	
-	public final void setContent(Node n)
-	{
-		if(n == null)
-		{
-			n = new FxDockEmptyPane();
-		}
-		setCenter(n);
-		DockTools.setParent(this, n);
-	}
-	
-	
-	public final Node getContent()
-	{
-		return getCenter();
+		setCenter(new FxDockEmptyPane());
 	}
 	
 	
