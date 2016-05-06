@@ -277,4 +277,23 @@ public class FX
 		}
 		return false;
 	}
+	
+	
+	public static void setProperty(Node n, Object k, Object v)
+	{
+		if(v == null)
+		{
+			n.getProperties().remove(k);
+		}
+		else
+		{
+			n.getProperties().put(k, v);
+		}
+	}
+	
+	
+	public static Object getProperty(Node n, Object k)
+	{
+		return n.getProperties().get(k);
+	}
 }
