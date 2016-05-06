@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.demo.dock;
+import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SB;
@@ -10,10 +11,8 @@ import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.WindowListMenuItem;
-import goryachev.fxdock.internal.FxDockSplitPane;
 import java.util.Random;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 
@@ -42,6 +41,7 @@ public class DemoWindow
 	{
 		CMenuBar mb = new CMenuBar();
 		CMenu m;
+		CMenu m2;
 		// file
 		mb.add(m = new CMenu("File"));
 		m.add("Save Settings", saveSettingsAction);
@@ -53,6 +53,11 @@ public class DemoWindow
 		mb.add(m = new CMenu("Window"));
 		m.add("New Window", newWindowAction);
 		m.add(new WindowListMenuItem(this, m));
+		// help
+		mb.add(m = new CMenu("Help"));
+		m.add(m2 = new CMenu("Test", new CAction() { public void action() { D.print("test"); }}));
+		m2.add("T2", new CAction() { public void action() { D.print("t2"); }});
+		m.add("T3", new CAction() { public void action() { D.print("t3"); }});
 		return mb;
 	}
 

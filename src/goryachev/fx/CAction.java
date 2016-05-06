@@ -1,11 +1,13 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.Log;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleButton;
@@ -115,7 +117,25 @@ public abstract class CAction
 	{
 		if(isEnabled())
 		{
-			action();
+			if(ev.getSource() instanceof Menu)
+			{
+				if(ev.getSource() != ev.getTarget())
+				{
+					// selection of a cascading child menu triggers action event for the parent 
+					// for some unknown reason.  ignore this.
+					return;
+				}
+			}
+			
+			try
+			{
+				action();
+			}
+			catch(Exception e)
+			{
+				Log.fail(e);
+			}
+			ev.consume();
 		}
 	}
 }

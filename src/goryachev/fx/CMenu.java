@@ -17,6 +17,13 @@ public class CMenu
 	}
 	
 	
+	public CMenu(String text, CAction a)
+	{
+		super(text);
+		a.attach(this);
+	}
+	
+	
 	public SeparatorMenuItem addSeparator()
 	{
 		SeparatorMenuItem m = new SeparatorMenuItem();
