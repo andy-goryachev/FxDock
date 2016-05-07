@@ -117,7 +117,7 @@ public class FxDockFramework
 		{
 			if(!cur)
 			{
-				unlink(w, id);
+				unlinkWindow(w, id);
 			}
 		});
 		
@@ -125,12 +125,25 @@ public class FxDockFramework
 	}
 	
 	
-	private static void unlink(FxDockWindow w, String id)
+	private static void unlinkWindow(FxDockWindow w, String id)
 	{
-		windows.remove(w);
-		windows.remove(id);
-		
-		saveLayout();
+		if(getWindowCount() == 1)
+		{
+			// save the last window
+			saveLayout();
+			
+			if(confirmExit())
+			{
+				exitPrivate();
+			}
+		}
+		else
+		{
+			windows.remove(w);
+			windows.remove(id);
+			
+			saveLayout();
+		}
 	}
 	
 	
@@ -240,12 +253,27 @@ public class FxDockFramework
 	}
 	
 	
+	private static boolean confirmExit()
+	{
+		// TODO need to add confirmation step for each window (e.g. if modified),
+		// as well as handle bulk operations such as "Save All" and "Ignore All"
+		return true;
+	}
+	
+	
 	public static void exit()
 	{
-		// TODO confirm exiting
-		
 		saveLayout();
 		
+		if(confirmExit())
+		{
+			exitPrivate();
+		}
+	}
+	
+	
+	private static void exitPrivate()
+	{
 		Platform.exit();
 		System.exit(0);
 	}
