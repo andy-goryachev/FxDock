@@ -185,11 +185,18 @@ public class FxDockSchema
 	}
 
 
-	public static void saveContent(String id, Node content)
+	public static void saveContent(String prefix, Node n)
+	{
+		SStream s = saveContentPrivate(n);
+		GlobalSettings.setStream(prefix + SUFFIX_LAYOUT, s);
+	}
+	
+	
+	public static SStream saveContentPrivate(Node content)
 	{
 		SStream s = new SStream();
 		saveContentPrivate(s, content);
-		GlobalSettings.setStream(id + SUFFIX_LAYOUT, s);
+		return s;
 	}
 
 

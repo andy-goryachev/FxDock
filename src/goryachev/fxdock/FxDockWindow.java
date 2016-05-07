@@ -14,6 +14,22 @@ import javafx.scene.layout.BorderPane;
 public abstract class FxDockWindow
 	extends FxWindowBase
 {
+	/** 
+	 * invoked by the framework after the window and its content is created.
+	 * subclasses should override this method to retrieve window-specific parameters via querying the
+	 * global settings:
+	 * GlobalSettings.getXXX(prefix + ".SomeKey");
+	 */
+	public void loadSettings(String prefix) { }
+	
+	/**
+	 * invoked by the framework when necessary to allow the window to store window-specific settings:
+	 * GlobalSettings.setXXX(prefix + ".SomeKey", value);
+	 */
+	public void saveSettings(String prefix) { }
+	
+	//
+	
 	public final CAction closeWindowAction = new CAction() { public void action() { close(); } };
 	private final BorderPane frame;
 	private final FxDockRootPane root;
@@ -108,5 +124,11 @@ public abstract class FxDockWindow
 	public final Node getRight()
 	{
 		return frame.getRight();
+	}
+	
+	
+	public void saveWindowSettings()
+	{
+		FxDockFramework.storeWindow(this);
 	}
 }

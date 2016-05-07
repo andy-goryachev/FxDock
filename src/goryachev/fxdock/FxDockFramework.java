@@ -70,11 +70,16 @@ public class FxDockFramework
 				FxDockWindow w = createWindow();
 				String id = FxDockSchema.windowID(i);
 				
+				FxDockSchema.restoreWindow(id, w);
+				
 				Node n = FxDockSchema.loadContent(id);
 				w.setContent(n);
-				
-				FxDockSchema.restoreWindow(id, w);
+
 				openPrivate(w, id);
+				
+				w.loadSettings(id);
+				
+				w.show();
 			}
 			catch(Exception e)
 			{
@@ -92,12 +97,19 @@ public class FxDockFramework
 		
 		for(FxDockWindow w: ws)
 		{
-			String id = getWindowID(w);
-			FxDockSchema.saveContent(id, w.getContent());
-			FxDockSchema.storeWindow(id, w);
+			storeWindow(w);
 		}
 		
 		GlobalSettings.save();
+	}
+	
+	
+	public static void storeWindow(FxDockWindow w)
+	{
+		String id = getWindowID(w);
+		FxDockSchema.saveContent(id, w.getContent());
+		w.saveSettings(id);
+		FxDockSchema.storeWindow(id, w);
 	}
 
 
@@ -105,6 +117,7 @@ public class FxDockFramework
 	{
 		String id = newWindowID();
 		openPrivate(w, id);
+		w.show();
 	}
 	
 	
@@ -120,8 +133,6 @@ public class FxDockFramework
 				unlinkWindow(w, id);
 			}
 		});
-		
-		w.show();
 	}
 	
 	

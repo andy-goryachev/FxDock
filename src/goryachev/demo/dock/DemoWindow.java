@@ -11,9 +11,11 @@ import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.WindowListMenuItem;
+import goryachev.fxdock.internal.FxDockSchema;
 import java.util.Random;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 
@@ -26,6 +28,7 @@ public class DemoWindow
 	public static final CAction exitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); } };
 	public static final CAction newWindowAction = new CAction() { public void action() { newWindow(); } };
 	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); } };
+	public final Label statusField = new Label();
 
 	
 	public DemoWindow()
@@ -65,6 +68,7 @@ public class DemoWindow
 	protected Node createStatusBar()
 	{
 		BorderPane p = new BorderPane();
+		p.setLeft(statusField);
 		p.setRight(FX.label("copyright © 2016 andy goryachev", new Insets(1, 20, 1, 10)));
 		return p;
 	}
@@ -97,5 +101,12 @@ public class DemoWindow
 	{
 		FxDockFramework.saveLayout();
 		GlobalSettings.save();
+	}
+
+
+	public void saveSettings(String prefix)
+	{
+		String s = FxDockSchema.saveContentPrivate(getContent()).toString();
+		statusField.setText(s);
 	}
 }

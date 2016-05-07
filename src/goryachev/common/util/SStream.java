@@ -94,4 +94,10 @@ public class SStream
 	{
 		return list.toArray(new String[list.size()]);
 	}
+	
+	
+	public String toString()
+	{
+		return list.toString();
+	}
 }
