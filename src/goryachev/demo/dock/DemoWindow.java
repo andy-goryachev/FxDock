@@ -32,7 +32,7 @@ public class DemoWindow
 	{
 		setTop(createMenu());
 		setBottom(createStatusBar());
-		setMinSize(500, 300);
+//		setMinSize(500, 300);
 		setTitle("FxDock Framework Demo");
 	}
 	

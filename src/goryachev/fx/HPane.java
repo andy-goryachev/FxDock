@@ -108,13 +108,13 @@ public class HPane
 	}
 	
 	
-	protected double ssz(double x)
+	protected double snapsize(double x)
 	{
 		return snapSize(x);
 	}
 	
 	
-	protected double ssp(double x)
+	protected double snapspace(double x)
 	{
 		return snapSpace(x);
 	}
@@ -145,10 +145,10 @@ public class HPane
 		{
 			this.nodes = nodes;
 			this.sz = nodes.size();
-			top = ssp(m.getTop());
-			bottom = ssp(m.getBottom());
-			left = ssp(m.getLeft());
-			right = ssp(m.getRight());
+			top = snapspace(m.getTop());
+			bottom = snapspace(m.getBottom());
+			left = snapspace(m.getLeft());
+			right = snapspace(m.getRight());
 		}
 		
 		
@@ -196,7 +196,7 @@ public class HPane
 				double w = getFixedWidth(n);
 				if(w < 0)
 				{
-					w = ssz(sizingMethod.apply(n));
+					w = snapsize(sizingMethod.apply(n));
 				}
 				
 				if(inLayout)
@@ -221,7 +221,7 @@ public class HPane
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
-				double d = ssz(sizingMethod.apply(n));
+				double d = snapsize(sizingMethod.apply(n));
 				if(d > max)
 				{
 					max = d;
@@ -232,10 +232,11 @@ public class HPane
 		}
 		
 		
+		/** size to allocate extrac space between FILL and PERCENT cells */
 		protected void expand(double delta)
 		{
 			// space available for FILL/PERCENT columns
-			double available = delta;
+			double flex = delta;
 			// ratio of columns with percentage explicitly set
 			double percent = 0;
 			// number of FILL columns
@@ -249,23 +250,23 @@ public class HPane
 				{
 					// percent
 					percent += cc;
-					available += size[i];
+					flex += size[i];
 				}
 				else if(isFill(cc))
 				{
 					// fill
 					fillCount++;
-					available += size[i];
+					flex += size[i];
 				}
 			}
 			
 			// no overbooking
-			if(available < 0)
+			if(flex < 0)
 			{
-				available = 0;
+				flex = 0;
 			}
 			
-			double remaining = available;
+			double remaining = flex;
 			
 			// PERCENT sizes first
 			for(int i=0; i<sz; i++)
@@ -277,7 +278,7 @@ public class HPane
 					double w;
 					if(remaining > 0)
 					{
-						w = ssz(cc * available);
+						w = snapsize(cc * flex);
 						remaining -= w;
 					}
 					else
@@ -302,7 +303,7 @@ public class HPane
 						double w;
 						if(remaining >= 0)
 						{
-							w = Math.min(cw, available);
+							w = Math.min(cw, flex);
 							remaining -= w;
 						}
 						else
@@ -317,9 +318,14 @@ public class HPane
 		}
 		
 		
-		// TODO if more than min size: contract between min and pref
-		// otherwise contract all proportionally
-		// except for fixed sizes
+		/** fixed size: keep; distribute space proportionally to their *minimum* size */
+		protected void contract(double delta)
+		{
+			
+		}
+		
+		
+		/** fixed size: keep, squeeze the rest proportionally to their *minimum* size */
 		protected void squeeze(double delta)
 		{
 			/*
@@ -443,7 +449,16 @@ public class HPane
 			double dw = getWidth() - pref;
 			if(dw < 0)
 			{
-				squeeze(dw);
+				double min = computeWidth((n) -> n.minWidth(-1), true);
+				dw = getWidth() - min;
+				if(dw < 0)
+				{
+					squeeze(dw);
+				}
+				else
+				{
+					contract(dw);
+				}
 			}
 			else if(dw > 0)
 			{
