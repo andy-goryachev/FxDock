@@ -12,10 +12,10 @@ import javafx.scene.layout.Region;
 
 
 /**
- * Horizontally arranged Pane that lays out its child nodes using the following constraints:
+ * Vertically arranged Pane that lays out its child nodes using the following constraints:
  * PREF, FILL, percentage, exact pixels.
  */
-public class HPane
+public class VPane
 	extends Pane
 {
 	public static final double FILL = -1.0;
@@ -24,13 +24,13 @@ public class HPane
 	protected static final Object KEY_CONSTRAINT = new Object();
 	
 	
-	public HPane(int hgap)
+	public VPane(int hgap)
 	{
 		this.gap = hgap;
 	}
 	
 	
-	public HPane()
+	public VPane()
 	{
 	}
 	
@@ -65,25 +65,25 @@ public class HPane
 	
 	protected double computePrefWidth(double height)
 	{
-		return h().computeSizes(true);
+		return h().computeWidth(height, true);	
 	}
 	
 
 	protected double computeMinWidth(double height)
 	{
-		return h().computeSizes(false);
+		return h().computeWidth(height, false);
 	}
 	
 	
 	protected double computePrefHeight(double width)
 	{
-		return h().computeHeight(width, true);
+		return h().computeSizes(true);
 	}
 
 	
 	protected double computeMinHeight(double width)
 	{
-		return h().computeHeight(width, false);
+		return h().computeSizes(false);
 	}
 	
 	
@@ -199,11 +199,11 @@ public class HPane
 				{
 					if(preferred)
 					{
-						d = ceil(n.prefWidth(-1));
+						d = ceil(n.prefHeight(-1));
 					}
 					else
 					{
-						d = ceil(n.minWidth(-1));
+						d = ceil(n.minHeight(-1));
 					}
 				}
 				
@@ -215,11 +215,11 @@ public class HPane
 				sum += d;
 			}
 			
-			return sum + left + right + gaps;
+			return sum + top + bottom + gaps;
 		}
 		
 		
-		protected double computeHeight(double width, boolean preferred)
+		protected double computeWidth(double height, boolean preferred)
 		{
 			int max = 0;
 			for(int i=0; i<sz; i++)
@@ -228,11 +228,11 @@ public class HPane
 				int d;
 				if(preferred)
 				{
-					d = ceil(n.prefHeight(width));
+					d = ceil(n.prefWidth(height));
 				}
 				else
 				{
-					d = ceil(n.minHeight(width));				
+					d = ceil(n.minWidth(height));				
 				}
 				if(d > max)
 				{
@@ -240,7 +240,7 @@ public class HPane
 				}
 			}
 			
-			return max + top + bottom;
+			return max + left + right;
 		}
 		
 		
@@ -269,13 +269,13 @@ public class HPane
 				}
 			}
 			
-			double extra = (getWidth() - left - right - gaps - sum);
+			double extra = (getHeight() - top - bottom - gaps - sum);
 			double percentRatio = (totalPercent > 1.0) ? (1 / totalPercent) : 1.0;
 			double fillRatio = (1.0 - totalPercent * percentRatio) / fills;
 			
 			// keeping a double cumulative value in addition to the integer one
 			// in order to avoid accumulating rounding errors
-			int isum = gaps + left + right;
+			int isum = gaps + top + bottom;
 			double dsum = isum;
 			
 			// compute sizes
@@ -310,7 +310,7 @@ public class HPane
 				
 				if(i == last)
 				{
-					di = floor(getWidth() - isum);
+					di = floor(getHeight() - isum);
 				}
 				
 				size[i] = di;
@@ -337,7 +337,7 @@ public class HPane
 				sum += size[i];
 			}
 			
-			double extra = (getWidth() - left - right - gaps - sum);
+			double extra = (getHeight() - top - bottom - gaps - sum);
 			if(extra < 0)
 			{
 				// do not make it smaller than permitted by the minimum size
@@ -346,7 +346,7 @@ public class HPane
 			
 			// keeping a double cumulative value in addition to the integer one
 			// in order to avoid accumulating rounding errors
-			int isum = gaps + left + right;
+			int isum = gaps + top + bottom;
 			double dsum = isum;
 			
 			// compute sizes
@@ -372,7 +372,7 @@ public class HPane
 				
 				if(i == last)
 				{
-					di = floor(getWidth() - isum);
+					di = floor(getHeight() - isum);
 				}
 				
 				size[i] = di;
@@ -399,14 +399,14 @@ public class HPane
 		{
 			computePositions();
 			
-			int h = floor(getHeight() - top - bottom);
+			int w = floor(getWidth() - left - right);
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
-				int x = pos[i];
-				int w = size[i];
+				int y = pos[i];
+				int h = size[i];
 				
-				setBounds(n, x, top, w, h);
+				setBounds(n, left, y, w, h);
 			}
 		}
 		
@@ -416,9 +416,9 @@ public class HPane
 			size = new int[sz];
 			
 			// populate size[] with preferred sizes
-			int pw = computeSizes(true);
-			double dw = getWidth() - pw;
-			if(dw < 0)
+			int ph = computeSizes(true);
+			double dh = getHeight() - ph;
+			if(dh < 0)
 			{
 				// populate size[] array with minimum sizes
 				computeSizes(false);
@@ -426,7 +426,7 @@ public class HPane
 				// contract between min size and pref size
 				contract();
 			}
-			else if(dw > 0)
+			else if(dh > 0)
 			{
 				expand();
 			}
