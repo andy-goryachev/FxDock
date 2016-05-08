@@ -143,6 +143,7 @@ public class HPane
 		public int bottom;
 		public int left;
 		public int right;
+		public int[] pref;
 		public int[] size;
 		public int[] pos;
 
@@ -184,7 +185,7 @@ public class HPane
 		}
 		
 		
-		protected double computeSizes(boolean preferred)
+		protected int computeSizes(boolean preferred)
 		{
 			int sum = 0;
 			for(int i=0; i<sz; i++)
@@ -246,94 +247,7 @@ public class HPane
 		
 		
 		/** size to allocate extra space between FILL and PERCENT cells */
-		protected void expand_OLD(double delta)
-		{
-			// space available for FILL/PERCENT columns
-			double flex = delta;
-			// ratio of columns with percentage explicitly set
-			double percent = 0;
-			// number of FILL columns
-			int fillCount = 0;
-			
-			for(int i=0; i<sz; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				if(isPercent(cc))
-				{
-					// percent
-					percent += cc;
-					flex += size[i];
-				}
-				else if(isFill(cc))
-				{
-					// fill
-					fillCount++;
-					flex += size[i];
-				}
-			}
-			
-			// no overbooking
-			if(flex < 0)
-			{
-				flex = 0;
-			}
-			
-			double remaining = flex;
-			
-			// PERCENT sizes first
-			for(int i=0; i<sz; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				if(isPercent(cc))
-				{
-					double w;
-					if(remaining > 0)
-					{
-						w = ceil(cc * flex);
-						remaining -= w;
-					}
-					else
-					{
-						w = 0;
-					}
-					size[i] = (int)w;
-				}
-			}
-			
-			// FILL sizes after PERCENT
-			if(fillCount > 0)
-			{
-				double cw = remaining / fillCount;
-
-				for(int i=0; i<sz; i++)
-				{
-					Node n = nodes.get(i);
-					double cc = getConstraint(n);
-					if(isFill(cc))
-					{
-						double w;
-						if(remaining >= 0)
-						{
-							w = Math.min(cw, flex);
-							remaining -= w;
-						}
-						else
-						{
-							w = 0;
-						}
-						
-						size[i] = (int)w;
-					}
-				}
-			}
-		}
-		
-		
-		/** size to allocate extra space between FILL and PERCENT cells */
-		// FIX for fills and percents: use minimum size
-		protected void expand(double delta_DELETE)
+		protected void expand()
 		{
 			int sum = 0;
 			int fills = 0;
@@ -407,6 +321,8 @@ public class HPane
 				size[i] = d;
 			}
 			
+			// FIX this is a bad idea
+			
 			// distribute integer errors
 			int delta = w - sum - left - right - gaps;
 			D.print(delta); // FIX
@@ -458,116 +374,61 @@ public class HPane
 		/** keep minimum sizes, redistributing extra space between PERCENT and FILL components */
 		protected void contract()
 		{
-			int min = 0;
-			double totalPercent = 0;
-			int fills = 0;
+			int ct = 0;
+			int sum = 0;
+			
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
 				double cc = getConstraint(n);
-				if(isPercent(cc))
+				if(!isFixed(cc))
 				{
-					totalPercent += cc;
-				}
-				else if(isFill(cc))
-				{
-					fills++;
-				}
-				else
-				{
-					if(size[i] == 0)
-					{
-						// treat this as a fill
-						fills++;
-					}
+					ct++;
 				}
 				
-				min += size[i];
+				sum += size[i];
 			}
 			
-			int w = floor(getWidth());
-			int extra = (w - left - right - gaps - min);
+			double extra = (getWidth() - left - right - gaps - sum);
 			if(extra < 0)
 			{
+				// do not make it smaller than permitted by the minimum size
 				extra = 0;
 			}
 			
-			double percentRatio = (totalPercent > 1.0) ? (1 / totalPercent) : 1.0;
-			double fillRatio = (1.0 - totalPercent * percentRatio) / fills;
-			double factor = extra / getWidth();
+			// keeping a double cumulative value in addition to the integer one
+			// in order to avoid accumulating rounding errors
+			int isum = gaps;
+			double dsum = isum;
 			
 			// compute sizes
-			int total = left + right + gaps;
-			for(int i=0; i<sz; i++)
+			int last = sz - 1;
+			for(int i=0; i<=last; i++)
 			{
 				Node n = nodes.get(i);
 				double cc = getConstraint(n);
 				int w0 = size[i];
+				int pr = pref[i];
+				int iw;
 				
-				int d;
-				if(isFill(cc) || (w0 == 0)) // treat zero min width as a fill
+				if(isFixed(cc))
 				{
-					d = round(w0 + extra * fillRatio * factor);
-				}
-				else if(isFixed(cc))
-				{
-					d = ceil(cc);
-				}
-				else if(isPercent(cc))
-				{
-					d = round(w0 + extra * percentRatio * factor);
+					iw = ceil(cc);
+					dsum += iw;
 				}
 				else
 				{
-					d = round(w0 + extra * factor);
+					dsum += (w0 + extra / ct);
+					iw = round(dsum - isum);
 				}
 				
-				total += d;
-				size[i] = d;
-			}
-			
-			// distribute integer errors
-			int delta = w - total;
-			D.print(delta); // FIX
-			if(delta > 0)
-			{
-				for(int i=0; i<sz; i++)
+				if(i == last)
 				{
-					Node n = nodes.get(i);
-					double cc = getConstraint(n);
-					if(!isFixed(cc))
-					{
-						size[i]++;
-						delta--;
-					}
-					
-					if(delta == 0)
-					{
-						break;
-					}
+					iw = floor(getWidth() - isum);
 				}
-			}
-			else if(delta < 0)
-			{
-				for(int i=sz-1; i>=0; i--)
-				{
-					Node n = nodes.get(i);
-					double cc = getConstraint(n);
-
-					if(!isFixed(cc))
-					{
-						if(size[i] > 0)
-						{
-							size[i]--;
-							delta++;
-							
-							if(delta == 0)
-							{
-								break;
-							}
-						}
-					}
-				}
+				
+				size[i] = iw;
+				isum += iw;
 			}
 		}
 		
@@ -607,17 +468,23 @@ public class HPane
 			size = new int[sz];
 			
 			// populate size[] with preferred sizes
-			double pw = computeSizes(true);
+			int pw = computeSizes(true);
 			double dw = getWidth() - pw;
 			if(dw < 0)
 			{
+				// save preferred sizes
+				pref = size;
+				size = new int[sz];
+				
 				// populate size[] array with minimum sizes
 				computeSizes(false);
+				
+				// contract between min size and pref size
 				contract();
 			}
 			else if(dw > 0)
 			{
-				expand(dw);
+				expand();
 			}
 
 			applySizes();
