@@ -117,6 +117,10 @@ public class D
 		{
 			listLongArray((long[])x);
 		}
+		else if(x instanceof double[])
+		{
+			listDoubleArray((double[])x);
+		}
 		else 
 		{
 			print(x);
@@ -213,6 +217,22 @@ public class D
 		sb.append(a.length);
 		
 		for(long d: a)
+		{
+			sb.append("\n");
+			sb.append("    ");
+			sb.append(d);
+		}
+
+		log(sb.toString(), 2);
+	}
+	
+	
+	private static void listDoubleArray(double[] a)
+	{
+		SB sb = new SB();
+		sb.append(a.length);
+		
+		for(double d: a)
 		{
 			sb.append("\n");
 			sb.append("    ");

@@ -1,6 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.common.util.Log;
+import goryachev.common.util.D;
 import goryachev.common.util.Parsers;
 import java.util.List;
 import java.util.function.Function;
@@ -66,7 +66,7 @@ public class HPane
 	
 	protected double computePrefWidth(double height)
 	{
-		return h().computeWidth((nd) -> nd.prefWidth(height), false);
+		return h().computeSizes((nd) -> nd.prefWidth(height), false);
 	}
 	
 	
@@ -78,7 +78,7 @@ public class HPane
 
 	protected double computeMinWidth(double height)
 	{
-		return h().computeWidth((nd) -> nd.minWidth(height), false);
+		return h().computeSizes((nd) -> nd.minWidth(height), false);
 	}
 	
 	
@@ -183,7 +183,7 @@ public class HPane
 		}
 		
 		
-		protected double computeWidth(Function<Node,Double> sizingMethod, boolean inLayout)
+		protected double computeSizes(Function<Node,Double> sizingMethod, boolean inLayout)
 		{
 			if(inLayout)
 			{
@@ -215,7 +215,7 @@ public class HPane
 				total += (gap * (sz - 1));
 			}
 			
-			return total;
+			return total + left + right;
 		}
 		
 		
@@ -236,9 +236,103 @@ public class HPane
 		}
 		
 		
-		/** size to allocate extrac space between FILL and PERCENT cells */
+		/** size to allocate extra space between FILL and PERCENT cells */
 		protected void expand(double delta)
 		{
+			// space available for FILL/PERCENT columns
+			double flex = delta;
+			// ratio of columns with percentage explicitly set
+			double percent = 0;
+			// number of FILL columns
+			int fillCount = 0;
+			
+			for(int i=0; i<sz; i++)
+			{
+				Node n = nodes.get(i);
+				double cc = getConstraint(n);
+				if(isPercent(cc))
+				{
+					// percent
+					percent += cc;
+					flex += size[i];
+				}
+				else if(isFill(cc))
+				{
+					// fill
+					fillCount++;
+					flex += size[i];
+				}
+			}
+			
+			// no overbooking
+			if(flex < 0)
+			{
+				flex = 0;
+			}
+			
+			double remaining = flex;
+			
+			// PERCENT sizes first
+			for(int i=0; i<sz; i++)
+			{
+				Node n = nodes.get(i);
+				double cc = getConstraint(n);
+				if(isPercent(cc))
+				{
+					double w;
+					if(remaining > 0)
+					{
+						w = snapsize(cc * flex);
+						remaining -= w;
+					}
+					else
+					{
+						w = 0;
+					}
+					size[i] = w;
+				}
+			}
+			
+			// FILL sizes after PERCENT
+			if(fillCount > 0)
+			{
+				double cw = remaining / fillCount;
+
+				for(int i=0; i<sz; i++)
+				{
+					Node n = nodes.get(i);
+					double cc = getConstraint(n);
+					if(isFill(cc))
+					{
+						double w;
+						if(remaining >= 0)
+						{
+							w = Math.min(cw, flex);
+							remaining -= w;
+						}
+						else
+						{
+							w = 0;
+						}
+						
+						size[i] = w;
+					}
+				}
+			}
+		}
+		
+		
+		/** 
+		 * allocate space according to the following logic: 
+		 * fixed space - intact;
+		 * everything else - proportionally to their minimum size
+		 */ 
+		protected void contract(double delta)
+		{
+			// FIX
+			// [min,pref] fill,percent,fixed,pref 
+			
+			
 			// space available for FILL/PERCENT columns
 			double flex = delta;
 			// ratio of columns with percentage explicitly set
@@ -343,10 +437,10 @@ public class HPane
 		}
 		
 		
-		protected void computePositions(double start, int gap)
+		protected void computePositions()
 		{
+			double start = left;
 			pos = new double[sz + 1];
-			
 			pos[0] = start;
 			
 			for(int i=0; i<sz; i++)
@@ -359,7 +453,7 @@ public class HPane
 		
 		public void applySizes()
 		{
-			computePositions(left, gap);
+			computePositions();
 			
 			double h = getHeight() - top - bottom;
 			for(int i=0; i<sz; i++)
@@ -370,17 +464,22 @@ public class HPane
 				
 				setBounds(n, x, top, w, h);
 			}
+			
+			D.list(size);
 		}
 		
 
 		public void layout()
 		{
-			double pref = computeWidth((n) -> n.prefWidth(-1), true);
-			double dw = getWidth() - pref;
+			double w = getWidth();
+			D.print(w);
+			
+			double pref = computeSizes((n) -> n.prefWidth(-1), true);
+			double dw = w - pref;
 			if(dw < 0)
 			{
-				double min = computeWidth((n) -> n.minWidth(-1), true);
-				dw = getWidth() - min;
+				double min = computeSizes((n) -> n.minWidth(-1), true);
+				dw = w - min;
 				if(dw < 0)
 				{
 					// force all smaller
@@ -389,7 +488,7 @@ public class HPane
 				else
 				{
 					// honor munimum sizes
-					expand(dw);
+					contract(dw);
 				}
 			}
 			else if(dw > 0)
