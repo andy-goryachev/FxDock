@@ -21,13 +21,13 @@ public class HPane
 {
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;
-	protected int hgap;
+	protected int gap;
 	protected static final Object KEY_CONSTRAINT = new Object();
 	
 	
 	public HPane(int hgap)
 	{
-		this.hgap = hgap;
+		this.gap = hgap;
 	}
 	
 	
@@ -159,14 +159,15 @@ public class HPane
 		}
 
 		
-		protected double getFixedWidth(Node n)
+		/** returns fixed size or a negative value */
+		protected double fixedWidth(Node n)
 		{
 			double w = getConstraint(n);
 			if(w > 1.0)
 			{
-				return w;
+				return snapsize(w);
 			}
-			return -1;
+			return -100.0;
 		}
 		
 		
@@ -186,14 +187,17 @@ public class HPane
 		{
 			if(inLayout)
 			{
-				size = new double[sz];
+				if(size == null)
+				{
+					size = new double[sz];
+				}
 			}
 			
 			double total = 0;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
-				double w = getFixedWidth(n);
+				double w = fixedWidth(n);
 				if(w < 0)
 				{
 					w = snapsize(sizingMethod.apply(n));
@@ -208,7 +212,7 @@ public class HPane
 			
 			if(sz > 1)
 			{
-				total += (hgap * (sz - 1));
+				total += (gap * (sz - 1));
 			}
 			
 			return total;
@@ -318,98 +322,24 @@ public class HPane
 		}
 		
 		
-		/** fixed size: keep; distribute space proportionally to their *minimum* size */
-		protected void contract(double delta)
+		/** all components will be smaller than their minimum size (proportionnaly to their fixed/minimum size) */
+		protected void squeeze(double min)
 		{
-			
-		}
-		
-		
-		/** fixed size: keep, squeeze the rest proportionally to their *minimum* size */
-		protected void squeeze(double delta)
-		{
-			/*
-			// space available for FILL/PERCENT columns
-			int available = delta;
-			// ratio of columns with percentage explicitly set
-			float percent = 0;
-			// number of FILL columns
-			int fillCount = 0;
-			
-			int sz = specs.size();
+			double total = 0;
+			double factor = min / getWidth();
 			for(int i=0; i<sz; i++)
 			{
-				LC lc = specs.get(i);
-				if(lc.isPercent())
-				{
-					// percent
-					percent += lc.width;
-					available += size[i];
-				}
-				else if(lc.isFill())
-				{
-					// fill
-					fillCount++;
-					available += size[i];
-				}
+				Node n = nodes.get(i);
+				double cc = getConstraint(n);
+				double w = snapsize(size[i] * factor); 
+				size[i] = w;
+				total += w;
 			}
 			
-			// no overbooking
-			if(available < 0)
+			if(total != getWidth());
 			{
-				available = 0;
+				// TODO adjust largest?
 			}
-			
-			int remaining = available;
-			
-			// PERCENT sizes first
-			for(int i=0; i<sz; i++)
-			{
-				LC lc = specs.get(i);
-				if(lc.isPercent())
-				{
-					int w;
-					if(remaining > 0)
-					{
-						w = s(lc.width * available);
-						remaining -= w;
-					}
-					else
-					{
-						w = 0;
-					}
-					size[i] = w;
-				}
-			}
-			
-			// FILL sizes after PERCENT
-			if(fillCount > 0)
-			{
-				int cw = remaining / fillCount;
-				
-				for(int i=0; i<sz; i++)
-				{
-					LC lc = specs.get(i);
-					if(lc.isFill())
-					{
-						int w;
-						if(remaining >= 0)
-						{
-							w = Math.min(cw, available);
-							remaining -= w;
-						}
-						else
-						{
-							w = 0;
-						}
-						
-						size[i] = w;
-					}
-				}
-			}
-			
-			// TODO may be change the order of assignments to avoid jitter in the first columns
-			*/
 		}
 		
 		
@@ -427,9 +357,9 @@ public class HPane
 		}
 		
 		
-		public void sizeComponents()
+		public void applySizes()
 		{
-			computePositions(left, hgap);
+			computePositions(left, gap);
 			
 			double h = getHeight() - top - bottom;
 			for(int i=0; i<sz; i++)
@@ -453,11 +383,13 @@ public class HPane
 				dw = getWidth() - min;
 				if(dw < 0)
 				{
-					squeeze(dw);
+					// force all smaller
+					squeeze(min);
 				}
 				else
 				{
-					contract(dw);
+					// honor munimum sizes
+					expand(dw);
 				}
 			}
 			else if(dw > 0)
@@ -465,7 +397,7 @@ public class HPane
 				expand(dw);
 			}
 
-			sizeComponents();
+			applySizes();
 		}
 	}
 }

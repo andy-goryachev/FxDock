@@ -32,9 +32,9 @@ public class DemoPane
 		super(type);
 		
 		VBox vb = new VBox();
-		a(vb, 2, HPane.PREF, HPane.FILL, HPane.PREF);
-		a(vb, 2, HPane.FILL, HPane.FILL, HPane.FILL);
-		a(vb, 2, 20, HPane.FILL, 20);
+//		a(vb, 2, HPane.PREF, HPane.FILL, HPane.PREF);
+//		a(vb, 2, HPane.FILL, HPane.FILL, HPane.FILL);
+//		a(vb, 2, 20, HPane.FILL, 20);
 		a(vb, 2, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL);
 		
 		BorderPane bp = new BorderPane();
@@ -57,7 +57,7 @@ public class DemoPane
 			String text = getDescription(w);
 			TextField t = new TextField(text);
 			t.setEditable(false);
-			t.setPrefColumnCount(1);
+			t.setPrefColumnCount(3);
 			t.setTooltip(new InfoTooltip(t));
 			t.setBackground(FX.background(c));
 			t.setPadding(Insets.EMPTY);
