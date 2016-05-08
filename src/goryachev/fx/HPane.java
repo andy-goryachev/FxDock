@@ -1,6 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.common.util.D;
 import goryachev.common.util.Parsers;
 import java.util.List;
 import javafx.geometry.HPos;
@@ -107,15 +106,15 @@ public class HPane
 	}
 	
 	
-	protected double round(double x)
+	protected int round(double x)
 	{
-		return Math.round(x);
+		return (int)Math.round(x);
 	}
 	
 	
-	protected double ceil(double x)
+	protected int ceil(double x)
 	{
-		return Math.ceil(x);
+		return (int)Math.ceil(x);
 	}
 	
 	
@@ -132,13 +131,13 @@ public class HPane
 	{
 		public final List<Node> nodes;
 		public final int sz;
-		public double top;
-		public double bottom;
-		public double left;
-		public double right;
-		public double[] size;
-		public double[] pref;
-		public double[] pos;
+		public int top;
+		public int bottom;
+		public int left;
+		public int right;
+		public int[] size;
+		public int[] pref;
+		public int[] pos;
 
 
 		public Helper(List<Node> nodes, Insets m)
@@ -179,12 +178,17 @@ public class HPane
 		
 		protected double computeSizes(boolean preferred)
 		{
-			double total = 0;
+			int total = 0;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
-				double w = getConstraint(n);
-				if(!isFixed(w))
+				double cc = getConstraint(n);
+				int w;
+				if(isFixed(cc))
+				{
+					w = ceil(cc);
+				}
+				else
 				{
 					if(preferred)
 					{
@@ -215,11 +219,11 @@ public class HPane
 		
 		protected double computeHeight(double width, boolean preferred)
 		{
-			double max = 0;
+			int max = 0;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
-				double d;
+				int d;
 				if(preferred)
 				{
 					d = ceil(n.prefHeight(width));
@@ -291,7 +295,7 @@ public class HPane
 					{
 						w = 0;
 					}
-					size[i] = w;
+					size[i] = (int)w;
 				}
 			}
 			
@@ -317,7 +321,7 @@ public class HPane
 							w = 0;
 						}
 						
-						size[i] = w;
+						size[i] = (int)w;
 					}
 				}
 			}
@@ -327,8 +331,8 @@ public class HPane
 		/** keep minimum sizes, redistributing extra space between PERCENT and FILL components */
 		protected void contract()
 		{
-			double minSizes = 0;
-			int totalPercent = 0;
+			int min = 0;
+			double totalPercent = 0;
 			int fills = 0;
 			for(int i=0; i<sz; i++)
 			{
@@ -342,54 +346,99 @@ public class HPane
 				{
 					fills++;
 				}
-				
-				minSizes += size[i];
-			}
-			
-			double w = getWidth();
-			double factor = (w - left - right - minSizes) / w;
-			
-			double percentRatio = 1.0;
-			double fillRatio;
-			if(factor < 0)
-			{
-				fillRatio = 0;
-			}
-			else
-			{
-				if(totalPercent > 1.0)
+				else
 				{
-					percentRatio = 1.0 / totalPercent;
+					if(size[i] == 0)
+					{
+						// treat this as a fill
+						fills++;
+					}
 				}
 				
-				fillRatio = (1.0 - percentRatio) / fills;
+				min += size[i];
 			}
 			
-			D.print("factor", factor);
+			int w = (int)Math.floor(getWidth());
+			int extra = (w - left - right - min);
+			if(extra < 0)
+			{
+				extra = 0;
+			}
+			
+			double percentRatio = (totalPercent > 1.0) ? (1 / totalPercent) : 1.0;
+			double fillRatio = (1.0 - totalPercent * percentRatio) / fills;
+			double factor = extra / getWidth();
 			
 			// compute sizes
+			int total = left + right;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
 				double cc = getConstraint(n);
-				if(isFixed(cc))
+				int w0 = size[i];
+				
+				int d;
+				if(isFill(cc) || (w0 == 0)) // treat zero min width as a fill
 				{
-					size[i] = cc;
+					d = round(w0 + extra * fillRatio * factor);
+				}
+				else if(isFixed(cc))
+				{
+					d = ceil(cc);
 				}
 				else if(isPercent(cc))
 				{
-					double w0 = size[i];
-					size[i] = w0 + (pref[i] - w0) * percentRatio * factor;
-				}
-				else if(isFill(cc))
-				{
-					double w0 = size[i];
-					size[i] = w0 + (pref[i] - w0) * fillRatio * factor;
+					d = round(w0 + extra * percentRatio * factor);
 				}
 				else
 				{
-					double w0 = size[i];
-					size[i] = w0 + (pref[i] - w0) * factor;
+					d = round(w0 + extra * factor);
+				}
+				
+				total += d;
+				size[i] = d;
+			}
+			
+			// distribute integer errors
+			int delta = w - total;
+			if(delta > 0)
+			{
+				for(int i=0; i<sz; i++)
+				{
+					Node n = nodes.get(i);
+					double cc = getConstraint(n);
+					if(!isFixed(cc))
+					{
+						size[i]++;
+						delta--;
+					}
+					
+					if(delta == 0)
+					{
+						break;
+					}
+				}
+			}
+			else if(delta < 0)
+			{
+				for(int i=sz-1; i>=0; i--)
+				{
+					Node n = nodes.get(i);
+					double cc = getConstraint(n);
+
+					if(!isFixed(cc))
+					{
+						if(size[i] > 0)
+						{
+							size[i]--;
+							delta++;
+							
+							if(delta == 0)
+							{
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -397,8 +446,8 @@ public class HPane
 		
 		protected void computePositions()
 		{
-			double start = left;
-			pos = new double[sz + 1];
+			int start = left;
+			pos = new int[sz + 1];
 			pos[0] = start;
 			
 			for(int i=0; i<sz; i++)
@@ -422,14 +471,12 @@ public class HPane
 				
 				setBounds(n, x, top, w, h);
 			}
-			
-			D.list(size);
 		}
 		
 
 		public void layout()
 		{
-			size = new double[sz];
+			size = new int[sz];
 			
 			// populate size[] with preferred sizes
 			double pw = computeSizes(true);
@@ -438,7 +485,7 @@ public class HPane
 			{
 				// save preferred sizes
 				pref = size;
-				size = new double[sz];
+				size = new int[sz];
 				
 				// populate size[] array with minimum sizes
 				computeSizes(false);
