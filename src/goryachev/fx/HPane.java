@@ -107,15 +107,15 @@ public class HPane
 	}
 	
 	
-	protected double snapsize(double x)
+	protected double round(double x)
 	{
-		return snapSize(x);
+		return Math.round(x);
 	}
 	
 	
-	protected double snapspace(double x)
+	protected double ceil(double x)
 	{
-		return snapSpace(x);
+		return Math.ceil(x);
 	}
 	
 	
@@ -145,10 +145,10 @@ public class HPane
 		{
 			this.nodes = nodes;
 			this.sz = nodes.size();
-			top = snapspace(m.getTop());
-			bottom = snapspace(m.getBottom());
-			left = snapspace(m.getLeft());
-			right = snapspace(m.getRight());
+			top = round(m.getTop());
+			bottom = round(m.getBottom());
+			left = round(m.getLeft());
+			right = round(m.getRight());
 		}
 		
 		
@@ -188,11 +188,11 @@ public class HPane
 				{
 					if(preferred)
 					{
-						w = snapsize(n.prefWidth(-1));
+						w = ceil(n.prefWidth(-1));
 					}
 					else
 					{
-						w = snapsize(n.minWidth(-1));
+						w = ceil(n.minWidth(-1));
 					}
 				}
 				
@@ -222,11 +222,11 @@ public class HPane
 				double d;
 				if(preferred)
 				{
-					d = snapsize(n.prefHeight(width));
+					d = ceil(n.prefHeight(width));
 				}
 				else
 				{
-					d = snapsize(n.minHeight(width));				
+					d = ceil(n.minHeight(width));				
 				}
 				if(d > max)
 				{
@@ -284,7 +284,7 @@ public class HPane
 					double w;
 					if(remaining > 0)
 					{
-						w = snapsize(cc * flex);
+						w = ceil(cc * flex);
 						remaining -= w;
 					}
 					else
