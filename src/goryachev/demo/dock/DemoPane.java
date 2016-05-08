@@ -49,7 +49,7 @@ public class DemoPane
 	
 	private static void a(Pane p, int gap, double ... specs)
 	{
-		HPane hp = new HPane();
+		HPane hp = new HPane(2);
 		int ix = 0;
 		for(double w: specs)
 		{

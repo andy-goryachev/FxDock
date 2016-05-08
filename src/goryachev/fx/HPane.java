@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.D;
 import goryachev.common.util.Parsers;
 import java.util.List;
 import javafx.geometry.HPos;
@@ -131,6 +132,7 @@ public class HPane
 	{
 		public final List<Node> nodes;
 		public final int sz;
+		public final int gaps;
 		public int top;
 		public int bottom;
 		public int left;
@@ -148,6 +150,7 @@ public class HPane
 			bottom = round(m.getBottom());
 			left = round(m.getLeft());
 			right = round(m.getRight());
+			gaps = (sz > 1) ? (gap * (sz - 1)) : 0;
 		}
 		
 		
@@ -208,12 +211,7 @@ public class HPane
 				total += w;
 			}
 			
-			if(sz > 1)
-			{
-				total += (gap * (sz - 1));
-			}
-			
-			return total + left + right;
+			return total + left + right + gaps;
 		}
 		
 		
@@ -243,7 +241,7 @@ public class HPane
 		
 		
 		/** size to allocate extra space between FILL and PERCENT cells */
-		protected void expand(double delta)
+		protected void expand2(double delta)
 		{
 			// space available for FILL/PERCENT columns
 			double flex = delta;
@@ -328,6 +326,123 @@ public class HPane
 		}
 		
 		
+		/** size to allocate extra space between FILL and PERCENT cells */
+		// FIX for fills and percents: use minimum size
+		protected void expand(double delta_DELETE)
+		{
+			int min = 0;
+			double totalPercent = 0;
+			int fills = 0;
+			for(int i=0; i<sz; i++)
+			{
+				Node n = nodes.get(i);
+				double cc = getConstraint(n);
+				if(isPercent(cc))
+				{
+					totalPercent += cc;
+				}
+				else if(isFill(cc))
+				{
+					fills++;
+				}
+				else
+				{
+					if(size[i] == 0)
+					{
+						// treat this as a fill
+						fills++;
+					}
+				}
+				
+				min += size[i];
+			}
+			
+			int w = (int)Math.floor(getWidth());
+			int extra = (w - left - right - gaps - min);
+//			if(extra < 0)
+//			{
+//				extra = 0;
+//			}
+			
+			double percentRatio = (totalPercent > 1.0) ? (1 / totalPercent) : 1.0;
+			double fillRatio = (1.0 - totalPercent * percentRatio) / fills;
+			double factor = extra / getWidth();
+			
+			// compute sizes
+			int total = left + right + gaps;
+			for(int i=0; i<sz; i++)
+			{
+				Node n = nodes.get(i);
+				double cc = getConstraint(n);
+				int w0 = size[i];
+				
+				int d;
+				if(isFill(cc) || (w0 == 0)) // treat zero min width as a fill
+				{
+					d = round(w0 + extra * fillRatio * factor);
+				}
+				else if(isFixed(cc))
+				{
+					d = ceil(cc);
+				}
+				else if(isPercent(cc))
+				{
+					d = round(w0 + extra * percentRatio * factor);
+				}
+				else
+				{
+					d = w0;
+				}
+				
+				total += d;
+				size[i] = d;
+			}
+			
+			// distribute integer errors
+			int delta = w - total;
+			if(delta > 0)
+			{
+				for(int i=0; i<sz; i++)
+				{
+					Node n = nodes.get(i);
+					double cc = getConstraint(n);
+					if(!isFixed(cc))
+					{
+						size[i]++;
+						delta--;
+					}
+					
+					if(delta == 0)
+					{
+						break;
+					}
+				}
+			}
+			else if(delta < 0)
+			{
+				for(int i=sz-1; i>=0; i--)
+				{
+					Node n = nodes.get(i);
+					double cc = getConstraint(n);
+
+					if(!isFixed(cc))
+					{
+						if(size[i] > 0)
+						{
+							size[i]--;
+							delta++;
+							
+							if(delta == 0)
+							{
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
 		/** keep minimum sizes, redistributing extra space between PERCENT and FILL components */
 		protected void contract()
 		{
@@ -359,7 +474,7 @@ public class HPane
 			}
 			
 			int w = (int)Math.floor(getWidth());
-			int extra = (w - left - right - min);
+			int extra = (w - left - right - gaps - min);
 			if(extra < 0)
 			{
 				extra = 0;
@@ -370,7 +485,7 @@ public class HPane
 			double factor = extra / getWidth();
 			
 			// compute sizes
-			int total = left + right;
+			int total = left + right + gaps;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
@@ -401,6 +516,7 @@ public class HPane
 			
 			// distribute integer errors
 			int delta = w - total;
+			D.print(delta); // FIX
 			if(delta > 0)
 			{
 				for(int i=0; i<sz; i++)
