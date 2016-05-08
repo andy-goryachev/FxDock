@@ -8,8 +8,6 @@ import java.text.DecimalFormat;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -18,7 +16,7 @@ import javafx.scene.paint.Color;
 
 
 /**
- * DemoDockPane.
+ * Demo FxDockPane with a bunch of HPanes.
  */
 public class DemoPane
     extends FxDockPane
@@ -93,7 +91,7 @@ public class DemoPane
 	{
 		int rgb = Hex.parseInt(c, 0);
 		Region r = new Region();
-		r.setBackground(new Background(new BackgroundFill(FX.rgb(rgb), null, null)));
+		r.setBackground(FX.background(FX.rgb(rgb)));
 		return r;
 	}
 }
