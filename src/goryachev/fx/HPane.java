@@ -144,7 +144,6 @@ public class HPane
 		public int left;
 		public int right;
 		public int[] size;
-		public int[] pref;
 		public int[] pos;
 
 
@@ -612,10 +611,6 @@ public class HPane
 			double dw = getWidth() - pw;
 			if(dw < 0)
 			{
-				// save preferred sizes
-				pref = size;
-				size = new int[sz];
-				
 				// populate size[] array with minimum sizes
 				computeSizes(false);
 				contract();
