@@ -119,6 +119,12 @@ public class HPane
 	}
 	
 	
+	protected int floor(double x)
+	{
+		return (int)Math.floor(x);
+	}
+	
+	
 	protected void setBounds(Node nd, double left, double top, double width, double height)
 	{
 		layoutInArea(nd, left, top, width, height, 0, HPos.CENTER, VPos.CENTER);
@@ -150,7 +156,7 @@ public class HPane
 			bottom = round(m.getBottom());
 			left = round(m.getLeft());
 			right = round(m.getRight());
-			gaps = (sz > 1) ? (gap * (sz - 1)) : 0;
+			gaps = (sz < 2) ? 0 : (gap * (sz - 1));
 		}
 		
 		
@@ -169,7 +175,7 @@ public class HPane
 		
 		protected boolean isPercent(double x)
 		{
-			return (x < 1.0) && (x >= 0);
+			return (x < 1.0) && (x >= 0.0);
 		}
 		
 		
@@ -181,7 +187,7 @@ public class HPane
 		
 		protected double computeSizes(boolean preferred)
 		{
-			int total = 0;
+			int sum = 0;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
@@ -208,10 +214,10 @@ public class HPane
 					size[i] = w;
 				}
 				
-				total += w;
+				sum += w;
 			}
 			
-			return total + left + right + gaps;
+			return sum + left + right + gaps;
 		}
 		
 		
@@ -241,7 +247,7 @@ public class HPane
 		
 		
 		/** size to allocate extra space between FILL and PERCENT cells */
-		protected void expand2(double delta)
+		protected void expand_OLD(double delta)
 		{
 			// space available for FILL/PERCENT columns
 			double flex = delta;
@@ -330,9 +336,11 @@ public class HPane
 		// FIX for fills and percents: use minimum size
 		protected void expand(double delta_DELETE)
 		{
-			int min = 0;
-			double totalPercent = 0;
+			int sum = 0;
 			int fills = 0;
+			double totalPercent = 0;
+			int percents = 0;
+			
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
@@ -340,6 +348,7 @@ public class HPane
 				if(isPercent(cc))
 				{
 					totalPercent += cc;
+					percents++;
 				}
 				else if(isFill(cc))
 				{
@@ -354,22 +363,23 @@ public class HPane
 					}
 				}
 				
-				min += size[i];
+				// keep track of min/pref size regardless
+				sum += size[i];
 			}
 			
 			int w = (int)Math.floor(getWidth());
-			int extra = (w - left - right - gaps - min);
-//			if(extra < 0)
-//			{
-//				extra = 0;
-//			}
+			int extra = (w - left - right - gaps - sum);
+			if(extra < 0)
+			{
+				extra = 0;
+			}
 			
 			double percentRatio = (totalPercent > 1.0) ? (1 / totalPercent) : 1.0;
 			double fillRatio = (1.0 - totalPercent * percentRatio) / fills;
 			double factor = extra / getWidth();
 			
 			// compute sizes
-			int total = left + right + gaps;
+			sum = 0;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
@@ -377,7 +387,7 @@ public class HPane
 				int w0 = size[i];
 				
 				int d;
-				if(isFill(cc) || (w0 == 0)) // treat zero min width as a fill
+				if(isFill(cc) || (w0 == 0)) // treat zero min/pref size as a fill
 				{
 					d = round(w0 + extra * fillRatio * factor);
 				}
@@ -394,13 +404,15 @@ public class HPane
 					d = w0;
 				}
 				
-				total += d;
+				sum += d;
 				size[i] = d;
 			}
 			
 			// distribute integer errors
-			int delta = w - total;
-			if(delta > 0)
+			int delta = w - sum - left - right - gaps;
+			D.print(delta); // FIX
+			
+			while(delta > 0)
 			{
 				for(int i=0; i<sz; i++)
 				{
@@ -418,7 +430,8 @@ public class HPane
 					}
 				}
 			}
-			else if(delta < 0)
+			
+			while(delta < 0)
 			{
 				for(int i=sz-1; i>=0; i--)
 				{
@@ -473,7 +486,7 @@ public class HPane
 				min += size[i];
 			}
 			
-			int w = (int)Math.floor(getWidth());
+			int w = floor(getWidth());
 			int extra = (w - left - right - gaps - min);
 			if(extra < 0)
 			{
@@ -578,12 +591,12 @@ public class HPane
 		{
 			computePositions();
 			
-			double h = getHeight() - top - bottom;
+			int h = floor(getHeight() - top - bottom);
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
-				double x = pos[i];
-				double w = size[i];
+				int x = pos[i];
+				int w = size[i];
 				
 				setBounds(n, x, top, w, h);
 			}
