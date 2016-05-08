@@ -32,6 +32,8 @@ public class DemoPane
 		super(type);
 		
 		VBox vb = new VBox();
+		a(vb, 2, 0.25, 0.25, HPane.FILL);
+		a(vb, 2, 30, 30, 100);
 		a(vb, 2, 0.2, 0.2, 0.6);
 		a(vb, 2, HPane.PREF, HPane.FILL, HPane.PREF);
 		a(vb, 2, HPane.FILL, HPane.FILL, HPane.FILL);

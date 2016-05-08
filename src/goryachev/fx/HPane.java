@@ -1,6 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.common.util.D;
 import goryachev.common.util.Parsers;
 import java.util.List;
 import javafx.geometry.HPos;
@@ -143,7 +142,6 @@ public class HPane
 		public int bottom;
 		public int left;
 		public int right;
-		public int[] pref;
 		public int[] size;
 		public int[] pos;
 
@@ -250,9 +248,8 @@ public class HPane
 		protected void expand()
 		{
 			int sum = 0;
-			int fills = 0;
 			double totalPercent = 0;
-			int percents = 0;
+			int fills = 0;
 			
 			for(int i=0; i<sz; i++)
 			{
@@ -261,7 +258,6 @@ public class HPane
 				if(isPercent(cc))
 				{
 					totalPercent += cc;
-					percents++;
 				}
 				else if(isFill(cc))
 				{
@@ -269,104 +265,56 @@ public class HPane
 				}
 				else
 				{
-					if(size[i] == 0)
-					{
-						// treat this as a fill
-						fills++;
-					}
+					sum += size[i];
 				}
-				
-				// keep track of min/pref size regardless
-				sum += size[i];
 			}
 			
-			int w = (int)Math.floor(getWidth());
-			int extra = (w - left - right - gaps - sum);
-			if(extra < 0)
-			{
-				extra = 0;
-			}
-			
+			double extra = (getWidth() - left - right - gaps - sum);
 			double percentRatio = (totalPercent > 1.0) ? (1 / totalPercent) : 1.0;
 			double fillRatio = (1.0 - totalPercent * percentRatio) / fills;
-			double factor = extra / getWidth();
+			
+			// keeping a double cumulative value in addition to the integer one
+			// in order to avoid accumulating rounding errors
+			int isum = gaps + left + right;
+			double dsum = isum;
 			
 			// compute sizes
-			sum = 0;
-			for(int i=0; i<sz; i++)
+			int last = sz - 1;
+			for(int i=0; i<=last; i++)
 			{
 				Node n = nodes.get(i);
 				double cc = getConstraint(n);
 				int w0 = size[i];
+				int iw;
 				
-				int d;
-				if(isFill(cc) || (w0 == 0)) // treat zero min/pref size as a fill
+				if(isFixed(cc))
 				{
-					d = round(w0 + extra * fillRatio * factor);
+					iw = w0;
+					dsum += iw;
 				}
-				else if(isFixed(cc))
+				else if(isFill(cc)) // || (w0 == 0)) // treat zero min/pref size as a fill
 				{
-					d = ceil(cc);
+					dsum += (extra * fillRatio);
+					iw = round(dsum - isum);
 				}
 				else if(isPercent(cc))
 				{
-					d = round(w0 + extra * percentRatio * factor);
+					dsum += (extra * percentRatio * cc);
+					iw = round(dsum - isum);
 				}
 				else
 				{
-					d = w0;
+					dsum += w0;
+					iw = w0;
 				}
 				
-				sum += d;
-				size[i] = d;
-			}
-			
-			// FIX this is a bad idea
-			
-			// distribute integer errors
-			int delta = w - sum - left - right - gaps;
-			D.print(delta); // FIX
-			
-			while(delta > 0)
-			{
-				for(int i=0; i<sz; i++)
+				if(i == last)
 				{
-					Node n = nodes.get(i);
-					double cc = getConstraint(n);
-					if(!isFixed(cc))
-					{
-						size[i]++;
-						delta--;
-					}
-					
-					if(delta == 0)
-					{
-						break;
-					}
+					iw = floor(getWidth() - isum);
 				}
-			}
-			
-			while(delta < 0)
-			{
-				for(int i=sz-1; i>=0; i--)
-				{
-					Node n = nodes.get(i);
-					double cc = getConstraint(n);
-
-					if(!isFixed(cc))
-					{
-						if(size[i] > 0)
-						{
-							size[i]--;
-							delta++;
-							
-							if(delta == 0)
-							{
-								break;
-							}
-						}
-					}
-				}
+				
+				size[i] = iw;
+				isum += iw;
 			}
 		}
 		
@@ -398,7 +346,7 @@ public class HPane
 			
 			// keeping a double cumulative value in addition to the integer one
 			// in order to avoid accumulating rounding errors
-			int isum = gaps;
+			int isum = gaps + left + right;
 			double dsum = isum;
 			
 			// compute sizes
@@ -408,7 +356,6 @@ public class HPane
 				Node n = nodes.get(i);
 				double cc = getConstraint(n);
 				int w0 = size[i];
-				int pr = pref[i];
 				int iw;
 				
 				if(isFixed(cc))
@@ -418,6 +365,7 @@ public class HPane
 				}
 				else
 				{
+					// TODO multiply by percent, fill, preferred ratios
 					dsum += (w0 + extra / ct);
 					iw = round(dsum - isum);
 				}
@@ -472,10 +420,6 @@ public class HPane
 			double dw = getWidth() - pw;
 			if(dw < 0)
 			{
-				// save preferred sizes
-				pref = size;
-				size = new int[sz];
-				
 				// populate size[] array with minimum sizes
 				computeSizes(false);
 				
