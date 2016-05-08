@@ -2,6 +2,7 @@
 package goryachev.fx;
 import goryachev.common.util.D;
 import goryachev.common.util.Parsers;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import javafx.geometry.HPos;
@@ -66,7 +67,7 @@ public class HPane
 	
 	protected double computePrefWidth(double height)
 	{
-		return h().computeSizes((nd) -> nd.prefWidth(height), false);
+		return h().computeSizes((nd) -> nd.prefWidth(height));
 	}
 	
 	
@@ -78,7 +79,7 @@ public class HPane
 
 	protected double computeMinWidth(double height)
 	{
-		return h().computeSizes((nd) -> nd.minWidth(height), false);
+		return h().computeSizes((nd) -> nd.minWidth(height));
 	}
 	
 	
@@ -137,8 +138,9 @@ public class HPane
 		public double bottom;
 		public double left;
 		public double right;
-		public double[] pos;
 		public double[] size;
+		public double[] pref;
+		public double[] pos;
 
 
 		public Helper(List<Node> nodes, Insets m)
@@ -159,15 +161,9 @@ public class HPane
 		}
 
 		
-		/** returns fixed size or a negative value */
-		protected double fixedWidth(Node n)
+		protected boolean isFixed(double x)
 		{
-			double w = getConstraint(n);
-			if(w > 1.0)
-			{
-				return snapsize(w);
-			}
-			return -100.0;
+			return (x > 1.0);
 		}
 		
 		
@@ -183,30 +179,23 @@ public class HPane
 		}
 		
 		
-		protected double computeSizes(Function<Node,Double> sizingMethod, boolean inLayout)
+		protected double computeSizes(Function<Node,Double> sizingMethod)
 		{
-			if(inLayout)
-			{
-				if(size == null)
-				{
-					size = new double[sz];
-				}
-			}
-			
 			double total = 0;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
-				double w = fixedWidth(n);
-				if(w < 0)
+				double w = getConstraint(n);
+				if(!isFixed(w))
 				{
 					w = snapsize(sizingMethod.apply(n));
 				}
 				
-				if(inLayout)
+				if(size != null)
 				{
 					size[i] = w;
 				}
+				
 				total += w;
 			}
 			
@@ -322,117 +311,73 @@ public class HPane
 		}
 		
 		
-		/** 
-		 * allocate space according to the following logic: 
-		 * fixed space - intact;
-		 * everything else - proportionally to their minimum size
-		 */ 
-		protected void contract(double delta)
+		/** keep minimum sizes, redistributing extra space between PERCENT and FILL components */
+		protected void contract()
 		{
-			// FIX
-			// [min,pref] fill,percent,fixed,pref 
-			
-			
-			// space available for FILL/PERCENT columns
-			double flex = delta;
-			// ratio of columns with percentage explicitly set
-			double percent = 0;
-			// number of FILL columns
-			int fillCount = 0;
-			
+			double minSizes = 0;
+			int totalPercent = 0;
+			int fills = 0;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
 				double cc = getConstraint(n);
 				if(isPercent(cc))
 				{
-					// percent
-					percent += cc;
-					flex += size[i];
+					totalPercent += cc;
 				}
 				else if(isFill(cc))
 				{
-					// fill
-					fillCount++;
-					flex += size[i];
+					fills++;
 				}
+				
+				minSizes += size[i];
 			}
 			
-			// no overbooking
-			if(flex < 0)
+			double w = getWidth();
+			double factor = (w - left - right - minSizes) / w;
+			
+			double percentRatio = 1.0;
+			double fillRatio;
+			if(factor < 0)
 			{
-				flex = 0;
+				fillRatio = 0;
+			}
+			else
+			{
+				if(totalPercent > 1.0)
+				{
+					percentRatio = 1.0 / totalPercent;
+				}
+				
+				fillRatio = (1.0 - percentRatio) / fills;
 			}
 			
-			double remaining = flex;
+			D.print("factor", factor);
 			
-			// PERCENT sizes first
+			// compute sizes
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
 				double cc = getConstraint(n);
-				if(isPercent(cc))
+				if(isFixed(cc))
 				{
-					double w;
-					if(remaining > 0)
-					{
-						w = snapsize(cc * flex);
-						remaining -= w;
-					}
-					else
-					{
-						w = 0;
-					}
-					size[i] = w;
+					size[i] = cc;
 				}
-			}
-			
-			// FILL sizes after PERCENT
-			if(fillCount > 0)
-			{
-				double cw = remaining / fillCount;
-
-				for(int i=0; i<sz; i++)
+				else if(isPercent(cc))
 				{
-					Node n = nodes.get(i);
-					double cc = getConstraint(n);
-					if(isFill(cc))
-					{
-						double w;
-						if(remaining >= 0)
-						{
-							w = Math.min(cw, flex);
-							remaining -= w;
-						}
-						else
-						{
-							w = 0;
-						}
-						
-						size[i] = w;
-					}
+					double w0 = size[i];
+					size[i] = w0 + (pref[i] - w0) * percentRatio * factor;
 				}
-			}
-		}
-		
-		
-		/** all components will be smaller than their minimum size (proportionnaly to their fixed/minimum size) */
-		protected void squeeze(double min)
-		{
-			double total = 0;
-			double factor = min / getWidth();
-			for(int i=0; i<sz; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				double w = snapsize(size[i] * factor); 
-				size[i] = w;
-				total += w;
-			}
-			
-			if(total != getWidth());
-			{
-				// TODO adjust largest?
+				else if(isFill(cc))
+				{
+					double w0 = size[i];
+					size[i] = w0 + (pref[i] - w0) * fillRatio * factor;
+				}
+				else
+				{
+					double w0 = size[i];
+					size[i] = w0 + (pref[i] - w0) * factor;
+				}
 			}
 		}
 		
@@ -471,25 +416,20 @@ public class HPane
 
 		public void layout()
 		{
-			double w = getWidth();
-			D.print(w);
+			size = new double[sz];
 			
-			double pref = computeSizes((n) -> n.prefWidth(-1), true);
-			double dw = w - pref;
+			// populate size[] with preferred sizes
+			double pw = computeSizes((n) -> n.prefWidth(-1));
+			double dw = getWidth() - pw;
 			if(dw < 0)
 			{
-				double min = computeSizes((n) -> n.minWidth(-1), true);
-				dw = w - min;
-				if(dw < 0)
-				{
-					// force all smaller
-					squeeze(min);
-				}
-				else
-				{
-					// honor munimum sizes
-					contract(dw);
-				}
+				// save preferred sizes
+				pref = size;
+				size = new double[sz];
+				
+				// populate size[] array with minimum sizes
+				computeSizes((n) -> n.minWidth(-1));
+				contract();
 			}
 			else if(dw > 0)
 			{
