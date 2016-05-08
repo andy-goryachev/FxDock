@@ -2,9 +2,7 @@
 package goryachev.fx;
 import goryachev.common.util.D;
 import goryachev.common.util.Parsers;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -67,25 +65,25 @@ public class HPane
 	
 	protected double computePrefWidth(double height)
 	{
-		return h().computeSizes((nd) -> nd.prefWidth(height));
+		return h().computeSizes(true);
+	}
+	
+
+	protected double computeMinWidth(double height)
+	{
+		return h().computeSizes(false);
 	}
 	
 	
 	protected double computePrefHeight(double width)
 	{
-		return h().computeHeight((nd) -> nd.prefHeight(width));
+		return h().computeHeight(width, true);
 	}
 
-
-	protected double computeMinWidth(double height)
-	{
-		return h().computeSizes((nd) -> nd.minWidth(height));
-	}
-	
 	
 	protected double computeMinHeight(double width)
 	{
-		return h().computeHeight((nd) -> nd.minHeight(width));
+		return h().computeHeight(width, false);
 	}
 	
 	
@@ -179,7 +177,7 @@ public class HPane
 		}
 		
 		
-		protected double computeSizes(Function<Node,Double> sizingMethod)
+		protected double computeSizes(boolean preferred)
 		{
 			double total = 0;
 			for(int i=0; i<sz; i++)
@@ -188,7 +186,14 @@ public class HPane
 				double w = getConstraint(n);
 				if(!isFixed(w))
 				{
-					w = snapsize(sizingMethod.apply(n));
+					if(preferred)
+					{
+						w = snapsize(n.prefWidth(-1));
+					}
+					else
+					{
+						w = snapsize(n.minWidth(-1));
+					}
 				}
 				
 				if(size != null)
@@ -208,13 +213,21 @@ public class HPane
 		}
 		
 		
-		protected double computeHeight(Function<Node,Double> sizingMethod)
+		protected double computeHeight(double width, boolean preferred)
 		{
 			double max = 0;
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
-				double d = snapsize(sizingMethod.apply(n));
+				double d;
+				if(preferred)
+				{
+					d = snapsize(n.prefHeight(width));
+				}
+				else
+				{
+					d = snapsize(n.minHeight(width));				
+				}
 				if(d > max)
 				{
 					max = d;
@@ -419,7 +432,7 @@ public class HPane
 			size = new double[sz];
 			
 			// populate size[] with preferred sizes
-			double pw = computeSizes((n) -> n.prefWidth(-1));
+			double pw = computeSizes(true);
 			double dw = getWidth() - pw;
 			if(dw < 0)
 			{
@@ -428,7 +441,7 @@ public class HPane
 				size = new double[sz];
 				
 				// populate size[] array with minimum sizes
-				computeSizes((n) -> n.minWidth(-1));
+				computeSizes(false);
 				contract();
 			}
 			else if(dw > 0)
