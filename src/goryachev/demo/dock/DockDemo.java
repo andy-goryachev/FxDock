@@ -13,7 +13,7 @@ import javafx.stage.Window;
 
 
 /**
- * FxDockDemo.
+ * FxDock Demo.
  */
 public class DockDemo
 	extends Application
