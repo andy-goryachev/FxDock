@@ -1,10 +1,12 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import java.io.File;
 import goryachev.common.util.CMap;
 import goryachev.common.util.CPlatform;
 import goryachev.common.util.D;
+import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
+import goryachev.common.util.SStream;
+import java.io.File;
 import javafx.stage.Stage;
 
 
@@ -27,10 +29,10 @@ public class FxSettings
 	public static final String TREE_TABLE = ".TreeTable";
 	public static final String TREE_TABLE_SELECTION = ".TreeTable.S";
 	
-	public static final char STAGE_FULLSCREEN = 'F';
-	public static final char STAGE_MAXIMIZED = 'X';
-	public static final char STAGE_ICONIFIED = 'I';
-	public static final char STAGE_NORMAL = 'N';
+	public static final String STAGE_FULLSCREEN = "F";
+	public static final String STAGE_MAXIMIZED = "X";
+	public static final String STAGE_ICONIFIED = "I";
+	public static final String STAGE_NORMAL = "N";
 
 	private static final CMap<Object,Object> stages = new CMap();
 	
@@ -121,18 +123,27 @@ public class FxSettings
 	}
 
 
-	protected static void setProperty(String key, Object val)
+	protected static void setProperty(String key, String val)
 	{
-		// TODO
-		System.err.println("WR " + key + " = " + val);
+		GlobalSettings.setString(key, val);
 	}
 	
 	
 	protected static String getProperty(String key)
 	{
-		// TODO
-		System.err.println("RD " + key);
-		return null;
+		return GlobalSettings.getString(key);
+	}
+	
+	
+	protected static void setStream(String key, SStream s)
+	{
+		GlobalSettings.setStream(key, s);
+	}
+	
+	
+	protected static SStream getStream(String key)
+	{
+		return GlobalSettings.getStream(key);
 	}
 	
 	
@@ -144,7 +155,7 @@ public class FxSettings
 		double w = win.getWidth();
 		double h = win.getHeight();
 		
-		char state;
+		String state;
 		if(win.isFullScreen())
 		{
 			state = STAGE_FULLSCREEN;
@@ -177,22 +188,17 @@ public class FxSettings
 //				}
 //			}
 //		}
+
+		// TODO store Screen configuration?
 		
-		String id = PREFIX + STAGE + "." + lookupStageName(name, win);
-		SettingsIO.Writer wr = new SettingsIO.Writer();
+		SStream s = new SStream();
+		s.add(x);
+		s.add(y);
+		s.add(w);
+		s.add(h);
+		s.add(state);
 
-		// TODO store Screen configuration
-		wr.write(x);
-		wr.comma();
-		wr.write(y);
-		wr.comma();
-		wr.write(w);
-		wr.comma();
-		wr.write(h);
-		wr.comma();
-		wr.write(state);
-
-		setProperty(id, wr);
+		setStream(PREFIX + STAGE + "." + lookupStageName(name, win), s);
 	}
 	
 	
@@ -201,13 +207,12 @@ public class FxSettings
 		try
 		{
 			String id = PREFIX + STAGE + "." + lookupStageName(name, win);
-			String pv = getProperty(id);
-			SettingsIO.Reader rd = new SettingsIO.Reader(pv);
-			int x = rd.readInt(-1);
-			int y = rd.readInt(-1);
-			int w = rd.readInt(-1);
-			int h = rd.readInt(-1);
-			char state = rd.readChar(STAGE_NORMAL);
+			SStream s = getStream(id);
+			double x = s.nextDouble(-1);
+			double y = s.nextDouble(-1);
+			double w = s.nextDouble(-1);
+			double h = s.nextDouble(-1);
+			String state = s.nextString(STAGE_NORMAL);
 			
 //			if((w < 0) || (h < 0))
 //			{

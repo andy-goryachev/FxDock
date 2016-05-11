@@ -66,6 +66,17 @@ public class SStream
 	}
 	
 	
+	public String nextString(String defaultValue)
+	{
+		String s = nextString();
+		if(s == null)
+		{
+			return defaultValue;
+		}
+		return s;
+	}
+	
+	
 	public double nextDouble(double defaultValue)
 	{
 		return Parsers.parseDouble(nextString(), defaultValue);
