@@ -3,9 +3,9 @@ package goryachev.fx;
 import goryachev.common.util.CMap;
 import goryachev.common.util.CPlatform;
 import goryachev.common.util.GlobalSettings;
-import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import java.io.File;
+import javafx.scene.Node;
 import javafx.stage.Stage;
 
 
@@ -46,17 +46,15 @@ public class FxSettings
 	public static void onStageOpening(Stage w, String name)
 	{
 		String id = addStage(w, name);
-		SB sb = new SB();
-		boolean max = w.isMaximized();
-		// FIX use id
-		restore(w);
+		restoreStage(w, name);
 	}
 
 
-	public static void onStageClosing(Stage w)
+	public static void onStageClosing(Stage w, String name)
 	{
-		store(w);
+		storeStage(w, name);
 		removeStage(w);
+		save();
 	}
 	
 	
@@ -140,7 +138,7 @@ public class FxSettings
 	
 	
 	// Stage: x,y,w,h,{maximized,minimized}
-	public static void storeStage(String name, Stage win)
+	public static void storeStage(Stage win, String name)
 	{
 		double x = win.getX();
 		double y = win.getY();
@@ -194,7 +192,7 @@ public class FxSettings
 	}
 	
 	
-	public static void restoreStage(String name, Stage win)
+	public static void restoreStage(Stage win, String name)
 	{
 		try
 		{
@@ -206,128 +204,43 @@ public class FxSettings
 			double h = s.nextDouble(-1);
 			String state = s.nextString(STAGE_NORMAL);
 			
-//			if((w < 0) || (h < 0))
-//			{
-//				if((win.getWidth() > 0) && (win.getHeight() > 0))
-//				{
-//					// size set already, position at the center
-//					UI.center(win);
-//					return;
-//				}
-//				else
-//				{
-//					// window natural size and center
-//					if(isResizable(win))
-//					{
-//						win.pack();
-//					}
-//					UI.center(win);
-//					return;
-//				}
-//			}
-//			else
-//			{
-//				// keep unresizable frame dimensions
-//				if(!isResizable(win))
-//				{
-//					w = win.getWidth();
-//					h = win.getHeight();
-//				}
-//				
-//				Rectangle r = new Rectangle(x, y, w, h);
-//
-//				// check if it will be at least partially visible
-//				boolean partiallyVisible = false;
-//				GraphicsDevice[] ds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-//				for(GraphicsDevice dev: ds)
-//				{
-//					Rectangle screen = dev.getDefaultConfiguration().getBounds();
-//					if(r.intersects(screen))
-//					{
-//						partiallyVisible = true;
-//						break;
-//					}
-//				}
-//
-//				if(!partiallyVisible)
-//				{
-//					// show on main screen and resize if necessary
-//					Rectangle screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-//					if(x < screen.x)
-//					{
-//						x = screen.x;
-//					}
-//					if(y < screen.y)
-//					{
-//						y = screen.y;
-//					}
-//					if(x + w > screen.width)
-//					{
-//						x = screen.width - w;
-//						if(x < screen.x)
-//						{
-//							w = screen.width;
-//							x = screen.x;
-//						}
-//					}
-//					if(y + h > screen.height)
-//					{
-//						y = screen.height - h;
-//						if(y < screen.y)
-//						{
-//							w = screen.height;
-//							y = screen.y;
-//						}
-//					}
-//				}
-//				
-//				if(isResizable(win))
-//				{
-//					win.setBounds(x,y,w,h);
-//					
-//					if(win instanceof AppFrame)
-//					{
-//						((AppFrame)win).setNormalBounds(x,y,w,h);
-//					}
-//				}
-//				else
-//				{
-//					win.setLocation(x,y);
-//				}
-//				
-//				if(win instanceof Frame)
-//				{
-//					Frame f = (Frame)win;
-//					if(FRAME_MAXIMIZED.equals(state))
-//					{
-//						f.setExtendedState(Frame.MAXIMIZED_BOTH);
-//					}
-//					else if(FRAME_MINIMIZED.equals(state))
-//					{
-//						f.setExtendedState(Frame.ICONIFIED);
-//					}
-//				}
-//			}
+			if((w > 0) && (h > 0))
+			{
+				win.setX(x);
+				win.setY(y);
+				win.setWidth(w);
+				win.setHeight(h);
+				
+				switch(state)
+				{
+				case STAGE_ICONIFIED:
+					win.setIconified(true);
+					break;
+				case STAGE_FULLSCREEN:
+					win.setFullScreen(true);
+					break;
+				}
+			}
 		}
 		catch(Exception e)
 		{ }
 	}
 	
 	
-	public static void store(Object x)
+	public static void storeNode(Node n)
 	{
-//		if(x instanceof Stage)
-//		{
-//			storeStage((Stage)x);
-//		}
+		// TODO
 	}
 	
 	
-	public static void restore(Object x)
+	public static void restoreNode(Node n)
 	{
-//		if(x instanceof Stage)
-//		{
-//			restoreStage((Stage)x);
-//		}
+		// TODO
+	}
+	
+	
+	public static void save()
+	{
+		GlobalSettings.save();
 	}
 }

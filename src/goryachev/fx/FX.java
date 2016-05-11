@@ -15,7 +15,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 
 /**
@@ -25,27 +24,33 @@ public class FX
 {
 	public static void storeSettings(Node n)
 	{
-		FxSettings.store(n);
+		FxSettings.storeNode(n);
 	}
 	
 	
 	public static void restoreSettings(Node n)
 	{
-		FxSettings.restore(n);
+		FxSettings.restoreNode(n);
 	}
 	
 	
-	public static void open(Stage s, String stageName)
+	public static void open(Stage w, String stageName)
 	{
-		s.addEventHandler(WindowEvent.WINDOW_HIDING, (ev) -> handleStageHiding(stageName, s));
-		s.show();
-		FxSettings.restoreStage(stageName, s);
+		w.showingProperty().addListener((src,old,cur) -> 
+		{
+			if(!cur)
+			{
+				FxSettings.onStageClosing(w, stageName);
+			}
+		});
+		FxSettings.restoreStage(w, stageName);
+		w.show();
 	}
 	
 	
-	private static void handleStageHiding(String name, Stage s)
+	public static void close(Stage s)
 	{
-		FxSettings.storeStage(name, s);
+		// TODO
 	}
 	
 	
