@@ -2,7 +2,6 @@
 package goryachev.fx;
 import goryachev.common.util.CMap;
 import goryachev.common.util.CPlatform;
-import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
@@ -35,13 +34,6 @@ public class FxSettings
 	public static final String STAGE_NORMAL = "N";
 
 	private static final CMap<Object,Object> stages = new CMap();
-	
-	
-	public static void init(File folder)
-	{
-		D.print(folder);
-		// TODO
-	}
 	
 	
 	public static File getUserFolder()

@@ -1,7 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.common.util.Log;
-import java.io.File;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -25,31 +23,6 @@ import javafx.stage.WindowEvent;
  */
 public class FX
 {
-	private static final String LOGS_FOLDER = "logs";
-	
-	
-	/** initialize app preferences and logger in a standard way */
-	public static void initApp(String appName)
-	{
-		File settingsFolder = FxSettings.getUserFolder();
-		File logFolder =  new File(settingsFolder, appName + "/" + LOGS_FOLDER);
-		initApp(settingsFolder, logFolder);
-	}
-	
-	
-	public static void initApp(File settingsFolder)
-	{
-		initApp(settingsFolder, new File(settingsFolder, LOGS_FOLDER));
-	}
-	
-	
-	public static void initApp(File settingsFolder, File logFolder)
-	{
-		FxSettings.init(settingsFolder);
-		Log.init(logFolder);
-	}
-	
-	
 	public static void storeSettings(Node n)
 	{
 		FxSettings.store(n);
