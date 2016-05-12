@@ -306,8 +306,7 @@ public class DragAndDropHandler
 		{
 			if(y < y1)
 			{
-				// TL or LT
-				where = DockTools.aboveDiagonal(x, y, 0, 0, x1, y1) ? Where.TOP_LEFT : Where.LEFT_TOP;
+				where = DockTools.aboveDiagonal(x, y, 0, 0, x1, y1) ? Where.TOP : Where.LEFT;
 			}
 			else if(y < y2)
 			{
@@ -315,8 +314,7 @@ public class DragAndDropHandler
 			}
 			else
 			{
-				// BL or LB
-				where = DockTools.aboveDiagonal(x, y, 0, h, x1, y2) ? Where.LEFT_BOTTOM : Where.BOTTOM_LEFT;
+				where = DockTools.aboveDiagonal(x, y, 0, h, x1, y2) ? Where.LEFT : Where.BOTTOM;
 			}
 		}
 		else if(x < x2)
@@ -327,7 +325,6 @@ public class DragAndDropHandler
 			}
 			else if(y < y2)
 			{
-				// center
 				where = Where.CENTER;
 			}
 			else
@@ -339,8 +336,7 @@ public class DragAndDropHandler
 		{
 			if(y < y1)
 			{
-				// TR or RT
-				where = DockTools.aboveDiagonal(x, y, x2, y1, w, 0) ? Where.TOP_RIGHT : Where.RIGHT_TOP;
+				where = DockTools.aboveDiagonal(x, y, x2, y1, w, 0) ? Where.TOP : Where.RIGHT;
 			}
 			else if(y < y2)
 			{
@@ -348,8 +344,7 @@ public class DragAndDropHandler
 			}
 			else
 			{
-				// BR or RB
-				where = DockTools.aboveDiagonal(x, y, x2, y2, w, h) ? Where.RIGHT_BOTTOM : Where.BOTTOM_RIGHT;
+				where = DockTools.aboveDiagonal(x, y, x2, y2, w, h) ? Where.RIGHT : Where.BOTTOM;
 			}
 		}
 		
@@ -366,49 +361,17 @@ public class DragAndDropHandler
 		case BOTTOM:
 			op.addRect(target, 0, y2, w, h - y2);
 			break;
-		case BOTTOM_LEFT:
-			op.addRect(target, 0, y2, x1, h - y2);
-			op.addOutline(target, 0, 0, w, y2);
-			break;
-		case BOTTOM_RIGHT:
-			op.addRect(target, x2, y2, x2, h - y2);
-			op.addOutline(target, 0, 0, w, y2);
-			break;
 		case CENTER:
 			op.addRect(target, 0, 0, w, h);
 			break;
 		case LEFT:
 			op.addRect(target, 0, 0, x1, h);
 			break;
-		case LEFT_BOTTOM: 
-			op.addRect(target, 0, y2, x1, h - y2);
-			op.addOutline(target, x1, 0, w - x1, h);
-			break;
-		case LEFT_TOP:
-			op.addRect(target, 0, 0, x1, y1);
-			op.addOutline(target, x1, 0, w - x1, h);
-			break;
 		case RIGHT:
 			op.addRect(target, x2, 0, w - x2, h);
 			break;
-		case RIGHT_BOTTOM:
-			op.addRect(target, x2, y2, w - x2, h - y2);
-			op.addOutline(target, 0, 0, x2, h);
-			break;
-		case RIGHT_TOP:
-			op.addRect(target, x2, 0, w - x2, y1);
-			op.addOutline(target, 0, 0, x2, h);
-			break;
 		case TOP:
 			op.addRect(target, 0, 0, w, y1);
-			break;
-		case TOP_LEFT:
-			op.addRect(target, 0, 0, x1, y1);
-			op.addOutline(target, 0, y1, w, h - y1);
-			break;
-		case TOP_RIGHT:
-			op.addRect(target, x2, 0, w - x2, y1);
-			op.addOutline(target, 0, y1, w, h - y1);
 			break;
 		}
 		return op;

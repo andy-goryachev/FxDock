@@ -426,28 +426,12 @@ public class DockTools
 		{
 		case BOTTOM:
 			return new FxDockSplitPane(Orientation.VERTICAL, old, client);
-		case BOTTOM_LEFT:
-			return new FxDockSplitPane(Orientation.VERTICAL, old, new FxDockSplitPane(Orientation.HORIZONTAL, client, null));
-		case BOTTOM_RIGHT:
-			return new FxDockSplitPane(Orientation.VERTICAL, old, new FxDockSplitPane(Orientation.HORIZONTAL, null, client));
 		case LEFT:
 			return new FxDockSplitPane(Orientation.HORIZONTAL, client, old);
-		case LEFT_BOTTOM:
-			return new FxDockSplitPane(Orientation.HORIZONTAL, new FxDockSplitPane(Orientation.VERTICAL, null, client), old);
-		case LEFT_TOP:
-			return new FxDockSplitPane(Orientation.HORIZONTAL, new FxDockSplitPane(Orientation.VERTICAL, client, null), old);
 		case RIGHT:
 			return new FxDockSplitPane(Orientation.HORIZONTAL, old, client);
-		case RIGHT_BOTTOM:
-			return new FxDockSplitPane(Orientation.HORIZONTAL, old, new FxDockSplitPane(Orientation.VERTICAL, null, client));
-		case RIGHT_TOP:
-			return new FxDockSplitPane(Orientation.HORIZONTAL, old, new FxDockSplitPane(Orientation.VERTICAL, client, null));
 		case TOP:
 			return new FxDockSplitPane(Orientation.VERTICAL, client, old);
-		case TOP_LEFT:
-			return new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, client, null), old);
-		case TOP_RIGHT:
-			return new FxDockSplitPane(Orientation.VERTICAL, new FxDockSplitPane(Orientation.HORIZONTAL, null, client), old);
 		case CENTER:
 		default:
 			throw new Error("?" + where);
