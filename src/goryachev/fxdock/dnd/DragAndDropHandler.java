@@ -58,7 +58,7 @@ public class DragAndDropHandler
 			deltay = p.getY();
 
 			dragWindow = createDragWindow(client);
-			dragWindow.addEventHandler(KeyEvent.KEY_PRESSED, (ke) -> onKeyPress(ke.getCode()));
+			dragWindow.addEventHandler(KeyEvent.KEY_PRESSED, (ke) -> cancelDrag());
 			
 			dragWindow.setX(x - deltax);
 			dragWindow.setY(y - deltay);
@@ -68,8 +68,16 @@ public class DragAndDropHandler
 			ev.consume();
 		}
 	}
-	
-	
+
+
+	protected static void cancelDrag()
+	{
+		// any key cancels the drag operation
+		stopDrag();
+		dropOp = null;
+	}
+
+
 	protected static void onMouseDragged(MouseEvent ev, FxDockPane client)
 	{
 		if(dragWindow != null)
@@ -117,17 +125,6 @@ public class DragAndDropHandler
 		if(dropOp != null)
 		{
 			dropOp.execute();
-			dropOp = null;
-		}
-	}
-	
-	
-	protected static void onKeyPress(KeyCode k)
-	{
-		// ESCAPE key cancels the drag operation
-		if(k == KeyCode.ESCAPE)
-		{
-			stopDrag();
 			dropOp = null;
 		}
 	}
