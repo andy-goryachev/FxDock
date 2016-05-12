@@ -22,7 +22,7 @@ import javafx.stage.Window;
 /**
  * Making FX-ing easier.
  */
-public class FX
+public final class FX
 {
 	public static void storeSettings(Node n)
 	{
@@ -290,5 +290,26 @@ public class FX
 			}
 		}
 		return null;
+	}
+	
+	
+	/** rounds a double value to int */
+	public static int round(double x)
+	{
+		return (int)Math.round(x);
+	}
+	
+	
+	/** returns int ceiling of a double value */
+	public static int ceil(double x)
+	{
+		return (int)Math.ceil(x);
+	}
+	
+	
+	/** returns int floor of a double value */
+	public static int floor(double x)
+	{
+		return (int)Math.floor(x);
 	}
 }

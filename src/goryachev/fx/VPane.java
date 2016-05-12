@@ -106,24 +106,6 @@ public class VPane
 	}
 	
 	
-	protected int round(double x)
-	{
-		return (int)Math.round(x);
-	}
-	
-	
-	protected int ceil(double x)
-	{
-		return (int)Math.ceil(x);
-	}
-	
-	
-	protected int floor(double x)
-	{
-		return (int)Math.floor(x);
-	}
-	
-	
 	protected void setBounds(Node nd, double left, double top, double width, double height)
 	{
 		layoutInArea(nd, left, top, width, height, 0, HPos.CENTER, VPos.CENTER);
@@ -150,10 +132,10 @@ public class VPane
 		{
 			this.nodes = nodes;
 			this.sz = nodes.size();
-			top = round(m.getTop());
-			bottom = round(m.getBottom());
-			left = round(m.getLeft());
-			right = round(m.getRight());
+			top = FX.round(m.getTop());
+			bottom = FX.round(m.getBottom());
+			left = FX.round(m.getLeft());
+			right = FX.round(m.getRight());
 			gaps = (sz < 2) ? 0 : (gap * (sz - 1));
 		}
 		
@@ -193,17 +175,17 @@ public class VPane
 				int d;
 				if(isFixed(cc))
 				{
-					d = ceil(cc);
+					d = FX.ceil(cc);
 				}
 				else
 				{
 					if(preferred)
 					{
-						d = ceil(n.prefHeight(-1));
+						d = FX.ceil(n.prefHeight(-1));
 					}
 					else
 					{
-						d = ceil(n.minHeight(-1));
+						d = FX.ceil(n.minHeight(-1));
 					}
 				}
 				
@@ -228,11 +210,11 @@ public class VPane
 				int d;
 				if(preferred)
 				{
-					d = ceil(n.prefWidth(height));
+					d = FX.ceil(n.prefWidth(height));
 				}
 				else
 				{
-					d = ceil(n.minWidth(height));				
+					d = FX.ceil(n.minWidth(height));				
 				}
 				if(d > max)
 				{
@@ -295,12 +277,12 @@ public class VPane
 				else if(isFill(cc))
 				{
 					dsum += (extra * fillRatio);
-					di = round(dsum - isum);
+					di = FX.round(dsum - isum);
 				}
 				else if(isPercent(cc))
 				{
 					dsum += (extra * percentRatio * cc);
-					di = round(dsum - isum);
+					di = FX.round(dsum - isum);
 				}
 				else
 				{
@@ -310,7 +292,7 @@ public class VPane
 				
 				if(i == last)
 				{
-					di = floor(getHeight() - isum);
+					di = FX.floor(getHeight() - isum);
 				}
 				
 				size[i] = di;
@@ -360,19 +342,19 @@ public class VPane
 				
 				if(isFixed(cc))
 				{
-					di = ceil(cc);
+					di = FX.ceil(cc);
 					dsum += di;
 				}
 				else
 				{
 					// TODO multiply by percent, fill, preferred ratios
 					dsum += (d0 + extra / ct);
-					di = round(dsum - isum);
+					di = FX.round(dsum - isum);
 				}
 				
 				if(i == last)
 				{
-					di = floor(getHeight() - isum);
+					di = FX.floor(getHeight() - isum);
 				}
 				
 				size[i] = di;
@@ -399,7 +381,7 @@ public class VPane
 		{
 			computePositions();
 			
-			int w = floor(getWidth() - left - right);
+			int w = FX.floor(getWidth() - left - right);
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
