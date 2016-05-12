@@ -761,8 +761,11 @@ public class DockTools
 		default:
 			Node p = getParent(tp);
 			int ix = indexInParent(tp);
-			Node n = makeSplit(client, tp, where);
-			replaceChild(p, ix, n);
+			Node sp = makeSplit(client, tp, where);
+			if(p != sp)
+			{
+				replaceChild(p, ix, sp);
+			}
 			break;			
 		}
 	}
