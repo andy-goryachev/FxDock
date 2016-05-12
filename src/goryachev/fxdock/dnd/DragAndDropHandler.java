@@ -6,20 +6,24 @@ import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.FxDockRootPane;
 import goryachev.fxdock.internal.FxDockSplitPane;
+import goryachev.fxdock.internal.FxDockTabPane;
 import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 
 /**
@@ -53,10 +57,11 @@ public class DragAndDropHandler
 		{
 			double x = ev.getScreenX();
 			double y = ev.getScreenY();
+			
 			Point2D p = client.screenToLocal(x, y);
 			deltax = p.getX();
-			deltay = p.getY();
-
+			deltay = p.getY(); // gets modified in createDragWindow()
+			
 			dragWindow = createDragWindow(client);
 			dragWindow.addEventHandler(KeyEvent.KEY_PRESSED, (ke) -> cancelDrag());
 			
@@ -149,19 +154,46 @@ public class DragAndDropHandler
 	
 	protected static Stage createDragWindow(FxDockPane client)
 	{
-		double w = client.getWidth();
-		double h = client.getHeight();
-		
-		WritableImage im = new WritableImage((int)w, (int)h);
-		SnapshotParameters sp = new SnapshotParameters();
-		sp.setFill(Color.TRANSPARENT);
-		client.snapshot(sp, im);
-		
+		Window owner = FX.getParentWindow(client);
+		Image im = createDragImage(client);
 		Pane p = new Pane(new ImageView(im));
-		Stage s = new Stage(StageStyle.UTILITY);
-		s.setScene(new Scene(p, w, h));
+		Stage s = new Stage(StageStyle.TRANSPARENT);
+		s.initOwner(owner);
+		s.setScene(new Scene(p, im.getWidth(), im.getHeight()));
 		s.setOpacity(DRAG_WINDOW_OPACITY);
 		return s;
+	}
+	
+	
+	protected static Image createDragImage(FxDockPane client)
+	{
+		SnapshotParameters sp = new SnapshotParameters();
+		sp.setFill(Color.TRANSPARENT);
+		
+		WritableImage im = client.snapshot(sp, null);
+
+		if(client.isPaneMode())
+		{
+			return im;
+		}
+		
+		// include selected tab
+		FxDockTabPane tp = (FxDockTabPane)DockTools.getParent(client);
+		Node n = tp.lookup(".tab:selected");
+		WritableImage tim = n.snapshot(sp, null);
+		
+		double dy = tim.getHeight();
+		
+		// must adjust for the tab
+		deltay += dy;
+		
+		double w = Math.max(im.getWidth(), tim.getWidth());
+		double h = im.getHeight() + dy;
+		Canvas c = new Canvas(w, h);
+		GraphicsContext g = c.getGraphicsContext2D();
+		g.drawImage(tim, 0, 0);
+		g.drawImage(im, 0, dy);
+		return c.snapshot(sp, null);
 	}
 	
 	

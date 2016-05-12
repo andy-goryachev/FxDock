@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
@@ -15,6 +16,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 
 /**
@@ -273,5 +275,20 @@ public class FX
 	public static Object getProperty(Node n, Object k)
 	{
 		return n.getProperties().get(k);
+	}
+	
+	
+	/** returns parent window or null */
+	public static Window getParentWindow(Node n)
+	{
+		if(n != null)
+		{
+			Scene s = n.getScene();
+			if(s != null)
+			{
+				return s.getWindow();
+			}
+		}
+		return null;
 	}
 }
