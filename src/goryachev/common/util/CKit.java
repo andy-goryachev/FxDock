@@ -38,7 +38,7 @@ import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipFile;
 
 
-public class CKit
+public final class CKit
 {
 	public static final String COPYRIGHT = "Copyright (c) 1996-2016 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
 	public static final char APPLE = '\u2318';
@@ -53,12 +53,9 @@ public class CKit
 	public static final long MS_IN_A_DAY = 86400000;
 	public static final long MS_IN_A_WEEK = 604800000;
 	private static AtomicInteger id = new AtomicInteger(); 
+	private static Boolean eclipseDetected;
 	
 	
-	private CKit()
-	{ }
-	
-
 	public static void close(Closeable x)
 	{
 		try
@@ -2030,5 +2027,16 @@ public class CKit
 			}
 		}
 		return rv;
+	}
+	
+	
+	/** returns true if running from Eclipse */
+	public static boolean isEclipse()
+	{
+		if(eclipseDetected == null)
+		{
+			eclipseDetected = new File(".project").exists() && new File(".classpath").exists();
+		}
+		return eclipseDetected;
 	}
 }
