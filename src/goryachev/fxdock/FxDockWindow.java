@@ -9,27 +9,11 @@ import javafx.scene.layout.BorderPane;
 
 
 /**
- * FxDockWindow.
+ * Base class for docking framework Stage.
  */
 public abstract class FxDockWindow
 	extends FxWindowBase
 {
-	/** 
-	 * invoked by the framework after the window and its content is created.
-	 * subclasses should override this method to retrieve window-specific parameters via querying the
-	 * global settings:
-	 * GlobalSettings.getXXX(prefix + ".SomeKey");
-	 */
-	public void loadSettings(String prefix) { }
-	
-	/**
-	 * invoked by the framework when necessary to allow the window to store window-specific settings:
-	 * GlobalSettings.setXXX(prefix + ".SomeKey", value);
-	 */
-	public void saveSettings(String prefix) { }
-	
-	//
-	
 	public final CAction closeWindowAction = new CAction() { public void action() { close(); } };
 	private final BorderPane frame;
 	private final FxDockRootPane root;
@@ -41,8 +25,6 @@ public abstract class FxDockWindow
 		frame = new BorderPane(root);
 		Scene s = new Scene(frame);
 		setScene(s);
-		
-		// TODO add listeners for maximized/iconified/fullscreen mode to record size and location
 		
 		FxDockFramework.addFocusListener(this);
 	}
@@ -127,8 +109,21 @@ public abstract class FxDockWindow
 	}
 	
 	
-	public void saveWindowSettings()
+	public void saveSettings()
 	{
-		FxDockFramework.storeWindow(this);
+		FxDockFramework.saveLayout();
+	}
+
+
+	/** invoked by the framework after the window and its content is created. */
+	public void loadSettings(String prefix)
+	{
+		
+	}
+
+
+	/** invoked by the framework as necessary to store the window-specific settings */
+	public void saveSettings(String prefix)
+	{
 	}
 }

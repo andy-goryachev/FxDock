@@ -16,6 +16,7 @@ import javafx.scene.Node;
  */
 public class FxDockFramework
 {
+	/** a generator must be plugged into the framework to provide custom windows and panes */ 
 	public static interface Generator
 	{
 		public FxDockWindow createWindow();
@@ -27,7 +28,8 @@ public class FxDockFramework
 	
 	protected static final Log log = Log.get("FxDockFramework");
 	private static final CMap<Object,Object> windows = new CMap<>();
-	private static final WeakList<FxDockWindow> windowStack = new WeakList<>(); // top window last
+	/** window stack: top window first */
+	private static final WeakList<FxDockWindow> windowStack = new WeakList<>();
 	private static Generator generator;
 	
 	
@@ -72,7 +74,7 @@ public class FxDockFramework
 				
 				FxDockSchema.restoreWindow(id, w);
 				
-				Node n = FxDockSchema.loadContent(id);
+				Node n = FxDockSchema.loadLayout(id);
 				w.setContent(n);
 
 				openPrivate(w, id);
@@ -104,10 +106,10 @@ public class FxDockFramework
 	}
 	
 	
-	public static void storeWindow(FxDockWindow w)
+	private static void storeWindow(FxDockWindow w)
 	{
 		String id = getWindowID(w);
-		FxDockSchema.saveContent(id, w.getContent());
+		FxDockSchema.saveLayout(id, w.getContent());
 		w.saveSettings(id);
 		FxDockSchema.storeWindow(id, w);
 	}

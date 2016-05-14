@@ -2,6 +2,7 @@
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.D;
+import goryachev.common.util.SStream;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -221,6 +222,13 @@ public class DockTools
 		return false;
 	}
 
+	
+	/** for debugging or information purposes */
+	public static SStream saveLayout(Node n)
+	{
+		return FxDockSchema.saveLayoutPrivate(n);
+	}
+	
 
 	public static boolean aboveDiagonal(double x, double y, double x0, double y0, double x1, double y1)
 	{

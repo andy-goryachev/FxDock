@@ -11,7 +11,7 @@ import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.WindowListMenuItem;
-import goryachev.fxdock.internal.FxDockSchema;
+import goryachev.fxdock.internal.DockTools;
 import java.util.Random;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -108,7 +108,7 @@ public class DemoWindow
 
 	public void saveSettings(String prefix)
 	{
-		String s = FxDockSchema.saveContentPrivate(getContent()).toString();
+		String s = DockTools.saveLayout(getContent()).toString();
 		statusField.setText(s);
 	}
 }

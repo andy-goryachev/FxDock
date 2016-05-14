@@ -4,10 +4,9 @@ import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
+import goryachev.fxdock.FxDockWindow;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 
 
 /**
@@ -53,40 +52,36 @@ public class FxDockSchema
 	}
 
 
-	public static void storeWindow(String id, Window w)
+	public static void storeWindow(String id, FxDockWindow w)
 	{
 		SStream s = new SStream();
 		s.add(w.getX());
 		s.add(w.getY());
 		s.add(w.getWidth());
 		s.add(w.getHeight());
-		
-		if(w instanceof Stage)
+
+		if(w.isFullScreen())
 		{
-			Stage stage = (Stage)w;
-			if(stage.isFullScreen())
-			{
-				s.add(STAGE_FULL_SCEEN);
-			}
-			else if(stage.isMaximized())
-			{
-				s.add(STAGE_MAXIMIZED);
-			}
-			else if(stage.isIconified())
-			{
-				s.add(STAGE_ICONIFIED);
-			}
-			else
-			{
-				s.add(STAGE_NORMAL);
-			}
+			s.add(STAGE_FULL_SCEEN);
 		}
-		
+		else if(w.isMaximized())
+		{
+			s.add(STAGE_MAXIMIZED);
+		}
+		else if(w.isIconified())
+		{
+			s.add(STAGE_ICONIFIED);
+		}
+		else
+		{
+			s.add(STAGE_NORMAL);
+		}
+
 		GlobalSettings.setStream(id + SUFFIX_WINDOW, s);
 	}
 	
 	
-	public static void restoreWindow(String id, Window w)
+	public static void restoreWindow(String id, FxDockWindow w)
 	{
 		SStream s = GlobalSettings.getStream(id + SUFFIX_WINDOW);
 		if(s.size() == 5)
@@ -101,31 +96,27 @@ public class FxDockSchema
 			w.setY(y);
 			w.setWidth(width);
 			w.setHeight(h);
-			
-			if(w instanceof Stage)
+
+			if(STAGE_FULL_SCEEN.equals(t))
 			{
-				Stage st = (Stage)w;
-				if(STAGE_FULL_SCEEN.equals(t))
-				{
-					st.setFullScreen(true);
-				}
-				else if(STAGE_MAXIMIZED.equals(t))
-				{
-					st.setMaximized(true);
-				}
-				else if(STAGE_ICONIFIED.equals(t))
-				{
-					st.setIconified(true);
-				}
+				w.setFullScreen(true);
+			}
+			else if(STAGE_MAXIMIZED.equals(t))
+			{
+				w.setMaximized(true);
+			}
+			else if(STAGE_ICONIFIED.equals(t))
+			{
+				w.setIconified(true);
 			}
 		}
 	}
 
 
-	public static Node loadContent(String id)
+	public static Node loadLayout(String id)
 	{
 		SStream s = GlobalSettings.getStream(id + SUFFIX_LAYOUT);
-		return loadNodePrivate(s);
+		return loadLayoutPrivate(s);
 	}
 	
 	
@@ -136,14 +127,14 @@ public class FxDockSchema
 		int sz = s.nextInt();
 		for(int i=0; i<sz; i++)
 		{
-			Node ch = loadNodePrivate(s);
+			Node ch = loadLayoutPrivate(s);
 			sp.addPane(ch);
 		}
 		return sp;
 	}
 	
 	
-	private static Node loadNodePrivate(SStream s)
+	private static Node loadLayoutPrivate(SStream s)
 	{
 		String t = s.nextString();
 		if(t == null)
@@ -169,7 +160,7 @@ public class FxDockSchema
 			int sz = s.nextInt();
 			for(int i=0; i<sz; i++)
 			{
-				Node ch = loadNodePrivate(s);
+				Node ch = loadLayoutPrivate(s);
 				tp.addTab(ch);
 			}
 			return tp;
@@ -185,22 +176,22 @@ public class FxDockSchema
 	}
 
 
-	public static void saveContent(String prefix, Node n)
+	public static void saveLayout(String prefix, Node n)
 	{
-		SStream s = saveContentPrivate(n);
+		SStream s = saveLayoutPrivate(n);
 		GlobalSettings.setStream(prefix + SUFFIX_LAYOUT, s);
 	}
 	
 	
-	public static SStream saveContentPrivate(Node content)
+	protected static SStream saveLayoutPrivate(Node content)
 	{
 		SStream s = new SStream();
-		saveContentPrivate(s, content);
+		saveLayoutPrivate(s, content);
 		return s;
 	}
 
 
-	private static void saveContentPrivate(SStream s, Node n)
+	private static void saveLayoutPrivate(SStream s, Node n)
 	{
 		if(n == null)
 		{
@@ -224,7 +215,7 @@ public class FxDockSchema
 			
 			for(Node ch: sp.getPanes())
 			{
-				saveContentPrivate(s, ch);
+				saveLayoutPrivate(s, ch);
 			}
 		}
 		else if(n instanceof FxDockTabPane)
@@ -237,7 +228,7 @@ public class FxDockSchema
 			
 			for(Node ch: tp.getPanes())
 			{
-				saveContentPrivate(s, ch);
+				saveLayoutPrivate(s, ch);
 			}
 		}
 		else if(n instanceof FxDockEmptyPane)
