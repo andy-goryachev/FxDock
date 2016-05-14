@@ -251,6 +251,47 @@ public class FxDockSchema
 	}
 	
 	
+	private static String getPath(String prefix, Node n, String suffix)
+	{
+		SB sb = new SB(128);
+		sb.a(prefix);
+		getPathRecursive(sb, n);
+		sb.a(suffix);
+		return sb.toString();
+	}
+
+
+	private static void getPathRecursive(SB sb, Node n)
+	{
+		Node p = DockTools.getParent(n);
+		if(p != null)
+		{
+			getPathRecursive(sb, p);
+		}
+		
+		if(n instanceof FxDockRootPane)
+		{
+			return;
+		}
+		else if(n instanceof FxDockSplitPane)
+		{
+			sb.a(NAME_SPLIT);
+		}
+		else if(n instanceof FxDockTabPane)
+		{
+			sb.a(NAME_TAB);
+		}
+		else if(n instanceof FxDockPane)
+		{
+			sb.a(NAME_PANE);
+		}
+		else
+		{
+			throw new Error("?" + n);
+		}
+	}
+	
+	
 	/** 
 	 * default functionality provided by the docking framework to load window content settings.
 	 * what's being stored:
@@ -263,7 +304,7 @@ public class FxDockSchema
 		{
 			if(n instanceof FxDockPane)
 			{
-				loadPaneSettings((FxDockPane)n);
+				loadPaneSettings(prefix, (FxDockPane)n);
 			}
 			else if(n instanceof FxDockSplitPane)
 			{
@@ -303,7 +344,7 @@ public class FxDockSchema
 		{
 			if(n instanceof FxDockPane)
 			{
-				savePaneSettings((FxDockPane)n);
+				savePaneSettings(prefix, (FxDockPane)n);
 			}
 			else if(n instanceof FxDockSplitPane)
 			{
@@ -376,55 +417,14 @@ public class FxDockSchema
 	}
 	
 	
-	private static void loadPaneSettings(FxDockPane p)
+	private static void loadPaneSettings(String prefix, FxDockPane p)
 	{
 		D.print("loadPaneSettings", p);
 	}
 	
 	
-	private static void savePaneSettings(FxDockPane p)
+	private static void savePaneSettings(String prefix, FxDockPane p)
 	{
 		D.print("savePaneSettings", p);
-	}
-	
-	
-	private static String getPath(String prefix, Node n, String suffix)
-	{
-		SB sb = new SB(128);
-		sb.a(prefix);
-		getPathRecursive(sb, n);
-		sb.a(suffix);
-		return sb.toString();
-	}
-
-
-	private static void getPathRecursive(SB sb, Node n)
-	{
-		Node p = DockTools.getParent(n);
-		if(p != null)
-		{
-			getPathRecursive(sb, p);
-		}
-		
-		if(n instanceof FxDockRootPane)
-		{
-			return;
-		}
-		else if(n instanceof FxDockSplitPane)
-		{
-			sb.a(NAME_SPLIT);
-		}
-		else if(n instanceof FxDockTabPane)
-		{
-			sb.a(NAME_TAB);
-		}
-		else if(n instanceof FxDockPane)
-		{
-			sb.a(NAME_PANE);
-		}
-		else
-		{
-			throw new Error("?" + n);
-		}
 	}
 }

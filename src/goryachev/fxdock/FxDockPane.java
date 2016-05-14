@@ -5,6 +5,7 @@ import goryachev.fxdock.dnd.DragAndDropHandler;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.FxDockBorderPane;
 import goryachev.fxdock.internal.FxDockTabPane;
+import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
+import javafx.util.StringConverter;
 
 
 /**
@@ -114,6 +116,20 @@ public abstract class FxDockPane
 	public final SimpleStringProperty titleProperty()
 	{
 		return title;
+	}
+	
+	
+	/** bind a property to be saved in tile-specific settings using the specified subkey */
+	public <T> void bind(String subKey, Property<T> p)
+	{
+		// TODO
+	}
+	
+	
+	/** bind a property to be saved in tile-specific settings using the specified subkey, using subkey */
+	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
+	{
+		// TODO
 	}
 	
 	
