@@ -1,6 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.demo.dock;
 import goryachev.common.util.Hex;
+import goryachev.fx.CPopupMenu;
 import goryachev.fx.FX;
 import goryachev.fx.HPane;
 import goryachev.fxdock.FxDockPane;
@@ -46,6 +47,16 @@ public class DemoPane
 		setCenter(bp);
 		this.pseq = seq++;
 		setTitle("pane " + pseq);
+		
+		// set up context menu off the title field
+		titleField.setContextMenu(new CPopupMenu()
+		{
+			protected void populateMenu()
+			{
+				add("Pop up in Window", popToWindowAction);
+				add("Close", closeAction);
+			}
+		});
 	}
 	
 	

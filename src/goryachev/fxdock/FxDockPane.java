@@ -23,7 +23,8 @@ import javafx.scene.control.ToolBar;
 public abstract class FxDockPane
 	extends FxDockBorderPane
 {
-	public final CAction closeAction = new CAction() { public void action() { actionClose(); }}; 
+	public final CAction closeAction = new CAction() { public void action() { actionClose(); }};
+	public final CAction popToWindowAction = new CAction() { public void action() { actionPopToWindow(); }}; 
 	public final Label titleField = new Label();
 	private final ReadOnlyBooleanWrapper tabMode = new ReadOnlyBooleanWrapper();
 	private final SimpleStringProperty title = new SimpleStringProperty();
@@ -98,12 +99,6 @@ public abstract class FxDockPane
 	}
 	
 	
-	public void actionClose()
-	{
-		DockTools.remove(this);
-	}
-	
-	
 	public final void setTitle(String s)
 	{
 		titleProperty().set(s);
@@ -119,5 +114,17 @@ public abstract class FxDockPane
 	public final SimpleStringProperty titleProperty()
 	{
 		return title;
+	}
+	
+	
+	public void actionClose()
+	{
+		DockTools.remove(this);
+	}
+	
+	
+	public void actionPopToWindow()
+	{
+		DockTools.moveToNewWindow(this);
 	}
 }

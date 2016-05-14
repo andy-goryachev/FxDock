@@ -717,6 +717,23 @@ public class DockTools
 		
 		collapseEmptySpace(p);
 	}
+	
+	
+	public static void moveToNewWindow(FxDockPane client)
+	{
+		Node p = getParent(client);
+		Point2D pos = client.localToScreen(0, 0);
+		
+		FxDockWindow w = FxDockFramework.createWindow();
+		w.setContent(client);
+		w.setX(pos.getX());
+		w.setY(pos.getY());
+		w.setWidth(client.getWidth());
+		w.setHeight(client.getHeight());
+		FxDockFramework.open(w);
+		
+		collapseEmptySpace(p);
+	}
 
 
 	public static void moveToSplit(FxDockPane client, FxDockSplitPane sp, int index)
