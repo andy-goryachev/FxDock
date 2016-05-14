@@ -69,6 +69,18 @@ public class SB
 	}
 	
 	
+	/** append an object, separating it with the specified delimiter if the buffer is not empty */
+	public SB a(char delimiter, Object x)
+	{
+		if(isNotEmpty())
+		{
+			sb.append(delimiter);
+		}
+		
+		return a(x);
+	}
+	
+	
 	public SB a(Object x)
 	{
 		if(x != null)

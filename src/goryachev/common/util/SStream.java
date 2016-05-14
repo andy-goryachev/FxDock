@@ -48,6 +48,15 @@ public class SStream
 			list.add(Double.toString(x));
 		}
 	}
+	
+	
+	public void addAll(double[] xs)
+	{
+		for(double x: xs)
+		{
+			add(x);
+		}
+	}
 
 
 	public Iterator<String> iterator()

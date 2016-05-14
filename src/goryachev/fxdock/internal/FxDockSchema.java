@@ -2,6 +2,7 @@
 package goryachev.fxdock.internal;
 import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
+import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
@@ -18,15 +19,21 @@ public class FxDockSchema
 	public static final String PREFIX_DOCK = "fxdock.";
 	public static final String PREFIX_WINDOW = PREFIX_DOCK + "window.";
 	
-	public static final String SUFFIX_LAYOUT = ".layout";
-	public static final String SUFFIX_WINDOW = ".window";
-	
 	public static final String KEY_WINDOW_COUNT = PREFIX_DOCK + "window.count";
 	
+	public static final String NAME_PANE = ".P";
+	public static final String NAME_TAB = ".T";
+	public static final String NAME_SPLIT = ".S";
+
 	public static final String STAGE_FULL_SCEEN = "F";
 	public static final String STAGE_ICONIFIED = "I";
 	public static final String STAGE_MAXIMIZED = "X";
 	public static final String STAGE_NORMAL = "N";
+	
+	public static final String SUFFIX_LAYOUT = ".layout";
+	public static final String SUFFIX_SELECTED_TAB = ".tab";
+	public static final String SUFFIX_SPLITS = ".splits";
+	public static final String SUFFIX_WINDOW = ".window";
 	
 	public static final String TYPE_EMPTY = "E";
 	public static final String TYPE_PANE = "P";
@@ -259,21 +266,20 @@ public class FxDockSchema
 			}
 			else if(n instanceof FxDockSplitPane)
 			{
-				FxDockSplitPane sp = (FxDockSplitPane)n;
-				double[] divs = sp.getDividerPositions();
-				// TODO save
+				FxDockSplitPane p = (FxDockSplitPane)n;
+				loadSplitPaneSettings(p);
 				
-				for(Node ch: sp.getPanes())
+				for(Node ch: p.getPanes())
 				{
 					loadContentSettings(prefix, ch);
 				}
 			}
 			else if(n instanceof FxDockTabPane)
 			{
-				FxDockTabPane tp = (FxDockTabPane)n;
-				// TODO save selected?
+				FxDockTabPane p = (FxDockTabPane)n;
+				loadTabPaneSettings(p);
 				
-				for(Node ch: tp.getPanes())
+				for(Node ch: p.getPanes())
 				{
 					loadContentSettings(prefix, ch);
 				}
@@ -298,26 +304,58 @@ public class FxDockSchema
 			}
 			else if(n instanceof FxDockSplitPane)
 			{
-				FxDockSplitPane sp = (FxDockSplitPane)n;
-				double[] divs = sp.getDividerPositions();
-				// TODO save
+				FxDockSplitPane p = (FxDockSplitPane)n;
+				saveSplitPaneSettings(prefix, p);
 				
-				for(Node ch: sp.getPanes())
+				for(Node ch: p.getPanes())
 				{
 					saveContentSettings(prefix, ch);
 				}
 			}
 			else if(n instanceof FxDockTabPane)
 			{
-				FxDockTabPane tp = (FxDockTabPane)n;
-				// TODO save selected?
+				FxDockTabPane p = (FxDockTabPane)n;
+				saveTabPaneSettings(prefix, p);
 				
-				for(Node ch: tp.getPanes())
+				for(Node ch: p.getPanes())
 				{
 					saveContentSettings(prefix, ch);
 				}
 			}
 		}
+	}
+	
+	
+	private static void saveSplitPaneSettings(String prefix, FxDockSplitPane p)
+	{
+		double[] divs = p.getDividerPositions();
+		
+		SStream s = new SStream();
+		s.addAll(divs);
+		
+		String k = getPath(prefix, p, SUFFIX_SPLITS);
+		GlobalSettings.setStream(k, s);
+	}
+	
+	
+	private static void loadSplitPaneSettings(FxDockSplitPane p)
+	{
+		// TODO
+	}
+	
+	
+	private static void saveTabPaneSettings(String prefix, FxDockTabPane p)
+	{
+		int ix = p.getSelectedTabIndex();
+		
+		String k = getPath(prefix, p, SUFFIX_SELECTED_TAB);
+		GlobalSettings.setInt(k, ix);
+	}
+	
+	
+	private static void loadTabPaneSettings(FxDockTabPane p)
+	{
+		// TODO
 	}
 	
 	
@@ -330,5 +368,46 @@ public class FxDockSchema
 	private static void savePaneSettings(FxDockPane p)
 	{
 		D.print("savePaneSettings", p);
+	}
+	
+	
+	private static String getPath(String prefix, Node n, String suffix)
+	{
+		SB sb = new SB(128);
+		sb.a(prefix);
+		getPathRecursive(sb, n);
+		sb.a(suffix);
+		return sb.toString();
+	}
+
+
+	private static void getPathRecursive(SB sb, Node n)
+	{
+		Node p = DockTools.getParent(n);
+		if(p != null)
+		{
+			getPathRecursive(sb, p);
+		}
+		
+		if(n instanceof FxDockRootPane)
+		{
+			return;
+		}
+		else if(n instanceof FxDockSplitPane)
+		{
+			sb.a(NAME_SPLIT);
+		}
+		else if(n instanceof FxDockTabPane)
+		{
+			sb.a(NAME_TAB);
+		}
+		else if(n instanceof FxDockPane)
+		{
+			sb.a(NAME_PANE);
+		}
+		else
+		{
+			throw new Error("?" + n);
+		}
 	}
 }

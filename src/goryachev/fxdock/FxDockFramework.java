@@ -147,10 +147,6 @@ public class FxDockFramework
 				exitPrivate();
 			}
 		}
-		else
-		{
-			saveLayout();
-		}
 	}
 	
 	
@@ -211,7 +207,7 @@ public class FxDockFramework
 	}
 	
 	
-	/** returns a list of windows, topmost window first */
+	/** returns a list of vidible windows, topmost window first */
 	public static List<FxDockWindow> getWindows()
 	{
 		int sz = windowStack.size();
@@ -221,7 +217,10 @@ public class FxDockFramework
 			FxDockWindow w = windowStack.get(i);
 			if(w != null)
 			{
-				rv.add(w);
+				if(w.isShowing())
+				{
+					rv.add(w);
+				}
 			}
 		}
 		return rv;
