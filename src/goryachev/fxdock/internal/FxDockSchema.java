@@ -267,17 +267,18 @@ public class FxDockSchema
 			else if(n instanceof FxDockSplitPane)
 			{
 				FxDockSplitPane p = (FxDockSplitPane)n;
-				loadSplitPaneSettings(p);
-				
+
 				for(Node ch: p.getPanes())
 				{
 					loadContentSettings(prefix, ch);
 				}
+
+				loadSplitPaneSettings(prefix, p);
 			}
 			else if(n instanceof FxDockTabPane)
 			{
 				FxDockTabPane p = (FxDockTabPane)n;
-				loadTabPaneSettings(p);
+				loadTabPaneSettings(prefix, p);
 				
 				for(Node ch: p.getPanes())
 				{
@@ -338,9 +339,20 @@ public class FxDockSchema
 	}
 	
 	
-	private static void loadSplitPaneSettings(FxDockSplitPane p)
+	private static void loadSplitPaneSettings(String prefix, FxDockSplitPane p)
 	{
-		// TODO
+		String k = getPath(prefix, p, SUFFIX_SPLITS);
+		SStream s = GlobalSettings.getStream(k);
+		
+		int ct = s.size();
+		if(p.getDividers().size() == ct)
+		{
+			for(int i=0; i<ct; i++)
+			{
+				double pos = s.nextDouble();
+				p.setDividerPosition(i, pos);
+			}
+		}
 	}
 	
 	
@@ -353,9 +365,12 @@ public class FxDockSchema
 	}
 	
 	
-	private static void loadTabPaneSettings(FxDockTabPane p)
+	private static void loadTabPaneSettings(String prefix, FxDockTabPane p)
 	{
-		// TODO
+		String k = getPath(prefix, p, SUFFIX_SELECTED_TAB);
+		int ix = GlobalSettings.getInt(k, 0);
+		
+		p.select(ix);
 	}
 	
 	

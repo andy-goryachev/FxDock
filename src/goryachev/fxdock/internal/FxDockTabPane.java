@@ -159,4 +159,13 @@ public class FxDockTabPane
 			getSelectionModel().select(ix);
 		}
 	}
+	
+	
+	public void select(int ix)
+	{
+		if((ix >= 0) && (ix < getTabCount()))
+		{
+			getSelectionModel().select(ix);
+		}
+	}
 }

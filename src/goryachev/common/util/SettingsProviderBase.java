@@ -66,6 +66,10 @@ public abstract class SettingsProviderBase
 		{
 			return (String[])x;
 		}
+		else if(x instanceof String)
+		{
+			return new String[] { (String)x };
+		}
 		return null;
 	}
 	
