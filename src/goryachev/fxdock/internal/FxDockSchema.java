@@ -7,6 +7,7 @@ import goryachev.common.util.SStream;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 
@@ -273,7 +274,8 @@ public class FxDockSchema
 					loadContentSettings(prefix, ch);
 				}
 
-				loadSplitPaneSettings(prefix, p);
+				// because of the split pane idiosyncrasy with layout
+				Platform.runLater(() -> loadSplitPaneSettings(prefix, p));
 			}
 			else if(n instanceof FxDockTabPane)
 			{
