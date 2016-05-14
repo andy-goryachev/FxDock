@@ -127,7 +127,7 @@ public class BeforeDrop
 	protected void allocateEqually(FxDockSplitPane p)
 	{
 		int sz = p.getDividers().size();
-		double total = (sz + 1.0);
+		double total = (sz + 1);
 		
 		for(int i=0; i<sz; i++)
 		{
