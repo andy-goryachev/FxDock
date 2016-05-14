@@ -53,7 +53,7 @@ public class FxDockSchema
 	}
 
 
-	public static void storeWindow(String id, FxDockWindow w)
+	public static void storeWindow(String prefix, FxDockWindow w)
 	{
 		SStream s = new SStream();
 		s.add(w.getX());
@@ -78,13 +78,13 @@ public class FxDockSchema
 			s.add(STAGE_NORMAL);
 		}
 
-		GlobalSettings.setStream(id + SUFFIX_WINDOW, s);
+		GlobalSettings.setStream(prefix + SUFFIX_WINDOW, s);
 	}
 	
 	
-	public static void restoreWindow(String id, FxDockWindow w)
+	public static void restoreWindow(String prefix, FxDockWindow w)
 	{
-		SStream s = GlobalSettings.getStream(id + SUFFIX_WINDOW);
+		SStream s = GlobalSettings.getStream(prefix + SUFFIX_WINDOW);
 		if(s.size() == 5)
 		{
 			double x = s.nextDouble();
@@ -114,9 +114,9 @@ public class FxDockSchema
 	}
 
 
-	public static Node loadLayout(String id)
+	public static Node loadLayout(String prefix)
 	{
-		SStream s = GlobalSettings.getStream(id + SUFFIX_LAYOUT);
+		SStream s = GlobalSettings.getStream(prefix + SUFFIX_LAYOUT);
 		return loadLayoutRecursively(s);
 	}
 	

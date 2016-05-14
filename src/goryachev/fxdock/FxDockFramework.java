@@ -1,7 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.common.util.CList;
-import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
 import goryachev.common.util.WeakList;
@@ -27,7 +26,6 @@ public class FxDockFramework
 	//
 	
 	protected static final Log log = Log.get("FxDockFramework");
-	private static final CMap<Object,Object> windows = new CMap<>();
 	/** window stack: top window first */
 	private static final WeakList<FxDockWindow> windowStack = new WeakList<>();
 	private static Generator generator;
@@ -70,16 +68,16 @@ public class FxDockFramework
 			try
 			{
 				FxDockWindow w = createWindow();
-				String id = FxDockSchema.windowID(i);
+				String prefix = FxDockSchema.windowID(i);
 				
-				FxDockSchema.restoreWindow(id, w);
+				FxDockSchema.restoreWindow(prefix, w);
 				
-				Node n = FxDockSchema.loadLayout(id);
+				Node n = FxDockSchema.loadLayout(prefix);
 				w.setContent(n);
 
-				openPrivate(w, id);
+				openPrivate(w);
 				
-				w.loadSettings(id);
+				w.loadSettings(prefix);
 				
 				w.show();
 			}
@@ -95,54 +93,53 @@ public class FxDockFramework
 	public static void saveLayout()
 	{
 		List<FxDockWindow> ws = getWindows();
-		FxDockSchema.setWindowCount(ws.size());
+		int ct = ws.size();
 		
-		for(FxDockWindow w: ws)
+		FxDockSchema.setWindowCount(ct);
+		
+		for(int i=0; i<ct; i++)
 		{
-			storeWindow(w);
+			FxDockWindow w = ws.get(i);
+			// ensure proper z-order
+			storeWindow(ct - i - 1, w);
 		}
 		
 		GlobalSettings.save();
 	}
 	
 	
-	private static void storeWindow(FxDockWindow w)
+	private static void storeWindow(int ix, FxDockWindow w)
 	{
-		String id = getWindowID(w);
-		FxDockSchema.saveLayout(id, w.getContent());
-		w.saveSettings(id);
-		FxDockSchema.storeWindow(id, w);
+		String prefix = FxDockSchema.windowID(ix);
+		FxDockSchema.saveLayout(prefix, w.getContent());
+		w.saveSettings(prefix);
+		FxDockSchema.storeWindow(prefix, w);
 	}
 	
 
 	public static void open(FxDockWindow w)
 	{
-		String id = newWindowID();
-		openPrivate(w, id);
+		openPrivate(w);
 		w.show();
 	}
 	
 	
-	private static void openPrivate(FxDockWindow w, String id)
+	private static void openPrivate(FxDockWindow w)
 	{
-		windows.put(id, w);
-		windows.put(w, id);
-		
 		w.showingProperty().addListener((src,old,cur) ->
 		{
 			if(!cur)
 			{
-				unlinkWindow(w, id);
+				unlinkWindow(w);
 			}
 		});
 	}
 	
 	
-	private static void unlinkWindow(FxDockWindow w, String id)
+	private static void unlinkWindow(FxDockWindow w)
 	{
 		if(getWindowCount() == 1)
 		{
-			// save the last window
 			saveLayout();
 			
 			if(confirmExit())
@@ -152,46 +149,8 @@ public class FxDockFramework
 		}
 		else
 		{
-			windows.remove(w);
-			windows.remove(id);
-			
 			saveLayout();
 		}
-	}
-	
-	
-	private static String getWindowID(FxDockWindow w)
-	{
-		return (String)windows.get(w);
-	}
-	
-	
-	private static String newWindowID()
-	{
-		int i = 0;
-		for( ; i<100000; i++)
-		{
-			String id = FxDockSchema.windowID(i);
-			if(!windows.containsKey(id))
-			{
-				return id;
-			}
-		}
-		throw new Error("?" + i);
-	}
-	
-	
-	public static int getWindowCount()
-	{
-		int ct = 0;
-		for(Object x: windows.keySet())
-		{
-			if(x instanceof FxDockWindow)
-			{
-				ct++;
-			}
-		}
-		return ct;
 	}
 	
 	
@@ -266,6 +225,25 @@ public class FxDockFramework
 			}
 		}
 		return rv;
+	}
+	
+	
+	public static int getWindowCount()
+	{
+		int ct = 0;
+		for(int i=windowStack.size()-1; i>=0; --i)
+		{
+			FxDockWindow w = windowStack.get(i);
+			if(w == null)
+			{
+				windowStack.remove(i);
+			}
+			else
+			{
+				ct++;
+			}
+		}
+		return ct;
 	}
 	
 	
