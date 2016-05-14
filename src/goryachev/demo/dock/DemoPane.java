@@ -31,14 +31,14 @@ public class DemoPane
 		super(type);
 		
 		VBox vb = new VBox();
-		a(vb, 2, 0.25, 0.25, HPane.FILL);
-		a(vb, 2, 30, 30, 100);
-		a(vb, 2, 0.2, 0.2, 0.6);
-		a(vb, 2, HPane.PREF, HPane.FILL, HPane.PREF);
-		a(vb, 2, HPane.FILL, HPane.FILL, HPane.FILL);
-		a(vb, 2, 20, HPane.FILL, 20);
-		a(vb, 2, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL);
-		a(vb, 2, 50, HPane.FILL, HPane.FILL, 50);
+//		a(vb, 2, 0.25, 0.25, HPane.FILL);
+//		a(vb, 2, 30, 30, 100);
+//		a(vb, 2, 0.2, 0.2, 0.6);
+//		a(vb, 2, HPane.PREF, HPane.FILL, HPane.PREF);
+//		a(vb, 2, HPane.FILL, HPane.FILL, HPane.FILL);
+//		a(vb, 2, 20, HPane.FILL, 20);
+//		a(vb, 2, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL);
+//		a(vb, 2, 50, HPane.FILL, HPane.FILL, 50);
 			
 		BorderPane bp = new BorderPane();
 		bp.setCenter(createColorNode(type));

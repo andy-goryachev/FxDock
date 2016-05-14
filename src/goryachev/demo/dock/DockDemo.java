@@ -56,7 +56,7 @@ public class DockDemo
 		if(ct == 0)
 		{
 			// no saved layout, open initial window
-			DemoWindow.newWindow().setTitle("Initial Window");
+			DemoWindow.actionNewWindow().setTitle("Initial Window");
 		}
 	}
 

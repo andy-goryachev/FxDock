@@ -26,7 +26,7 @@ public class DemoWindow
     extends FxDockWindow
 {
 	public static final CAction exitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); } };
-	public static final CAction newWindowAction = new CAction() { public void action() { newWindow(); } };
+	public static final CAction newWindowAction = new CAction() { public void action() { actionNewWindow(); } };
 	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); } };
 	public final Label statusField = new Label();
 
@@ -74,7 +74,7 @@ public class DemoWindow
 	}
 
 	
-	public static DemoWindow newWindow()
+	public static DemoWindow actionNewWindow()
 	{
 		SB sb = new SB();
 		c(sb);
@@ -84,6 +84,8 @@ public class DemoWindow
 			
 		DemoWindow w = new DemoWindow();
 		w.setContent(new DemoPane(type));
+		w.setWidth(300);
+		w.setHeight(200);
 		w.open();
 		return w;
 	}

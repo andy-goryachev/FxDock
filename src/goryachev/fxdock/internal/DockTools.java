@@ -672,7 +672,7 @@ public class DockTools
 		{
 			FxDockRootPane rp = (FxDockRootPane)target;
 			
-			Node p = getParent(client);
+			BeforeDrop b = new BeforeDrop(client, target);
 			boolean makesplit = true;
 			Node old = rp.getContent();
 			if(old instanceof FxDockSplitPane)
@@ -688,7 +688,8 @@ public class DockTools
 				rp.setContent(makeSplit(client, old, (Where)where));
 			}
 			
-			collapseEmptySpace(p);
+			collapseEmptySpace(b.clientParent);
+			b.adjustSplits();
 		}
 		else if(target instanceof FxDockPane)
 		{
@@ -738,9 +739,10 @@ public class DockTools
 
 	public static void moveToSplit(FxDockPane client, FxDockSplitPane sp, int index)
 	{
-		Node p = getParent(client);
+		BeforeDrop b = new BeforeDrop(client, sp);
 		sp.addPane(index, client);
-		collapseEmptySpace(p);
+		collapseEmptySpace(b.clientParent);
+		b.adjustSplits();
 	}
 	
 	
@@ -858,7 +860,7 @@ public class DockTools
 	/** moves client pane to new position, creating necessary splits or tabs */
 	public static void moveToPane(FxDockPane client, Pane target, Where where)
 	{
-		Node p = getParent(client);
+		BeforeDrop b = new BeforeDrop(client, target);
 		Node targetParent = getParent(target);
 
 		if(targetParent instanceof FxDockSplitPane)
@@ -880,6 +882,7 @@ public class DockTools
 			throw new Error("?" + targetParent);
 		}
 
-		collapseEmptySpace(p);
+		collapseEmptySpace(b.clientParent);
+		b.adjustSplits();
 	}
 }
