@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
+import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
 import goryachev.fxdock.FxDockFramework;
@@ -116,7 +117,7 @@ public class FxDockSchema
 	public static Node loadLayout(String id)
 	{
 		SStream s = GlobalSettings.getStream(id + SUFFIX_LAYOUT);
-		return loadLayoutPrivate(s);
+		return loadLayoutRecursively(s);
 	}
 	
 	
@@ -127,14 +128,14 @@ public class FxDockSchema
 		int sz = s.nextInt();
 		for(int i=0; i<sz; i++)
 		{
-			Node ch = loadLayoutPrivate(s);
+			Node ch = loadLayoutRecursively(s);
 			sp.addPane(ch);
 		}
 		return sp;
 	}
 	
 	
-	private static Node loadLayoutPrivate(SStream s)
+	private static Node loadLayoutRecursively(SStream s)
 	{
 		String t = s.nextString();
 		if(t == null)
@@ -160,7 +161,7 @@ public class FxDockSchema
 			int sz = s.nextInt();
 			for(int i=0; i<sz; i++)
 			{
-				Node ch = loadLayoutPrivate(s);
+				Node ch = loadLayoutRecursively(s);
 				tp.addTab(ch);
 			}
 			return tp;
@@ -186,12 +187,12 @@ public class FxDockSchema
 	protected static SStream saveLayoutPrivate(Node content)
 	{
 		SStream s = new SStream();
-		saveLayoutPrivate(s, content);
+		saveLayoutRecursively(s, content);
 		return s;
 	}
 
 
-	private static void saveLayoutPrivate(SStream s, Node n)
+	private static void saveLayoutRecursively(SStream s, Node n)
 	{
 		if(n == null)
 		{
@@ -215,7 +216,7 @@ public class FxDockSchema
 			
 			for(Node ch: sp.getPanes())
 			{
-				saveLayoutPrivate(s, ch);
+				saveLayoutRecursively(s, ch);
 			}
 		}
 		else if(n instanceof FxDockTabPane)
@@ -228,7 +229,7 @@ public class FxDockSchema
 			
 			for(Node ch: tp.getPanes())
 			{
-				saveLayoutPrivate(s, ch);
+				saveLayoutRecursively(s, ch);
 			}
 		}
 		else if(n instanceof FxDockEmptyPane)
@@ -239,5 +240,95 @@ public class FxDockSchema
 		{
 			throw new Error("?" + n);
 		}
+	}
+	
+	
+	/** 
+	 * default functionality provided by the docking framework to load window content settings.
+	 * what's being stored:
+	 * - split positions
+	 * - settings bindings
+	 */
+	public static void loadContentSettings(String prefix, Node n)
+	{
+		if(n != null)
+		{
+			if(n instanceof FxDockPane)
+			{
+				loadPaneSettings((FxDockPane)n);
+			}
+			else if(n instanceof FxDockSplitPane)
+			{
+				FxDockSplitPane sp = (FxDockSplitPane)n;
+				double[] divs = sp.getDividerPositions();
+				// TODO save
+				
+				for(Node ch: sp.getPanes())
+				{
+					loadContentSettings(prefix, ch);
+				}
+			}
+			else if(n instanceof FxDockTabPane)
+			{
+				FxDockTabPane tp = (FxDockTabPane)n;
+				// TODO save selected?
+				
+				for(Node ch: tp.getPanes())
+				{
+					loadContentSettings(prefix, ch);
+				}
+			}
+		}
+	}
+
+	
+	/** 
+	 * default functionality provided by the docking framework to store window content settings.
+	 * what's being stored:
+	 * - split positions
+	 * - settings bindings
+	 */
+	public static void saveContentSettings(String prefix, Node n)
+	{
+		if(n != null)
+		{
+			if(n instanceof FxDockPane)
+			{
+				savePaneSettings((FxDockPane)n);
+			}
+			else if(n instanceof FxDockSplitPane)
+			{
+				FxDockSplitPane sp = (FxDockSplitPane)n;
+				double[] divs = sp.getDividerPositions();
+				// TODO save
+				
+				for(Node ch: sp.getPanes())
+				{
+					saveContentSettings(prefix, ch);
+				}
+			}
+			else if(n instanceof FxDockTabPane)
+			{
+				FxDockTabPane tp = (FxDockTabPane)n;
+				// TODO save selected?
+				
+				for(Node ch: tp.getPanes())
+				{
+					saveContentSettings(prefix, ch);
+				}
+			}
+		}
+	}
+	
+	
+	private static void loadPaneSettings(FxDockPane p)
+	{
+		D.print("loadPaneSettings", p);
+	}
+	
+	
+	private static void savePaneSettings(FxDockPane p)
+	{
+		D.print("savePaneSettings", p);
 	}
 }

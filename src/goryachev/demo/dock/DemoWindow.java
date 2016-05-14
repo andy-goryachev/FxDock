@@ -108,6 +108,8 @@ public class DemoWindow
 
 	public void saveSettings(String prefix)
 	{
+		super.saveSettings(prefix);
+		
 		String s = DockTools.saveLayout(getContent()).toString();
 		statusField.setText(s);
 	}

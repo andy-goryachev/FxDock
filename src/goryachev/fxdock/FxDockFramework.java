@@ -65,7 +65,7 @@ public class FxDockFramework
 	public static int loadLayout()
 	{
 		int ct = FxDockSchema.getWindowCount();
-		for(int i=0; i<ct; i++)
+		for(int i=ct-1; i>=0; i--)
 		{
 			try
 			{
@@ -113,7 +113,7 @@ public class FxDockFramework
 		w.saveSettings(id);
 		FxDockSchema.storeWindow(id, w);
 	}
-
+	
 
 	public static void open(FxDockWindow w)
 	{
@@ -178,20 +178,6 @@ public class FxDockFramework
 			}
 		}
 		throw new Error("?" + i);
-	}
-	
-	
-	public static List<FxDockWindow> getWindows()
-	{
-		CList<FxDockWindow> rv = new CList(windows.size() / 2);
-		for(Object x: windows.keySet())
-		{
-			if(x instanceof FxDockWindow)
-			{
-				rv.add((FxDockWindow)x);
-			}
-		}
-		return rv;
 	}
 	
 	
@@ -263,6 +249,23 @@ public class FxDockFramework
 			}
 		}
 		return null;
+	}
+	
+	
+	/** returns a list of windows, topmost window first */
+	public static List<FxDockWindow> getWindows()
+	{
+		int sz = windowStack.size();
+		CList<FxDockWindow> rv = new CList(sz);
+		for(int i=0; i<sz; i++)
+		{
+			FxDockWindow w = windowStack.get(i);
+			if(w != null)
+			{
+				rv.add(w);
+			}
+		}
+		return rv;
 	}
 	
 	

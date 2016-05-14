@@ -2,6 +2,7 @@
 package goryachev.fxdock;
 import goryachev.fx.CAction;
 import goryachev.fxdock.internal.FxDockRootPane;
+import goryachev.fxdock.internal.FxDockSchema;
 import goryachev.fxdock.internal.FxWindowBase;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -118,12 +119,13 @@ public abstract class FxDockWindow
 	/** invoked by the framework after the window and its content is created. */
 	public void loadSettings(String prefix)
 	{
-		
+		FxDockSchema.loadContentSettings(prefix, getContent());
 	}
 
 
 	/** invoked by the framework as necessary to store the window-specific settings */
 	public void saveSettings(String prefix)
 	{
+		FxDockSchema.saveContentSettings(prefix, getContent());
 	}
 }
