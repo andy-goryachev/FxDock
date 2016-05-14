@@ -63,6 +63,7 @@ public class FxDockFramework
 	public static int loadLayout()
 	{
 		int ct = FxDockSchema.getWindowCount();
+		// restore in proper z order
 		for(int i=ct-1; i>=0; i--)
 		{
 			try
@@ -71,11 +72,10 @@ public class FxDockFramework
 				String prefix = FxDockSchema.windowID(i);
 				
 				FxDockSchema.restoreWindow(prefix, w);
+				registerWindow(w);
 				
 				Node n = FxDockSchema.loadLayout(prefix);
 				w.setContent(n);
-
-				openPrivate(w);
 				
 				w.loadSettings(prefix);
 				
@@ -119,12 +119,12 @@ public class FxDockFramework
 
 	public static void open(FxDockWindow w)
 	{
-		openPrivate(w);
+		registerWindow(w);
 		w.show();
 	}
 	
 	
-	private static void openPrivate(FxDockWindow w)
+	private static void registerWindow(FxDockWindow w)
 	{
 		w.showingProperty().addListener((src,old,cur) ->
 		{
