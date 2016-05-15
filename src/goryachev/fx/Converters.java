@@ -1,5 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.fxdock.internal;
+package goryachev.fx;
 import goryachev.common.util.Parsers;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;

@@ -3,9 +3,9 @@ package goryachev.fxdock.internal;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
+import goryachev.fx.Converters;
 import goryachev.fx.SSConverter;
 import javafx.beans.property.Property;
-import javafx.beans.property.StringProperty;
 import javafx.util.StringConverter;
 
 
