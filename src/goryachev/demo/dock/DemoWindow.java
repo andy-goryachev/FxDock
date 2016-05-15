@@ -38,7 +38,7 @@ public class DemoWindow
 		setTop(createMenu());
 		setBottom(createStatusBar());
 //		setMinSize(500, 300);
-		setTitle("FxDock Framework Demo");
+		setTitle("FxDock Docking Framework Demo");
 		
 		bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
 	}
