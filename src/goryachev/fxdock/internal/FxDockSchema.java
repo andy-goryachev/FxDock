@@ -30,6 +30,7 @@ public class FxDockSchema
 	public static final String STAGE_MAXIMIZED = "X";
 	public static final String STAGE_NORMAL = "N";
 	
+	public static final String SUFFIX_BINDINGS = ".bindings";
 	public static final String SUFFIX_LAYOUT = ".layout";
 	public static final String SUFFIX_SELECTED_TAB = ".tab";
 	public static final String SUFFIX_SPLITS = ".splits";
@@ -250,12 +251,15 @@ public class FxDockSchema
 	}
 	
 	
-	private static String getPath(String prefix, Node n, String suffix)
+	public static String getPath(String prefix, Node n, String suffix)
 	{
 		SB sb = new SB(128);
-		sb.a(prefix);
+		sb.append(prefix);
 		getPathRecursive(sb, n);
-		sb.a(suffix);
+		if(suffix != null)
+		{
+			sb.a(suffix);
+		}
 		return sb.toString();
 	}
 
@@ -266,6 +270,19 @@ public class FxDockSchema
 		if(p != null)
 		{
 			getPathRecursive(sb, p);
+			
+			if(p instanceof FxDockSplitPane)
+			{
+				int ix = ((FxDockSplitPane)p).indexOfPane(n);
+				sb.a('.');
+				sb.a(ix);
+			}
+			else if(p instanceof FxDockTabPane)
+			{
+				int ix = ((FxDockTabPane)p).indexOfTab(n);
+				sb.a('.');
+				sb.a(ix);
+			}
 		}
 		
 		if(n instanceof FxDockRootPane)

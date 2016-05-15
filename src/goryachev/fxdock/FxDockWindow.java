@@ -110,7 +110,8 @@ public abstract class FxDockWindow
 	}
 	
 	
-	public void saveSettings()
+	/** save all windows */
+	public void saveLayout()
 	{
 		FxDockFramework.saveLayout();
 	}

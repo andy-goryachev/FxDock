@@ -5,6 +5,7 @@ import goryachev.fx.SSConverter;
 import goryachev.fxdock.dnd.DragAndDropHandler;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.FxDockBorderPane;
+import goryachev.fxdock.internal.FxDockSchema;
 import goryachev.fxdock.internal.FxDockTabPane;
 import goryachev.fxdock.internal.LocalBindings;
 import javafx.beans.property.Property;
@@ -158,7 +159,8 @@ public abstract class FxDockPane
 	{
 		if(bindings != null)
 		{
-			bindings.loadValues(prefix);
+			String k = FxDockSchema.getPath(prefix, this, FxDockSchema.SUFFIX_BINDINGS);
+			bindings.loadValues(k);
 		}
 	}
 	
@@ -168,7 +170,8 @@ public abstract class FxDockPane
 	{
 		if(bindings != null)
 		{
-			bindings.saveValues(prefix);
+			String k = FxDockSchema.getPath(prefix, this, FxDockSchema.SUFFIX_BINDINGS);
+			bindings.saveValues(k);
 		}
 	}
 	
