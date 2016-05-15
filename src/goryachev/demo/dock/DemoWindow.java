@@ -5,6 +5,7 @@ import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SB;
 import goryachev.fx.CAction;
+import goryachev.fx.CCheckMenuItem;
 import goryachev.fx.CMenu;
 import goryachev.fx.CMenuBar;
 import goryachev.fx.FX;
@@ -20,14 +21,15 @@ import javafx.scene.layout.BorderPane;
 
 
 /**
- * DemoWindow.
+ * Demo Window.
  */
 public class DemoWindow
     extends FxDockWindow
 {
-	public static final CAction exitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); } };
-	public static final CAction newWindowAction = new CAction() { public void action() { actionNewWindow(); } };
-	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); } };
+	public static final CAction exitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); }};
+	public static final CAction newWindowAction = new CAction() { public void action() { actionNewWindow(); }};
+	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); }};
+	public final CAction windowCheckAction = new CAction() { public void action() {  }};
 	public final Label statusField = new Label();
 
 	
@@ -37,6 +39,8 @@ public class DemoWindow
 		setBottom(createStatusBar());
 //		setMinSize(500, 300);
 		setTitle("FxDock Framework Demo");
+		
+		bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
 	}
 	
 	
@@ -58,6 +62,7 @@ public class DemoWindow
 		m.add(new WindowListMenuItem(this, m));
 		// help
 		mb.add(m = new CMenu("Help"));
+		m.add(new CCheckMenuItem("Check Box Menu", windowCheckAction));
 		m.add(m2 = new CMenu("Test", new CAction() { public void action() { D.print("test"); }}));
 		m2.add("T2", new CAction() { public void action() { D.print("t2"); }});
 		m.add("T3", new CAction() { public void action() { D.print("t3"); }});
