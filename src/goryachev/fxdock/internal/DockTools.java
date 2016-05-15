@@ -6,7 +6,6 @@ import goryachev.common.util.SStream;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
-import goryachev.fxdock.dnd.Where;
 import java.util.List;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;

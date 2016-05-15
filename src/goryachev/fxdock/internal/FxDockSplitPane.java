@@ -2,7 +2,6 @@
 package goryachev.fxdock.internal;
 import goryachev.fx.FX;
 import goryachev.fxdock.FxDockStyles;
-import goryachev.fxdock.dnd.DragAndDropHandler;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;

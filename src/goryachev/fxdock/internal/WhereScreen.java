@@ -1,5 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.fxdock.dnd;
+package goryachev.fxdock.internal;
 import goryachev.common.util.CKit;
 
 

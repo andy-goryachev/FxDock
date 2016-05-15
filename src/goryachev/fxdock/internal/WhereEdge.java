@@ -1,5 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.fxdock.dnd;
+package goryachev.fxdock.internal;
 
 /**
  * Drop zone position at the edge of a window.

@@ -1,12 +1,8 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.fxdock.dnd;
+package goryachev.fxdock.internal;
 import goryachev.fx.FX;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
-import goryachev.fxdock.internal.DockTools;
-import goryachev.fxdock.internal.FxDockRootPane;
-import goryachev.fxdock.internal.FxDockSplitPane;
-import goryachev.fxdock.internal.FxDockTabPane;
 import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
