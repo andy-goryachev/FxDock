@@ -4,15 +4,16 @@ import goryachev.common.util.Hex;
 import goryachev.fx.CPopupMenu;
 import goryachev.fx.FX;
 import goryachev.fx.HPane;
+import goryachev.fx.VPane;
 import goryachev.fxdock.FxDockPane;
 import java.text.DecimalFormat;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 
@@ -30,7 +31,11 @@ public class DemoPane
 	{
 		super(type);
 		
-		VBox vb = new VBox();
+		CheckBox cb = new CheckBox("boolean property");
+		bind("checkbox", cb.selectedProperty());
+		
+		VPane vb = new VPane();
+		vb.add(cb);
 //		a(vb, 2, 0.25, 0.25, HPane.FILL);
 //		a(vb, 2, 30, 30, 100);
 //		a(vb, 2, 0.2, 0.2, 0.6);

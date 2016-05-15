@@ -1,6 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
-import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
@@ -304,7 +303,7 @@ public class FxDockSchema
 		{
 			if(n instanceof FxDockPane)
 			{
-				loadPaneSettings(prefix, (FxDockPane)n);
+				((FxDockPane)n).loadPaneSettings(prefix);
 			}
 			else if(n instanceof FxDockSplitPane)
 			{
@@ -344,7 +343,7 @@ public class FxDockSchema
 		{
 			if(n instanceof FxDockPane)
 			{
-				savePaneSettings(prefix, (FxDockPane)n);
+				((FxDockPane)n).savePaneSettings(prefix);
 			}
 			else if(n instanceof FxDockSplitPane)
 			{
@@ -414,17 +413,5 @@ public class FxDockSchema
 		int ix = GlobalSettings.getInt(k, 0);
 		
 		p.select(ix);
-	}
-	
-	
-	private static void loadPaneSettings(String prefix, FxDockPane p)
-	{
-		D.print("loadPaneSettings", p);
-	}
-	
-	
-	private static void savePaneSettings(String prefix, FxDockPane p)
-	{
-		D.print("savePaneSettings", p);
 	}
 }

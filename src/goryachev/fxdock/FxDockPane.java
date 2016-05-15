@@ -1,10 +1,12 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fx.CAction;
+import goryachev.fx.SSConverter;
 import goryachev.fxdock.dnd.DragAndDropHandler;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.FxDockBorderPane;
 import goryachev.fxdock.internal.FxDockTabPane;
+import goryachev.fxdock.internal.LocalBindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -31,6 +33,7 @@ public abstract class FxDockPane
 	private final ReadOnlyBooleanWrapper tabMode = new ReadOnlyBooleanWrapper();
 	private final SimpleStringProperty title = new SimpleStringProperty();
 	private final String type;
+	private LocalBindings bindings;
 	
 	
 	public FxDockPane(String type)
@@ -122,14 +125,51 @@ public abstract class FxDockPane
 	/** bind a property to be saved in tile-specific settings using the specified subkey */
 	public <T> void bind(String subKey, Property<T> p)
 	{
-		// TODO
+		bindings().add(subKey, p, null);
 	}
 	
 	
 	/** bind a property to be saved in tile-specific settings using the specified subkey, using subkey */
 	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
 	{
-		// TODO
+		bindings().add(subKey, p, c);
+	}
+	
+	
+	/** bind a property to be saved in tile-specific settings using the specified subkey, using subkey */
+	public <T> void bind(String subKey, Property<T> p, SSConverter<T> c)
+	{
+		bindings().add(subKey, c, p);
+	}
+	
+	
+	protected LocalBindings bindings()
+	{
+		if(bindings == null)
+		{
+			bindings = new LocalBindings();
+		}
+		return bindings;
+	}
+	
+	
+	/** called by the framework to load values */
+	public void loadPaneSettings(String prefix)
+	{
+		if(bindings != null)
+		{
+			bindings.loadValues(prefix);
+		}
+	}
+	
+	
+	/** called by the framework to save values */
+	public void savePaneSettings(String prefix)
+	{
+		if(bindings != null)
+		{
+			bindings.saveValues(prefix);
+		}
 	}
 	
 	
