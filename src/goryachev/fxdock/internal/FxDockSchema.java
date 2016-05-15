@@ -17,9 +17,8 @@ import javafx.scene.Node;
 public class FxDockSchema
 {
 	public static final String PREFIX_DOCK = "fxdock.";
-	public static final String PREFIX_WINDOW = PREFIX_DOCK + "window.";
-	
-	public static final String KEY_WINDOW_COUNT = PREFIX_DOCK + "window.count";
+	public static final String PREFIX_WINDOW = PREFIX_DOCK + "w.";
+	public static final String KEY_WINDOW_COUNT = PREFIX_WINDOW + "count";
 	
 	public static final String NAME_PANE = ".P";
 	public static final String NAME_TAB = ".T";
