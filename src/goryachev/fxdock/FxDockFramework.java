@@ -95,6 +95,7 @@ public class FxDockFramework
 		List<FxDockWindow> ws = getWindows();
 		int ct = ws.size();
 		
+		FxDockSchema.clearSettings();
 		FxDockSchema.setWindowCount(ct);
 		
 		for(int i=0; i<ct; i++)

@@ -59,6 +59,19 @@ public class FxDockSchema
 	{
 		return PREFIX_WINDOW + n;
 	}
+	
+	
+	public static void clearSettings()
+	{
+		// remove previously saved layout
+		for(String k: GlobalSettings.getKeys())
+		{
+			if(k.startsWith(PREFIX_WINDOW))
+			{
+				GlobalSettings.setString(k, null);
+			}
+		}
+	}
 
 
 	public static void storeWindow(String prefix, FxDockWindow w)

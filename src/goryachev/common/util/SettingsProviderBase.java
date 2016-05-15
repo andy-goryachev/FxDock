@@ -84,8 +84,15 @@ public abstract class SettingsProviderBase
 
 	public synchronized void setString(String key, String val)
 	{
-		data.put(key, val);
-		//log.debug(key, val);
+		if(val == null)
+		{
+			data.remove(key);
+		}
+		else
+		{
+			data.put(key, val);
+			//log.debug(key, val);
+		}
 	}
 
 
