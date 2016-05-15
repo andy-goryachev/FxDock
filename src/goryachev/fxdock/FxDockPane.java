@@ -105,6 +105,13 @@ public abstract class FxDockPane
 	}
 	
 	
+	protected Node createToolBar()
+	{
+		// TODO
+		return null;
+	}
+	
+	
 	public final void setTitle(String s)
 	{
 		titleProperty().set(s);
