@@ -7,6 +7,7 @@ import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import java.util.List;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -730,17 +731,36 @@ public class DockTools
 	public static void moveToNewWindow(FxDockPane client)
 	{
 		Node p = getParent(client);
+		Window clientWindow = getWindow(client);
+		
+		// TODO still not correct
+		Insets m = getWindowInsets(clientWindow);
 		Point2D pos = client.localToScreen(0, 0);
 		
 		FxDockWindow w = FxDockFramework.createWindow();
+
 		w.setContent(client);
-		w.setX(pos.getX());
-		w.setY(pos.getY());
-		w.setWidth(client.getWidth());
-		w.setHeight(client.getHeight());
+		w.setX(pos.getX() - m.getLeft());
+		w.setY(pos.getY() - m.getTop());
+		w.setWidth(client.getWidth() + m.getRight() + m.getLeft());
+		w.setHeight(client.getHeight() + m.getTop() + m.getBottom());
+		
 		FxDockFramework.open(w);
 		
 		collapseEmptySpace(p);
+	}
+	
+	
+	public static Insets getWindowInsets(Window w)
+	{
+		Scene s = w.getScene();
+		
+		double left = s.getX();
+		double top = s.getY();
+		double right = w.getWidth() - s.getWidth() - left;
+		double bottom = w.getHeight() - s.getHeight() - top;
+		
+		return new Insets(top, right, bottom, left);
 	}
 
 
