@@ -1,6 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fx.CAction;
+import goryachev.fx.FX;
 import goryachev.fx.SSConverter;
 import goryachev.fxdock.dnd.DragAndDropHandler;
 import goryachev.fxdock.internal.DockTools;
@@ -30,7 +31,7 @@ public abstract class FxDockPane
 {
 	public final CAction closeAction = new CAction() { public void action() { actionClose(); }};
 	public final CAction popToWindowAction = new CAction() { public void action() { actionPopToWindow(); }}; 
-	public final Label titleField = new Label();
+	public final Label titleField;
 	private final ReadOnlyBooleanWrapper tabMode = new ReadOnlyBooleanWrapper();
 	private final SimpleStringProperty title = new SimpleStringProperty();
 	private final String type;
@@ -41,10 +42,12 @@ public abstract class FxDockPane
 	{
 		this.type = type;
 		
+		FX.style(this, FxDockStyles.FX_DOCK_PANE);
+		
+		titleField = new Label();
+		FX.style(titleField, FxDockStyles.TOOLBAR_TITLE);
 		titleField.textProperty().bindBidirectional(titleProperty());
 		DragAndDropHandler.attach(titleField, this);
-
-		updateToolBar();
 		
 		parent.addListener((s,old,cur) -> setTabMode(cur instanceof FxDockTabPane));
 	}
@@ -59,7 +62,9 @@ public abstract class FxDockPane
 	protected final void setTabMode(boolean on)
 	{
 		tabMode.set(on);
-		updateToolBar();
+		
+		Node tb = createToolBar(on);
+		setTop(tb);
 	}
 	
 	
@@ -81,34 +86,23 @@ public abstract class FxDockPane
 	}
 	
 	
-	protected void updateToolBar()
+	protected Node createToolBar(boolean tabMode)
 	{
-		Node tb;
-		if(isTabMode())
+		if(tabMode)
 		{
-			// TODO custom toolbar components
-			tb = null;
+			return null;
 		}
 		else
 		{
 			Button b = new Button("x");
+			FX.style(b, FxDockStyles.TOOLBAR_CLOSE_BUTTON);
 			closeAction.attach(b);
 			
-			// TODO HPane
-			// TODO custom toolbar components
 			ToolBar t = new ToolBar();
+			FX.style(t, FxDockStyles.TOOLBAR);
 			t.getItems().addAll(titleField, b);
-			tb = t;
+			return t;
 		}
-		
-		setTop(tb);
-	}
-	
-	
-	protected Node createToolBar()
-	{
-		// TODO
-		return null;
 	}
 	
 	

@@ -1,5 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
+import goryachev.fx.FX;
+import goryachev.fxdock.FxDockStyles;
 import goryachev.fxdock.dnd.DragAndDropHandler;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
@@ -36,6 +38,8 @@ public class FxDockSplitPane
 	
 	private void init()
 	{
+		FX.style(this, FxDockStyles.FX_SPLIT_PANE);
+		
 		addEventFilter(MouseEvent.MOUSE_RELEASED, (ev) -> updateDividers());
 	}
 	

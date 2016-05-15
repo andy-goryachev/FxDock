@@ -1,8 +1,9 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
+import goryachev.fx.FX;
 import goryachev.fxdock.FxDockPane;
-import goryachev.fxdock.dnd.DragAndDropHandler;
+import goryachev.fxdock.FxDockStyles;
 import java.util.List;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
@@ -22,6 +23,7 @@ public class FxDockTabPane
 	
 	public FxDockTabPane()
 	{
+		FX.style(this, FxDockStyles.FX_TAB_PANE);
 	}
 	
 	
