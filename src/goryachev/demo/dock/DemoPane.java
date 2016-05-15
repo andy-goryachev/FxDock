@@ -32,10 +32,12 @@ public class DemoPane
 		super(type);
 		
 		CheckBox cb = new CheckBox("boolean property");
-		bind("checkbox", cb.selectedProperty());
+		bind("CHECKBOX", cb.selectedProperty());
 		
-		VPane vb = new VPane();
-		vb.add(cb);
+		TextField textField = new TextField();
+		bind("TEXTFIELD", textField.textProperty()); 
+		
+//		VPane vb = new VPane();
 //		a(vb, 2, 0.25, 0.25, HPane.FILL);
 //		a(vb, 2, 30, 30, 100);
 //		a(vb, 2, 0.2, 0.2, 0.6);
@@ -44,6 +46,10 @@ public class DemoPane
 //		a(vb, 2, 20, HPane.FILL, 20);
 //		a(vb, 2, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL, HPane.FILL);
 //		a(vb, 2, 50, HPane.FILL, HPane.FILL, 50);
+		
+		HPane vb = new HPane(2);
+		vb.add(cb);
+		vb.add(textField);
 			
 		BorderPane bp = new BorderPane();
 		bp.setCenter(createColorNode(type));
