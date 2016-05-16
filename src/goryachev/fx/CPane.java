@@ -1,8 +1,8 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import java.util.function.Function;
 import goryachev.common.util.CList;
 import goryachev.common.util.Log;
+import java.util.function.Function;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -17,8 +17,8 @@ import javafx.scene.layout.Region;
 public class CPane
 	extends Pane
 {
-	public static final float PREFERRED = -2.0f;
-	public static final float FILL = -3.0f;
+	public static final double FILL = -1.0;
+	public static final double PREF = -2.0;
 	
 	public static final CC TOP = new CC(true);
 	public static final CC BOTTOM = new CC(true);
@@ -83,43 +83,43 @@ public class CPane
 	}
 	
 	
-	public void addColumn(float spec)
+	public void addColumn(double spec)
 	{
 		cols.add(new LC(spec));
 	}
 	
 	
-	public void addColumns(float ... specs)
+	public void addColumns(double ... specs)
 	{
-		for(float cs: specs)
+		for(double cs: specs)
 		{
 			addColumn(cs);
 		}
 	}
 
 	
-	public void insertColumn(int ix, float spec)
+	public void insertColumn(int ix, double spec)
 	{
 		// TODO
 	}
 	
 	
-	public void addRow(float spec)
+	public void addRow(double spec)
 	{
 		rows.add(new LC(spec));
 	}
 	
 	
-	public void addRows(float ... specs)
+	public void addRows(double ... specs)
 	{
-		for(float rs: specs)
+		for(double rs: specs)
 		{
 			addRow(rs);
 		}
 	}
 
 	
-	public void insertRow(int ix, float spec)
+	public void insertRow(int ix, double spec)
 	{
 		// TODO
 	}
@@ -129,7 +129,7 @@ public class CPane
 	{
 		while(getColumnCount() <= col)
 		{
-			addColumn(PREFERRED);
+			addColumn(PREF);
 		}
 		return cols.get(col);
 	}
@@ -142,7 +142,7 @@ public class CPane
 	}
 	
 	
-	public void setColumnSpec(int col, float spec)
+	public void setColumnSpec(int col, double spec)
 	{
 		LC c = getColumnSpec(col);
 		c.width = spec;
@@ -153,7 +153,7 @@ public class CPane
 	{
 		while(getRowCount() <= row)
 		{
-			addRow(PREFERRED);
+			addRow(PREF);
 		}
 		return rows.get(row);
 	}
@@ -371,12 +371,6 @@ public class CPane
 		layoutInArea(nd, left, top, width, height, 0, HPos.CENTER, VPos.CENTER);
 	}
 	
-	
-	protected static int s(double x)
-	{
-		return (int)Math.ceil(x);
-	}
-	
 
 	protected double computePrefWidth(double height)
 	{
@@ -437,7 +431,7 @@ public class CPane
 	/** layout axis contstraints */
 	public static class LC
 	{
-		public float width; // [0..1[ : percent, >=1 in pixels, <0 special
+		public double width; // [0..1[ : percent, >=1 in pixels, <0 special
 		public int min;
 		public int max;
 		public int group;
@@ -446,12 +440,12 @@ public class CPane
 		
 		public LC()
 		{
-			width = PREFERRED;
+			width = PREF;
 			align = AL.FULL;
 		}
 		
 		
-		public LC(float width)
+		public LC(double width)
 		{
 			this.width = width;
 			align = AL.FULL;
@@ -460,7 +454,7 @@ public class CPane
 		
 		public boolean isPercent()
 		{
-			return (width >= 0.0f) && (width < 1.0f);
+			return (width >= 0.0) && (width < 1.0);
 		}
 		
 
@@ -597,8 +591,8 @@ public class CPane
 		// fixed width if set, 0 otherwise
 		protected int fixed(int ix)
 		{
-			float w = specs.get(ix).width;
-			if(w >= 1.0f)
+			double w = specs.get(ix).width;
+			if(w >= 1.0)
 			{
 				return (int)w;
 			}
@@ -684,7 +678,7 @@ public class CPane
 							if(!skip)
 							{
 								Node c = en.node;
-								int d = s(sizingMethod.apply(c));
+								int d = FX.ceil(sizingMethod.apply(c));
 								
 								// amount of space component occupies in this column
 								int cw = d - aggregateSize(start, i, gap);
@@ -729,9 +723,9 @@ public class CPane
 			// space available for FILL/PERCENT columns
 			int available = delta;
 			// ratio of columns with percentage explicitly set
-			float percent = 0;
+			double percent = 0;
 			// number of FILL columns
-			int fillCount = 0;
+			int fillsCount = 0;
 			
 			int sz = specs.size();
 			for(int i=0; i<sz; i++)
@@ -746,17 +740,17 @@ public class CPane
 				else if(lc.isFill())
 				{
 					// fill
-					fillCount++;
+					fillsCount++;
 					available += size[i];
 				}
 			}
 			
-			// no overbooking
 			if(available < 0)
 			{
 				available = 0;
 			}
 			
+			double percentFactor = (percent > 1.0) ? (1 / percent) : percent;
 			int remaining = available;
 			
 			// PERCENT sizes first
@@ -765,47 +759,48 @@ public class CPane
 				LC lc = specs.get(i);
 				if(lc.isPercent())
 				{
-					int w;
+					double w;
 					if(remaining > 0)
 					{
-						w = s(lc.width * available);
-						remaining -= w;
+						w = lc.width * available * percentFactor;
 					}
 					else
 					{
 						w = 0;
 					}
-					size[i] = w;
+					
+					int d = FX.round(w);
+					size[i] = d;
+					remaining -= d;
 				}
 			}
 			
 			// FILL sizes after PERCENT
-			if(fillCount > 0)
+			if(fillsCount > 0)
 			{
-				int cw = remaining / fillCount;
+				double cw = remaining / (double)fillsCount;
 				
 				for(int i=0; i<sz; i++)
 				{
 					LC lc = specs.get(i);
 					if(lc.isFill())
 					{
-						int w;
+						double w;
 						if(remaining >= 0)
 						{
-							w = Math.min(cw, available);
-							remaining -= w;
+							w = Math.min(cw, remaining);
 						}
 						else
 						{
 							w = 0;
 						}
 						
-						size[i] = w;
+						int d = FX.ceil(w);
+						size[i] = d;
+						remaining -= d;
 					}
 				}
 			}
-			
-			// TODO may be change the order of assignments to avoid jitter in the first columns
 		}
 	}
 	
@@ -837,10 +832,10 @@ public class CPane
 			ltr = true; // FIX (getNodeOrientation() == NodeOrientation.LEFT_TO_RIGHT);
 				
 			Insets m = getInsets();
-			mtop = s(m.getTop());
-			mbottom = s(m.getBottom());
-			mleft = s(m.getLeft());
-			mright = s(m.getRight());
+			mtop = FX.round(m.getTop());
+			mbottom = FX.round(m.getBottom());
+			mleft = FX.round(m.getLeft());
+			mright = FX.round(m.getRight());
 		}
 		
 
@@ -885,13 +880,13 @@ public class CPane
 			
 			if((c = ltr ? leftComp : rightComp) != null)
 			{
-				int d = s(sizingMethod.apply(c));
+				int d = FX.ceil(sizingMethod.apply(c));
 				h = Math.max(d, h);
 			}
 			
 			if((c = ltr ? rightComp : leftComp) != null)
 			{
-				int d = s(sizingMethod.apply(c));
+				int d = FX.ceil(sizingMethod.apply(c));
 				h = Math.max(d, h);
 			}
 			
@@ -899,19 +894,19 @@ public class CPane
 			
 			if(centerComp != null)
 			{
-				int d = s(sizingMethod.apply(centerComp));
+				int d = FX.ceil(sizingMethod.apply(centerComp));
 				h = Math.max(d, h);
 			}
 			
 			if(topComp != null)
 			{
-				int d = s(sizingMethod.apply(topComp));
+				int d = FX.ceil(sizingMethod.apply(topComp));
 				h += (d + vgap);
 			}
 			
 			if(bottomComp != null)
 			{
-				int d = s(sizingMethod.apply(bottomComp));
+				int d = FX.ceil(sizingMethod.apply(bottomComp));
 				h += (d + vgap);
 			}
 
@@ -927,31 +922,31 @@ public class CPane
 			
 			if((c = ltr ? leftComp : rightComp) != null)
 			{
-				int d = s(sizingMethod.apply(c));
+				int d = FX.ceil(sizingMethod.apply(c));
 				w += (d + hgap);
 			}
 			
 			if((c = ltr ? rightComp : leftComp) != null)
 			{
-				int d = s(sizingMethod.apply(c));
+				int d = FX.ceil(sizingMethod.apply(c));
 				w += (d + hgap);
 			}
 			
 			if(centerComp != null)
 			{
-				int d = s(sizingMethod.apply(centerComp));
+				int d = FX.ceil(sizingMethod.apply(centerComp));
 				w += d;
 			}
 			
 			if(topComp != null)
 			{
-				int d = s(sizingMethod.apply(topComp));
+				int d = FX.ceil(sizingMethod.apply(topComp));
 				w = Math.max(d, w);
 			}
 			
 			if(bottomComp != null)
 			{
-				int d = s(sizingMethod.apply(bottomComp));
+				int d = FX.ceil(sizingMethod.apply(bottomComp));
 				w = Math.max(d, w);
 			}
 
@@ -984,15 +979,15 @@ public class CPane
 		protected void layoutBorderComponents()
 		{	
 			int top = mtop;
-			int bottom = s(getHeight()) - mbottom;
+			int bottom = FX.round(getHeight()) - mbottom;
 			int left = mleft;
-			int right = s(getWidth()) - mright;
+			int right = FX.round(getWidth()) - mright;
 
 			Node c;
 			if(topComp != null)
 			{
 				c = topComp;
-				int h = s(c.prefHeight(right - left));
+				int h = FX.ceil(c.prefHeight(right - left));
 				setBounds(c, left, top, right - left, h);
 				top += (h + vgap);
 			}
@@ -1000,21 +995,21 @@ public class CPane
 			if(bottomComp != null)
 			{
 				c = bottomComp;
-				int h = s(c.prefHeight(right - left));
+				int h = FX.ceil(c.prefHeight(right - left));
 				setBounds(c, left, bottom - h, right - left, h);
 				bottom -= (h + vgap);
 			}
 			
 			if((c = (ltr ? rightComp : leftComp)) != null)
 			{
-				int w = s(c.prefWidth(bottom - top));
+				int w = FX.ceil(c.prefWidth(bottom - top));
 				setBounds(c, right - w, top, w, bottom - top);
 				right -= (w + hgap);
 			}
 			
 			if((c = (ltr ? leftComp : rightComp)) != null)
 			{
-				int w = s(c.prefWidth(bottom - top));
+				int w = FX.ceil(c.prefWidth(bottom - top));
 				setBounds(c, left, top, w, bottom - top);
 				left += (w + hgap);
 			}
