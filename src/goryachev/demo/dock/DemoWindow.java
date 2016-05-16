@@ -26,7 +26,7 @@ import javafx.scene.layout.BorderPane;
 public class DemoWindow
     extends FxDockWindow
 {
-	public static final CAction exitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); }};
+	public static final CAction quitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); }};
 	public static final CAction newWindowAction = new CAction() { public void action() { actionNewWindow(); }};
 	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); }};
 	public final CAction windowCheckAction = new CAction() { public void action() {  }};
@@ -55,7 +55,7 @@ public class DemoWindow
 		m.addSeparator();
 		m.add("Close Window", closeWindowAction);
 		m.addSeparator();
-		m.add("Exit Application", exitApplicationAction);
+		m.add("Quit Application", quitApplicationAction);
 		// window
 		mb.add(m = new CMenu("Window"));
 		m.add("New Window", newWindowAction);
