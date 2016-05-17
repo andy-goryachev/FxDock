@@ -4,7 +4,6 @@ import goryachev.common.util.Hex;
 import goryachev.fx.CPopupMenu;
 import goryachev.fx.FX;
 import goryachev.fx.HPane;
-import goryachev.fx.VPane;
 import goryachev.fxdock.FxDockPane;
 import java.text.DecimalFormat;
 import javafx.geometry.Insets;
@@ -18,11 +17,12 @@ import javafx.scene.paint.Color;
 
 
 /**
- * Demo FxDockPane with a bunch of HPanes.
+ * An example of an FxDockPane.
  */
 public class DemoPane
     extends FxDockPane
 {
+	/** sequence number for debugging */
 	private static int seq = 1;
 	private int pseq;
 	
@@ -82,7 +82,6 @@ public class DemoPane
 			TextField t = new TextField(text);
 			t.setEditable(false);
 			t.setPrefColumnCount(3);
-			t.setTooltip(new InfoTooltip(t));
 			t.setBackground(FX.background(c));
 			t.setPadding(Insets.EMPTY);
 			hp.add(t, w);

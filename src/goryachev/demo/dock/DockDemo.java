@@ -9,11 +9,14 @@ import goryachev.fxdock.FxDockWindow;
 import java.io.File;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 
 /**
- * FxDock Demo.
+ * Demo for FxDock docking framework.
+ * 
+ * This class provides an example of an FX application that uses the docking framework.
+ * The framework depends on GlobalSettings, Log, and goryachev.common package.
+ * A custom Generator allows for creation of application-specific windows and dockable panes. 
  */
 public class DockDemo
 	extends Application
@@ -37,7 +40,7 @@ public class DockDemo
 
 	public void start(Stage s) throws Exception
 	{
-		// init docking framework
+		// plug in custom windows and dockable panes. 
 		FxDockFramework.setGenerator(new FxDockFramework.Generator()
 		{
 			public FxDockWindow createWindow()
@@ -55,15 +58,8 @@ public class DockDemo
 		int ct = FxDockFramework.loadLayout();
 		if(ct == 0)
 		{
-			// no saved layout, open initial window
+			// when no saved layout exists, open the first window
 			DemoWindow.actionNewWindow().setTitle("Initial Window");
 		}
-	}
-
-
-	protected void move(Window w, int d)
-	{
-		w.setX(w.getX() + d);
-		w.setY(w.getY() + d);
 	}
 }
