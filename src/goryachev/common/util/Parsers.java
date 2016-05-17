@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.TimeZone;
 
 
 /** 
@@ -339,28 +338,6 @@ public class Parsers
 		
 		return null;
 	}
-	
-	
-//	public static String parseTimeZoneCode(Object x)
-//	{
-//		if(x instanceof CTimeZone)
-//		{
-//			return ((CTimeZone)x).getID();
-//		}
-//		else if(x instanceof TimeZone)
-//		{
-//			return ((TimeZone)x).getID();
-//		}
-//		else if(x instanceof String)
-//		{
-//			// no validation
-//			return (String)x;
-//		}
-//		else
-//		{
-//			return null;
-//		}
-//	}
 	
 	
 	public static File parseFile(Object x)
