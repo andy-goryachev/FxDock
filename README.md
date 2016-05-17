@@ -14,4 +14,4 @@ Please contact me to acquire this library under a business-friendly license.
 
 ## Using the Library
 
-Please refer to **FxDockDemo** class for an example of how to integrate this library into your project.
+Please refer to [**DockDemo**](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/demo/dock/DockDemo.java) class for an example of how to integrate this library into your project.
