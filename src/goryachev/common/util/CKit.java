@@ -1431,7 +1431,7 @@ public final class CKit
 	
 	public static void todo()
 	{
-		throw new Rex("(to be implemented)");
+		throw new Error("(to be implemented)");
 	}
 	
 	
