@@ -86,6 +86,7 @@ public abstract class FxDockPane
 	}
 	
 	
+	/** override to create your own toolbar, possibly with custom icons and buttons */
 	protected Node createToolBar(boolean tabMode)
 	{
 		if(tabMode)
@@ -174,6 +175,16 @@ public abstract class FxDockPane
 			String k = FxDockSchema.getPath(prefix, this, FxDockSchema.SUFFIX_BINDINGS);
 			bindings.saveValues(k);
 		}
+	}
+	
+	
+	/** 
+	 * while FxDockPane extends BorderPane, it's better to insert a custom content using this method only,
+	 * because the top is used by the toolbar.
+	 */
+	public void setContent(Node n)
+	{
+		setCenter(n);
 	}
 	
 	
