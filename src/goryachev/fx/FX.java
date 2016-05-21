@@ -315,8 +315,21 @@ public final class FX
 	}
 	
 	
+	/** shortcut for Platform.runLater() */
 	public static void later(Runnable r)
 	{
 		Platform.runLater(r);
+	}
+
+
+	/** returns window decoration insets */
+	public static Insets getDecorationInsets(Window w)
+	{
+		Scene s = w.getScene();
+		double left = s.getX();
+		double top = s.getY();
+		double right = w.getWidth() - s.getWidth() - left;
+		double bottom = w.getHeight() - s.getHeight() - top;
+		return new Insets(top, right, bottom, left);
 	}
 }

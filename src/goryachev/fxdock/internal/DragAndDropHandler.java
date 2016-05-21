@@ -33,10 +33,10 @@ public class DragAndDropHandler
 	public static final double PANE_EDGE_VERTICAL = 0.3;
 	public static final double WINDOW_EDGE_HORIZONTAL = 30;
 	public static final double WINDOW_EDGE_VERTICAL = 30;
-	private static double deltax;
-	private static double deltay;
-	private static Stage dragWindow;
-	private static DropOp dropOp;
+	protected static double deltax;
+	protected static double deltay;
+	protected static Stage dragWindow;
+	protected static DropOp dropOp;
 	
 	
 	public static void attach(Node n, FxDockPane client)
@@ -279,7 +279,7 @@ public class DragAndDropHandler
 		{
 			public void executePrivate()
 			{
-				DockTools.moveToNewWindow(client, screenx, screeny);
+				DockTools.moveToNewWindow(client, screenx - deltax, screeny - deltay);
 			}
 		};
 	}

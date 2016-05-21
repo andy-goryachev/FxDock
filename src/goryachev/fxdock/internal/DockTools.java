@@ -3,6 +3,7 @@ package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.D;
 import goryachev.common.util.SStream;
+import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -715,14 +716,24 @@ public class DockTools
 	public static void moveToNewWindow(FxDockPane client, double screenx, double screeny)
 	{
 		Node p = getParent(client);
+		double w = client.getWidth();
+		double h = client.getHeight();
+				
+		FxDockWindow win = FxDockFramework.createWindow();
+		win.setContent(client);		
 		
-		FxDockWindow w = FxDockFramework.createWindow();
-		w.setContent(client);
-		w.setX(screenx);
-		w.setY(screeny);
-		w.setWidth(client.getWidth());
-		w.setHeight(client.getHeight());
-		FxDockFramework.open(w);
+		FxDockFramework.open(win);
+
+		// take into account window decorations
+		// apparently, this is available only after show()
+		Insets m = FX.getDecorationInsets(win);
+		
+		// TODO account for window menu?  use FxDockRoot center component?
+		
+		win.setX(screenx - m.getLeft());
+		win.setY(screeny - m.getTop());
+		win.setWidth(w + m.getLeft() + m.getRight());
+		win.setHeight(h + m.getTop() + m.getBottom());
 		
 		collapseEmptySpace(p);
 	}
