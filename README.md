@@ -16,7 +16,9 @@ Please contact me to acquire this library under a business-friendly license.
 
 ## Demo
 
-Download and run [**FxDockDemo.jar**](https://github.com/andy-goryachev/FxDock/blob/master/demo/FxDockDemo.jar)
+Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/blob/master/demo/FxDockDemo.jar)
+
+SHA-256: f0ef0b09effbe7527c6a23f8343717803b9f6c7884e1aa4fb45fe93ef6b8d587
 
 ## Using the Library
 
@@ -24,5 +26,5 @@ Download and run [**FxDockDemo.jar**](https://github.com/andy-goryachev/FxDock/b
 - Set generator which will be used to create custom FxDockWindows and FxDockPanes.
 - Load the layout.  Check the number of opened windows, and if it is 0, create the first window.   
 
-Please refer to [**DockDemoApp.java**](https://github.com/andy-goryachev/FxDock/blob/master/src/demo/dock/DockDemoApp.java) for an example of how to integrate this library into your project.
+Please refer to [DockDemoApp.java](https://github.com/andy-goryachev/FxDock/blob/master/src/demo/dock/DockDemoApp.java) for an example of how to integrate this library into your project.
 

@@ -43,12 +43,9 @@
 	</target>
 	
 	
+	<!-- build demo jar -->
 	<target name="make-jar" depends="compile, copy-resources">
 		<delete file="build/jars/FxDockDemo.jar" />
-	</target>
-	
-	
-	<target name="all" depends="compile, copy-resources, make-jar">
 		<jar
 			jarfile="build/jars/FxDockDemo.jar"
 			basedir="build/classes"
@@ -57,5 +54,15 @@
 			>
 		</jar>
 	</target>
+	
+	
+	<!-- generate digest -->
+	<target name="sha-jar" depends="make-jar">
+		<checksum file="build/jars/FxDockDemo.jar" algorithm="sha-256" forceoverwrite="yes" fileext=".sha256.txt" />
+	</target>
+	
+
+	<!-- build all -->
+	<target name="all" depends="compile, copy-resources, make-jar, sha-jar" />
 	
 </project>
