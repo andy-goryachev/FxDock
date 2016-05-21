@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -311,5 +312,11 @@ public final class FX
 	public static int floor(double x)
 	{
 		return (int)Math.floor(x);
+	}
+	
+	
+	public static void later(Runnable r)
+	{
+		Platform.runLater(r);
 	}
 }

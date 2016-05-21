@@ -26,8 +26,9 @@ import javafx.scene.layout.BorderPane;
 public class DemoWindow
     extends FxDockWindow
 {
-	public static final CAction quitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); }};
+	public static final CAction newBrowserAction = new CAction() { public void action() { actionNewBrowser(); }};
 	public static final CAction newWindowAction = new CAction() { public void action() { actionNewWindow(); }};
+	public static final CAction quitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); }};
 	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); }};
 	public final CAction windowCheckAction = new CAction() { public void action() {  }};
 	public final Label statusField = new Label();
@@ -58,6 +59,7 @@ public class DemoWindow
 		m.add("Quit Application", quitApplicationAction);
 		// window
 		mb.add(m = new CMenu("Window"));
+		m.add("New Browser", newBrowserAction);
 		m.add("New Window", newWindowAction);
 		m.add(new WindowListMenuItem(this, m));
 		// help
@@ -91,6 +93,20 @@ public class DemoWindow
 		w.setContent(new DemoPane(type));
 		w.setWidth(300);
 		w.setHeight(200);
+		w.open();
+		return w;
+	}
+	
+	
+	public static DemoWindow actionNewBrowser()
+	{
+		DemoBrowser b = new DemoBrowser();
+		b.openPage("https://github.com/andy-goryachev/FxDock");
+		
+		DemoWindow w = new DemoWindow();
+		w.setContent(b);
+		w.setWidth(600);
+		w.setHeight(700);
 		w.open();
 		return w;
 	}
