@@ -110,6 +110,15 @@ public abstract class CAction
 	{
 		disabledProperty.set(!on);
 	}
+	
+	
+	public void fire()
+	{
+		if(isEnabled())
+		{
+			handle(null);
+		}
+	}
 
 
 	/** override to obtain the actual event */
