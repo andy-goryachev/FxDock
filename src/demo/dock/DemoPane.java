@@ -1,5 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.demo.dock;
+package demo.dock;
 import goryachev.common.util.Hex;
 import goryachev.fx.CPopupMenu;
 import goryachev.fx.FX;

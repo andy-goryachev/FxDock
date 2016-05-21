@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
 Created-By: andy@goryachev.com
-Main-Class: goryachev.demo.dock.DockDemo
+Main-Class: demo.dock.DockDemo
