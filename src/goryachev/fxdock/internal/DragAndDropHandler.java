@@ -412,7 +412,7 @@ public class DragAndDropHandler
 			}
 		}
 		
-		throw new Error("?div");
+		return null;
 	}
 	
 	

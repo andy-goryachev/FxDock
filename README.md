@@ -2,6 +2,8 @@
 
 Docking Framework for JavaFX.
 
+![screenshot](https://github.com/andy-goryachev/FxDock/blob/master/screenshots/2016-0521-125006-709.png)
+
 ## About
 
 This library was created to provide JavaFX developers with a fully functional docking framework.
