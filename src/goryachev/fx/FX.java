@@ -1,6 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -330,6 +331,23 @@ public final class FX
 		double top = s.getY();
 		double right = w.getWidth() - s.getWidth() - left;
 		double bottom = w.getHeight() - s.getHeight() - top;
+		return new Insets(top, right, bottom, left);
+	}
+
+
+	/** 
+	 * returns margin between the node and its containing window.
+	 * WARNING: does not check if window is indeed a right one. 
+	 */ 
+	public static Insets getInsetsInWindow(Window w, Node n)
+	{
+		Bounds b = n.localToScreen(n.getBoundsInLocal());
+		
+		double left = b.getMinX() - w.getX();
+		double top = b.getMinY() - w.getY();
+		double right = w.getX() + w.getWidth() - b.getMaxX();
+		double bottom = w.getY() + w.getHeight() - b.getMaxY();
+
 		return new Insets(top, right, bottom, left);
 	}
 }

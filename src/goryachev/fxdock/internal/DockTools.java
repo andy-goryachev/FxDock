@@ -722,18 +722,27 @@ public class DockTools
 		FxDockWindow win = FxDockFramework.createWindow();
 		win.setContent(client);		
 		
+		win.setX(screenx);
+		win.setY(screeny);
+		
+		// moving window after show() seems to cause flicker
+		double op = win.getOpacity();
+		win.setOpacity(0);
+		
 		FxDockFramework.open(win);
 
 		// take into account window decorations
 		// apparently, this is available only after show()
-		Insets m = FX.getDecorationInsets(win);
+		Node n = win.getDockRootPane().getCenter();
+		Insets m = FX.getInsetsInWindow(win, n);
 		
-		// TODO account for window menu?  use FxDockRoot center component?
-		
+		// this may still cause flicker
 		win.setX(screenx - m.getLeft());
 		win.setY(screeny - m.getTop());
 		win.setWidth(w + m.getLeft() + m.getRight());
 		win.setHeight(h + m.getTop() + m.getBottom());
+		
+		win.setOpacity(op);
 		
 		collapseEmptySpace(p);
 	}
