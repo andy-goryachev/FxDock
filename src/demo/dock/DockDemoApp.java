@@ -18,7 +18,7 @@ import javafx.stage.Stage;
  * The framework depends on GlobalSettings, Log, and goryachev.common package.
  * A custom Generator allows for creation of application-specific windows and dockable panes. 
  */
-public class DockDemo
+public class DockDemoApp
 	extends Application
 {
 	public static void main(String[] args)
@@ -34,7 +34,7 @@ public class DockDemo
 		GlobalSettings.setProvider(fs);
 		
 		// launch ui
-		new DockDemo().launch(args);
+		new DockDemoApp().launch(args);
 	}
 	
 
@@ -48,7 +48,7 @@ public class DockDemo
 		if(ct == 0)
 		{
 			// when no saved layout exists, open the first window
-			DemoWindow.actionNewWindow().setTitle("Initial Window");
+			DemoWindow.openBrowser("https://github.com/andy-goryachev/FxDock");
 		}
 	}
 }

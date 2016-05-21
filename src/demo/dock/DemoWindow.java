@@ -38,7 +38,6 @@ public class DemoWindow
 	{
 		setTop(createMenu());
 		setBottom(createStatusBar());
-//		setMinSize(500, 300);
 		setTitle("FxDock Docking Framework Demo");
 		
 		bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
@@ -60,7 +59,7 @@ public class DemoWindow
 		// window
 		mb.add(m = new CMenu("Window"));
 		m.add("New Browser", newBrowserAction);
-		m.add("New Window", newWindowAction);
+		m.add("New Demo Window", newWindowAction);
 		m.add(new WindowListMenuItem(this, m));
 		// help
 		mb.add(m = new CMenu("Help"));
@@ -100,12 +99,18 @@ public class DemoWindow
 	
 	public static DemoWindow actionNewBrowser()
 	{
+		return openBrowser("");
+	}
+	
+	
+	public static DemoWindow openBrowser(String url)
+	{
 		DemoBrowser b = new DemoBrowser();
-		b.openPage("https://github.com/andy-goryachev/FxDock");
+		b.openPage(url);
 		
 		DemoWindow w = new DemoWindow();
 		w.setContent(b);
-		w.setWidth(600);
+		w.setWidth(900);
 		w.setHeight(700);
 		w.open();
 		return w;

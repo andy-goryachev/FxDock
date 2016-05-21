@@ -13,6 +13,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -77,7 +78,8 @@ public class DemoBrowser
 	{
 		HPane t = new HPane(5);
 		t.setMaxWidth(Double.MAX_VALUE);
-		
+		t.setPadding(new Insets(2, 2, 2, 2));
+
 		if(!tabMode)
 		{
 			Button b = new Button("x");
