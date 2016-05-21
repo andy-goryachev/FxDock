@@ -14,4 +14,8 @@ Please contact me to acquire this library under a business-friendly license.
 
 ## Using the Library
 
-Please refer to [**DockDemo**](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/demo/dock/DockDemo.java) class for an example of how to integrate this library into your project.
+- Register your provider for GlobalSettings.
+- Set generator which will be used to create custom FxDockWindows and FxDockPanes.
+- Load the layout.  Check the number of opened windows, and if it is 0, create the first window.   
+
+Please refer to [**DockDemoApp.java**](https://github.com/andy-goryachev/FxDock/blob/master/src/demo/dock/DockDemoApp.java) for an example of how to integrate this library into your project.
