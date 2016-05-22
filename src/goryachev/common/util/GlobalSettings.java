@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import java.io.File;
 import java.util.List;
 
 
@@ -32,6 +33,15 @@ public class GlobalSettings
 	public static void setProvider(Provider p)
 	{
 		provider = p;
+	}
+	
+	
+	/** a convenience shortcut to set file-based provider and load the settings */
+	public static void setFileProvider(File f)
+	{
+		FileSettingsProvider p = new FileSettingsProvider(f);
+		p.loadQuiet();
+		setProvider(p);
 	}
 	
 	

@@ -163,22 +163,6 @@ public class FxSettings
 			state = STAGE_NORMAL;
 		}
 		
-//		if(win instanceof AppFrame)
-//		{
-//			// size before maximized
-//			Rectangle r = ((AppFrame)win).getNormalSize();
-//			if(r != null)
-//			{
-//				if(state == FRAME_MAXIMIZED)
-//				{
-//					x = r.x;
-//					y = r.y;
-//					w = r.width;
-//					h = r.height;
-//				}
-//			}
-//		}
-
 		// TODO store Screen configuration?
 		
 		SStream s = new SStream();
