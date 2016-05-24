@@ -28,3 +28,9 @@ SHA-256: f0ef0b09effbe7527c6a23f8343717803b9f6c7884e1aa4fb45fe93ef6b8d587
 
 Please refer to [DockDemoApp.java](https://github.com/andy-goryachev/FxDock/blob/master/src/demo/dock/DockDemoApp.java) for an example of how to integrate this library into your project.
 
+## Download
+
+[FxDoc-0.00.01.jar](https://github.com/andy-goryachev/FxDock/blob/master/lib/FxDock-0.00.01.jar)
+
+SHA-256: d440519fc5b7447f7c5e51ec82075b65f5c10bb990f6409114911b76233c1233
+
