@@ -30,7 +30,7 @@ Please refer to [DockDemoApp.java](https://github.com/andy-goryachev/FxDock/blob
 
 ## Download
 
-Library JAR: [FxDoc-0.00.01.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDock-0.00.01.jar)
+Library JAR: [FxDock-0.00.01.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDock-0.00.01.jar)
 
 SHA-256: d440519fc5b7447f7c5e51ec82075b65f5c10bb990f6409114911b76233c1233
 
