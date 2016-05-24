@@ -56,13 +56,28 @@
 	</target>
 	
 	
+	<!-- build lib jar -->
+	<target name="make-lib-jar" depends="compile, copy-resources">
+		<delete file="build/jars/FxDock.jar" />
+		<jar
+			jarfile="build/jars/FxDock.jar"
+			basedir="build/classes"
+			filesonly="true"
+			manifest="config/FxDock.manifest"
+			excludes="demo/**"
+			>
+		</jar>
+	</target>
+	
+	
 	<!-- generate digest -->
 	<target name="sha-jar" depends="make-jar">
 		<checksum file="build/jars/FxDockDemo.jar" algorithm="sha-256" forceoverwrite="yes" fileext=".sha256.txt" />
+		<checksum file="build/jars/FxDock.jar" algorithm="sha-256" forceoverwrite="yes" fileext=".sha256.txt" />
 	</target>
 	
 
 	<!-- build all -->
-	<target name="all" depends="compile, copy-resources, make-jar, sha-jar" />
+	<target name="all" depends="compile, copy-resources, make-jar, make-lib-jar, sha-jar" />
 	
 </project>
