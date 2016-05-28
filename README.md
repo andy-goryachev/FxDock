@@ -20,7 +20,7 @@ Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/blob/
 
 SHA-256: f0ef0b09effbe7527c6a23f8343717803b9f6c7884e1aa4fb45fe93ef6b8d587
 
-## Using the Library
+## How to Use the Library
 
 - Register your provider for GlobalSettings.
 - Set generator which will be used to create custom FxDockWindows and FxDockPanes.
