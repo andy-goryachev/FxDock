@@ -96,3 +96,9 @@ Here is an example of startup code.  The framework attempts to load an existing 
 		DemoWindow.openBrowser("https://github.com/andy-goryachev/FxDock");
 	}
 ```
+
+
+## Did I Miss Anything?
+
+Please let me know by [creating an issue on Github](https://github.com/andy-goryachev/FxDock/issues/new).
+
