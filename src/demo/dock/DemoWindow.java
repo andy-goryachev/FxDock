@@ -6,16 +6,20 @@ import goryachev.common.util.Hex;
 import goryachev.common.util.SB;
 import goryachev.fx.CAction;
 import goryachev.fx.CCheckMenuItem;
+import goryachev.fx.CDialog;
 import goryachev.fx.CMenu;
 import goryachev.fx.CMenuBar;
 import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockWindow;
+import goryachev.fxdock.OnWindowClosing;
 import goryachev.fxdock.WindowListMenuItem;
 import goryachev.fxdock.internal.DockTools;
 import java.util.Random;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
@@ -138,5 +142,66 @@ public class DemoWindow
 		
 		String s = DockTools.saveLayout(getContent()).toString();
 		statusField.setText(s);
+	}
+	
+	
+	public void save()
+	{
+		// indicates saving the changes
+		D.print("save");
+	}
+
+
+	// here we provide an example of handling a closing window event
+	public void confirmClosing(OnWindowClosing ch)
+	{
+		if(ch.isSaveAll())
+		{
+			save();
+			return;
+		}
+		else if(ch.isDiscardAll())
+		{
+			return;
+		}
+		
+		CDialog d = new CDialog();
+		d.setTitle("Save Changes?");
+		d.setContentText("This is an example of a dialog shown when closing a window.");
+		
+		Object save = d.addButton("Save");
+		Object saveAll = null;
+		if(ch.isClosingMultipleWindows())
+		{
+			saveAll = d.addButton("Save All");
+		}
+		d.addButton("Discard");
+		Object discardAll = null;
+		if(ch.isClosingMultipleWindows())
+		{
+			discardAll = d.addButton("Discard All");
+		}
+		Object cancel = d.addButton("Cancel", ButtonBar.ButtonData.APPLY);
+		
+		d.showAndWait();
+		Object rv = d.getResult();
+
+		if(rv == cancel)
+		{
+			ch.setCancelled();
+		}
+		else if(rv == save)
+		{
+			save();
+		}
+		else if(rv == saveAll)
+		{
+			ch.setSaveAll();
+			save();
+		}
+		else if(rv == discardAll)
+		{
+			ch.setDiscardAll();
+		}
 	}
 }

@@ -19,7 +19,14 @@ import javafx.util.StringConverter;
 public abstract class FxDockWindow
 	extends FxWindowBase
 {
-	public final CAction closeWindowAction = new CAction() { public void action() { close(); } };
+	/** override to ask the user to confirm closing of window.
+	 * make sure to check if the argument already has the user's choice and
+	 * perform the necessary action */
+	public void confirmClosing(OnWindowClosing choice) { }
+	
+	//
+	
+	public final CAction closeWindowAction = new CAction() { public void action() { actionClose(); } };
 	private final BorderPane frame;
 	private final FxDockRootPane root;
 	private LocalBindings bindings;
@@ -176,5 +183,16 @@ public abstract class FxDockWindow
 			bindings = new LocalBindings();
 		}
 		return bindings;
+	}
+	
+	
+	protected void actionClose()
+	{
+		OnWindowClosing ch = new OnWindowClosing(false);
+		confirmClosing(ch);
+		if(!ch.isCancelled())
+		{
+			close();
+		}
 	}
 }

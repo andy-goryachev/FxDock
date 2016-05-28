@@ -8,6 +8,7 @@ import goryachev.fxdock.internal.FxDockSchema;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.stage.WindowEvent;
 
 
 /**
@@ -15,9 +16,10 @@ import javafx.scene.Node;
  */
 public class FrameworkBase
 {
+	/** creates windows and panes */
+	protected FxDockFramework.Generator generator;
 	/** window stack: top window first */
-	protected static final WeakList<FxDockWindow> windowStack = new WeakList<>();
-	protected static FxDockFramework.Generator generator;
+	protected final WeakList<FxDockWindow> windowStack = new WeakList<>();
 	protected static final Log log = Log.get("FxDockFramework");
 	
 	
@@ -117,6 +119,8 @@ public class FrameworkBase
 	
 	protected void registerWindow(FxDockWindow w)
 	{
+		w.setOnCloseRequest((ev) -> handleClose(w, ev));
+		
 		w.showingProperty().addListener((src,old,cur) ->
 		{
 			if(!cur)
@@ -127,19 +131,27 @@ public class FrameworkBase
 	}
 	
 	
+	protected void handleClose(FxDockWindow w, WindowEvent ev)
+	{
+		OnWindowClosing ch = new OnWindowClosing(false);
+		w.confirmClosing(ch);
+		if(ch.isCancelled())
+		{
+			// don't close the window
+			ev.consume();
+		}
+	}
+	
+	
 	protected void unlinkWindow(FxDockWindow w)
 	{
 		if(getWindowCount() == 1)
 		{
 			saveLayout();
-			
-			if(confirmExit())
-			{
-				exitPrivate();
-			}
+			exitPrivate();
 		}
 	}
-	
+
 	
 	// FX cannot tell us which window is on top, so we have to do the dirty work ourselves
 	protected void addFocusListener(FxDockWindow w)
@@ -239,8 +251,16 @@ public class FrameworkBase
 	
 	protected boolean confirmExit()
 	{
-		// TODO need to add confirmation step for each window (e.g. if modified),
-		// as well as handle bulk operations such as "Save All" and "Ignore All"
+		OnWindowClosing choice = new OnWindowClosing(true);
+		for(FxDockWindow w: getWindows())
+		{
+			w.confirmClosing(choice);
+
+			if(choice.isCancelled())
+			{
+				return false;
+			}
+		}
 		return true;
 	}
 	
