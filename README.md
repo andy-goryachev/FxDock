@@ -1,12 +1,8 @@
 # FxDock
 
-Docking Framework for JavaFX.
+This library was created to provide JavaFX developers with a full-fledged docking framework.
 
 ![screenshot](https://github.com/andy-goryachev/FxDock/blob/master/screenshots/2016-0521-125006-709.png)
-
-## About
-
-This library was created to provide JavaFX developers with a fully functional docking framework.
 
 ## License
 
@@ -14,7 +10,7 @@ This project and its source code is licensed under the [GNU General Public Licen
 
 Please contact me to acquire this library under a business-friendly license.
 
-## Demo
+## Try It
 
 Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/blob/master/demo/FxDockDemo.jar)
 
