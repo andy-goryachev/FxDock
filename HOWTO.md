@@ -30,8 +30,11 @@ The docking framework uses
 facility to store the layout.  This is a facade that can use your custom key-value database to store application-wide settings, or you
 can simply use the file-based properties-like implementation provided by default.
 
-- explain bindings
+The framework also provides a mechanism to store JavaFX properties as a part of the layout.  All you need to do is to call one of the several
+bind() methods available in FxDockWindow and FxDockPane classes.  (Note: currently, support for only a few property types is implemented, as it is still work in progress).  
 
+Here is an example of binding a boolean "selected" property to a subkey for a check box:
+ bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
 
 ## Local Settings
 
