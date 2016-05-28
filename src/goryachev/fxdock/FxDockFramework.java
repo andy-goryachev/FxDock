@@ -1,13 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
-import goryachev.common.util.CList;
-import goryachev.common.util.GlobalSettings;
-import goryachev.common.util.Log;
-import goryachev.common.util.WeakList;
-import goryachev.fxdock.internal.FxDockSchema;
 import java.util.List;
-import javafx.application.Platform;
-import javafx.scene.Node;
 
 
 /**
@@ -25,250 +18,75 @@ public class FxDockFramework
 	
 	//
 	
-	protected static final Log log = Log.get("FxDockFramework");
-	/** window stack: top window first */
-	private static final WeakList<FxDockWindow> windowStack = new WeakList<>();
-	private static Generator generator;
+	/** implementation */
+	protected static FrameworkBase base = new FrameworkBase();
+	
+	
+	/** set your own implementation if you dare */
+	public static void setFrameworkBase(FrameworkBase b)
+	{
+		base = b;
+	}
 	
 	
 	/** generator allows for creation of custom docking Stages and docking Panes */ 
 	public static void setGenerator(Generator g)
 	{
-		generator = g;
+		base.setGenerator(g);
 	}
 	
 	
 	public static FxDockWindow createWindow()
 	{
-		return  generator().createWindow();
+		return base.createWindow();
 	}
 	
 	
 	public static FxDockPane createPane(String type)
 	{
-		return  generator().createPane(type);
-	}
-	
-	
-	private static Generator generator()
-	{
-		if(generator == null)
-		{
-			throw new Error("Please configure generator");
-		}
-		return generator;
+		return base.createPane(type);
 	}
 	
 	
 	public static int loadLayout()
 	{
-		int ct = FxDockSchema.getWindowCount();
-		// restore in proper z order
-		for(int i=ct-1; i>=0; i--)
-		{
-			try
-			{
-				FxDockWindow w = createWindow();
-				String prefix = FxDockSchema.windowID(i);
-				
-				FxDockSchema.restoreWindow(prefix, w);
-				registerWindow(w);
-				
-				Node n = FxDockSchema.loadLayout(prefix);
-				w.setContent(n);
-				
-				w.loadSettings(prefix);
-				
-				w.show();
-			}
-			catch(Exception e)
-			{
-				log.err(e);
-			}
-		}
-		return ct;
+		return base.loadLayout();
 	}
 	
 	
 	public static void saveLayout()
 	{
-		List<FxDockWindow> ws = getWindows();
-		int ct = ws.size();
-		
-		FxDockSchema.clearSettings();
-		FxDockSchema.setWindowCount(ct);
-		
-		for(int i=0; i<ct; i++)
-		{
-			FxDockWindow w = ws.get(i);
-			// ensure proper z-order
-			storeWindow(ct - i - 1, w);
-		}
-		
-		GlobalSettings.save();
-	}
-	
-	
-	private static void storeWindow(int ix, FxDockWindow w)
-	{
-		String prefix = FxDockSchema.windowID(ix);
-		FxDockSchema.saveLayout(prefix, w.getContent());
-		w.saveSettings(prefix);
-		FxDockSchema.storeWindow(prefix, w);
+		base.saveLayout();
 	}
 	
 
 	public static void open(FxDockWindow w)
 	{
-		registerWindow(w);
-		w.show();
-	}
-	
-	
-	private static void registerWindow(FxDockWindow w)
-	{
-		w.showingProperty().addListener((src,old,cur) ->
-		{
-			if(!cur)
-			{
-				unlinkWindow(w);
-			}
-		});
-	}
-	
-	
-	private static void unlinkWindow(FxDockWindow w)
-	{
-		if(getWindowCount() == 1)
-		{
-			saveLayout();
-			
-			if(confirmExit())
-			{
-				exitPrivate();
-			}
-		}
-	}
-	
-	
-	// FX cannot tell us which window is on top, so we have to do the dirty work ourselves
-	protected static void addFocusListener(FxDockWindow w)
-	{
-		w.focusedProperty().addListener((src,old,v) ->
-		{
-			if(v)
-			{
-				onWindowFocused(w);
-			}
-		});
-	}
-	
-	
-	private static void onWindowFocused(FxDockWindow win)
-	{
-		int ix = 0;
-		while(ix < windowStack.size())
-		{
-			FxDockWindow w = windowStack.get(ix);
-			if((w == null) || (w == win))
-			{
-				windowStack.remove(ix);
-			}
-			else
-			{
-				ix++;
-			}
-		}
-		windowStack.add(win);
+		base.open(w);
 	}
 	
 	
 	public static FxDockWindow findTopWindow(List<FxDockWindow> ws)
 	{
-		int sz = ws.size();
-		for(int i=windowStack.size()-1; i>=0; --i)
-		{
-			FxDockWindow w = windowStack.get(i);
-			if(w == null)
-			{
-				windowStack.remove(i);
-			}
-			else
-			{
-				for(int j=0; j<sz; j++)
-				{
-					if(w == ws.get(j))
-					{
-						return w;
-					}
-				}
-			}
-		}
-		return null;
+		return base.findTopWindow(ws);
 	}
 	
 	
 	/** returns a list of vidible windows, topmost window first */
 	public static List<FxDockWindow> getWindows()
 	{
-		int sz = windowStack.size();
-		CList<FxDockWindow> rv = new CList(sz);
-		for(int i=0; i<sz; i++)
-		{
-			FxDockWindow w = windowStack.get(i);
-			if(w != null)
-			{
-				if(w.isShowing())
-				{
-					rv.add(w);
-				}
-			}
-		}
-		return rv;
+		return base.getWindows();
 	}
 	
 	
 	public static int getWindowCount()
 	{
-		int ct = 0;
-		for(int i=windowStack.size()-1; i>=0; --i)
-		{
-			FxDockWindow w = windowStack.get(i);
-			if(w == null)
-			{
-				windowStack.remove(i);
-			}
-			else
-			{
-				ct++;
-			}
-		}
-		return ct;
-	}
-	
-	
-	private static boolean confirmExit()
-	{
-		// TODO need to add confirmation step for each window (e.g. if modified),
-		// as well as handle bulk operations such as "Save All" and "Ignore All"
-		return true;
+		return base.getWindowCount();
 	}
 	
 	
 	public static void exit()
 	{
-		saveLayout();
-		
-		if(confirmExit())
-		{
-			exitPrivate();
-		}
-	}
-	
-	
-	private static void exitPrivate()
-	{
-		Platform.exit();
-		System.exit(0);
+		base.exit();
 	}
 }
