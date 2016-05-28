@@ -23,7 +23,7 @@ public abstract class CJob
 	private volatile boolean cancelled;
 	private static final Object NULL = new Object();
 	private static final ParallelExecutor exec = init();
-	private static final ThreadLocal<CJob> currentJob = new ThreadLocal();
+	private static final ThreadLocal<CJob> currentJob = new ThreadLocal<>();
 	
 	
 	public CJob(String name)
@@ -99,7 +99,7 @@ public abstract class CJob
 	{
 		if(children == null)
 		{
-			children = new CList();
+			children = new CList<>();
 		}
 		
 		children.add(ch);
@@ -223,7 +223,7 @@ public abstract class CJob
 	public CList<CJob> getChildren()
 	{
 		CList<CJob> cs = getChildrenPrivate();
-		return cs == null ? new CList() : cs;
+		return cs == null ? new CList<>() : cs;
 	}
 	
 	
@@ -235,7 +235,7 @@ public abstract class CJob
 		}
 		else
 		{
-			return new CList(children);
+			return new CList<>(children);
 		}
 	}
 	

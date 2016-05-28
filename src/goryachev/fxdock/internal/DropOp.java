@@ -83,7 +83,7 @@ public abstract class DropOp
 	{
 		if(highlights == null)
 		{
-			highlights = new CList();
+			highlights = new CList<>();
 		}
 		highlights.add(n);
 	}

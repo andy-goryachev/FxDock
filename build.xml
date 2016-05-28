@@ -29,7 +29,7 @@
 			includeantruntime="false"
 			>
 			
-			<compilerarg value="-Xlint:none"/>
+			<compilerarg value="-Xlint:unchecked"/>
 		
 			<classpath></classpath>
 		</javac>

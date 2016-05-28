@@ -129,7 +129,7 @@ public class FxDockTabPane
 	
 	public List<Node> getPanes()
 	{
-		CList<Node> rv = new CList(getTabCount());
+		CList<Node> rv = new CList<>(getTabCount());
 		for(Tab t: getTabs())
 		{
 			rv.add(t.getContent());

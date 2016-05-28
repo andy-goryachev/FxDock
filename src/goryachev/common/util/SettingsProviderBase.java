@@ -15,7 +15,7 @@ public abstract class SettingsProviderBase
 	//
 	
 	// stores String or String[]
-	protected CMap<String,Object> data = new CMap();
+	protected CMap<String,Object> data = new CMap<>();
 	protected static final Log log = Log.get("SettingsProviderBase");
 
 	

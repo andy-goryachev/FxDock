@@ -129,7 +129,7 @@ public class D
 		SB sb = new SB();
 		sb.append(a.size());
 		
-		CList<Object> keys = new CList(a.keySet());
+		CList<Object> keys = new CList<>(a.keySet());
 		CSorter.sort(keys);
 		
 		for(Object key: keys)

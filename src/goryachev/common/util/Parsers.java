@@ -528,15 +528,16 @@ public class Parsers
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public static <T> HashSet<T> parseHashSet(Object x)
 	{
 		if(x != null)
 		{
 			if(x instanceof Collection)
 			{
-				return new HashSet((Collection)x);
+				return new HashSet<>((Collection)x);
 			}
 		}
-		return new HashSet();
+		return new HashSet<>();
 	}
 }

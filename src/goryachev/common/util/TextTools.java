@@ -727,7 +727,7 @@ public class TextTools
 	/** split to words using whitespace and word-delimiting punctuation */
 	public static CList<String> splitWords(String text)
 	{
-		CList<String> list = new CList();
+		CList<String> list = new CList<>();
 		if(text != null)
 		{
 			int start = 0;

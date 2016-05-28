@@ -14,7 +14,7 @@ import javafx.util.StringConverter;
  */
 public class LocalBindings
 {
-	private CMap<String,Entry> entries = new CMap();
+	private CMap<String,Entry> entries = new CMap<>();
 	
 	//
 	

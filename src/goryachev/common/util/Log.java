@@ -33,10 +33,10 @@ public class Log
 	private volatile boolean enabled = true;
 	private volatile boolean printCallingMethod = true;
 	// using unsynchronized list, which will be replaced with a new instance on any change
-	private volatile CList<ILogWriter> writers = new CList(0);
+	private volatile CList<ILogWriter> writers = new CList<>(0);
 
-	private static final CMap<String,Log> channels = new CMap();
-	private static final CMap<String,LogWriter> writerByName = new CMap();
+	private static final CMap<String,Log> channels = new CMap<>();
+	private static final CMap<String,LogWriter> writerByName = new CMap<>();
 	private static volatile Log errorChannel = initErrorChannel();
 	
 	
@@ -232,7 +232,7 @@ public class Log
 
 	public synchronized void addWriter(ILogWriter wr)
 	{
-		CList<ILogWriter> ws = new CList(writers);
+		CList<ILogWriter> ws = new CList<>(writers);
 		ws.add(wr);
 		writers = ws;
 	}
@@ -240,7 +240,7 @@ public class Log
 	
 	public synchronized void removeWriter(ILogWriter wr)
 	{
-		CList<ILogWriter> ws = new CList(writers);
+		CList<ILogWriter> ws = new CList<>(writers);
 		ws.remove(wr);
 		writers = ws;
 	}

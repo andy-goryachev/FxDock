@@ -219,7 +219,7 @@ public class FrameworkBase
 	public List<FxDockWindow> getWindows()
 	{
 		int sz = windowStack.size();
-		CList<FxDockWindow> rv = new CList(sz);
+		CList<FxDockWindow> rv = new CList<>(sz);
 		for(int i=0; i<sz; i++)
 		{
 			FxDockWindow w = windowStack.get(i);

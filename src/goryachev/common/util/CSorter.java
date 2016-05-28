@@ -170,6 +170,7 @@ public class CSorter
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	protected static int smartCompare(Object a, Object b)
 	{
 		if(a instanceof Comparable)

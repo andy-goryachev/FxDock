@@ -28,9 +28,9 @@ public class CPane
 	
 	protected int hgap;
 	protected int vgap;
-	protected CList<Entry> entries = new CList();
-	protected CList<LC> cols = new CList();
-	protected CList<LC> rows = new CList();
+	protected CList<Entry> entries = new CList<>();
+	protected CList<LC> cols = new CList<>();
+	protected CList<LC> rows = new CList<>();
 
 
 	public CPane()

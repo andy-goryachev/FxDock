@@ -130,7 +130,7 @@ public class SysInfo
 		header("Environment");
 		
 		Map<String,String> env = System.getenv();
-		CList<String> keys = new CList(env.keySet());
+		CList<String> keys = new CList<>(env.keySet());
 		CSorter.sort(keys);
 		for(String key: keys)
 		{
@@ -145,7 +145,7 @@ public class SysInfo
 		header("System Properties");
 		
 		Properties p = System.getProperties();
-		CList<String> keys = new CList(p.stringPropertyNames());
+		CList<String> keys = new CList<>(p.stringPropertyNames());
 		CSorter.sort(keys);
 		for(String key: keys)
 		{
@@ -175,7 +175,7 @@ public class SysInfo
 
 		try
 		{
-			CList<String> names = new CList(Security.getAlgorithms(name));
+			CList<String> names = new CList<>(Security.getAlgorithms(name));
 			CSorter.sort(names);
 			
 			for(String s: names)

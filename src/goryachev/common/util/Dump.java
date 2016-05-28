@@ -159,7 +159,7 @@ public class Dump
 	
 	private static String listMap(Map<?,?> map)
 	{
-		CList<String> a = new CList();
+		CList<String> a = new CList<>();
 		Iterator<?> it = map.entrySet().iterator();
 		while(it.hasNext())
 		{
@@ -539,7 +539,7 @@ public class Dump
 		
 		try
 		{
-			CMultiMap<String,Object> m = new CMultiMap();
+			CMultiMap<String,Object> m = new CMultiMap<>();
 			
 			while(c != null)
 			{
@@ -573,7 +573,7 @@ public class Dump
 				}
 			}
 			
-			CList<String> names = new CList(m.keySet());
+			CList<String> names = new CList<>(m.keySet());
 			CSorter.sort(names);
 			
 			for(String fname: names)

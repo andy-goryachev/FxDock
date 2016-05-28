@@ -26,7 +26,7 @@ public class CMap<K,V>
 	
 	public CList<K> keys()
 	{
-		return new CList(keySet());
+		return new CList<>(keySet());
 	}
 	
 	
@@ -51,10 +51,11 @@ public class CMap<K,V>
 	
 	public CMap<K,V> copyCMap()
 	{
-		return new CMap(this);
+		return new CMap<>(this);
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public void loadArray(Object ... xx)
 	{
 		if(xx != null)

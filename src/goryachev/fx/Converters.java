@@ -18,6 +18,7 @@ public class Converters
 	public static StringConverter<String> cstring;
 	
 	
+	@SuppressWarnings("unchecked")
 	public static <T> StringConverter<T> get(Property<T> p)
 	{
 		if(p instanceof BooleanProperty)

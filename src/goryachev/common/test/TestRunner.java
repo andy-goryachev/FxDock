@@ -18,9 +18,9 @@ import java.util.Vector;
 
 public class TestRunner
 {
-	private final CList<Class> classes = new CList();
+	private final CList<Class> classes = new CList<>();
 	private int failed;
-	protected final Vector<TestCase> cases = new Vector();
+	protected final Vector<TestCase> cases = new Vector<>();
 	protected long started;
 	protected long ended;
 	
@@ -72,6 +72,7 @@ public class TestRunner
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	protected void checkConstructor(Class c)
 	{
 		try
@@ -130,7 +131,7 @@ public class TestRunner
 
 	protected void executeTests()
 	{
-		CList<CJob> jobs = new CList();
+		CList<CJob> jobs = new CList<>();
 		
 		started = System.currentTimeMillis();
 		
@@ -162,11 +163,11 @@ public class TestRunner
 	
 	protected void executeTestClass(CJob parent, final Class c) throws Exception
 	{
-		final CList<RunEntry> beforeAll = new CList();
-		final CList<RunEntry> before = new CList();
-		final CList<RunEntry> tests = new CList();
-		final CList<RunEntry> after = new CList();
-		final CList<RunEntry> afterAll = new CList();
+		final CList<RunEntry> beforeAll = new CList<>();
+		final CList<RunEntry> before = new CList<>();
+		final CList<RunEntry> tests = new CList<>();
+		final CList<RunEntry> after = new CList<>();
+		final CList<RunEntry> afterAll = new CList<>();
 		
 		extract(c, beforeAll, BeforeClass.class, true);
 		extract(c, before, Before.class, false);
@@ -185,7 +186,7 @@ public class TestRunner
 			m.invoke(null);
 		}
 		
-		CList<CJob> jobs = new CList();
+		CList<CJob> jobs = new CList<>();
 		
 		// individual tests
 		for(final RunEntry m: tests)

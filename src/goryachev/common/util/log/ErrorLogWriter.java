@@ -17,7 +17,7 @@ public class ErrorLogWriter
 	
 	public static final ErrorLogWriter instance = new ErrorLogWriter();
 	private int maxSize = 128;
-	private CList<LogEntry> errors = new CList();
+	private CList<LogEntry> errors = new CList<>();
 	private CList<Monitor> listeners;
 	
 	
@@ -62,7 +62,7 @@ public class ErrorLogWriter
 	{
 		if(listeners == null)
 		{
-			listeners = new CList();
+			listeners = new CList<>();
 		}
 		
 		listeners.add(m);

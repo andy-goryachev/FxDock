@@ -60,6 +60,6 @@ public class CSet<T>
 
 	public CList<T> asList()
 	{
-		return new CList(this);
+		return new CList<>(this);
 	}
 }

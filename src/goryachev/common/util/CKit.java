@@ -595,6 +595,7 @@ public final class CKit
 	
 	
 	/** universal comparison to be used when other logic fails */
+	@SuppressWarnings("unchecked")
 	public static int compareLastResort(Object a, Object b)
 	{
 		if(a == null)
@@ -807,7 +808,7 @@ public final class CKit
 	/** Splits a string using any whitespace as delimiter.  Returns a non-null value. */
 	public static String[] split(String s)
 	{
-		CList<String> list = new CList();
+		CList<String> list = new CList<>();
 		
 		if(s != null)
 		{
@@ -856,7 +857,7 @@ public final class CKit
 	 */
 	public static String[] split(String s, String delim)
 	{
-		CList<String> list = new CList();
+		CList<String> list = new CList<>();
 		
 		if(s != null)
 		{
@@ -893,7 +894,7 @@ public final class CKit
 
 	public static String[] split(String s, char delim, boolean includeDelimiter)
 	{
-		CList<String> a = new CList();
+		CList<String> a = new CList<>();
 
 		if(s != null)
 		{
@@ -925,7 +926,7 @@ public final class CKit
 	/** Splits a string using any of the characters in the delimiters string */
 	public static String[] splitAny(String s, String delimiters)
 	{
-		CList<String> list = new CList();
+		CList<String> list = new CList<>();
 		
 		int start = 0;
 		boolean white = true;
@@ -2001,6 +2002,7 @@ public final class CKit
 	
 	
 	/** collect public static fields from a class, of specified type */
+	@SuppressWarnings("unchecked")
 	public static <T> CSet<T> collectPublicStaticFields(Class<?> c, Class<T> type)
 	{
 		CSet<T> rv = new CSet();

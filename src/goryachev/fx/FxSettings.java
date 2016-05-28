@@ -33,7 +33,7 @@ public class FxSettings
 	public static final String STAGE_ICONIFIED = "I";
 	public static final String STAGE_NORMAL = "N";
 
-	private static final CMap<Object,Object> stages = new CMap();
+	private static final CMap<Object,Object> stages = new CMap<>();
 	
 	
 	public static File getUserFolder()

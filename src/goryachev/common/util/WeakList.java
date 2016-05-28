@@ -19,14 +19,14 @@ public class WeakList<T>
 	
 	public WeakList(int size)
 	{
-		list = new CList(size);
+		list = new CList<>(size);
 	}
 
 
 	public CList<T> asList()
 	{
 		int sz = list.size();
-		CList<T> rv = new CList(sz);
+		CList<T> rv = new CList<>(sz);
 		for(int i=sz-1; i>=0; i--)
 		{
 			WeakReference<T> ref = list.get(i);
@@ -52,13 +52,13 @@ public class WeakList<T>
 
 	public void add(T item)
 	{
-		list.add(new WeakReference(item));
+		list.add(new WeakReference<>(item));
 	}
 	
 	
 	public void add(int index, T item)
 	{
-		list.add(index, new WeakReference(item));
+		list.add(index, new WeakReference<>(item));
 	}
 	
 	

@@ -11,7 +11,7 @@ public class TestCase
 	private SB text = new SB();
 	private long startTime;
 	private long stopTime;
-	protected static final ThreadLocal<TestCase> currentTestCase = new ThreadLocal();
+	protected static final ThreadLocal<TestCase> currentTestCase = new ThreadLocal<>();
 	
 	
 	public TestCase(String name)

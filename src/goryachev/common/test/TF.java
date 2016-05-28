@@ -95,7 +95,7 @@ public class TF
 	/** Runs a set of test classes */
 	public static void run(Class ... tests)
 	{
-		TestRunner.run(new CList(tests));
+		TestRunner.run(new CList<>(tests));
 	}
 	
 	

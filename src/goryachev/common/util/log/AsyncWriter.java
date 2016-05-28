@@ -7,7 +7,7 @@ public class AsyncWriter
 	implements LogWriterPrivate, Runnable
 {
 	private final LogWriter writer;
-	private final LinkedBlockingQueue<LogEntry> queue = new LinkedBlockingQueue();
+	private final LinkedBlockingQueue<LogEntry> queue = new LinkedBlockingQueue<>();
 	private final Thread thread;
 	private volatile boolean running = true;
 
