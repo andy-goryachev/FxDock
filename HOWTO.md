@@ -34,7 +34,10 @@ The framework also provides a mechanism to store JavaFX properties as a part of 
 bind() methods available in FxDockWindow and FxDockPane classes.  (Note: currently, support for only a few property types is implemented, as it is still work in progress).  
 
 Here is an example of binding a boolean "selected" property to a subkey for a check box:
- bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
+
+```java
+bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
+```
 
 ## Local Settings
 
