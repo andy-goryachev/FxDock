@@ -20,8 +20,44 @@ There could be only one type of application window (FX Stage), and it must exten
 Before the framework loads the layout, you must set a 
 [FxDockFramework.Generator](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/fxdock/FxDockFramework.java),
 which creates windows and panes for your application.
-Example:
+
+Here is an example:
 [DemoGenerator.java](https://github.com/andy-goryachev/FxDock/blob/master/src/demo/dock/DemoGenerator.java)
+```java
+/**
+ * Demo Generator creates custom window of type DemoWindow
+ * and two kinds of panes:
+ * - DemoBrowser, a simple web browser, with a type id BROWSER,
+ * - DemoPane, an empty pane with a background color encoded in its type id.
+ */
+public class DemoGenerator
+	implements FxDockFramework.Generator
+{
+	/** type id for a browser pane */
+	public static final String BROWSER = "BROWSER";
+
+
+	/** creates custom window */
+	public FxDockWindow createWindow()
+	{
+		return new DemoWindow();
+	}
+
+
+	/** creates custom pane using the type id */
+	public FxDockPane createPane(String type)
+	{
+		switch(type)
+		{
+		case BROWSER:
+			return new DemoBrowser();
+		default:
+			// type here codes for background color
+			return new DemoPane(type);
+		}
+	}
+}
+```
 
 ## Global Settings
 

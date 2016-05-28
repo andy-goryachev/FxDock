@@ -18,12 +18,14 @@ public class DemoGenerator
 	public static final String BROWSER = "BROWSER";
 
 
+	/** creates custom window */
 	public FxDockWindow createWindow()
 	{
 		return new DemoWindow();
 	}
 
 
+	/** creates custom pane using the type id */
 	public FxDockPane createPane(String type)
 	{
 		switch(type)
