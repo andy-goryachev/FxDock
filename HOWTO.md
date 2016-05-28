@@ -66,19 +66,33 @@ The docking framework uses
 facility to store the layout.  This is a facade that can use your custom key-value database to store application-wide settings, or you
 can simply use the file-based properties-like implementation provided by default.
 
+## Local Settings
+
 The framework also provides a mechanism to store JavaFX properties as a part of the layout.  All you need to do is to call one of the several
 bind() methods available in FxDockWindow and FxDockPane classes.  (Note: currently, support for only a few property types is implemented, as it is still work in progress).  
 
 Here is an example of binding a boolean "selected" property to a subkey for a check box:
 
 ```java
-bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
+	bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
 ```
 
-## Local Settings
+## Logging
 
-
-## Logger
+The framework uses custom logging facade
+[Log](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/common/util/Log.java)
+which, alas, is still a work in progress.
 
 
 ## Startup
+
+Here is an example of startup code.  The framework attempts to load an existing layout first, the proceeds to creating the initial window if no prior layout exists:
+```java
+	// load saved layout
+	int ct = FxDockFramework.loadLayout();
+	if(ct == 0)
+	{
+		// when no saved layout exists, open the first window
+		DemoWindow.openBrowser("https://github.com/andy-goryachev/FxDock");
+	}
+```

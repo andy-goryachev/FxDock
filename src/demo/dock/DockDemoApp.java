@@ -28,7 +28,7 @@ public class DockDemoApp
 		GlobalSettings.setFileProvider(new File("settings.conf"));
 		
 		// launch ui
-		new DockDemoApp().launch(args);
+		Application.launch(DockDemoApp.class, args);
 	}
 	
 
