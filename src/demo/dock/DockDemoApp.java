@@ -35,7 +35,7 @@ public class DockDemoApp
 	public void start(Stage s) throws Exception
 	{
 		// plug in custom windows and dockable panes. 
-		FxDockFramework.setGenerator(new DemoPanes());
+		FxDockFramework.setGenerator(new DemoGenerator());
 		
 		// load saved layout
 		int ct = FxDockFramework.loadLayout();

@@ -39,7 +39,7 @@ public class DemoBrowser
 	
 	public DemoBrowser()
 	{
-		super(DemoPanes.BROWSER);
+		super(DemoGenerator.BROWSER);
 		setTitle("Browser");
 		
 		addressField = new TextField();

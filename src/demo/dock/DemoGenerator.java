@@ -6,11 +6,15 @@ import goryachev.fxdock.FxDockWindow;
 
 
 /**
- * Demo Panes.
+ * Demo Generator creates custom window of type DemoWindow
+ * and two kinds of panes:
+ * - DemoBrowser, a simple web browser, with a type id BROWSER,
+ * - DemoPane, an empty pane with a background color encoded in its type id.
  */
-public class DemoPanes
+public class DemoGenerator
 	implements FxDockFramework.Generator
 {
+	/** type id for a browser pane */
 	public static final String BROWSER = "BROWSER";
 
 
