@@ -22,7 +22,7 @@ Please refer to [HOWTO.md](HOWTO.md) for detailed instructions on how to use the
 
 ## Download
 
-Library JAR: [FxDock-0.00.01.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDock-0.00.02.jar)
+Library JAR: [FxDock-0.00.02.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDock-0.00.02.jar)
 
 SHA-256: 1f9ae325b34df279d55b39a4e0a99fbe81ff724cebd9be977681d53665f94ce5
 
