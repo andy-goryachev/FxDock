@@ -1,10 +1,13 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.fxdock;
+package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
 import goryachev.common.util.WeakList;
-import goryachev.fxdock.internal.FxDockSchema;
+import goryachev.fxdock.FxDockFramework;
+import goryachev.fxdock.FxDockPane;
+import goryachev.fxdock.FxDockWindow;
+import goryachev.fxdock.OnWindowClosing;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -32,7 +35,9 @@ public class FrameworkBase
 	
 	public FxDockWindow createWindow()
 	{
-		return generator().createWindow();
+		FxDockWindow w = generator().createWindow();
+		addFocusListener(w);
+		return w;
 	}
 	
 	
@@ -154,7 +159,7 @@ public class FrameworkBase
 
 	
 	// FX cannot tell us which window is on top, so we have to do the dirty work ourselves
-	protected void addFocusListener(FxDockWindow w)
+	public void addFocusListener(FxDockWindow w)
 	{
 		w.focusedProperty().addListener((src,old,v) ->
 		{

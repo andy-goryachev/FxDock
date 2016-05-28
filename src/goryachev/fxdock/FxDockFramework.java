@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
+import goryachev.fxdock.internal.FrameworkBase;
 import java.util.List;
 
 
@@ -39,6 +40,12 @@ public class FxDockFramework
 	public static FxDockWindow createWindow()
 	{
 		return base.createWindow();
+	}
+	
+	
+	protected static void registerWindow(FxDockWindow w)
+	{
+		base.addFocusListener(w);
 	}
 	
 	

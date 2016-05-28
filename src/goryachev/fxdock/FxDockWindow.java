@@ -39,7 +39,7 @@ public abstract class FxDockWindow
 		Scene s = new Scene(frame);
 		setScene(s);
 		
-		FxDockFramework.base.addFocusListener(this);
+		FxDockFramework.registerWindow(this);
 	}
 	
 	
