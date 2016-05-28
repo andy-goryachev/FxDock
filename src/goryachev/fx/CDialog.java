@@ -3,6 +3,7 @@ package goryachev.fx;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.stage.Window;
 
 
 /**
@@ -12,6 +13,17 @@ import javafx.scene.control.Dialog;
 public class CDialog
 	extends Dialog<Object>
 {
+	public CDialog(Window owner)
+	{
+		initOwner(owner);
+	}
+	
+	
+	public CDialog()
+	{
+	}
+	
+	
 	public Object addButton(String text)
 	{
 		return addButton(text, 	ButtonBar.ButtonData.OTHER);

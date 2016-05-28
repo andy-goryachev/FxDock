@@ -152,7 +152,8 @@ public class DemoWindow
 	}
 
 
-	// here we provide an example of handling a closing window event
+	// this method illustrates how to handle closing a window,
+	// or closing multiple window when quitting the application.
 	public void confirmClosing(OnWindowClosing ch)
 	{
 		if(ch.isSaveAll())
@@ -165,7 +166,7 @@ public class DemoWindow
 			return;
 		}
 		
-		CDialog d = new CDialog();
+		CDialog d = new CDialog(this);
 		d.setTitle("Save Changes?");
 		d.setContentText("This is an example of a dialog shown when closing a window.");
 		
