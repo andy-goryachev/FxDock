@@ -13,13 +13,14 @@ import javafx.scene.layout.Region;
 
 /**
  * Vertically arranged Pane that lays out its child nodes using the following constraints:
- * PREF, FILL, percentage, exact pixels.
+ * PREF, FILL, MIN, percentage, or exact pixels.
  */
 public class VPane
 	extends Pane
 {
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;
+	public static final double MIN = -3.0;
 	protected int gap;
 	protected static final Object KEY_CONSTRAINT = new Object();
 	
@@ -165,6 +166,12 @@ public class VPane
 		}
 		
 		
+		protected boolean isMin(double x)
+		{
+			return (x == MIN);
+		}
+		
+		
 		protected int computeSizes(boolean preferred)
 		{
 			int sum = 0;
@@ -176,6 +183,10 @@ public class VPane
 				if(isFixed(cc))
 				{
 					d = FX.ceil(cc);
+				}
+				else if(isMin(cc))
+				{
+					d = FX.ceil(n.minHeight(-1));
 				}
 				else
 				{
@@ -341,6 +352,11 @@ public class VPane
 				int di;
 				
 				if(isFixed(cc))
+				{
+					di = FX.ceil(cc);
+					dsum += di;
+				}
+				else if(isMin(cc))
 				{
 					di = FX.ceil(cc);
 					dsum += di;
