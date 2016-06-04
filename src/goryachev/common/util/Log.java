@@ -452,7 +452,7 @@ public class Log
 	}
 	
 	
-	public static synchronized void addWriter(LogWriter wr)
+	public static synchronized void addLogWriter(LogWriter wr)
 	{
 		writerByName.put(wr.getName(), wr);
 	}
@@ -502,7 +502,7 @@ public class Log
 	{
 		FileLogWriter wr = new FileLogWriter(name, file, maxSize, rounds);
 		wr.setAsync(async);
-		addWriter(wr);
+		addLogWriter(wr);
 		return wr;
 	}
 	

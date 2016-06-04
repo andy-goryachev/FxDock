@@ -59,7 +59,7 @@ public class TestRunner
 	{
 		LogWriter wr = new ConsoleLogWriter("console");
 		wr.setAsync(false);
-		Log.addWriter(wr);
+//		Log.addWriter(wr);
 		Log.addErrorWriter(wr);
 	}
 
