@@ -259,7 +259,6 @@ public class FrameworkBase
 		OnWindowClosing choice = new OnWindowClosing(true);
 		for(FxDockWindow w: getWindows())
 		{
-			w.toFront();
 			w.confirmClosing(choice);
 
 			if(choice.isCancelled())

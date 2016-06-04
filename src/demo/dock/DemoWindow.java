@@ -166,6 +166,8 @@ public class DemoWindow
 			return;
 		}
 		
+		toFront();
+		
 		CDialog d = new CDialog(this);
 		d.setTitle("Save Changes?");
 		d.setContentText("This is an example of a dialog shown when closing a window.");

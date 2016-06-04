@@ -20,9 +20,12 @@ import javafx.util.StringConverter;
 public abstract class FxDockWindow
 	extends FxWindowBase
 {
-	/** override to ask the user to confirm closing of window.
-	 * make sure to check if the argument already has the user's choice and
-	 * perform the necessary action */
+	/** 
+	 * Override to ask the user to confirm closing of window.
+	 * Make sure to check if the argument already has the user's choice and
+	 * perform the necessary action.
+	 * If a dialog must be shown, make sure to call toFront().
+	 */
 	public void confirmClosing(OnWindowClosing choice) { }
 	
 	//
