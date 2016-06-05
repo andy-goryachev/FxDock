@@ -192,7 +192,7 @@ public class VPane
 				{
 					if(preferred)
 					{
-						d = FX.ceil(n.prefHeight(-1));
+						d = FX.ceil(Math.max(n.prefHeight(-1), n.minHeight(-1)));
 					}
 					else
 					{

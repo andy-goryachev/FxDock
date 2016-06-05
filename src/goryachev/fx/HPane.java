@@ -192,7 +192,7 @@ public class HPane
 				{
 					if(preferred)
 					{
-						d = FX.ceil(n.prefWidth(-1));
+						d = FX.ceil(Math.max(n.prefWidth(-1), n.minWidth(-1)));
 					}
 					else
 					{

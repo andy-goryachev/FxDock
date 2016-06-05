@@ -5,11 +5,13 @@ import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeView;
@@ -31,6 +33,10 @@ public class FxSchema
 	public static final String SFX_COLUMNS = ".COLS";
 	public static final String SFX_DIVIDERS = ".DIVS";
 	public static final String SFX_SELECTION = ".SEL";
+	
+	public static final String SORT_ASCENDING = "A";
+	public static final String SORT_DESCENDING = "D";
+	public static final String SORT_NONE = "N";
 	
 	public static final String WINDOW_FULLSCREEN = "F";
 	public static final String WINDOW_MAXIMIZED = "X";
@@ -111,7 +117,7 @@ public class FxSchema
 	}
 	
 
-	public static void storeBindings(String prefix, LocalBindings bindings)
+	private static void storeBindings(String prefix, LocalBindings bindings)
 	{
 		if(bindings != null)
 		{
@@ -121,7 +127,7 @@ public class FxSchema
 	}
 	
 	
-	public static void restoreBindings(String prefix, LocalBindings bindings)
+	private static void restoreBindings(String prefix, LocalBindings bindings)
 	{
 		if(bindings != null)
 		{
@@ -131,7 +137,7 @@ public class FxSchema
 	}
 
 	
-	public static void storeSplitPane(String prefix, SplitPane sp)
+	private static void storeSplitPane(String prefix, SplitPane sp)
 	{
 		SStream s = new SStream();
 		s.add(sp.getDividers().size());
@@ -142,7 +148,7 @@ public class FxSchema
 	}
 	
 	
-	public static void restoreSplitPane(String prefix, SplitPane sp)
+	private static void restoreSplitPane(String prefix, SplitPane sp)
 	{
 		String k = prefix + SFX_DIVIDERS;
 		SStream s = GlobalSettings.getStream(k);
@@ -160,6 +166,86 @@ public class FxSchema
 				}
 			}
 		});
+	}
+	
+	
+	private static void storeTableView(String prefix, TableView t)
+	{
+		ObservableList<TableColumn<?,?>> cs = t.getColumns();
+		int sz = cs.size();
+		ObservableList<TableColumn<?,?>> sorted = t.getSortOrder();
+		
+		// columns: count,[id,width,sortOrder(0 for none, negative for descending, positive for ascending)
+		SStream s = new SStream();
+		s.add(sz);
+		for(int i=0; i<sz; i++)
+		{
+			TableColumn<?,?> c = cs.get(i);
+			
+			int sortOrder = sorted.indexOf(c);
+			if(sortOrder < 0)
+			{
+				sortOrder = 0;
+			}
+			else
+			{
+				sortOrder++;
+				if(c.getSortType() == TableColumn.SortType.DESCENDING)
+				{
+					sortOrder = -sortOrder;
+				}
+			}
+			
+			s.add(c.getId());
+			s.add(c.getWidth());
+			s.add(sortOrder);
+		}
+		// FIX separate columns and width/sort
+		GlobalSettings.setStream(prefix + SFX_COLUMNS, s);
+		
+		// selection
+		int ix = t.getSelectionModel().getSelectedIndex();
+		GlobalSettings.setInt(prefix + SFX_SELECTION, ix);
+	}
+	
+	
+	private static void restoreTableView(String prefix, TableView t)
+	{
+		ObservableList<TableColumn<?,?>> cs = t.getColumns();
+		
+		// columns
+		SStream s = GlobalSettings.getStream(prefix + SFX_COLUMNS);
+		int sz = s.nextInt();
+		if(sz == cs.size())
+		{
+			for(int i=0; i<sz; i++)
+			{
+				TableColumn<?,?> c = cs.get(i);
+				
+				String id = s.nextString();
+				double w = s.nextDouble();
+				int sortOrder = s.nextInt();
+				
+				// TODO
+			}
+		}
+		
+		// selection
+		int ix = GlobalSettings.getInt(prefix + SFX_SELECTION, -1);
+		if(ix >= 0)
+		{
+			// if done immediately it screws up the selection model for some reason
+			// FIX does not select for some reason.
+			/* TODO 
+			FX.later(() ->
+			{
+				if(ix < t.getItems().size())
+				{
+					t.getSelectionModel().select(ix);
+				}
+			});
+			*/
+		}
 	}
 	
 	
@@ -211,6 +297,10 @@ public class FxSchema
 			{
 				storeSplitPane(prefix, (SplitPane)n);
 			}
+			else if(n instanceof TableView)
+			{
+				storeTableView(prefix, (TableView)n);
+			}
 			
 			if(n instanceof Parent)
 			{
@@ -226,7 +316,6 @@ public class FxSchema
 	public static void restoreNode(String wprefix, Node n)
 	{
 		// TODO skip is storing is not supported
-		// TODO bound properties
 		
 		String prefix = findName(wprefix, n);
 		if(prefix != null)
@@ -234,6 +323,10 @@ public class FxSchema
 			if(n instanceof SplitPane)
 			{
 				restoreSplitPane(prefix, (SplitPane)n);
+			}
+			else if(n instanceof TableView)
+			{
+				restoreTableView(prefix, (TableView)n);
 			}
 			
 			if(n instanceof Parent)
@@ -287,11 +380,11 @@ public class FxSchema
 		}
 		else if(n instanceof BorderPane)
 		{
-			return "BORDERPANE";
+			return "BP";
 		}
 		else if(n instanceof Group)
 		{
-			return "GROUP";
+			return "GR";
 		}
 		else if(n instanceof SplitPane)
 		{
@@ -299,7 +392,7 @@ public class FxSchema
 		}
 		else if(n instanceof StackPane)
 		{
-			return "STACKPANE";
+			return "SP";
 		}
 		else if(n instanceof TableView)
 		{
@@ -315,7 +408,7 @@ public class FxSchema
 		}
 		else if(n instanceof Region)
 		{
-			return "REGION";
+			return "R";
 		}
 		
 		throw new Error("?" + n);

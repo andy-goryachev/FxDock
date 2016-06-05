@@ -145,7 +145,11 @@ public class WindowsFx
 		storeWindow(w);
 		GlobalSettings.save();
 
-		removeStage(w);
+		Object id = windows.remove(w);
+		if(id instanceof String)
+		{
+			windows.remove(id);
+		}
 		
 		if(getWindowCount() == 0)
 		{
@@ -229,9 +233,6 @@ public class WindowsFx
 	}
 	
 	
-	// old code
-	
-	
 	protected String addWindow(FxWindow w)
 	{
 		String name = w.getName();
@@ -254,16 +255,6 @@ public class WindowsFx
 		onWindowFocused(w);
 		
 		return prefix;
-	}
-
-
-	protected void removeStage(Stage w)
-	{
-		Object id = windows.remove(w);
-		if(id instanceof String)
-		{
-			windows.remove(id);
-		}
 	}
 
 	
