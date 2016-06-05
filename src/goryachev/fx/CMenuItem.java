@@ -14,4 +14,10 @@ public class CMenuItem
 		super(text);
 		a.attach(this);
 	}
+	
+	
+	public CMenuItem(String text)
+	{
+		super(text);
+	}
 }

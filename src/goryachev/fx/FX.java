@@ -1,5 +1,7 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.GlobalSettings;
+import goryachev.fx.internal.WindowsFx;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -17,7 +19,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 
 
@@ -26,35 +27,63 @@ import javafx.stage.Window;
  */
 public final class FX
 {
+	private static WindowsFx windowsFx = new WindowsFx();
+	
+	
+	public static FxWindow getWindow(Node n)
+	{
+		Window w = n.getScene().getWindow();
+		if(w instanceof FxWindow)
+		{
+			return (FxWindow)w;
+		}
+		return null;
+	}
+	
+	
 	public static void storeSettings(Node n)
 	{
-		FxSettings.storeNode(n);
+		FxWindow w = getWindow(n);
+		storeSettings(w);
 	}
 	
 	
 	public static void restoreSettings(Node n)
 	{
-		FxSettings.restoreNode(n);
+		FxWindow w = getWindow(n);
+		restoreSettings(w);
 	}
 	
 	
-	public static void open(Stage w, String stageName)
+	public static void storeSettings(FxWindow w)
 	{
-		w.showingProperty().addListener((src,old,cur) -> 
-		{
-			if(!cur)
-			{
-				FxSettings.onStageClosing(w, stageName);
-			}
-		});
-		FxSettings.restoreStage(w, stageName);
-		w.show();
+		windowsFx.storeWindow(w);
+		GlobalSettings.save();
 	}
 	
 	
-	public static void close(Stage s)
+	public static void restoreSettings(FxWindow w)
 	{
-		// TODO
+		windowsFx.restoreWindow(w);
+		GlobalSettings.save();
+	}
+	
+	
+	public static void open(FxWindow w)
+	{
+		windowsFx.open(w);
+	}
+	
+	
+	public static void close(FxWindow w)
+	{
+		windowsFx.close(w);
+	}
+	
+	
+	public static void exit()
+	{
+		windowsFx.exit();
 	}
 	
 	

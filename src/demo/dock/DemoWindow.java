@@ -19,7 +19,6 @@ import java.util.Random;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
@@ -56,9 +55,9 @@ public class DemoWindow
 		// file
 		mb.add(m = new CMenu("File"));
 		m.add("Save Settings", saveSettingsAction);
-		m.addSeparator();
+		m.separator();
 		m.add("Close Window", closeWindowAction);
-		m.addSeparator();
+		m.separator();
 		m.add("Quit Application", quitApplicationAction);
 		// window
 		mb.add(m = new CMenu("Window"));

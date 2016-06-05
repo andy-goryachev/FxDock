@@ -18,4 +18,12 @@ public class CMenuBar
 	{
 		getMenus().add(m);
 	}
+	
+	
+	public CMenu addMenu(String text)
+	{
+		CMenu m = new CMenu(text);
+		getMenus().add(m);
+		return m;
+	}
 }

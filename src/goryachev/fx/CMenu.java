@@ -24,7 +24,7 @@ public class CMenu
 	}
 	
 	
-	public SeparatorMenuItem addSeparator()
+	public SeparatorMenuItem separator()
 	{
 		SeparatorMenuItem m = new SeparatorMenuItem();
 		getItems().add(m);
@@ -44,5 +44,14 @@ public class CMenu
 	{
 		getItems().add(m);
 		return m;
+	}
+	
+	
+	/** adds a disabled menu item */
+	public MenuItem add(String text)
+	{
+		CMenuItem m = new CMenuItem(text);
+		m.setDisable(true);
+		return add(m);
 	}
 }
