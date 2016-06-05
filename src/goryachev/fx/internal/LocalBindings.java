@@ -1,5 +1,5 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.fxdock.internal;
+package goryachev.fx.internal;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
