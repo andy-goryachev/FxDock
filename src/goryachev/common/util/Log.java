@@ -39,6 +39,11 @@ public class Log
 	private static final CMap<String,LogWriter> writerByName = new CMap<>();
 	private static volatile Log errorChannel = initErrorChannel();
 	
+	static
+	{
+		initConsole();
+	}
+	
 	
 	public Log(String name)
 	{

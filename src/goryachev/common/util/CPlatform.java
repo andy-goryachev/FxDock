@@ -1,14 +1,19 @@
 // Copyright (c) 2008-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
-import java.io.File;
 import goryachev.common.util.platform.CPlatformLinux;
 import goryachev.common.util.platform.CPlatformMac;
 import goryachev.common.util.platform.CPlatformUnix;
 import goryachev.common.util.platform.CPlatformWindows;
+import java.io.File;
 
 
 public abstract class CPlatform
 {
+	protected abstract File getSettingsFolderPrivate();
+	
+	//
+	
+	protected static final String SETTINGS_FOLDER = "goryachev.com";
 	private static CPlatform instance;
 	
 
@@ -58,10 +63,23 @@ public abstract class CPlatform
 	}
 	
 	
+	public static File getUserHome()
+	{
+		return new File(System.getProperty("user.home"));
+	}
+	
+	
+	public static File getSettingsFolder()
+	{
+		return get().getSettingsFolderPrivate();
+	}
+	
+	
 	/** returns application settings folder. */
+	@Deprecated // use getSettingsFolder()
 	public File getDefaultSettingsFolder()
 	{
-		return new File(System.getProperty("user.home"), ".goryachev.com");
+		return new File(getUserHome(), "." + SETTINGS_FOLDER);
 	}
 	
 	

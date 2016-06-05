@@ -42,8 +42,16 @@ public class CPlatformWindows
 	}
 	
 	
+	@Deprecated
 	public File getDefaultSettingsFolder()
 	{
-		return new File(System.getProperty("user.home"), "goryachev.com");
+		return new File(getUserHome(), SETTINGS_FOLDER);
+	}
+
+
+	protected File getSettingsFolderPrivate()
+	{
+		// TODO "Documents"?
+		return new File(getUserHome(), SETTINGS_FOLDER);
 	}
 }
