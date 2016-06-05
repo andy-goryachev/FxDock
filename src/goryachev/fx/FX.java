@@ -3,6 +3,7 @@ package goryachev.fx;
 import goryachev.common.util.GlobalSettings;
 import goryachev.fx.internal.WindowsFx;
 import javafx.application.Platform;
+import javafx.beans.property.Property;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -20,6 +21,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Window;
+import javafx.util.StringConverter;
 
 
 /**
@@ -378,5 +380,26 @@ public final class FX
 		double bottom = w.getY() + w.getHeight() - b.getMaxY();
 
 		return new Insets(top, right, bottom, left);
+	}
+	
+	
+	/** bind a property to be saved as part of FxWindow settings using the specified subkey */
+	public static <T> void bind(Node n, String subKey, Property<T> p)
+	{
+		windowsFx.bindings(n, true).add(subKey, p, null);
+	}
+	
+	
+	/** bind a property to be saved as part of FxWindow settings using the specified subkey */
+	public static <T> void bind(Node n, String subKey, Property<T> p, StringConverter<T> c)
+	{
+		windowsFx.bindings(n, true).add(subKey, p, c);
+	}
+	
+	
+	/** bind a property to be saved as part of FxWindow settings using the specified subkey */
+	public static <T> void bind(Node n, String subKey, Property<T> p, SSConverter<T> c)
+	{
+		windowsFx.bindings(n, true).add(subKey, c, p);
 	}
 }

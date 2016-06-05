@@ -8,6 +8,7 @@ import goryachev.fx.FxWindow;
 import goryachev.fx.OnWindowClosing;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -277,5 +278,11 @@ public class WindowsFx
 		{
 			return addWindow(w);
 		}
+	}
+
+
+	public LocalBindings bindings(Node n, boolean create)
+	{
+		return FxSchema.bindings(n, create);
 	}
 }

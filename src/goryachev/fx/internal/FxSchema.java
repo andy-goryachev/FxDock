@@ -4,6 +4,7 @@ import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import goryachev.fx.CPane;
+import goryachev.fx.FX;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -26,6 +27,7 @@ public class FxSchema
 {
 	public static final String FX_PREFIX = "FX.";
 	
+	public static final String SFX_BINDINGS = ".BINDINGS";
 	public static final String SFX_COLUMNS = ".COLS";
 	public static final String SFX_DIVIDERS = ".DIVS";
 	public static final String SFX_SELECTION = ".SEL";
@@ -34,6 +36,8 @@ public class FxSchema
 	public static final String WINDOW_MAXIMIZED = "X";
 	public static final String WINDOW_ICONIFIED = "I";
 	public static final String WINDOW_NORMAL = "N";
+	
+	private static final Object PROP_BINDINGS = new Object();
 
 	
 	public static void storeStage(Stage win, String prefix)
@@ -106,6 +110,26 @@ public class FxSchema
 		{ }
 	}
 	
+
+	public static void storeBindings(String prefix, LocalBindings bindings)
+	{
+		if(bindings != null)
+		{
+			String k = prefix + SFX_BINDINGS;
+			bindings.saveValues(k);
+		}
+	}
+	
+	
+	public static void restoreBindings(String prefix, LocalBindings bindings)
+	{
+		if(bindings != null)
+		{
+			String k = prefix + SFX_BINDINGS;
+			bindings.loadValues(k);
+		}
+	}
+
 	
 	public static void storeSplitPane(String prefix, SplitPane sp)
 	{
@@ -123,15 +147,19 @@ public class FxSchema
 		String k = prefix + SFX_DIVIDERS;
 		SStream s = GlobalSettings.getStream(k);
 		
-		int ct = s.nextInt();
-		if(sp.getDividers().size() == ct)
+		// must run later because of FX split pane inability to set divider positions exactly
+		FX.later(() ->
 		{
-			for(int i=0; i<ct; i++)
+			int ct = s.nextInt();
+			if(sp.getDividers().size() == ct)
 			{
-				double div = s.nextDouble();
-				sp.setDividerPosition(i, div);
+				for(int i=0; i<ct; i++)
+				{
+					double div = s.nextDouble();
+					sp.setDividerPosition(i, div);
+				}
 			}
-		}
+		});
 	}
 	
 	
@@ -173,7 +201,8 @@ public class FxSchema
 	public static void storeNode(String wprefix, Node n)
 	{
 		// TODO skip is storing is not supported
-		// TODO bound properties
+		
+		storeBindings(wprefix, bindings(n, false));
 		
 		String prefix = findName(wprefix, n);
 		if(prefix != null)
@@ -215,6 +244,23 @@ public class FxSchema
 				}
 			}
 		}
+		
+		restoreBindings(wprefix, bindings(n, false));
+	}
+	
+	
+	public static LocalBindings bindings(Node n, boolean create)
+	{
+		LocalBindings b = (LocalBindings)n.getProperties().get(PROP_BINDINGS);
+		if(b == null)
+		{
+			if(create)
+			{
+				b = new LocalBindings();
+				n.getProperties().put(PROP_BINDINGS, b);
+			}
+		}
+		return b;
 	}
 	
 	

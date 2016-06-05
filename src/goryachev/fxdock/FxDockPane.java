@@ -132,14 +132,14 @@ public abstract class FxDockPane
 	}
 	
 	
-	/** bind a property to be saved in tile-specific settings using the specified subkey, using subkey */
+	/** bind a property to be saved in tile-specific settings using the specified subkey */
 	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
 	{
 		bindings().add(subKey, p, c);
 	}
 	
 	
-	/** bind a property to be saved in tile-specific settings using the specified subkey, using subkey */
+	/** bind a property to be saved in tile-specific settings using the specified subkey */
 	public <T> void bind(String subKey, Property<T> p, SSConverter<T> c)
 	{
 		bindings().add(subKey, c, p);
