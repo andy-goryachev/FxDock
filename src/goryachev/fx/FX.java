@@ -126,6 +126,9 @@ public final class FX
 				case NON_FOCUSABLE:
 					n.setFocusTraversable(false);
 					break;
+				case WRAP_TEXT:
+					n.setWrapText(true);
+					break;
 				default:
 					throw new Error("?" + a);
 				}
@@ -196,6 +199,9 @@ public final class FX
 						break;
 					case NON_FOCUSABLE:
 						n.setFocusTraversable(false);
+						break;
+					case WRAP_TEXT:
+						((Labeled)n).setWrapText(true);
 						break;
 					default:
 						throw new Error("?" + a);
