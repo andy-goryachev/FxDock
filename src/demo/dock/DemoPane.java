@@ -62,7 +62,7 @@ public class DemoPane
 		// set up context menu off the title field
 		titleField.setContextMenu(new CPopupMenu()
 		{
-			protected void populateMenu()
+			protected void createPopupMenu()
 			{
 				add("Pop up in Window", popToWindowAction);
 				add("Close", closeAction);

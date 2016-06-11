@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.Log;
 import java.util.function.Function;
@@ -12,7 +13,7 @@ import javafx.scene.layout.Region;
 
 
 /**
- * CPane is like my Swing CPanel - lays out nodes with an outer BorderLaoyut and inner TableLayout.
+ * CPane is like my Swing CPanel, lays out nodes with an outer border layout and an inner table layout.
  */
 public class CPane
 	extends Pane
@@ -67,17 +68,35 @@ public class CPane
 		setHGap(horizontal);
 		setVGap(vertical);
 	}
+	
+	
+	public void setPadding(double gap)
+	{
+		setPadding(new CInsets(gap));
+	}
+	
+	
+	public void setPadding(double ver, double hor)
+	{
+		setPadding(new CInsets(ver, hor));
+	}
+	
+	
+	public void setPadding(double top, double right, double bottom, double left)
+	{
+		setPadding(new CInsets(top, right, bottom, left));
+	}
 
 
 	/** returns number of columns for the table portion of the layout (ignoring border components) */
-	public int getColumnCount()
+	public int getCenterColumnCount()
 	{
 		return cols.size();
 	}
 	
 
 	/** returns number of rows for the table portion of the layout (ignoring border components) */
-	public int getRowCount()
+	public int getCenterRowCount()
 	{
 		return rows.size();
 	}
@@ -101,6 +120,7 @@ public class CPane
 	public void insertColumn(int ix, double spec)
 	{
 		// TODO
+		CKit.todo();
 	}
 	
 	
@@ -121,13 +141,35 @@ public class CPane
 	
 	public void insertRow(int ix, double spec)
 	{
-		// TODO
+		if(ix < 0)
+		{
+			throw new IllegalArgumentException("negative row: " + ix);
+		}
+		if(ix >= getCenterRowCount())
+		{
+			ix = getCenterRowCount();
+		}
+		
+		rows.add(ix, new LC());
+		
+		for(Entry en: entries)
+		{
+			if(en.cc.row >= ix)
+			{
+				en.cc.row++;
+				en.cc.row2++;
+			}
+			else if(en.cc.row2 >= ix)
+			{
+				en.cc.row2++;
+			}
+		}
 	}
 	
 	
 	protected LC getColumnSpec(int col)
 	{
-		while(getColumnCount() <= col)
+		while(getCenterColumnCount() <= col)
 		{
 			addColumn(PREF);
 		}
@@ -151,7 +193,7 @@ public class CPane
 	
 	protected LC getRowSpec(int row)
 	{
-		while(getRowCount() <= row)
+		while(getCenterRowCount() <= row)
 		{
 			addRow(PREF);
 		}
@@ -374,13 +416,13 @@ public class CPane
 
 	protected double computePrefWidth(double height)
 	{
-		return new Helper().computeWidth((nd) -> nd.prefWidth(height));
+		return new Helper().computeWidth((nd) -> Math.max(nd.minWidth(height), nd.prefWidth(height)));
 	}
 	
 	
 	protected double computePrefHeight(double width)
 	{
-		return new Helper().computeHeight((nd) -> nd.prefHeight(width));
+		return new Helper().computeHeight((nd) -> Math.max(nd.prefHeight(width), nd.minHeight(width)));	
 	}
 
 

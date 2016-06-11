@@ -8,6 +8,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
@@ -20,6 +21,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 import javafx.stage.Window;
 import javafx.util.StringConverter;
 
@@ -401,5 +403,20 @@ public final class FX
 	public static <T> void bind(Node n, String subKey, Property<T> p, SSConverter<T> c)
 	{
 		windowsFx.bindings(n, true).add(subKey, c, p);
+	}
+	
+	
+	/** returns true if the coordinates belong to one of the Screens */
+	public static boolean isValidCoordinates(double x, double y)
+	{
+		for(Screen screen: Screen.getScreens())
+		{
+			Rectangle2D r = screen.getVisualBounds();
+			if(r.contains(x, y))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

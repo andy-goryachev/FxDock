@@ -32,4 +32,20 @@ public class CButtonPane
 		add(b);
 		return b;
 	}
+	
+	
+	public CButton addButton(String text)
+	{
+		CButton b = new CButton(text);
+		b.setMinWidth(70);
+		b.setDisable(true);
+		
+		if(getChildren().size() == 0)
+		{
+			fill();
+		}
+		
+		add(b);
+		return b;
+	}
 }

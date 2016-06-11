@@ -2,27 +2,48 @@
 package goryachev.fx;
 import javafx.geometry.Side;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 
 
 /**
  * Dynamic popup menu.
  */
 public abstract class CPopupMenu
-	extends ContextMenu
+	extends CContextMenu
 {
 	/**
 	 * Implement this method to populate the menu dynamically.
 	 * The menu is always cleared before invoking this method. 
 	 * Use add* methods to build the content.
 	 */
-	protected abstract void populateMenu();
+	protected abstract void createPopupMenu();
 	
 	//
 	
 	public CPopupMenu()
 	{
+	}
+	
+	
+	public CPopupMenu(Node n)
+	{
+		attach(n);
+	}
+	
+	
+	public void attach(Node n)
+	{
+		n.setOnContextMenuRequested((ev) ->
+		{
+			// later or not?  it stills throws an exception in a tableview
+			FX.later(() ->
+			{
+				clear();
+				createPopupMenu();
+				
+				show(n, ev.getScreenX(), ev.getScreenY());
+			});
+			ev.consume();
+		});
 	}
 	
 	
@@ -35,7 +56,7 @@ public abstract class CPopupMenu
 	public void show(Node anchor, double screenX, double screenY)
 	{
 		clear();
-		populateMenu();
+		createPopupMenu();
 		super.show(anchor, screenX, screenY);
 	}
 
@@ -43,21 +64,7 @@ public abstract class CPopupMenu
 	public void show(Node anchor, Side side, double dx, double dy)
 	{
 		clear();
-		populateMenu();
+		createPopupMenu();
 		super.show(anchor, side, dx, dy);
-	}
-
-
-	public void add(String text, CAction a)
-	{
-		MenuItem m = new MenuItem(text);
-		a.attach(m);
-		add(m);
-	}
-	
-	
-	public void add(MenuItem m)
-	{
-		getItems().add(m);
 	}
 }

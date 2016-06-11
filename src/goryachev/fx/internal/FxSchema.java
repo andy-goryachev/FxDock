@@ -96,8 +96,13 @@ public class FxSchema
 			
 			if((w > 0) && (h > 0))
 			{
-				win.setX(x);
-				win.setY(y);
+				if(FX.isValidCoordinates(x, y))
+				{
+					// iconified windows have (x,y) of -32000 for some reason
+					// their coordinates are essentially lost (unless there is a way to get them in FX)
+					win.setX(x);
+					win.setY(y);
+				}
 				win.setWidth(w);
 				win.setHeight(h);
 				
