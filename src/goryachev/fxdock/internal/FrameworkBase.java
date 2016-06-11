@@ -256,8 +256,10 @@ public class FrameworkBase
 	
 	protected boolean confirmExit()
 	{
-		OnWindowClosing choice = new OnWindowClosing(true);
-		for(FxDockWindow w: getWindows())
+		List<FxDockWindow> ws = getWindows(); 
+		OnWindowClosing choice = new OnWindowClosing(ws.size() > 1);
+		
+		for(FxDockWindow w: ws)
 		{
 			w.confirmClosing(choice);
 
