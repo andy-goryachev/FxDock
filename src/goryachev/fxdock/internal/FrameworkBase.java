@@ -35,9 +35,7 @@ public class FrameworkBase
 	
 	public FxDockWindow createWindow()
 	{
-		FxDockWindow w = generator().createWindow();
-		addFocusListener(w);
-		return w;
+		return generator().createWindow();
 	}
 	
 	
@@ -133,11 +131,25 @@ public class FrameworkBase
 				unlinkWindow(w);
 			}
 		});
+		
+		// FX cannot tell us which window is on top, so we have to do the dirty work ourselves
+		w.focusedProperty().addListener((src,old,v) ->
+		{
+			if(v)
+			{
+				onWindowFocused(w);
+			}
+		});
 	}
 	
 	
 	protected void handleClose(FxDockWindow w, WindowEvent ev)
 	{
+		if(getWindowCount() == 1)
+		{
+			saveLayout();
+		}
+		
 		OnWindowClosing ch = new OnWindowClosing(false);
 		w.confirmClosing(ch);
 		if(ch.isCancelled())
@@ -150,26 +162,13 @@ public class FrameworkBase
 	
 	protected void unlinkWindow(FxDockWindow w)
 	{
-		if(getWindowCount() == 1)
+		int ct = getWindowCount();
+		if(ct == 0)
 		{
-			saveLayout();
 			exitPrivate();
 		}
 	}
 
-	
-	// FX cannot tell us which window is on top, so we have to do the dirty work ourselves
-	public void addFocusListener(FxDockWindow w)
-	{
-		w.focusedProperty().addListener((src,old,v) ->
-		{
-			if(v)
-			{
-				onWindowFocused(w);
-			}
-		});
-	}
-	
 	
 	protected void onWindowFocused(FxDockWindow win)
 	{
@@ -247,7 +246,10 @@ public class FrameworkBase
 			}
 			else
 			{
-				ct++;
+				if(w.isShowing())
+				{
+					ct++;
+				}
 			}
 		}
 		return ct;

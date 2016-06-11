@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.Background;
@@ -137,6 +138,10 @@ public final class FX
 			{
 				n.setPadding((Insets)a);
 			}
+			else if(a instanceof OverrunStyle)
+			{
+				n.setTextOverrun((OverrunStyle)a);
+			}
 			else if(a instanceof Pos)
 			{
 				n.setAlignment((Pos)a);
@@ -210,6 +215,10 @@ public final class FX
 				else if(a instanceof Insets)
 				{
 					((Region)n).setPadding((Insets)a);
+				}
+				else if(a instanceof OverrunStyle)
+				{
+					((Labeled)n).setTextOverrun((OverrunStyle)a);
 				}
 				else if(a instanceof Pos)
 				{

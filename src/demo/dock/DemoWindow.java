@@ -30,6 +30,7 @@ public class DemoWindow
     extends FxDockWindow
 {
 	public static final CAction newBrowserAction = new CAction() { public void action() { actionNewBrowser(); }};
+	public static final CAction newLoginAction = new CAction() { public void action() { actionNewLogin(); }};
 	public static final CAction newWindowAction = new CAction() { public void action() { actionNewWindow(); }};
 	public static final CAction quitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); }};
 	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); }};
@@ -63,6 +64,7 @@ public class DemoWindow
 		mb.add(m = new CMenu("Window"));
 		m.add("New Browser", newBrowserAction);
 		m.add("New Demo Window", newWindowAction);
+		m.add("New Login Window", newLoginAction);
 		m.add(new WindowListMenuItem(this, m));
 		// help
 		mb.add(m = new CMenu("Help"));
@@ -103,6 +105,17 @@ public class DemoWindow
 	public static DemoWindow actionNewBrowser()
 	{
 		return openBrowser("");
+	}
+	
+	
+	public static DemoWindow actionNewLogin()
+	{
+		DemoWindow w = new DemoWindow();
+		w.setContent(new DemoLoginPane());
+		w.setWidth(400);
+		w.setHeight(300);
+		w.open();
+		return w;
 	}
 	
 	

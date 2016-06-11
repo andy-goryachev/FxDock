@@ -42,8 +42,6 @@ public abstract class FxDockWindow
 		frame = new BorderPane(root);
 		Scene s = new Scene(frame);
 		setScene(s);
-		
-		FxDockFramework.registerWindow(this);
 	}
 	
 	

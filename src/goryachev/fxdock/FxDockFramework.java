@@ -43,12 +43,6 @@ public class FxDockFramework
 	}
 	
 	
-	protected static void registerWindow(FxDockWindow w)
-	{
-		base.addFocusListener(w);
-	}
-	
-	
 	public static FxDockPane createPane(String type)
 	{
 		return base.createPane(type);

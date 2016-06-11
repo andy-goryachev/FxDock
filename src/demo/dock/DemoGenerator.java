@@ -16,7 +16,8 @@ public class DemoGenerator
 {
 	/** type id for a browser pane */
 	public static final String BROWSER = "BROWSER";
-
+	/** type id for a login pane */
+	public static final String LOGIN = "LOGIN";
 
 	/** creates custom window */
 	public FxDockWindow createWindow()
@@ -32,6 +33,8 @@ public class DemoGenerator
 		{
 		case BROWSER:
 			return new DemoBrowser();
+		case LOGIN:
+			return new DemoLoginPane();
 		default:
 			// type here codes for background color
 			return new DemoPane(type);
