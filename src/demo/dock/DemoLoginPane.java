@@ -24,7 +24,7 @@ public class DemoLoginPane
 		String info = "This window demonstrates capabilities of CPane component.  This is a component that combines BorderPane with a table layout of the center part.  The table layout is modeled after my earlier work with Swing CPanel, which was inspired by the info.clearthought.TableLayout project."; 
 		
 		CButton b = new CButton("Login");
-		//b.setMinWidth(100);
+		b.setMinWidth(100);
 		
 		int pad = 10;
 		

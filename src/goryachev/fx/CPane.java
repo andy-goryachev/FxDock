@@ -1150,7 +1150,7 @@ public class CPane
 			layoutBorderComponents();
 
 			Axis hor = createHorAxis();
-			int w = hor.computeSizes((n) -> n.prefWidth(-1), true);
+			int w = hor.computeSizes((n) -> Math.max(n.minWidth(-1), n.prefWidth(-1)), true);
 
 			int dw = tableRight - tableLeft - w;
 			if(dw != 0)
@@ -1159,7 +1159,7 @@ public class CPane
 			}
 
 			Axis ver = createVerAxis();
-			int h = ver.computeSizes((n) -> n.prefHeight(-1), true);
+			int h = ver.computeSizes((n) -> Math.max(n.minHeight(-1), n.prefHeight(-1)), true);
 			
 			int dh = tableBottom - tableTop - h;
 			if(dh != 0)
