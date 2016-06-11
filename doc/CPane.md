@@ -6,9 +6,7 @@ The grid (or, rather, table) layout is similar to my Swing
 which in turn was inspired by 
 [info.clearthought.TableLayout](http://www.clearthought.info/)
 
-<center>
 ![screenshot](https://github.com/andy-goryachev/FxDock/blob/master/screenshots/2016-0611-154848-513.png)
-</center>
 
 ## Example
 
