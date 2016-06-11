@@ -16,49 +16,56 @@ import javafx.scene.text.TextAlignment;
 public class DemoLoginPane
 	extends FxDockPane
 {
+	public final TextField userNameField;
+	private final PasswordField passwordField;
+	public final CButton loginButton;
+	
+	
 	public DemoLoginPane()
 	{
 		super(DemoGenerator.LOGIN);
 		setTitle("CPane // Login Form");
-		
-		String info = "This demonstrates capabilities of CPane component."; 
-		
-		CButton b = new CButton("Login");
-		b.setMinWidth(100);
-		
-		int pad = 10;
-		
+
+		String info = "This demonstrates capabilities of CPane component.";
+
+		userNameField = new TextField();
+
+		passwordField = new PasswordField();
+
+		loginButton = new CButton("Login");
+		loginButton.setMinWidth(100);
+
 		CPane p = new CPane();
 		p.setGaps(10, 5);
 		p.setPadding(10);
 		p.addColumns
 		(
-			pad,
+			10,
 			CPane.PREF,
 			CPane.FILL,
 			CPane.PREF,
-			pad
+			10
 		);
 		p.addRows
 		(
-			pad,
+			10,
 			CPane.PREF,
 			CPane.PREF,
 			CPane.PREF,
 			CPane.PREF,
 			CPane.FILL,
-			pad
+			10
 		);
 		int r = 1;
 		p.add(1, r, 3, 1, FX.label(info, FxCtl.WRAP_TEXT));
 		r++;
 		p.add(1, r, FX.label("User name:", TextAlignment.RIGHT));
-		p.add(2, r, 2, 1, new TextField());
+		p.add(2, r, 2, 1, userNameField);
 		r++;
 		p.add(1, r, FX.label("Password:", TextAlignment.RIGHT));
-		p.add(2, r, 2, 1, new PasswordField());
+		p.add(2, r, 2, 1, passwordField);
 		r++;
-		p.add(3, r, b);
+		p.add(3, r, loginButton);
 		
 		setContent(p);
 	}

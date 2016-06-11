@@ -4,13 +4,43 @@ CPane is an FX Pane implementation that combines BorderPane and a table layout s
 The grid (or, rather, table) layout is similar to my Swing
 [CPanel](https://github.com/andy-goryachev/PasswordSafe/blob/master/src/goryachev/common/ui/CPanel.java), 
 which in turn was inspired by 
-[Table Layout](http://www.clearthought.info/)
+[info.clearthought.TableLayout](http://www.clearthought.info/)
 
-![screenshot](https://github.com/andy-goryachev/FxDock/blob/master/screenshots/2016-0521-125006-709.png)
+![screenshot](https://github.com/andy-goryachev/FxDock/blob/master/screenshots/2016-0611-153944-977.png)
 
-![screenshot](https://raw.githubusercontent.com/andy-goryachev/FxDock/master/screenshots/2016-0611-152216-581.png)
+## Example
 
-![screenshot](https://github.com/andy-goryachev/FxDock/blob/master/screenshots/2016-0611-152216-581.png)
+		CPane p = new CPane();
+		p.setGaps(10, 5);
+		p.setPadding(10);
+		p.addColumns
+		(
+			10,
+			CPane.PREF,
+			CPane.FILL,
+			CPane.PREF,
+			10
+		);
+		p.addRows
+		(
+			10,
+			CPane.PREF,
+			CPane.PREF,
+			CPane.PREF,
+			CPane.PREF,
+			CPane.FILL,
+			10
+		);
+		int r = 1;
+		p.add(1, r, 3, 1, FX.label(info, FxCtl.WRAP_TEXT));
+		r++;
+		p.add(1, r, FX.label("User name:", TextAlignment.RIGHT));
+		p.add(2, r, 2, 1, userNameField);
+		r++;
+		p.add(1, r, FX.label("Password:", TextAlignment.RIGHT));
+		p.add(2, r, 2, 1, passwordField);
+		r++;
+		p.add(3, r, loginButton);
 
 ## License
 
