@@ -9,7 +9,6 @@ import goryachev.fx.OnWindowClosing;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 

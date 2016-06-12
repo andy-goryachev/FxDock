@@ -10,6 +10,7 @@ import goryachev.fx.CDialog;
 import goryachev.fx.CMenu;
 import goryachev.fx.CMenuBar;
 import goryachev.fx.FX;
+import goryachev.fx.GlobalBooleanProperty;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockWindow;
@@ -36,6 +37,7 @@ public class DemoWindow
 	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); }};
 	public final CAction windowCheckAction = new CAction() { public void action() {  }};
 	public final Label statusField = new Label();
+	private static GlobalBooleanProperty showCloseDialogProperty = new GlobalBooleanProperty("show.close.dialog", true);
 
 	
 	public DemoWindow()
@@ -65,6 +67,8 @@ public class DemoWindow
 		m.add("New Browser", newBrowserAction);
 		m.add("New Demo Window", newWindowAction);
 		m.add("New Login Window", newLoginAction);
+		m.separator();
+		m.add(new CCheckMenuItem("Confirm Window Closing", showCloseDialogProperty));
 		m.add(new WindowListMenuItem(this, m));
 		// help
 		mb.add(m = new CMenu("Help"));
@@ -168,6 +172,11 @@ public class DemoWindow
 	// or closing multiple window when quitting the application.
 	public void confirmClosing(OnWindowClosing ch)
 	{
+		if(!showCloseDialogProperty.get())
+		{
+			return;
+		}
+		
 		if(ch.isSaveAll())
 		{
 			save();
