@@ -3,11 +3,12 @@ package demo.dock;
 import goryachev.fx.CButton;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
-import goryachev.fx.FxCtl;
 import goryachev.fxdock.FxDockPane;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 
 
 /**
@@ -16,6 +17,7 @@ import javafx.scene.text.TextAlignment;
 public class DemoLoginPane
 	extends FxDockPane
 {
+	public final TextFlow infoField;
 	public final TextField userNameField;
 	private final PasswordField passwordField;
 	public final CButton loginButton;
@@ -26,7 +28,9 @@ public class DemoLoginPane
 		super(DemoGenerator.LOGIN);
 		setTitle("CPane // Login Form");
 
-		String info = "This demonstrates capabilities of CPane component.";
+		String info = "This demonstrates table layout capabilities of CPane component.  CPane is easier to use than GridPane because one does not have to set so many constraints on the inidividual nodes.";
+
+		infoField = new TextFlow(new Text(info));
 
 		userNameField = new TextField();
 
@@ -36,7 +40,7 @@ public class DemoLoginPane
 		loginButton.setMinWidth(100);
 
 		CPane p = new CPane();
-		p.setGaps(10, 5);
+		p.setGaps(10, 7);
 		p.setPadding(10);
 		p.addColumns
 		(
@@ -57,7 +61,7 @@ public class DemoLoginPane
 			10
 		);
 		int r = 1;
-		p.add(1, r, 3, 1, FX.label(info, FxCtl.WRAP_TEXT));
+		p.add(1, r, 3, 1, infoField); 
 		r++;
 		p.add(1, r, FX.label("User name:", TextAlignment.RIGHT));
 		p.add(2, r, 2, 1, userNameField);
