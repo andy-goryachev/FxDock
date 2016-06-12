@@ -67,19 +67,21 @@ public class FxDockFramework
 	}
 	
 	
+	/** returns topmost window */
 	public static FxDockWindow findTopWindow(List<FxDockWindow> ws)
 	{
 		return base.findTopWindow(ws);
 	}
 	
 	
-	/** returns a list of vidible windows, topmost window first */
+	/** returns a list of visible windows, topmost window first */
 	public static List<FxDockWindow> getWindows()
 	{
 		return base.getWindows();
 	}
 	
 	
+	/** returns the number of visible windows */
 	public static int getWindowCount()
 	{
 		return base.getWindowCount();
