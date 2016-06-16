@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.test;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2004-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;

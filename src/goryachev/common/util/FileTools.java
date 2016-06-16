@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2004-2016 Andy Goryachev <andy@goryachev.com>
 // Contains fragments of Apache FileNameUtils code
 // http://www.apache.org/licenses/LICENSE-2.0
 package goryachev.common.util;
@@ -17,7 +17,7 @@ import java.util.Stack;
 
 public class FileTools
 {
-	public static final String COPYRIGHT = "Copyright (c) Andy Goryachev <andy@goryachev.com>.  All Rights Reserved.";
+	public static final String COPYRIGHT = "Copyright © Andy Goryachev <andy@goryachev.com>.  All Rights Reserved.";
 	
 	
 	public static final String[] IMAGE =
