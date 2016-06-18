@@ -21,6 +21,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Window;
@@ -32,6 +33,9 @@ import javafx.util.StringConverter;
  */
 public final class FX
 {
+	public static final double TWO_PI = Math.PI + Math.PI;
+	public static final double PI_2 = Math.PI / 2.0;
+	public static final double DEGREES_PER_RADIAN = 180.0 / Math.PI;
 	private static WindowsFx windowsFx = new WindowsFx();
 	
 	
@@ -264,7 +268,7 @@ public final class FX
 
 
 	/** Creates a simple color background. */
-	public static Background background(Color c)
+	public static Background background(Paint c)
 	{
 		return new Background(new BackgroundFill(c, null, null));
 	}
@@ -433,5 +437,19 @@ public final class FX
 			}
 		}
 		return false;
+	}
+	
+	
+	/** converts degrees to radians */
+	public static double toRadians(double degrees)
+	{
+		return degrees / DEGREES_PER_RADIAN;
+	}
+	
+	
+	/** converts radians to degrees */
+	public static double toDegrees(double radians)
+	{
+		return radians * DEGREES_PER_RADIAN;
 	}
 }

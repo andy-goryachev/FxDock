@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.effect.Effect;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcTo;
@@ -24,31 +25,44 @@ import javafx.scene.shape.StrokeType;
  * Fx Icon Builder.
  * 
  * Enables programmatic creation of icons.
+ * 
+ * Coordinate system is similar to SVG one, its (0,0) origin is located at the upper left corner,
+ * unless modified by setOrigin().
+ * 
+ * Angles are measured in radians.
+ * For rotations, positive angle corresponds to clockwise direction, negative - to counter-clockwise. 
  */
 public class FxIconBuilder
 {
 	private final double width;
 	private final double height;
 	private final CList<Node> elements;
-	private double xcenter;
-	private double ycenter;
+	private double xorigin;
+	private double yorigin;
 	private double strokeWidth = 1.0;
-	private Paint strokeColor;
-	private StrokeType strokeType;
-	private StrokeLineCap lineCap;
-	private StrokeLineJoin lineJoin;
+	private Paint fill = Color.BLACK;
+	private Paint strokeColor = Color.BLACK;
+	private StrokeType strokeType = StrokeType.CENTERED;
+	private StrokeLineCap lineCap = StrokeLineCap.ROUND;
+	private StrokeLineJoin lineJoin = StrokeLineJoin.ROUND;
 	private double miterLimit;
 	private double dashOffset;
 	private FillRule fillRule;	
 	private Effect effect;
-	private Color fill;
 	private Path path;
 	
 	
 	public FxIconBuilder(double width, double height, double xcenter, double ycenter)
 	{
 		this(width, height);
-		setCenter(xcenter, ycenter);
+		setOrigin(xcenter, ycenter);
+	}
+	
+	
+	public FxIconBuilder(double size, double xcenter, double ycenter)
+	{
+		this(size);
+		setOrigin(xcenter, ycenter);
 	}
 
 
@@ -66,11 +80,43 @@ public class FxIconBuilder
 	}
 	
 	
-	/** sets the builder's center point */
-	public void setCenter(double xcenter, double ycenter)
+	/** sets the builder's origin point (normally, the origin is located at the upper left corner). */
+	public void setOrigin(double xcenter, double ycenter)
 	{
-		this.xcenter = xcenter;
-		this.ycenter = ycenter;
+		this.xorigin = xcenter;
+		this.yorigin = ycenter;
+	}
+	
+	
+	/** sets fill color */
+	public void setFill(Paint c)
+	{
+		fill = c;
+		
+		if(path != null)
+		{
+			path.setFill(c);
+		}
+	}
+	
+	
+	/** creates a full size rectangle filled with the current fill color */
+	public void fill()
+	{
+		fill(0, 0, width, height);
+	}
+	
+	
+	/** creates a rectangle filled with the current fill color */
+	public void fill(double x, double y, double w, double h)
+	{
+		path = null;
+		
+		Region r = new Region();
+		r.resizeRelocate(x + xorigin, y + yorigin, w, h);
+		r.setBackground(FX.background(fill));
+		
+		elements.add(r);
 	}
 	
 	
@@ -116,6 +162,17 @@ public class FxIconBuilder
 	}
 	
 	
+	public void setStrokeLineCap(StrokeLineCap x)
+	{
+		lineCap = x;
+		
+		if(path != null)
+		{
+			path.setStrokeLineCap(x);
+		}
+	}
+	
+	
 	protected void add(PathElement em)
 	{
 		if(path == null)
@@ -130,14 +187,14 @@ public class FxIconBuilder
 	{
 		if(path == null)
 		{
-			return new Point2D(xcenter, ycenter);
+			return new Point2D(xorigin, yorigin);
 		}
 		
 		ObservableList<PathElement> es = path.getElements();
 		int sz = es.size();
 		if(sz == 0)
 		{
-			return new Point2D(xcenter, ycenter);
+			return new Point2D(xorigin, yorigin);
 		}
 		
 		PathElement em = es.get(sz - 1);
@@ -188,7 +245,7 @@ public class FxIconBuilder
 	/** move to absolute coordinates */
 	public void moveTo(double x, double y)
 	{
-		add(new MoveTo(x + xcenter, y + ycenter));
+		add(new MoveTo(x + xorigin, y + yorigin));
 	}
 	
 	
@@ -203,7 +260,7 @@ public class FxIconBuilder
 	/** line to absolute coordinates */
 	public void lineTo(double x, double y)
 	{
-		add(new LineTo(x + xcenter, y + ycenter));
+		add(new LineTo(x + xorigin, y + yorigin));
 	}
 	
 	
@@ -212,6 +269,35 @@ public class FxIconBuilder
 	{
 		Point2D p = currentPos();
 		add(new LineTo(dx + p.getX(), dy + p.getY()));
+	}
+	
+	
+	/** arc from current position, using the specified center coordinates, radius, and angle */
+	public void arcRel(double xc, double yc, double radius, double angle)
+	{
+		// arcTo seems to fail if sweep angle is greater than 360
+		if(angle >= FX.TWO_PI)
+		{
+			angle = FX.TWO_PI - 0.0000001;
+		}
+		else if(angle <= -FX.TWO_PI)
+		{
+			angle = - FX.TWO_PI + 0.0000001;
+		}
+		
+		Point2D p = currentPos();
+		
+		double a = Math.atan2(yc + yorigin - p.getY(), p.getX() - xc - xorigin);
+		double b = a - angle;
+		double xe = xorigin + xc + radius * Math.cos(b);
+		double ye = yorigin - yc - radius * Math.sin(b);
+
+		// arcTo sweep is explained here: 
+		// https://docs.oracle.com/javase/8/javafx/api/javafx/scene/shape/ArcTo.html
+		boolean large = (angle >= Math.PI);
+		boolean sweep = (angle > 0);
+		
+		add(new ArcTo(radius, radius, 0, xe, ye, large, sweep));
 	}
 	
 	
