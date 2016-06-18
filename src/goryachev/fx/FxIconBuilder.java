@@ -30,7 +30,10 @@ import javafx.scene.shape.StrokeType;
  * unless modified by setOrigin().
  * 
  * Angles are measured in radians.
- * For rotations, positive angle corresponds to clockwise direction, negative - to counter-clockwise. 
+ * For rotations, positive angle corresponds to clockwise direction, negative - to counter-clockwise.
+ * 
+ * Stroke and fill parameters are set at the moment of creation of a stroke or a shape.  Subsequent setting
+ * of those parameters has no effect on existing elements.
  */
 public class FxIconBuilder
 {
@@ -92,27 +95,21 @@ public class FxIconBuilder
 	public void setFill(Paint c)
 	{
 		fill = c;
-		
-		if(path != null)
-		{
-			path.setFill(c);
-		}
 	}
 	
 	
 	/** creates a full size rectangle filled with the current fill color */
 	public void fill()
 	{
-		fill(0, 0, width, height);
+		fill(-xorigin, -yorigin, width, height);
 	}
 	
 	
 	/** creates a rectangle filled with the current fill color */
 	public void fill(double x, double y, double w, double h)
 	{
-		path = null;
-		
 		Region r = new Region();
+		r.setManaged(false);
 		r.resizeRelocate(x + xorigin, y + yorigin, w, h);
 		r.setBackground(FX.background(fill));
 		
@@ -143,33 +140,36 @@ public class FxIconBuilder
 	public void setStrokeWidth(double w)
 	{
 		strokeWidth = w;
-		
-		if(path != null)
-		{
-			path.setStrokeWidth(w);
-		}
 	}
 	
 	
-	public void setStrokeColor(Paint c)
+	public void setStrokeColor(Paint x)
 	{
-		strokeColor = c;
-		
-		if(path != null)
-		{
-			path.setStroke(c);
-		}
+		strokeColor = x;
 	}
 	
 	
 	public void setStrokeLineCap(StrokeLineCap x)
 	{
 		lineCap = x;
-		
-		if(path != null)
-		{
-			path.setStrokeLineCap(x);
-		}
+	}
+	
+	
+	public void setStrokeLineJoin(StrokeLineJoin x)
+	{
+		lineJoin = x;
+	}
+	
+	
+	public void setStrokeMiterLimit(double x)
+	{
+		miterLimit = x;
+	}
+	
+	
+	public void setEffect(Effect x)
+	{
+		effect = x;
 	}
 	
 	

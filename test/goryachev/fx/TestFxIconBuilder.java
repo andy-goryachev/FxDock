@@ -4,6 +4,7 @@ import goryachev.common.util.D;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.effect.Bloom;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
@@ -102,26 +103,30 @@ public class TestFxIconBuilder
 	{
 		FxIconBuilder b = new FxIconBuilder(200, 100, 100);
 		
-		b.setFill(Color.WHITE);
+		b.setFill(Color.gray(1, 0.1));
 		b.fill();
-		
+
 		b.setFill(null);
 		b.setStrokeWidth(0.2);
+		b.setStrokeColor(Color.BLACK);
 
 		b.newPath();
-		b.setStrokeColor(Color.BLACK);
 		b.moveTo(0, -90);
 		b.lineRel(0, 180);
 		b.moveTo(-90, 0);
 		b.lineRel(180, 0);
 		
 		double a = Math.PI / 4;
-		double r = 90;
+		double r = 80;
 		
-		b.newPath();
 		b.setStrokeWidth(10);
 		b.setStrokeLineCap(StrokeLineCap.ROUND);
 		b.setStrokeColor(Color.YELLOW);
+		// beware of clipping
+		// https://bugs.openjdk.java.net/browse/JDK-8088365
+		// b.setEffect(new Bloom(0.5));
+
+		b.newPath();
 		b.moveTo(r * Math.cos(a), -r * Math.sin(a));
 		b.arcRel(0, 0, r, -(Math.PI - a - a));
 		b.moveTo(r * Math.cos(a), r * Math.sin(a));
