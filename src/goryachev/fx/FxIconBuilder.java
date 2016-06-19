@@ -1,11 +1,16 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CList;
+import java.io.ByteArrayInputStream;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -45,6 +50,8 @@ public class FxIconBuilder
 	private double xorigin;
 	private double yorigin;
 	private double scale = 1.0;
+	private double rotate;
+	private double opacity = 1.0;
 	private double xtranslate;
 	private double ytranslate;
 	private double strokeWidth = 1.0;
@@ -122,34 +129,11 @@ public class FxIconBuilder
 	}
 	
 	
-	/** creates new path segment */
-	public Path newPath()
+	protected Path createPath()
 	{
-		path = new Path();
-		path.setScaleX(scale);
-		path.setScaleY(scale);
-		path.setTranslateX(xtranslate);
-		path.setTranslateY(ytranslate);
-		path.setEffect(effect);
-		path.setFill(fill);
-		path.setFillRule(fillRule);
-		path.setStroke(strokeColor);
-		path.setStrokeDashOffset(dashOffset);
-		path.setStrokeLineCap(lineCap);
-		path.setStrokeLineJoin(lineJoin);
-		path.setStrokeMiterLimit(miterLimit);
-		path.setStrokeType(strokeType);
-		path.setStrokeWidth(strokeWidth);
+		Path p = new Path();
 		
-		elements.add(path);
-		return path;
-	}
-	
-	
-	public SVGPath svgPath(String svg)
-	{
-		SVGPath p = new SVGPath();
-		
+		p.setOpacity(opacity);
 		p.setScaleX(scale);
 		p.setScaleY(scale);
 		p.setTranslateX(xtranslate);
@@ -164,14 +148,74 @@ public class FxIconBuilder
 		p.setStrokeMiterLimit(miterLimit);
 		p.setStrokeType(strokeType);
 		p.setStrokeWidth(strokeWidth);
+		p.setRotate(rotate);
+		
+		return p;
+	}
 
+
+	protected SVGPath createSVGPath()
+	{
+		SVGPath p = new SVGPath();
+
+		p.setOpacity(opacity);
+		p.setScaleX(scale);
+		p.setScaleY(scale);
+		p.setTranslateX(xtranslate);
+		p.setTranslateY(ytranslate);
+		p.setEffect(effect);
+		p.setFill(fill);
+		p.setFillRule(fillRule);
+		p.setStroke(strokeColor);
+		p.setStrokeDashOffset(dashOffset);
+		p.setStrokeLineCap(lineCap);
+		p.setStrokeLineJoin(lineJoin);
+		p.setStrokeMiterLimit(miterLimit);
+		p.setStrokeType(strokeType);
+		p.setStrokeWidth(strokeWidth);
+		p.setRotate(rotate);
+
+		return p;
+	}
+
+
+	/** creates new path segment */
+	public Path newPath()
+	{
+		path = createPath();
+		elements.add(path);
+		return path;
+	}
+	
+	
+	/** add SVG path */
+	public SVGPath svgPath(String svg)
+	{
+		SVGPath p = createSVGPath();
 		p.setContent(svg);
 		
 		Label r = new Label();
 		r.setGraphic(p);
 		elements.add(r);
-		
 		return p;
+	}
+	
+	
+	/** add image */
+	public void image(byte[] bytes)
+	{
+		ImageView v = new ImageView();
+		v.setImage(new Image(new ByteArrayInputStream(bytes)));
+		
+		v.setOpacity(opacity);
+		v.setTranslateX(xtranslate + xorigin);
+		v.setTranslateY(ytranslate + yorigin);
+		v.setScaleX(scale);
+		v.setScaleY(scale);
+		v.setEffect(effect);
+		v.setRotate(rotate);
+		
+		elements.add(v);
 	}
 	
 	
@@ -181,10 +225,22 @@ public class FxIconBuilder
 	}
 	
 	
+	public void setOpacity(double x)
+	{
+		opacity = x;
+	}
+	
+	
 	public void setTranslate(double dx, double dy)
 	{
 		xtranslate = dx;
 		ytranslate = dy;
+	}
+	
+	
+	public void setRotate(double angle)
+	{
+		rotate = FX.toDegrees(angle);
 	}
 	
 	
@@ -221,6 +277,41 @@ public class FxIconBuilder
 	public void setEffect(Effect x)
 	{
 		effect = x;
+	}
+	
+	
+	public void addEffect(Effect x)
+	{
+		if(effect == null)
+		{
+			effect = x;
+		}
+		else
+		{
+			effect = setInputEffect(effect, x);
+		}
+	}
+	
+	
+	protected Effect setInputEffect(Effect a, Effect b)
+	{
+		// I don't know a better way to chain effects, it's missing in FX
+		// https://bugs.openjdk.java.net/browse/JDK-8091895
+		// perhaps try Blend:
+		// https://community.oracle.com/thread/2337194?tstart=0
+		if(b instanceof GaussianBlur)
+		{
+			((GaussianBlur)b).setInput(a);
+		}
+		else if(b instanceof ColorAdjust)
+		{
+			((ColorAdjust)b).setInput(a);
+		}
+		else
+		{
+			throw new Error("todo: does " + b + " have setInput()?"); 
+		}
+		return b;
 	}
 	
 	
@@ -269,23 +360,11 @@ public class FxIconBuilder
 			CubicCurveTo p = (CubicCurveTo)em;
 			return new Point2D(p.getX(), p.getY());
 		}
-//		else if(em instanceof HLineTo)
-//		{
-//			// TODO back up one element
-//			HLineTo p = (HLineTo)em;
-//			return new Point2D(p.getX(), p.getY());
-//		}
 		else if(em instanceof QuadCurveTo)
 		{
 			QuadCurveTo p = (QuadCurveTo)em;
 			return new Point2D(p.getX(), p.getY());
 		}
-//		else if(em instanceof VLineTo)
-//		{
-//			// TODO back up one element
-//			VLineTo p = (VLineTo)em;
-//			return new Point2D(p.getX(), p.getY());
-//		}
 		else
 		{
 			throw new Error("?" + em);
