@@ -4,6 +4,7 @@ import goryachev.common.util.CList;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.effect.Effect;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -16,6 +17,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
@@ -42,6 +44,9 @@ public class FxIconBuilder
 	private final CList<Node> elements;
 	private double xorigin;
 	private double yorigin;
+	private double scale = 1.0;
+	private double xtranslate;
+	private double ytranslate;
 	private double strokeWidth = 1.0;
 	private Paint fill = Color.BLACK;
 	private Paint strokeColor = Color.BLACK;
@@ -121,6 +126,10 @@ public class FxIconBuilder
 	public Path newPath()
 	{
 		path = new Path();
+		path.setScaleX(scale);
+		path.setScaleY(scale);
+		path.setTranslateX(xtranslate);
+		path.setTranslateY(ytranslate);
 		path.setEffect(effect);
 		path.setFill(fill);
 		path.setFillRule(fillRule);
@@ -134,6 +143,48 @@ public class FxIconBuilder
 		
 		elements.add(path);
 		return path;
+	}
+	
+	
+	public SVGPath svgPath(String svg)
+	{
+		SVGPath p = new SVGPath();
+		
+		p.setScaleX(scale);
+		p.setScaleY(scale);
+		p.setTranslateX(xtranslate);
+		p.setTranslateY(ytranslate);
+		p.setEffect(effect);
+		p.setFill(fill);
+		p.setFillRule(fillRule);
+		p.setStroke(strokeColor);
+		p.setStrokeDashOffset(dashOffset);
+		p.setStrokeLineCap(lineCap);
+		p.setStrokeLineJoin(lineJoin);
+		p.setStrokeMiterLimit(miterLimit);
+		p.setStrokeType(strokeType);
+		p.setStrokeWidth(strokeWidth);
+
+		p.setContent(svg);
+		
+		Label r = new Label();
+		r.setGraphic(p);
+		elements.add(r);
+		
+		return p;
+	}
+	
+	
+	public void setScale(double x)
+	{
+		scale = x;
+	}
+	
+	
+	public void setTranslate(double dx, double dy)
+	{
+		xtranslate = dx;
+		ytranslate = dy;
 	}
 	
 	

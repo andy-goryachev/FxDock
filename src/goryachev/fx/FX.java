@@ -452,4 +452,73 @@ public final class FX
 	{
 		return radians * DEGREES_PER_RADIAN;
 	}
+	
+	
+	/** sets an opacity value for a color */
+	public static Color alpha(Color c, double alpha)
+	{
+		return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+	}
+	
+	
+	/** adds a fraction of color to the base, using perceptual intensity law */ 
+	public static Color mix(Color base, Color add, double fraction)
+	{
+		if(fraction < 0)
+		{
+			return base;
+		}
+		else if(fraction >= 1.0)
+		{
+			return add;
+		}
+		
+		if(base.isOpaque() && add.isOpaque())
+		{
+			double r = mix(base.getRed(), add.getRed(), fraction);
+			double g = mix(base.getGreen(), add.getGreen(), fraction);
+			double b = mix(base.getBlue(), add.getBlue(), fraction);
+			return new Color(r, g, b, 1.0);
+		}
+		else
+		{
+			double baseOp = base.getOpacity();
+			double addOp = add.getOpacity();
+			
+			double r = mix(base.getRed(), baseOp, add.getRed(), addOp, fraction);
+			double g = mix(base.getGreen(), baseOp, add.getGreen(), addOp, fraction);
+			double b = mix(base.getBlue(), baseOp, add.getBlue(), addOp, fraction);
+			double a = baseOp * (1.0 - fraction) + addOp * fraction;
+			return new Color(r, g, b, a);
+		}
+	}
+
+
+	private static double mix(double a, double b, double fraction)
+	{
+		// using square law (gamma = 2)
+		return limit(Math.sqrt((a * a) * (1.0 - fraction) + (b * b) * fraction));
+	}
+	
+
+	private static double mix(double a, double opacityA, double b, double opacityB, double fraction)
+	{
+		// using square law (gamma = 2)
+		// I am guessing with opacity values here
+		return limit(Math.sqrt((a * a * opacityA) * (1.0 - fraction) + (b * b * opacityB) * fraction));
+	}
+
+	
+	private static double limit(double c)
+	{
+		if(c < 0)
+		{
+			return 0;
+		}
+		else if(c >= 1.0)
+		{
+			return 1.0;
+		}
+		return c;
+	}
 }
