@@ -244,8 +244,8 @@ public class TextTools
 		return false;
 	}
 	
-	
 
+	/** returns true if the character is non-word punctuation that does not contribute to the meaning */
 	public static boolean isTrimmablePunctuation(int c)
 	{
 		switch(c)
@@ -281,6 +281,7 @@ public class TextTools
 		case '/':
 		case '\\':
 		case '-':
+		case '*':
 			
 		case '"':
 		case '\'':
@@ -363,6 +364,28 @@ public class TextTools
 		case '‧': // middle dot
 		case '׃': // hebrew colon
 		case '׀': // hebrew paseq
+		case '‥': // japanese ellipsis
+		case '！': // japanese
+		case '：': // japanese
+		case '？': // japanese
+		case '·': // korean
+			return true;
+		}
+
+		return false;
+	}
+	
+	
+	/** returns true if the character signifies end of a sentence */
+	public static boolean isSentenceEnd(int c)
+	{
+		switch(c)
+		{
+		case '.':
+		case '…':
+		case '!':
+		case '?':
+		case '。': // full stop
 		case '‥': // japanese ellipsis
 		case '！': // japanese
 		case '：': // japanese
@@ -908,6 +931,15 @@ public class TextTools
 	/** educated guess, may fail with some numbers */
 	public static boolean isNumber(String s)
 	{
+		if(CKit.isBlank(s))
+		{
+			return false;
+		}
+		
+		boolean number = false;
+		boolean exp = false;
+		int sign = 0;
+		
 		for(int i=0; i<s.length(); i++)
 		{
 			char c = s.charAt(i);
@@ -923,23 +955,47 @@ public class TextTools
 			case '7':
 			case '8':
 			case '9':
+				number = true;
+				break;
 			case '-':
 			case '+':
+				sign++;
+				break;
 			case '.':
 			case ',':
-			case ' ':
+				break;
 			case 'e':
 			case 'E':
 			case 'f':
 			case 'F':
 			case 'g':
 			case 'G':
+				if(exp)
+				{
+					return false;
+				}
+				else
+				{
+					exp = true;
+				}
 				break;
 			default:
 				return false;
 			}
 		}
-		return true;
+		
+		if(sign > 2)
+		{
+			return false;
+		}
+		else if(number)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	
