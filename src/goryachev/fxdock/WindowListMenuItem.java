@@ -1,5 +1,6 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
+import goryachev.fxdock.internal.DockTools;
 import java.util.List;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -58,7 +59,7 @@ public class WindowListMenuItem
 		for(FxDockWindow w: FxDockFramework.getWindows())
 		{
 			WindowMenuItem mi = new WindowMenuItem(ct + ": " + w.getTitle());
-			mi.setOnAction((ev) -> w.toFront());
+			mi.setOnAction((ev) -> DockTools.toFront(w));
 			mi.setDisable(w == owner);
 			
 			ms.add(index, mi);

@@ -932,4 +932,18 @@ public class DockTools
 		collapseEmptySpace(b.clientParent);
 		b.adjustSplits();
 	}
+	
+	
+	/** deiconify and toFront() */
+	public static void toFront(FxDockWindow w)
+	{
+		if(w.isIconified())
+		{
+			w.setIconified(false);
+		}
+		
+		D.print(w.getX(), w.getY(), w.getWidth(), w.getHeight());
+		
+		w.toFront();
+	}
 }

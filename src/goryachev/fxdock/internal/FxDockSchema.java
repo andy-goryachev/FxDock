@@ -3,6 +3,7 @@ package goryachev.fxdock.internal;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
+import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -80,7 +81,7 @@ public class FxDockSchema
 		s.add(w.getY());
 		s.add(w.getWidth());
 		s.add(w.getHeight());
-
+		
 		if(w.isFullScreen())
 		{
 			s.add(STAGE_FULL_SCEEN);
@@ -102,33 +103,38 @@ public class FxDockSchema
 	}
 	
 	
-	public static void restoreWindow(String prefix, FxDockWindow w)
+	public static void restoreWindow(String prefix, FxDockWindow win)
 	{
 		SStream s = GlobalSettings.getStream(prefix + SUFFIX_WINDOW);
 		if(s.size() == 5)
 		{
 			double x = s.nextDouble();
 			double y = s.nextDouble();
-			double width = s.nextDouble();
+			double w = s.nextDouble();
 			double h = s.nextDouble();
 			String t = s.nextString();
 			
-			w.setX(x);
-			w.setY(y);
-			w.setWidth(width);
-			w.setHeight(h);
-
-			if(STAGE_FULL_SCEEN.equals(t))
+			if((w > 0) && (h > 0))
 			{
-				w.setFullScreen(true);
-			}
-			else if(STAGE_MAXIMIZED.equals(t))
-			{
-				w.setMaximized(true);
-			}
-			else if(STAGE_ICONIFIED.equals(t))
-			{
-				w.setIconified(true);
+				if(FX.isValidCoordinates(x, y))
+				{
+					// iconified windows have (x,y) of -32000 for some reason
+					// their coordinates are essentially lost (unless there is a way to get them in FX)
+					win.setX(x);
+					win.setY(y);
+				}
+				win.setWidth(w);
+				win.setHeight(h);
+				
+				switch(t)
+				{
+				case STAGE_ICONIFIED:
+					win.setIconified(true);
+					break;
+				case STAGE_FULL_SCEEN:
+					win.setFullScreen(true);
+					break;
+				}
 			}
 		}
 	}
