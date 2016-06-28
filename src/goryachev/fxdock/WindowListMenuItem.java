@@ -1,6 +1,6 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
-import goryachev.fxdock.internal.DockTools;
+import goryachev.fx.FX;
 import java.util.List;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -9,7 +9,7 @@ import javafx.stage.Window;
 
 
 /**
- * SeparatorMenuItem which automatically inserts a list of window selection menu items after itself,
+ * WindowListMenuItem is a separator menu item which automatically inserts a list of window selection menu items after itself,
  * and updates this list dynamically.
  */
 public class WindowListMenuItem
@@ -59,7 +59,7 @@ public class WindowListMenuItem
 		for(FxDockWindow w: FxDockFramework.getWindows())
 		{
 			WindowMenuItem mi = new WindowMenuItem(ct + ": " + w.getTitle());
-			mi.setOnAction((ev) -> DockTools.toFront(w));
+			mi.setOnAction((ev) -> FX.toFront(w));
 			mi.setDisable(w == owner);
 			
 			ms.add(index, mi);

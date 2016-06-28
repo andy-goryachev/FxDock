@@ -2,6 +2,7 @@
 package goryachev.fx;
 import goryachev.common.util.GlobalSettings;
 import goryachev.fx.internal.WindowsFx;
+import goryachev.fxdock.FxDockWindow;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.geometry.Bounds;
@@ -520,5 +521,17 @@ public final class FX
 			return 1.0;
 		}
 		return c;
+	}
+	
+	
+	/** deiconify and toFront() */
+	public static void toFront(FxDockWindow w)
+	{
+		if(w.isIconified())
+		{
+			w.setIconified(false);
+		}
+		
+		w.toFront();
 	}
 }
