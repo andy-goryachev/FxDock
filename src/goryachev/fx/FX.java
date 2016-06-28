@@ -2,7 +2,6 @@
 package goryachev.fx;
 import goryachev.common.util.GlobalSettings;
 import goryachev.fx.internal.WindowsFx;
-import goryachev.fxdock.FxDockWindow;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.geometry.Bounds;
@@ -25,6 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.StringConverter;
 
@@ -525,7 +525,7 @@ public final class FX
 	
 	
 	/** deiconify and toFront() */
-	public static void toFront(FxDockWindow w)
+	public static void toFront(Stage w)
 	{
 		if(w.isIconified())
 		{
