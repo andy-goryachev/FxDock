@@ -1,6 +1,7 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fx.CAction;
+import goryachev.fx.FxDump;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fx.SSConverter;
 import goryachev.fx.internal.LocalBindings;
@@ -42,6 +43,8 @@ public abstract class FxDockWindow
 		frame = new BorderPane(root);
 		Scene s = new Scene(frame);
 		setScene(s);
+		
+		new FxDump().attach(this);
 	}
 	
 	
