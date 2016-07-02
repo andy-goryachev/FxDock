@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (c) 2016 Andy Goryachev <andy@goryachev.com> -->
+<!-- Copyright © 2016 Andy Goryachev <andy@goryachev.com> -->
 
 <project default="build-all" basedir=".">
 	
@@ -27,7 +27,7 @@
 			source="1.8"
 			target="1.8"
 			includeantruntime="false"
-			>
+		>
 			
 			<compilerarg value="-Xlint:unchecked"/>
 		
@@ -65,7 +65,7 @@
 			filesonly="true"
 			manifest="config/FxDock.manifest"
 			excludes="demo/**"
-			>
+		>
 		</jar>
 	</target>
 	
