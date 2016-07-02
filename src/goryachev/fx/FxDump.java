@@ -11,7 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
-import javafx.stage.Stage;
+import javafx.stage.Window;
 
 
 /**
@@ -39,6 +39,20 @@ public class FxDump
 	}
 	
 	
+	/** a shortcut to attach a default FxDump */
+	public static void a(Node n)
+	{
+		new FxDump().attach(n);
+	}
+	
+	
+	/** a shortcut to attach a default FxDump */
+	public static void a(Window n)
+	{
+		new FxDump().attach(n);
+	}
+	
+	
 	/** controls whether to show null properties */
 	public void setShowNulls(boolean on)
 	{
@@ -46,7 +60,7 @@ public class FxDump
 	}
 	
 	
-	public void attach(Stage s)
+	public void attach(Window s)
 	{
 		attach(s.getScene().getRoot());
 	}
@@ -54,6 +68,7 @@ public class FxDump
 	
 	public void attach(Node n)
 	{
+		// I don't know how to listen to global mouse or key events in FX...
 		n.getScene().addEventFilter(KeyEvent.KEY_PRESSED, (ev) -> handleKeyPress(ev));
 		n.getScene().addEventFilter(MouseEvent.ANY, (ev) -> handleMouseEvent(ev));
 	}
