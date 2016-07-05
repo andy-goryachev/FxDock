@@ -15,6 +15,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -369,6 +370,10 @@ public class FxSchema
 			return null;
 		}
 		else if(n instanceof Shape)
+		{
+			return null;
+		}
+		else if(n instanceof ImageView)
 		{
 			return null;
 		}

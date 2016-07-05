@@ -84,6 +84,13 @@ public class FxWindow
 	}
 	
 	
+	public void setMinSize(int width, int height)
+	{
+		setMinWidth(width);
+		setMinHeight(height);
+	}
+	
+	
 	public void closeWithConfirmation()
 	{
 		OnWindowClosing ch = new OnWindowClosing(false);

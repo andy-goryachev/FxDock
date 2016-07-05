@@ -17,6 +17,7 @@ import javafx.scene.control.Labeled;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Region;
@@ -533,5 +534,11 @@ public final class FX
 		}
 		
 		w.toFront();
+	}
+	
+	
+	public static Image loadImage(Class<?> c, String resource)
+	{
+		return new Image(c.getResourceAsStream(resource));
 	}
 }
