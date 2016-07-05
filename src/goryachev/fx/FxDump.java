@@ -1,16 +1,20 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CComparator;
+import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.D;
 import goryachev.common.util.SB;
 import javafx.css.CssMetaData;
+import javafx.css.PseudoClass;
 import javafx.css.Styleable;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.stage.Window;
 
 
@@ -167,6 +171,27 @@ public class FxDump
 			sb.a("]");
 			return sb.toString();
 		}
+		else if(x instanceof Background)
+		{
+			Background b = (Background)x;
+			SB sb = new SB();
+			sb.a("Background[");
+			boolean sep = false;
+			for(BackgroundFill f: b.getFills())
+			{
+				if(sep)
+				{
+					sb.a(",");
+				}
+				else
+				{
+					sep = true;
+				}
+				sb.a(describe(f.getFill()));
+			}
+			sb.a("]");
+			return sb.toString();
+		}
 		
 		return x;
 	}
@@ -179,7 +204,26 @@ public class FxDump
 		
 		while(n != null)
 		{
-			sb.a(n.getClass().getSimpleName()).nl();
+			sb.a(CKit.simpleName(n));
+			
+			String id = n.getId();
+			if(CKit.isNotBlank(id))
+			{
+				sb.a(" #");
+				sb.a(id);
+			}
+			
+			for(String s: n.getStyleClass())
+			{
+				sb.a(" .").a(s);
+			}
+			
+			for(PseudoClass c: n.getPseudoClassStates())
+			{
+				sb.a(" :").a(c);
+			}
+			
+			sb.nl();
 			
 			CList<CssMetaData<? extends Styleable,?>> md = new CList<>(n.getCssMetaData());
 			sort(md);
