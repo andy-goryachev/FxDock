@@ -17,9 +17,6 @@ public abstract class CComparator<T>
 	private static Collator COLLATOR = Collator.getInstance();
 	
 	
-	// TODO add natural compare (with numbers)
-	
-	
 	protected int compareText(Object a, Object b)
 	{
 		String sa = toString(a);
@@ -37,6 +34,15 @@ public abstract class CComparator<T>
 		{
 			return collator().compare(sa, sb);
 		}
+	}
+	
+	
+	/** uses letters and numbers only */
+	public static int compareNatural(Object a, Object b)
+	{
+		String sa = toString(a);
+		String sb = toString(b);
+		return NaturalSort.compare(sa, sb);
 	}
 	
 	
