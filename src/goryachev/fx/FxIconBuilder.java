@@ -4,6 +4,7 @@ import goryachev.common.util.CList;
 import java.io.ByteArrayInputStream;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
@@ -11,6 +12,8 @@ import javafx.scene.effect.Effect;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -23,6 +26,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
@@ -132,15 +136,28 @@ public class FxIconBuilder
 	protected Path createPath()
 	{
 		Path p = new Path();
-		
-		p.setOpacity(opacity);
-		p.setScaleX(scale);
-		p.setScaleY(scale);
-		p.setTranslateX(xtranslate);
-		p.setTranslateY(ytranslate);
-		p.setEffect(effect);
-		p.setFill(fill);
+		configNode(p);
+		configShape(p);
 		p.setFillRule(fillRule);
+		return p;
+	}
+	
+	
+	protected void configNode(Node n)
+	{
+		n.setOpacity(opacity);
+		n.setScaleX(scale);
+		n.setScaleY(scale);
+		n.setTranslateX(xtranslate);
+		n.setTranslateY(ytranslate);
+		n.setEffect(effect);
+		n.setRotate(rotate);
+	}
+	
+	
+	protected void configShape(Shape p)
+	{
+		p.setFill(fill);
 		p.setStroke(strokeColor);
 		p.setStrokeDashOffset(dashOffset);
 		p.setStrokeLineCap(lineCap);
@@ -148,33 +165,15 @@ public class FxIconBuilder
 		p.setStrokeMiterLimit(miterLimit);
 		p.setStrokeType(strokeType);
 		p.setStrokeWidth(strokeWidth);
-		p.setRotate(rotate);
-		
-		return p;
 	}
 
 
 	protected SVGPath createSVGPath()
 	{
 		SVGPath p = new SVGPath();
-
-		p.setOpacity(opacity);
-		p.setScaleX(scale);
-		p.setScaleY(scale);
-		p.setTranslateX(xtranslate);
-		p.setTranslateY(ytranslate);
-		p.setEffect(effect);
-		p.setFill(fill);
+		configNode(p);
+		configShape(p);
 		p.setFillRule(fillRule);
-		p.setStroke(strokeColor);
-		p.setStrokeDashOffset(dashOffset);
-		p.setStrokeLineCap(lineCap);
-		p.setStrokeLineJoin(lineJoin);
-		p.setStrokeMiterLimit(miterLimit);
-		p.setStrokeType(strokeType);
-		p.setStrokeWidth(strokeWidth);
-		p.setRotate(rotate);
-
 		return p;
 	}
 
@@ -206,14 +205,9 @@ public class FxIconBuilder
 	{
 		ImageView v = new ImageView();
 		v.setImage(new Image(new ByteArrayInputStream(bytes)));
-		
-		v.setOpacity(opacity);
+		configNode(v);
 		v.setTranslateX(xtranslate + xorigin);
 		v.setTranslateY(ytranslate + yorigin);
-		v.setScaleX(scale);
-		v.setScaleY(scale);
-		v.setEffect(effect);
-		v.setRotate(rotate);
 		
 		elements.add(v);
 	}
@@ -437,5 +431,14 @@ public class FxIconBuilder
 		IconBase ic = new IconBase(width, height);
 		ic.addAll(elements);
 		return ic;
+	}
+	
+	
+	/** returns a new instance of the generated icon in a centered box */
+	public Pane getIconBox()
+	{
+		HBox b = new HBox(getIcon());
+		b.setAlignment(Pos.CENTER);
+		return b;
 	}
 }
