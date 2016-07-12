@@ -123,21 +123,14 @@ public abstract class CAction
 	{
 		if(isEnabled())
 		{
-			Object src = ev.getSource();
-			if(src instanceof Menu)
+			if(ev.getSource() instanceof Menu)
 			{
-				if(src != ev.getTarget())
+				if(ev.getSource() != ev.getTarget())
 				{
 					// selection of a cascading child menu triggers action event for the parent 
 					// for some unknown reason.  ignore this.
 					return;
 				}
-			}
-			
-			if(src instanceof MenuItem)
-			{
-				// context menu does not always close
-				((MenuItem)src).getParentPopup().hide();
 			}
 			
 			try

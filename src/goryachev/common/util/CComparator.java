@@ -14,7 +14,7 @@ public abstract class CComparator<T>
 
 	//
 	
-	private static Collator COLLATOR = Collator.getInstance();
+	private Collator collator;
 	
 	
 	protected int compareText(Object a, Object b)
@@ -42,6 +42,7 @@ public abstract class CComparator<T>
 	{
 		String sa = toString(a);
 		String sb = toString(b);
+		// TODO this needs more work
 		return NaturalSort.compare(sa, sb);
 	}
 	
@@ -66,20 +67,15 @@ public abstract class CComparator<T>
 	}
 	
 	
+	public static int compareInt(int a, int b)
+	{
+		return Integer.compare(a, b);
+	}
+	
+	
 	public static int compareLong(long a, long b)
 	{
-		if(a < b)
-		{
-			return -1;
-		}
-		else if(a > b)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		return Long.compare(a, b);
 	}
 	
 	
@@ -102,37 +98,14 @@ public abstract class CComparator<T>
 		}
 		else
 		{
-			long x = a - b;
-			if(x < 0)
-			{
-				return -1;
-			}
-			else if(x > 0)
-			{
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
+			return Long.compare(a.longValue(), b.longValue());
 		}
 	}
 	
 	
 	public static int compareDouble(double a, double b)
 	{
-		if(a < b)
-		{
-			return -1;
-		}
-		else if(a > b)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		return Double.compare(a, b);
 	}
 	
 	
@@ -155,37 +128,14 @@ public abstract class CComparator<T>
 		}
 		else
 		{
-			double x = a - b;
-			if(x < 0)
-			{
-				return -1;
-			}
-			else if(x > 0)
-			{
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
+			return Double.compare(a.doubleValue(), b.doubleValue());
 		}
 	}
 	
 	
 	public static int compareFloat(float a, float b)
 	{
-		if(a < b)
-		{
-			return -1;
-		}
-		else if(a > b)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		return Float.compare(a, b);
 	}
 	
 	
@@ -208,26 +158,18 @@ public abstract class CComparator<T>
 		}
 		else
 		{
-			float x = a - b;
-			if(x < 0)
-			{
-				return -1;
-			}
-			else if(x > 0)
-			{
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
+			return Float.compare(a.floatValue(), b.floatValue());
 		}
 	}
 	
 	
 	protected Collator collator()
 	{
-		return COLLATOR;
+		if(collator == null)
+		{
+			collator = Collator.getInstance();
+		}
+		return collator;
 	}
 	
 	
@@ -237,29 +179,32 @@ public abstract class CComparator<T>
 	}
 	
 	
-	public void sort(List<? extends T> items)
+	public List<? extends T> sort(List<? extends T> items)
 	{
 		if(items != null)
 		{
 			Collections.sort(items, this);
 		}
+		return items;
 	}
 	
 	
-	public void sort(T[] items)
+	public T[] sort(T[] items)
 	{
 		if(items != null)
 		{
 			Arrays.sort(items, this);
 		}
+		return items;
 	}
 	
 	
-	public static void sortStrings(List<String> items)
+	public static List<String> sortStrings(List<String> items)
 	{
 		if(items != null)
 		{
-			Collections.sort(items, COLLATOR);
+			Collections.sort(items, Collator.getInstance());
 		}
+		return items;
 	}
 }

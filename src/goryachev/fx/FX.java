@@ -15,11 +15,13 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.OverrunStyle;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -540,5 +542,22 @@ public final class FX
 	public static Image loadImage(Class<?> c, String resource)
 	{
 		return new Image(c.getResourceAsStream(resource));
+	}
+
+
+	/** permanently hides the table header */
+	public static void hideHeader(TableView<?> t)
+	{
+		t.skinProperty().addListener((s, p, v) ->
+		{
+			Pane h = (Pane)t.lookup("TableHeaderRow");
+			if(h.isVisible())
+			{
+				h.setMaxHeight(0);
+				h.setMinHeight(0);
+				h.setPrefHeight(0);
+				h.setVisible(false);
+			}
+		});
 	}
 }

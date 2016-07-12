@@ -113,6 +113,27 @@ public class HPane
 	}
 	
 	
+	/** a shortcut to set padding on the panel */
+	public void setPadding(double gap)
+	{
+		setPadding(new CInsets(gap));
+	}
+	
+	
+	/** a shortcut to set padding on the panel */
+	public void setPadding(double ver, double hor)
+	{
+		setPadding(new CInsets(ver, hor));
+	}
+	
+	
+	/** a shortcut to set padding on the panel */
+	public void setPadding(double top, double right, double bottom, double left)
+	{
+		setPadding(new CInsets(top, right, bottom, left));
+	}
+
+
 	//
 	
 	

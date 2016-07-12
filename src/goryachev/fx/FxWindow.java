@@ -77,6 +77,12 @@ public class FxWindow
 	}
 	
 	
+	public Node getCenter()
+	{
+		return pane.getCenter();
+	}
+	
+	
 	public void setSize(int width, int height)
 	{
 		setWidth(width);
@@ -88,6 +94,13 @@ public class FxWindow
 	{
 		setMinWidth(width);
 		setMinHeight(height);
+	}
+	
+	
+	public void setMaxSize(int width, int height)
+	{
+		setMaxWidth(width);
+		setMaxHeight(height);
 	}
 	
 	
