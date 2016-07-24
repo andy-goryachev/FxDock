@@ -137,6 +137,7 @@ public class NaturalSort
 				}
 				else
 				{
+					// FIX might be numbers here
 					ixa++;
 					ixb++;
 					continue;

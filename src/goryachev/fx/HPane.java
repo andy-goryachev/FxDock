@@ -38,13 +38,13 @@ public class HPane
 	
 	public void add(Node n)
 	{
-		getChildren().add(n);
+		addPrivate(n);
 	}
 	
 	
 	public void fill(Node n)
 	{
-		getChildren().add(n);
+		addPrivate(n);
 		FX.setProperty(n, KEY_CONSTRAINT, FILL);
 	}
 	
@@ -52,15 +52,27 @@ public class HPane
 	public void fill()
 	{
 		Region n = new Region();
-		getChildren().add(n);
+		addPrivate(n);
 		FX.setProperty(n, KEY_CONSTRAINT, FILL);
 	}
 	
 	
 	public void add(Node n, double constraint)
 	{
-		getChildren().add(n);
+		addPrivate(n);
 		FX.setProperty(n, KEY_CONSTRAINT, Double.valueOf(constraint));
+	}
+	
+	
+	protected void addPrivate(Node n)
+	{
+		// once in an HPane, surrender your limitations!
+		if(n instanceof Region)
+		{
+			Region r = (Region)n;
+			r.setMaxHeight(Double.MAX_VALUE);
+		}
+		getChildren().add(n);
 	}
 
 	
@@ -134,6 +146,7 @@ public class HPane
 	}
 
 
+	
 	//
 	
 	

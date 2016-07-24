@@ -379,16 +379,19 @@ public class CPane
 			
 			entries.add(en);
 			
-			int mxc = cc.col2;
-			while(cols.size() <= mxc)
+			if(!cc.border)
 			{
-				cols.add(new LC());
-			}
-			
-			int mxr = cc.row2;
-			while(rows.size() <= mxr)
-			{
-				rows.add(new LC());
+				int mxc = cc.col2;
+				while(cols.size() <= mxc)
+				{
+					cols.add(new LC());
+				}
+				
+				int mxr = cc.row2;
+				while(rows.size() <= mxr)
+				{
+					rows.add(new LC());
+				}
 			}
 		}
 
@@ -561,12 +564,6 @@ public class CPane
 			this.horAlign = horAlign;
 			this.verAlign = verAlign;
 		}
-		
-		
-		public boolean isTable()
-		{
-			return !border;
-		}
 	}
 	
 	
@@ -602,10 +599,12 @@ public class CPane
 		//
 		
 		public final int gap;
+		/** row/column specifications */
 		public final CList<LC> specs;
 		public Entry left;
 		public Entry center;
 		public Entry right;
+		/** row/column sizes */
 		public int[] size;
 		public int[] pos;
 		public Axis otherAxis;
@@ -721,7 +720,7 @@ public class CPane
 						int end = end(cc);
 						
 						// only if the component ends on this row/col
-						if(cc.isTable() && (end == i))
+						if((!cc.border) && (end == i))
 						{
 							int start = start(cc);
 							
@@ -1049,7 +1048,7 @@ public class CPane
 				
 				public double otherDimension(Entry en, boolean doingLayout)
 				{
-					// assymetry: horizontal layout is first, and no other dimension is available
+					// asymmetry: horizontal layout is first, and no other dimension is available
 					return -1;
 				}
 			};
@@ -1205,7 +1204,7 @@ public class CPane
 				Entry en = entries.get(i);
 				CC cc = en.cc;
 				
-				if(cc.isTable())
+				if(!cc.border)
 				{
 					int x = hor.pos[cc.col];
 					int w = hor.pos[cc.col2 + 1] - x - hgap;
