@@ -53,11 +53,19 @@ public class CPane
 	}
 
 	
-	/** sets horizontal and vertical gaps for the table layout portion of the layout */
+	/** sets horizontal and vertical gaps. */
 	public void setGaps(int horizontal, int vertical)
 	{
 		setHGap(horizontal);
 		setVGap(vertical);
+	}
+	
+	
+	/** sets horizontal and vertical gaps. */
+	public void setGaps(int gaps)
+	{
+		setHGap(gaps);
+		setVGap(gaps);
 	}
 	
 
