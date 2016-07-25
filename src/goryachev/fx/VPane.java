@@ -36,43 +36,68 @@ public class VPane
 	}
 	
 	
+	/** adds a node with preferred height constraint */
 	public void add(Node n)
 	{
-		addPrivate(n);
+		massage(n);
+		getChildren().add(n);
 	}
 	
 	
-	public void fill(Node n)
+	/** adds a node at the specified position */
+	public void add(int ix, Node n)
 	{
-		addPrivate(n);
-		FX.setProperty(n, KEY_CONSTRAINT, FILL);
+		massage(n);
+		getChildren().add(ix, n);
 	}
 	
 	
-	public void fill()
-	{
-		Region n = new Region();
-		addPrivate(n);
-		FX.setProperty(n, KEY_CONSTRAINT, FILL);
-	}
-	
-	
+	/** adds a node with the specified height constraint */
 	public void add(Node n, double constraint)
 	{
-		addPrivate(n);
+		massage(n);
+		getChildren().add(n);
 		FX.setProperty(n, KEY_CONSTRAINT, Double.valueOf(constraint));
 	}
 	
 	
-	protected void addPrivate(Node n)
+	/** adds an empty region with the FILL constraint */
+	public void fill()
 	{
-		// once in an HPane, surrender your limitations!
+		Region n = new Region();
+		massage(n);
+		getChildren().add(n);
+		FX.setProperty(n, KEY_CONSTRAINT, FILL);
+	}
+	
+	
+	/** adds a node with the FILL constraint */
+	public void fill(Node n)
+	{
+		massage(n);
+		getChildren().add(n);
+		FX.setProperty(n, KEY_CONSTRAINT, FILL);
+	}
+	
+	
+	/** adds a node with the FILL constraint at the specified position */
+	public void fill(int ix, Node n)
+	{
+		massage(n);
+		getChildren().add(ix, n);
+		FX.setProperty(n, KEY_CONSTRAINT, FILL);
+	}
+	
+	
+	protected void massage(Node n)
+	{
+		// once in an VPane, surrender your limitations!
 		if(n instanceof Region)
 		{
 			Region r = (Region)n;
+			r.setMaxHeight(Double.MAX_VALUE);
 			r.setMaxWidth(Double.MAX_VALUE);
 		}
-		getChildren().add(n);
 	}
 
 	
@@ -145,6 +170,12 @@ public class VPane
 		setPadding(new CInsets(top, right, bottom, left));
 	}
 
+
+	public void remove(Node n)
+	{
+		getChildren().remove(n);
+	}
+	
 	
 	//
 	

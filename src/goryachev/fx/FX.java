@@ -262,6 +262,10 @@ public final class FX
 				{
 					((Labeled)n).setTextAlignment((TextAlignment)a);
 				}
+				else if(a instanceof Background)
+				{
+					((Region)n).setBackground((Background)a);
+				}
 				else
 				{
 					throw new Error("?" + a);
