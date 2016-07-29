@@ -15,6 +15,7 @@ import javafx.scene.control.ToggleButton;
 
 /**
  * Action - an AbstractAction equivalent for FX, using method references.
+ * 
  * Usage:
  *    public final Action backAction = new Action(this::actionBack);
  */
@@ -24,6 +25,13 @@ public class CAction
 	private final BooleanProperty selectedProperty = new SimpleBooleanProperty(this, "selected");
 	private final BooleanProperty disabledProperty = new SimpleBooleanProperty(this, "disabled");
 	private Runnable onAction;
+	
+	
+	public CAction(Runnable onAction, boolean enabled)
+	{
+		this.onAction = onAction;
+		setEnabled(enabled);
+	}
 	
 	
 	public CAction(Runnable onAction)
@@ -129,6 +137,18 @@ public class CAction
 	}
 	
 	
+	public final void enable()
+	{
+		setEnabled(true);
+	}
+	
+	
+	public final void disable()
+	{
+		setEnabled(false);
+	}
+	
+	
 	public void fire()
 	{
 		if(isEnabled())
@@ -138,19 +158,24 @@ public class CAction
 	}
 
 
-	/** override to obtain the actual event */
+	/** override to obtain the ActionEvent */
 	public void handle(ActionEvent ev)
 	{
 		if(isEnabled())
 		{
-			if(ev.getSource() instanceof Menu)
+			if(ev != null)
 			{
-				if(ev.getSource() != ev.getTarget())
+				if(ev.getSource() instanceof Menu)
 				{
-					// selection of a cascading child menu triggers action event for the parent 
-					// for some unknown reason.  ignore this.
-					return;
+					if(ev.getSource() != ev.getTarget())
+					{
+						// selection of a cascading child menu triggers action event for the parent 
+						// for some unknown reason.  ignore this.
+						return;
+					}
 				}
+				
+				ev.consume();
 			}
 			
 			try
@@ -161,7 +186,6 @@ public class CAction
 			{
 				Log.fail(e);
 			}
-			ev.consume();
 		}
 	}
 }

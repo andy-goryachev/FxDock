@@ -17,6 +17,17 @@ public abstract class CComparator<T>
 	private Collator collator;
 	
 	
+	public CComparator()
+	{
+	}
+	
+	
+	public CComparator(Collator c)
+	{
+		this.collator = c;
+	}
+	
+	
 	protected int compareText(Object a, Object b)
 	{
 		String sa = toString(a);

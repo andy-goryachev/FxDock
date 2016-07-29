@@ -3,6 +3,10 @@ package goryachev.common.util;
 import java.util.Collection;
 
 
+/** 
+ * Various helpful text utility methods.
+ * Unfortunately, most of them do not handle supplementary unicode code points.
+ */  
 public class TextTools
 {
 	public interface SeparatorFunction
@@ -13,9 +17,7 @@ public class TextTools
 	public static final SeparatorFunction ANY_BLANK = new SeparatorFunction() { public boolean isSeparator(char c) { return CKit.isBlank(c); }};
 	public static final SeparatorFunction BLANK_OR_PUNCT = new SeparatorFunction() { public boolean isSeparator(char c) { return isBlankOrPunctuation(c); }};
 	
-	
 	//
-	
 
 	// attempt to trim on the word boundary up to max characters
 	public static String trimNicely(String s, int max)
@@ -1068,6 +1070,25 @@ public class TextTools
 		if(text != null)
 		{
 			return (text.indexOf(c) >= 0);
+		}
+		return false;
+	}
+
+
+	/** returns true if text contains any whitespace character */
+	public static boolean containsWhitespace(String text)
+	{
+		if(text != null)
+		{
+			int sz = text.length();
+			for(int i=0; i<sz; i++)
+			{
+				char c = text.charAt(i);
+				if(CKit.isBlank(c))
+				{
+					return true;
+				}
+			}
 		}
 		return false;
 	}
