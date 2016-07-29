@@ -48,13 +48,19 @@ public abstract class CComparator<T>
 	}
 	
 	
-	/** uses letters and numbers only */
+	/** compares string representation of objects using "natural" order https://en.wikipedia.org/wiki/Natural_sort_order */
 	public static int compareNatural(Object a, Object b)
 	{
 		String sa = toString(a);
 		String sb = toString(b);
-		// TODO this needs more work
 		return NaturalSort.compare(sa, sb);
+	}
+	
+	
+	/** compares strings using "natural" order https://en.wikipedia.org/wiki/Natural_sort_order */
+	public static int compareNatural(String a, String b)
+	{
+		return NaturalSort.compare(a, b);
 	}
 	
 	
