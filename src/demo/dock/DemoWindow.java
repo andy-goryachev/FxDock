@@ -108,7 +108,7 @@ public class DemoWindow
 	
 	public static DemoWindow actionNewBrowser()
 	{
-		return openBrowser("");
+		return openBrowser("https://github.com/andy-goryachev/FxDock");
 	}
 	
 	
