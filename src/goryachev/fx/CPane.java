@@ -222,7 +222,7 @@ public class CPane
 	}
 	
 	
-	public void setRow(int row, float spec)
+	public void setRow(int row, double spec)
 	{
 		LC c = getRowSpec(row);
 		c.width = spec;
