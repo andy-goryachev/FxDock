@@ -78,7 +78,7 @@ public class DemoPane
 		for(double w: specs)
 		{
 			Color c = Color.gray(0.5 + 0.5 * ix / (specs.length - 1));
-			String text = getDescription(w);
+			String text = DemoTools.spec(w);
 			TextField t = new TextField(text);
 			t.setEditable(false);
 			t.setPrefColumnCount(3);
@@ -88,23 +88,6 @@ public class DemoPane
 			ix++;
 		}
 		p.getChildren().add(hp);
-	}
-
-
-	private static String getDescription(double w)
-	{
-		if(w == HPane.FILL)
-		{
-			return "fill";
-		}
-		else if(w == HPane.PREF)
-		{
-			return "pref";
-		}
-		else
-		{
-			return new DecimalFormat("#0.##").format(w);
-		}
 	}
 
 

@@ -18,8 +18,13 @@ public class DemoGenerator
 	public static final String BROWSER = "BROWSER";
 	/** type id for a CPane demo */
 	public static final String CPANE = "CPANE";
+	/** type id for a HPane demo */
+	public static final String HPANE = "HPANE";
 	/** type id for a login pane */
 	public static final String LOGIN = "LOGIN";
+	/** type id for a VPane demo */
+	public static final String VPANE = "VPANE";
+	
 
 	/** creates custom window */
 	public FxDockWindow createWindow()
@@ -37,6 +42,8 @@ public class DemoGenerator
 			return new DemoBrowser();
 		case CPANE:
 			return new DemoCPane();
+		case HPANE:
+			return new DemoHPane();
 		case LOGIN:
 			return new DemoLoginPane();
 		default:

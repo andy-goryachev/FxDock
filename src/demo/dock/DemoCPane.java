@@ -128,20 +128,6 @@ public class DemoCPane
 	}
 	
 	
-	protected String f(double x)
-	{
-		int n = FX.round(x);
-		if(x == n)
-		{
-			return String.valueOf(n);
-		}
-		else
-		{
-			return String.valueOf(x);
-		}
-	}
-	
-	
 	protected Node t()
 	{
 		Label t = new Label();
@@ -149,7 +135,7 @@ public class DemoCPane
 		t.setPadding(new CInsets(1, 3));
 		t.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
 		
-		t.textProperty().bind(Bindings.createStringBinding(() -> f(t.getWidth()) + "x" + f(t.getHeight()), t.widthProperty(), t.heightProperty()));
+		t.textProperty().bind(Bindings.createStringBinding(() -> DemoTools.f(t.getWidth()) + "x" + DemoTools.f(t.getHeight()), t.widthProperty(), t.heightProperty()));
 		
 		return t;
 	}

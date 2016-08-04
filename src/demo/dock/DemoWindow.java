@@ -32,6 +32,8 @@ public class DemoWindow
 {
 	public static final CAction newBrowserAction = new CAction(DemoWindow::actionNewBrowser);
 	public static final CAction newCPaneAction = new CAction(DemoWindow::actionNewCPane);
+	public static final CAction newHPaneAction = new CAction(DemoWindow::actionNewHPane);
+	public static final CAction newVPaneAction = new CAction(DemoWindow::actionNewVPane);
 	public static final CAction newLoginAction = new CAction(DemoWindow::actionNewLogin);
 	public static final CAction newWindowAction = new CAction(DemoWindow::actionNewWindow);
 	public static final CAction quitApplicationAction = new CAction(FxDockFramework::exit);
@@ -66,9 +68,12 @@ public class DemoWindow
 		// window
 		mb.add(m = new CMenu("Window"));
 		m.add("New Browser", newBrowserAction);
-		m.add("New CPane Example", newCPaneAction);
 		m.add("New Demo Window", newWindowAction);
 		m.add("New Login Window", newLoginAction);
+		m.separator();
+		m.add("CPane Example", newCPaneAction);
+		m.add("HPane Example", newHPaneAction);
+//		m.add("VPane Example", newVPaneAction);
 		m.separator();
 		m.add(new CCheckMenuItem("Confirm Window Closing", showCloseDialogProperty));
 		m.add(new WindowListMenuItem(this, m));
@@ -119,6 +124,30 @@ public class DemoWindow
 		DemoWindow w = new DemoWindow();
 		w.setTitle("CPane Demo");
 		w.setContent(new DemoCPane());
+		w.setWidth(1000);
+		w.setHeight(750);
+		w.open();
+		return w;
+	}
+	
+	
+	public static DemoWindow actionNewHPane()
+	{
+		DemoWindow w = new DemoWindow();
+		w.setTitle("HPane Demo");
+		w.setContent(new DemoHPane());
+		w.setWidth(1000);
+		w.setHeight(750);
+		w.open();
+		return w;
+	}
+	
+	
+	public static DemoWindow actionNewVPane()
+	{
+		DemoWindow w = new DemoWindow();
+		w.setTitle("VPane Demo");
+//		w.setContent(new DemoVPane());
 		w.setWidth(1000);
 		w.setHeight(750);
 		w.open();
