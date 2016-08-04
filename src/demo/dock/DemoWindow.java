@@ -30,12 +30,13 @@ import javafx.scene.layout.BorderPane;
 public class DemoWindow
     extends FxDockWindow
 {
-	public static final CAction newBrowserAction = new CAction() { public void action() { actionNewBrowser(); }};
-	public static final CAction newLoginAction = new CAction() { public void action() { actionNewLogin(); }};
-	public static final CAction newWindowAction = new CAction() { public void action() { actionNewWindow(); }};
-	public static final CAction quitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); }};
-	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); }};
-	public final CAction windowCheckAction = new CAction() { public void action() {  }};
+	public static final CAction newBrowserAction = new CAction(DemoWindow::actionNewBrowser);
+	public static final CAction newCPaneAction = new CAction(DemoWindow::actionNewCPane);
+	public static final CAction newLoginAction = new CAction(DemoWindow::actionNewLogin);
+	public static final CAction newWindowAction = new CAction(DemoWindow::actionNewWindow);
+	public static final CAction quitApplicationAction = new CAction(FxDockFramework::exit);
+	public static final CAction saveSettingsAction = new CAction(DemoWindow::actionSaveSettings);
+	public final CAction windowCheckAction = new CAction();
 	public final Label statusField = new Label();
 	private static GlobalBooleanProperty showCloseDialogProperty = new GlobalBooleanProperty("show.close.dialog", true);
 
@@ -65,6 +66,7 @@ public class DemoWindow
 		// window
 		mb.add(m = new CMenu("Window"));
 		m.add("New Browser", newBrowserAction);
+		m.add("New CPane Example", newCPaneAction);
 		m.add("New Demo Window", newWindowAction);
 		m.add("New Login Window", newLoginAction);
 		m.separator();
@@ -109,6 +111,18 @@ public class DemoWindow
 	public static DemoWindow actionNewBrowser()
 	{
 		return openBrowser("https://github.com/andy-goryachev/FxDock");
+	}
+	
+	
+	public static DemoWindow actionNewCPane()
+	{
+		DemoWindow w = new DemoWindow();
+		w.setTitle("CPane Demo");
+		w.setContent(new DemoCPane());
+		w.setWidth(1000);
+		w.setHeight(750);
+		w.open();
+		return w;
 	}
 	
 	

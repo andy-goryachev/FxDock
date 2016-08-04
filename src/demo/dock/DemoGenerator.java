@@ -16,6 +16,8 @@ public class DemoGenerator
 {
 	/** type id for a browser pane */
 	public static final String BROWSER = "BROWSER";
+	/** type id for a CPane demo */
+	public static final String CPANE = "CPANE";
 	/** type id for a login pane */
 	public static final String LOGIN = "LOGIN";
 
@@ -33,6 +35,8 @@ public class DemoGenerator
 		{
 		case BROWSER:
 			return new DemoBrowser();
+		case CPANE:
+			return new DemoCPane();
 		case LOGIN:
 			return new DemoLoginPane();
 		default:
