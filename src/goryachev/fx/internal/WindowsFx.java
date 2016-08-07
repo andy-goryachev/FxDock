@@ -107,7 +107,7 @@ public class WindowsFx
 	public void storeWindow(FxWindow w)
 	{
 		String prefix = lookupPrefix(w);
-		FxSchema.storeStage(w, prefix);
+		FxSchema.storeWindow(w, prefix);
 		FxSchema.storeNode(prefix, w.getScene().getRoot());
 	}
 	
@@ -115,7 +115,7 @@ public class WindowsFx
 	public void restoreWindow(FxWindow w)
 	{
 		String prefix = lookupPrefix(w);
-		FxSchema.restoreStage(w, prefix);
+		FxSchema.restoreWindow(w, prefix);
 		FxSchema.restoreNode(prefix, w.getScene().getRoot());
 	}
 	

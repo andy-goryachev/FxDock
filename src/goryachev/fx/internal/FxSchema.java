@@ -1,10 +1,12 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
+import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
+import goryachev.fx.FxWindow;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -20,7 +22,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
-import javafx.stage.Stage;
 
 
 /**
@@ -47,12 +48,14 @@ public class FxSchema
 	private static final Object PROP_BINDINGS = new Object();
 
 	
-	public static void storeStage(Stage win, String prefix)
+	public static void storeWindow(FxWindow win, String prefix)
 	{
-		double x = win.getX();
-		double y = win.getY();
-		double w = win.getWidth();
-		double h = win.getHeight();
+		double x = win.getNormalX();
+		double y = win.getNormalY();
+		double w = win.getNormalWidth();
+		double h = win.getNormalHeight();
+		
+		D.print(x, y, w, h);
 		
 		String state;
 		if(win.isFullScreen())
@@ -83,7 +86,7 @@ public class FxSchema
 	}
 	
 	
-	public static void restoreStage(Stage win, String prefix)
+	public static void restoreWindow(FxWindow win, String prefix)
 	{
 		try
 		{
@@ -94,6 +97,8 @@ public class FxSchema
 			double w = s.nextDouble(-1);
 			double h = s.nextDouble(-1);
 			String state = s.nextString(WINDOW_NORMAL);
+			
+			D.print(x, y, w, h);
 			
 			if((w > 0) && (h > 0))
 			{
@@ -109,11 +114,14 @@ public class FxSchema
 				
 				switch(state)
 				{
-				case WINDOW_ICONIFIED:
-					win.setIconified(true);
-					break;
+//				case WINDOW_ICONIFIED:
+//					win.setIconified(true);
+//					break;
 				case WINDOW_FULLSCREEN:
 					win.setFullScreen(true);
+					break;
+				case WINDOW_MAXIMIZED:
+					win.setMaximized(true);
 					break;
 				}
 			}

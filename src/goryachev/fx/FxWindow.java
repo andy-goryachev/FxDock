@@ -1,5 +1,6 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.fx.internal.FxWindowBoundsMonitor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -25,6 +26,7 @@ public class FxWindow
 	public final CAction closeWindowAction = new CAction() { public void action() { closeWithConfirmation(); }};
 	private final String name;
 	private final BorderPane pane;
+	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
 	
 	
 	public FxWindow(String name)
@@ -38,6 +40,30 @@ public class FxWindow
 	public String getName()
 	{
 		return name;
+	}
+	
+	
+	public double getNormalX()
+	{
+		return normalBoundsMonitor.getX();
+	}
+	
+	
+	public double getNormalY()
+	{
+		return normalBoundsMonitor.getY();
+	}
+	
+	
+	public double getNormalWidth()
+	{
+		return normalBoundsMonitor.getWidth();
+	}
+	
+	
+	public double getNormalHeight()
+	{
+		return normalBoundsMonitor.getHeight();
 	}
 	
 	
