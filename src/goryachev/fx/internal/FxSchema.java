@@ -1,6 +1,5 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
-import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
@@ -55,32 +54,28 @@ public class FxSchema
 		double w = win.getNormalWidth();
 		double h = win.getNormalHeight();
 		
-		D.print(x, y, w, h);
-		
-		String state;
-		if(win.isFullScreen())
-		{
-			state = WINDOW_FULLSCREEN;
-		}
-		else if(win.isMaximized())
-		{
-			state = WINDOW_MAXIMIZED;
-		}
-		else if(win.isIconified())
-		{
-			state = WINDOW_ICONIFIED;
-		}
-		else
-		{
-			state = WINDOW_NORMAL;
-		}
-		
 		SStream s = new SStream();
 		s.add(x);
 		s.add(y);
 		s.add(w);
 		s.add(h);
-		s.add(state);
+		
+		if(win.isFullScreen())
+		{
+			s.add(WINDOW_FULLSCREEN);
+		}
+		else if(win.isMaximized())
+		{
+			s.add(WINDOW_MAXIMIZED);
+		}
+		else if(win.isIconified())
+		{
+			s.add(WINDOW_ICONIFIED);
+		}
+		else
+		{
+			s.add(WINDOW_NORMAL);
+		}
 
 		GlobalSettings.setStream(FX_PREFIX + prefix, s);
 	}
@@ -98,10 +93,9 @@ public class FxSchema
 			double h = s.nextDouble(-1);
 			String state = s.nextString(WINDOW_NORMAL);
 			
-			D.print(x, y, w, h);
-			
 			if((w > 0) && (h > 0))
 			{
+				// unnecessary anymore
 				if(FX.isValidCoordinates(x, y))
 				{
 					// iconified windows have (x,y) of -32000 for some reason

@@ -1,6 +1,6 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
-import goryachev.fx.FxWindow;
+import javafx.stage.Stage;
 
 
 /**
@@ -12,14 +12,14 @@ import goryachev.fx.FxWindow;
  */
 public class FxWindowBoundsMonitor
 {
-	private final FxWindow win;
+	private final Stage win;
 	private Duplet x = new Duplet();
 	private Duplet y = new Duplet();
 	private Duplet w = new Duplet();
 	private Duplet h = new Duplet();
 	
 	
-	public FxWindowBoundsMonitor(FxWindow w)
+	public FxWindowBoundsMonitor(Stage w)
 	{
 		this.win = w;
 		

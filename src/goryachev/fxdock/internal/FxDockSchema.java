@@ -25,10 +25,10 @@ public class FxDockSchema
 	public static final String NAME_TAB = ".T";
 	public static final String NAME_SPLIT = ".S";
 
-	public static final String STAGE_FULL_SCEEN = "F";
-	public static final String STAGE_ICONIFIED = "I";
-	public static final String STAGE_MAXIMIZED = "X";
-	public static final String STAGE_NORMAL = "N";
+	public static final String WINDOW_FULL_SCEEN = "F";
+	public static final String WINDOW_ICONIFIED = "I";
+	public static final String WINDOW_MAXIMIZED = "X";
+	public static final String WINDOW_NORMAL = "N";
 	
 	public static final String SUFFIX_BINDINGS = ".bindings";
 	public static final String SUFFIX_LAYOUT = ".layout";
@@ -74,29 +74,34 @@ public class FxDockSchema
 	}
 
 
-	public static void storeWindow(String prefix, FxDockWindow w)
+	public static void storeWindow(String prefix, FxDockWindow win)
 	{
-		SStream s = new SStream();
-		s.add(w.getX());
-		s.add(w.getY());
-		s.add(w.getWidth());
-		s.add(w.getHeight());
+		double x = win.getNormalX();
+		double y = win.getNormalY();
+		double w = win.getNormalWidth();
+		double h = win.getNormalHeight();
 		
-		if(w.isFullScreen())
+		SStream s = new SStream();
+		s.add(x);
+		s.add(y);
+		s.add(w);
+		s.add(h);
+		
+		if(win.isFullScreen())
 		{
-			s.add(STAGE_FULL_SCEEN);
+			s.add(WINDOW_FULL_SCEEN);
 		}
-		else if(w.isMaximized())
+		else if(win.isMaximized())
 		{
-			s.add(STAGE_MAXIMIZED);
+			s.add(WINDOW_MAXIMIZED);
 		}
-		else if(w.isIconified())
+		else if(win.isIconified())
 		{
-			s.add(STAGE_ICONIFIED);
+			s.add(WINDOW_ICONIFIED);
 		}
 		else
 		{
-			s.add(STAGE_NORMAL);
+			s.add(WINDOW_NORMAL);
 		}
 
 		GlobalSettings.setStream(prefix + SUFFIX_WINDOW, s);
@@ -116,6 +121,7 @@ public class FxDockSchema
 			
 			if((w > 0) && (h > 0))
 			{
+				// TODO unnecessary anymore
 				if(FX.isValidCoordinates(x, y))
 				{
 					// iconified windows have (x,y) of -32000 for some reason
@@ -128,11 +134,15 @@ public class FxDockSchema
 				
 				switch(t)
 				{
-				case STAGE_ICONIFIED:
-					win.setIconified(true);
-					break;
-				case STAGE_FULL_SCEEN:
+				// there is no point in restoring to minimized state
+//				case WINDOW_ICONIFIED:
+//					win.setIconified(true);
+//					break;
+				case WINDOW_FULL_SCEEN:
 					win.setFullScreen(true);
+					break;
+				case WINDOW_MAXIMIZED:
+					win.setMaximized(true);
 					break;
 				}
 			}

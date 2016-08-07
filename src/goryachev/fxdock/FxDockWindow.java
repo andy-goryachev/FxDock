@@ -4,6 +4,7 @@ import goryachev.fx.CAction;
 import goryachev.fx.FxDump;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fx.SSConverter;
+import goryachev.fx.internal.FxWindowBoundsMonitor;
 import goryachev.fx.internal.LocalBindings;
 import goryachev.fxdock.internal.FxDockRootPane;
 import goryachev.fxdock.internal.FxDockSchema;
@@ -35,6 +36,7 @@ public abstract class FxDockWindow
 	private final BorderPane frame;
 	private final FxDockRootPane root;
 	private LocalBindings bindings;
+	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
 	
 	
 	public FxDockWindow()
@@ -45,6 +47,30 @@ public abstract class FxDockWindow
 		setScene(s);
 		
 		new FxDump().attach(this);
+	}
+	
+	
+	public double getNormalX()
+	{
+		return normalBoundsMonitor.getX();
+	}
+	
+	
+	public double getNormalY()
+	{
+		return normalBoundsMonitor.getY();
+	}
+	
+	
+	public double getNormalWidth()
+	{
+		return normalBoundsMonitor.getWidth();
+	}
+	
+	
+	public double getNormalHeight()
+	{
+		return normalBoundsMonitor.getHeight();
 	}
 	
 	
