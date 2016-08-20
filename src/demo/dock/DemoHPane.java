@@ -61,6 +61,9 @@ public class DemoHPane
 		p.add(0, r++, p(HPane.FILL));
 		p.add(0, r++, p(1.0));
 		p.add(0, r++, p(0.1, HPane.FILL, HPane.FILL, 0.1));
+		p.add(0, r++, p(0.1, HPane.FILL));
+		p.add(0, r++, p(HPane.FILL, HPane.FILL));
+		p.add(0, r++, p(HPane.PREF, HPane.PREF, HPane.PREF));
 		
 		setContent(p);
 	}

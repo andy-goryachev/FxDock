@@ -19,7 +19,6 @@ public class CPane
 {
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;
-	// TODO public static final double MIN = -3.0;
 	
 	public static final CC TOP = new CC(true);
 	public static final CC BOTTOM = new CC(true);

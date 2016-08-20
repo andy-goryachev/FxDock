@@ -13,14 +13,13 @@ import javafx.scene.layout.Region;
 
 /**
  * Horizontally arranged Pane that lays out its child nodes using the following constraints:
- * PREF, FILL, MIN, percentage, or exact pixels.
+ * PREF, FILL, percentage, or exact pixels.
  */
 public class HPane
 	extends Pane
 {
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;
-	public static final double MIN = -3.0;
 	protected int gap;
 	protected static final Object KEY_CONSTRAINT = new Object();
 	
@@ -33,6 +32,12 @@ public class HPane
 	
 	public HPane()
 	{
+	}
+	
+	
+	public void setGap(int gap)
+	{
+		this.gap = gap;
 	}
 	
 	
@@ -230,15 +235,10 @@ public class HPane
 		}
 		
 		
-		protected boolean isMin(double x)
-		{
-			return (x == MIN);
-		}
-		
-		
 		protected int computeSizes(boolean preferred)
 		{
-			int sum = 0;
+			int total = 0;
+			
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
@@ -247,10 +247,6 @@ public class HPane
 				if(isFixed(cc))
 				{
 					d = FX.ceil(cc);
-				}
-				else if(isMin(cc))
-				{
-					d = FX.ceil(n.minWidth(-1));
 				}
 				else
 				{
@@ -269,10 +265,10 @@ public class HPane
 					size[i] = d;
 				}
 				
-				sum += d;
+				total += d;
 			}
 			
-			return sum + left + right + gaps;
+			return total + left + right + gaps;
 		}
 		
 		
@@ -301,148 +297,6 @@ public class HPane
 		}
 		
 		
-		/** size to allocate extra space between FILL and PERCENT cells */
-		protected void expand()
-		{
-			int sum = 0;
-			double totalPercent = 0;
-			int fills = 0;
-			
-			for(int i=0; i<sz; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				if(isPercent(cc))
-				{
-					totalPercent += cc;
-				}
-				else if(isFill(cc))
-				{
-					fills++;
-				}
-				else
-				{
-					sum += size[i];
-				}
-			}
-			
-			double extra = (getWidth() - left - right - gaps - sum);
-			double percentRatio = (totalPercent > 1.0) ? (1 / totalPercent) : 1.0;
-			double fillRatio = (1.0 - totalPercent * percentRatio) / fills;
-			
-			// keeping a double cumulative value in addition to the integer one
-			// in order to avoid accumulating rounding errors
-			int isum = gaps + left + right;
-			double dsum = isum;
-			
-			// compute sizes
-			int last = sz - 1;
-			for(int i=0; i<=last; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				int d = size[i];
-				int di;
-				
-				if(isFixed(cc))
-				{
-					di = d;
-					dsum += di;
-				}
-				else if(isFill(cc))
-				{
-					dsum += (extra * fillRatio);
-					di = FX.round(dsum - isum);
-				}
-				else if(isPercent(cc))
-				{
-					dsum += (extra * percentRatio * cc);
-					di = FX.round(dsum - isum);
-				}
-				else
-				{
-					dsum += d;
-					di = d;
-				}
-				
-				if(i == last)
-				{
-					di = FX.floor(getWidth() - isum);
-				}
-				
-				size[i] = di;
-				isum += di;
-			}
-		}
-		
-		
-		/** keep minimum sizes, redistributing extra space between PERCENT and FILL components */
-		protected void contract()
-		{
-			int ct = 0;
-			int sum = 0;
-			
-			for(int i=0; i<sz; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				if(!isFixed(cc))
-				{
-					ct++;
-				}
-				
-				sum += size[i];
-			}
-			
-			double extra = (getWidth() - left - right - gaps - sum);
-			if(extra < 0)
-			{
-				// do not make it smaller than permitted by the minimum size
-				extra = 0;
-			}
-			
-			// keeping a double cumulative value in addition to the integer one
-			// in order to avoid accumulating rounding errors
-			int isum = gaps + left + right;
-			double dsum = isum;
-			
-			// compute sizes
-			int last = sz - 1;
-			for(int i=0; i<=last; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				int d0 = size[i];
-				int di;
-				
-				if(isFixed(cc))
-				{
-					di = FX.ceil(cc);
-					dsum += di;
-				}
-				else if(isMin(cc))
-				{
-					di = FX.ceil(cc);
-					dsum += di;
-				}
-				else
-				{
-					// TODO multiply by percent, fill, preferred ratios
-					dsum += (d0 + extra / ct);
-					di = FX.round(dsum - isum);
-				}
-				
-				if(i == last)
-				{
-					di = FX.floor(getWidth() - isum);
-				}
-				
-				size[i] = di;
-				isum += di;
-			}
-		}
-		
-		
 		protected void computePositions()
 		{
 			int start = left;
@@ -456,7 +310,94 @@ public class HPane
 			}
 		}
 		
+		protected void adjust(int delta)
+		{
+			// space available for FILL/PERCENT columns
+			int available = delta;
+			// ratio of columns with percentage explicitly set
+			double percent = 0;
+			// number of FILL columns
+			int fillsCount = 0;
+			
+			for(int i=0; i<sz; i++)
+			{
+				Node n = nodes.get(i);
+				double cc = getConstraint(n);
+				if(isPercent(cc))
+				{
+					// percent
+					percent += cc;
+					available += size[i];
+				}
+				else if(isFill(cc))
+				{
+					// fill
+					fillsCount++;
+					available += size[i];
+				}
+			}
+			
+			if(available < 0)
+			{
+				available = 0;
+			}
+			
+			double percentFactor = (percent > 1.0) ? (1 / percent) : percent;
+			int remaining = available;
+			
+			// PERCENT sizes first
+			for(int i=0; i<sz; i++)
+			{
+				Node n = nodes.get(i);
+				double cc = getConstraint(n);
+				if(isPercent(cc))
+				{
+					double w;
+					if(remaining > 0)
+					{
+						w = cc * available * percentFactor;
+					}
+					else
+					{
+						w = 0;
+					}
+					
+					int d = FX.round(w);
+					size[i] = d;
+					remaining -= d;
+				}
+			}
+			
+			// FILL sizes after PERCENT
+			if(fillsCount > 0)
+			{
+				double cw = remaining / (double)fillsCount;
+				
+				for(int i=0; i<sz; i++)
+				{
+					Node n = nodes.get(i);
+					double cc = getConstraint(n);
+					if(isFill(cc))
+					{
+						double w;
+						if(remaining >= 0)
+						{
+							w = Math.min(cw, remaining);
+						}
+						else
+						{
+							w = 0;
+						}
+						
+						int d = FX.ceil(w);
+						size[i] = d;
+						remaining -= d;
+					}
+				}
+			}
+		}
 		
+
 		public void applySizes()
 		{
 			computePositions();
@@ -479,18 +420,10 @@ public class HPane
 			
 			// populate size[] with preferred sizes
 			int pw = computeSizes(true);
-			double dw = getWidth() - pw;
-			if(dw < 0)
+			int dw = FX.floor(getWidth()) - pw;
+			if(dw != 0)
 			{
-				// populate size[] array with minimum sizes
-				computeSizes(false);
-				
-				// contract between min size and pref size
-				contract();
-			}
-			else if(dw > 0)
-			{
-				expand();
+				adjust(dw);
 			}
 
 			applySizes();
