@@ -18,6 +18,7 @@ import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -563,5 +564,23 @@ public final class FX
 				h.setVisible(false);
 			}
 		});
+	}
+	
+	
+	/** sets a tool tip on the control. */
+	public static void tooltip(Control n, Object tooltip)
+	{
+		if(tooltip == null)
+		{
+			n.setTooltip(null);
+		}
+		else if(tooltip instanceof Tooltip)
+		{
+			n.setTooltip((Tooltip)tooltip);
+		}
+		else
+		{
+			n.setTooltip(new Tooltip(tooltip.toString()));
+		}
 	}
 }
