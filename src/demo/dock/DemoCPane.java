@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
+import goryachev.common.util.Parsers;
 import goryachev.fx.CComboBox;
 import goryachev.fx.CInsets;
 import goryachev.fx.CPane;
@@ -8,6 +9,7 @@ import goryachev.fxdock.FxDockPane;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -98,7 +100,56 @@ public class DemoCPane
 		p.add(3, r, 2, 1, t());
 		p.add(5, r, r(r));
 		
+		TextField hgapField = new TextField("5");
+		hgapField.textProperty().addListener((s,p,c) -> updateHGap(c));
+		
+		TextField vgapField = new TextField("5");
+		vgapField.textProperty().addListener((s,p,c) -> updateVGap(c));
+		
+		CPane cp = new CPane();
+		cp.setGaps(10, 7);
+		cp.addColumns
+		(
+			CPane.PREF,
+			CPane.FILL
+		);
+		cp.addRows
+		(
+			CPane.PREF,
+			CPane.PREF
+		);
+		cp.add(0, 0, FX.label("Horizontal gap:"));
+		cp.add(1, 0, hgapField);
+		cp.add(0, 1, FX.label("Vertical gap:"));
+		cp.add(1, 1, vgapField);
+
+		p.setBottom(cp);
+		
 		setContent(p);
+	}
+	
+	
+	protected void updateHGap(String s)
+	{
+		int v = Parsers.parseInt(s, -1);
+		if(v >= 0)
+		{
+			p.setHGap(v);
+		}
+	}
+	
+	
+	protected void updateVGap(String s)
+	{
+		int v = Parsers.parseInt(s, -1);
+		if(v >= 0)
+		{
+			//p.setVGap(v);
+			
+			// alternative
+			String st = "-ag-vgap: " + v;
+			p.setStyle(st);
+		}
 	}
 	
 	

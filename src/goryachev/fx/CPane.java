@@ -3,6 +3,12 @@ package goryachev.fx;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.Log;
+import java.util.List;
+import javafx.beans.value.ObservableValue;
+import javafx.css.CssMetaData;
+import javafx.css.Styleable;
+import javafx.css.StyleableProperty;
+import javafx.css.StyleablePropertyFactory;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -26,12 +32,13 @@ public class CPane
 	public static final CC RIGHT = new CC(true);
 	public static final CC CENTER = new CC(true);
 	
-	protected int hgap;
-	protected int vgap;
 	protected CList<Entry> entries = new CList<>();
 	protected CList<LC> cols = new CList<>();
 	protected CList<LC> rows = new CList<>();
-
+	private static final StyleablePropertyFactory<CPane> SPF = new StyleablePropertyFactory<>(Pane.getClassCssMetaData());
+	private final StyleableProperty<Number> hgap = SPF.createStyleableNumberProperty(this, "hgap", "-ag-hgap", s -> s.hgap);
+	private final StyleableProperty<Number> vgap = SPF.createStyleableNumberProperty(this, "vgap", "-ag-vgap", s -> s.vgap);
+	
 
 	public CPane()
 	{
@@ -41,17 +48,55 @@ public class CPane
 	/** sets horizontal gap for the table layout portion of the layout */
 	public void setHGap(int gap)
 	{
-		hgap = gap;
+		hgap.setValue(gap);
 	}
 
+
+	/** returns horizontal gap */
+	public int getHGap()
+	{
+		return hgap.getValue().intValue();
+	}
+	
+	
+	public ObservableValue<Number> hgapProperty()
+	{
+		return (ObservableValue<Number>)hgap;
+	}
+	
 
 	/** sets vertical gap for the table layout portion of the layout */
 	public void setVGap(int gap)
 	{
-		vgap = gap;
+		vgap.setValue(gap);
 	}
 
+
+	/** returns vertical gap */
+	public int getVGap()
+	{
+		return vgap.getValue().intValue();
+	}
 	
+	
+	public ObservableValue<Number> vgapProperty()
+	{
+		return (ObservableValue<Number>)vgap;
+	}
+
+
+	public static List<CssMetaData<? extends Styleable,?>> getClassCssMetaData()
+	{
+		return SPF.getCssMetaData();
+	}
+
+
+	public List<CssMetaData<? extends Styleable,?>> getCssMetaData()
+	{
+		return SPF.getCssMetaData();
+	}
+
+
 	/** sets horizontal and vertical gaps. */
 	public void setGaps(int horizontal, int vertical)
 	{
@@ -67,18 +112,6 @@ public class CPane
 		setVGap(gaps);
 	}
 	
-
-	public int getHGap()
-	{
-		return hgap;
-	}
-
-
-	public int getVGap()
-	{
-		return vgap;
-	}
-
 	
 	/** a shortcut to set padding on the panel */
 	public void setPadding(double gap)
@@ -982,13 +1015,13 @@ public class CPane
 			if(topComp != null)
 			{
 				int d = FX.ceil(sizeHeight(pref, topComp));
-				h += (d + vgap);
+				h += (d + getVGap());
 			}
 			
 			if(bottomComp != null)
 			{
 				int d = FX.ceil(sizeHeight(pref, bottomComp));
-				h += (d + vgap);
+				h += (d + getVGap());
 			}
 
 			h += (mtop + mbottom);
@@ -1004,13 +1037,13 @@ public class CPane
 			if((c = ltr ? leftComp : rightComp) != null)
 			{
 				int d = FX.ceil(sizeWidth(pref, c));
-				w += (d + hgap);
+				w += (d + getHGap());
 			}
 			
 			if((c = ltr ? rightComp : leftComp) != null)
 			{
 				int d = FX.ceil(sizeWidth(pref, c));
-				w += (d + hgap);
+				w += (d + getHGap());
 			}
 			
 			if(centerComp != null)
@@ -1038,7 +1071,7 @@ public class CPane
 		
 		protected Axis createHorAxis()
 		{
-			return new Axis(cols, hgap)
+			return new Axis(cols, getHGap())
 			{
 				public int start(CC cc) { return cc.col; }
 				public int end(CC cc) { return cc.col2; }
@@ -1064,7 +1097,7 @@ public class CPane
 		
 		protected Axis createVerAxis()
 		{
-			return new Axis(rows, vgap)
+			return new Axis(rows, getVGap())
 			{
 				public int start(CC cc) { return cc.row; }
 				public int end(CC cc) { return cc.row2; }
@@ -1119,7 +1152,7 @@ public class CPane
 				c = topComp;
 				int h = FX.ceil(c.prefHeight(right - left));
 				setBounds(c, left, top, right - left, h);
-				top += (h + vgap);
+				top += (h + getVGap());
 			}
 			
 			if(bottomComp != null)
@@ -1127,21 +1160,21 @@ public class CPane
 				c = bottomComp;
 				int h = FX.ceil(c.prefHeight(right - left));
 				setBounds(c, left, bottom - h, right - left, h);
-				bottom -= (h + vgap);
+				bottom -= (h + getVGap());
 			}
 			
 			if((c = (ltr ? rightComp : leftComp)) != null)
 			{
 				int w = FX.ceil(c.prefWidth(bottom - top));
 				setBounds(c, right - w, top, w, bottom - top);
-				right -= (w + hgap);
+				right -= (w + getHGap());
 			}
 			
 			if((c = (ltr ? leftComp : rightComp)) != null)
 			{
 				int w = FX.ceil(c.prefWidth(bottom - top));
 				setBounds(c, left, top, w, bottom - top);
-				left += (w + hgap);
+				left += (w + getHGap());
 			}
 
 			if(centerComp != null)
@@ -1200,8 +1233,8 @@ public class CPane
 		
 		public void sizeComponents(Axis hor, Axis ver)
 		{
-			hor.computePositions(tableLeft, hgap);
-			ver.computePositions(tableTop, vgap);
+			hor.computePositions(tableLeft, getHGap());
+			ver.computePositions(tableTop, getVGap());
 			
 			int xr = ltr ? 0 : tableRight + mright;
 			
@@ -1214,10 +1247,10 @@ public class CPane
 				if(!cc.border)
 				{
 					int x = hor.pos[cc.col];
-					int w = hor.pos[cc.col2 + 1] - x - hgap;
+					int w = hor.pos[cc.col2 + 1] - x - getHGap();
 	
 					int y = ver.pos[cc.row];
-					int h = ver.pos[cc.row2 + 1] - y - vgap;
+					int h = ver.pos[cc.row2 + 1] - y - getVGap();
 
 					if(ltr)
 					{
