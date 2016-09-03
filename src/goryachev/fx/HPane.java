@@ -310,6 +310,8 @@ public class HPane
 			}
 		}
 		
+		
+		// FIX minimum size for percent and fills? or clip?
 		protected void adjust(int delta)
 		{
 			// space available for FILL/PERCENT columns
