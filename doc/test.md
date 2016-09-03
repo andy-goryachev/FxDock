@@ -7,3 +7,5 @@
 [![Donate](https://github.com/andy-goryachev/FxDock/blob/master/doc/test.svg)](https://www.paypal.com/)
 
 [![Donate](https://raw.githubusercontent.com/andy-goryachev/FxDock/master/doc/test.svg)](https://www.paypal.com/)
+
+[![Donate](https://cdn.rawgit.com/andy-goryachev/FxDock/master/doc/test.svg)](https://www.paypal.com/)
