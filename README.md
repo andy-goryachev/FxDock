@@ -10,6 +10,8 @@ This project and its source code is licensed under the [GNU General Public Licen
 
 Please [contact me](http://goryachev.com/contact.html) to acquire this library under a business-friendly two-clause BSD license.
 
+[![Donate](https://cdn.rawgit.com/andy-goryachev/FxDock/master/doc/test.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q7JAWD7FK99QC)
+
 ## Try It
 
 Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/blob/master/lib/FxDock/FxDockDemo.jar)
