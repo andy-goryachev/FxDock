@@ -152,67 +152,134 @@ public class NaturalSort
 	}
 	
 	
+	private static int charCount(int c)
+	{
+		if(c < 0)
+		{
+			return 0;
+		}
+		return Character.charCount(c);
+	}
+	
+	
+	private static int skipWhiteSpace(String s, int ix)
+	{
+		for(;;)
+		{
+			int c = charAt(s, ix);
+			if(c < 0)
+			{
+				return ix;
+			}
+			else if(CKit.isBlank(c))
+			{
+				ix += Character.charCount(c);
+				continue;
+			}
+			else
+			{
+				return ix;
+			}
+		}
+	}
+	
+	
+	private static int skipPunctuation(String s, int ix)
+	{
+		for(;;)
+		{
+			int c = charAt(s, ix);
+			if(c < 0)
+			{
+				return ix;
+			}
+			else if(CKit.isBlank(c))
+			{
+				return ix;
+			}
+			else if(Character.isLetterOrDigit(c))
+			{
+				return ix;
+			}
+			else
+			{
+				ix += Character.charCount(c);
+				continue;
+			}
+		}
+	}
+	
+	
 	/** compares two strings looking at text and numbers, ignoring whitespace and punctuation. */
 	private static int compareTextAndNumbers(String a, String b)
 	{
 		int ixa = 0;
 		int ixb = 0;
-		
+				
 		for(;;)
 		{
+			int starta = ixa;
+			int startb = ixb;
+
 			int ca;
+			for(;;)
+			{
+				ca = charAt(a, ixa);
+				ixa += charCount(ca);
+				
+				if(ca >= 0)
+				{
+					if(CKit.isBlank(ca))
+					{
+						ca = ' ';
+						ixa = skipWhiteSpace(a, ixa);
+					}
+					else if(!Character.isLetterOrDigit(ca))
+					{
+						// punctuation
+						ixa = skipPunctuation(a, ixa);
+						// loop again because it might be a space
+						continue;
+					}
+				}
+				
+				break;
+			}
+			
 			int cb;
-			
-			boolean skipa = false;
-			boolean skipb = false;
-			
-			while(isNotTextOrNumber(ca = charAt(a, ixa)))
+			for(;;)
 			{
-				skipa = true;
-				ixa += Character.charCount(ca);
-			}
-			
-			while(isNotTextOrNumber(cb = charAt(b, ixb)))
-			{
-				skipb = true;
-				ixb += Character.charCount(cb);
-			}
-			
-			if(skipa != skipb)
-			{
-				if(skipa)
+				cb = charAt(b, ixb);
+				ixb += charCount(cb);
+				
+				if(cb >= 0)
 				{
-					if(cb < 0)
+					if(CKit.isBlank(cb))
 					{
-						return 1;
+						cb = ' ';
+						ixb = skipWhiteSpace(b, ixb);
 					}
-					else
+					else if(!Character.isLetterOrDigit(cb))
 					{
-						return -1;
+						// punctuation
+						ixb = skipPunctuation(b, ixb);
+						// loop again because it might be a space
+						continue; // FIX do not loop. must ignore whitespace
 					}
 				}
-				else if(skipb)
-				{
-					if(ca < 0)
-					{
-						return -1;
-					}
-					else
-					{
-						return 1;
-					}
-				}
+				
+				break;
 			}
 			
 			if(Character.isDigit(ca) && Character.isDigit(cb))
 			{
-				String na = number(a, ixa);
-				String nb = number(b, ixb);
+				String na = number(a, starta);
+				String nb = number(b, startb);
 				int d = compareNumbers(na, nb);
 				if(d == 0)
 				{
-					ixa += na.length();
-					ixb += nb.length();
+					ixa = starta + na.length();
+					ixb = startb + nb.length();
 				}
 				else
 				{
@@ -227,8 +294,6 @@ public class NaturalSort
 				}
 				else
 				{
-					ixa += Character.charCount(ca);
-					ixb += Character.charCount(cb);
 					continue;
 				}
 			}

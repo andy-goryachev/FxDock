@@ -883,7 +883,7 @@ public class TextTools
 	}
 
 
-	protected static int indexOfIgnoreCase(String text, String pattern, int fromIndex)
+	public static int indexOfIgnoreCase(String text, String pattern, int fromIndex)
 	{
 		int textLen = text.length();
 		int patternLen = pattern.length();
