@@ -1039,66 +1039,6 @@ public final class CKit
 		return (a == null ? null : a.toString());
 	}
 
-
-	public static int hashCode(Object ... xs)
-	{
-		return hashCodeArray(xs);
-	}
-	
-	
-	public static int hashCode(Object a, Object b)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b);
-	}
-	
-	
-	public static int hashCode(Object a, Object b, Object c)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b) ^ hashCodeObject(c);
-	}
-
-	
-	public static int hashCode(Object a, Object b, Object c, Object d)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b) ^ hashCodeObject(c) ^ hashCodeObject(d);
-	}
-	
-	
-	public static int hashCode(Object a, Object b, Object c, Object d, Object e)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b) ^ hashCodeObject(c) ^ hashCodeObject(d) ^ hashCodeObject(e);
-	}
-	
-	
-	public static int hashCode(Object a, Object b, Object c, Object d, Object e, Object f)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b) ^ hashCodeObject(c) ^ hashCodeObject(d) ^ hashCodeObject(e) ^ hashCodeObject(f);
-	}
-	
-	
-	public static int hashCodeArray(Object[] xs)
-	{
-		if(xs == null)
-		{
-			return 0xABBAABBA;
-		}
-		else
-		{
-			int h = 0;
-			for(Object x: xs)
-			{
-				h ^= hashCodeObject(x);
-			}
-			return h;
-		}
-	}
-	
-	
-	public static int hashCodeObject(Object x)
-	{
-		return x == null ? 0xBADBEEF : x.hashCode();
-	}
-	
 	
 	public static String toString(byte[] bytes, String encoding) throws Exception
 	{
@@ -1272,6 +1212,11 @@ public final class CKit
 	/** copies input stream into the output stream using 64K buffer.  returns the number of bytes copied.  supports cancellation */
 	public static long copy(InputStream in, OutputStream out) throws Exception
 	{
+		if(in == null)
+		{
+			return 0;
+		}
+		
 		byte[] buf = new byte[65536];
 		long count = 0;
 		for(;;)

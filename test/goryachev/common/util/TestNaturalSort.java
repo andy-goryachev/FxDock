@@ -17,8 +17,18 @@ public class TestNaturalSort
 	}
 	
 	
-	// https://blog.codinghorror.com/sorting-for-humans-natural-sort-order/
 	@Test
+	public void testSingle()
+	{
+//		t("51 Clasteron", "51B Clasteron", -1);
+//		t("20X R", "200X R", -1);
+//		t("z11.doc", "z20.doc", -1);
+		t("Ask", "$ Change", -1);
+	}
+	
+
+	// https://blog.codinghorror.com/sorting-for-humans-natural-sort-order/
+//	@Test
 	public void testCodingHorror()
 	{
 		ts(new String[]
@@ -50,15 +60,8 @@ public class TestNaturalSort
 	}
 	
 	
-	@Test
-	public void testSingle()
-	{
-//		t("51 Clasteron", "51B Clasteron", -1);
-	}
-	
-	
 	// http://www.davekoelle.com/alphanum.html
-	@Test
+//	@Test
 	public void testAlphaNum()
 	{
 		ts(new String[]
@@ -117,11 +120,13 @@ public class TestNaturalSort
 	}
 	
 	
-	@Test
+//	@Test
 	public void testFin()
 	{
 		ts(new String[]
 		{
+			"Ask",
+			"Bid",
 	        "$ Change",
 	        "$ change",
 	        " % Change",
