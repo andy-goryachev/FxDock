@@ -1034,15 +1034,29 @@ public final class CKit
 	}
 
 
+	@Deprecated // FIX remove
 	public static String toString(Object a)
 	{
 		return (a == null ? null : a.toString());
 	}
 
 	
+	@Deprecated // FIX use Charset
 	public static String toString(byte[] bytes, String encoding) throws Exception
 	{
 		return (encoding == null ? new String(bytes) : new String(bytes, encoding));
+	}
+	
+	
+	/** converts byte array to a String assuming UTF-8 encoding */
+	public static String toString(byte[] b)
+	{
+		if(b == null)
+		{
+			return null;
+		}
+		
+		return new String(b, CHARSET_UTF8);
 	}
 
 
@@ -1466,7 +1480,7 @@ public final class CKit
 		int read = 0;
 		byte[] buf = new byte[Math.min(max, 65536)];
 		ByteArrayOutputStream ba = new ByteArrayOutputStream(65536);
-		for(;;)
+		while(read < max)
 		{
 			int rd = in.read(buf);
 			if(rd < 0)
