@@ -46,6 +46,19 @@ public class CSet<T>
 			}
 		}
 	}
+	
+	
+	public void removeAll(T[] items)
+	{
+		if(items != null)
+		{
+			int sz = items.length;
+			for(int i=0; i<sz; i++)
+			{
+				remove(items[i]);
+			}
+		}
+	}
 
 
 	public boolean addAll(Collection<? extends T> items)
