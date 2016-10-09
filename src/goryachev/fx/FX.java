@@ -101,6 +101,12 @@ public final class FX
 	}
 	
 	
+	public static CAction exitAction()
+	{
+		return windowsFx.exitAction();
+	}
+	
+	
 	/** creates a label */
 	public static Label label(Object ... attrs)
 	{

@@ -44,16 +44,16 @@ public class FxDump
 	
 	
 	/** a shortcut to attach a default FxDump */
-	public static void a(Node n)
+	public static void attach(Node n)
 	{
-		new FxDump().attach(n);
+		new FxDump().attachNode(n);
 	}
 	
 	
 	/** a shortcut to attach a default FxDump */
-	public static void a(Window n)
+	public static void attach(Window n)
 	{
-		new FxDump().attach(n);
+		new FxDump().attachWindow(n);
 	}
 	
 	
@@ -64,13 +64,13 @@ public class FxDump
 	}
 	
 	
-	public void attach(Window s)
+	public void attachWindow(Window s)
 	{
-		attach(s.getScene().getRoot());
+		attachNode(s.getScene().getRoot());
 	}
 	
 	
-	public void attach(Node n)
+	public void attachNode(Node n)
 	{
 		// I don't know how to listen to global mouse or key events in FX...
 		n.getScene().addEventFilter(KeyEvent.KEY_PRESSED, (ev) -> handleKeyPress(ev));

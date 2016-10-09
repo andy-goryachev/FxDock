@@ -58,4 +58,10 @@ public class CancellableThread
 			throw new CancelledException();
 		}
 	}
+	
+	
+	public static boolean isCurrentThreadCancelled()
+	{
+		return ((CancellableThread)Thread.currentThread()).isCancelled();
+	}
 }

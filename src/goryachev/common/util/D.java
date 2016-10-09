@@ -4,12 +4,20 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 /** debug printing */
 // TODO move conversion to Dump
 public class D
 {
+	private static Executor exec;
+	
+	
 	// convert milliseconds to MM:SS or HHH:MM:SS String
 	public static String msToString(long ms)
 	{
@@ -319,14 +327,6 @@ public class D
 	}
 	
 	
-	private static void log(String msg, int depth)
-	{
-		StackTraceElement t = new Throwable().getStackTrace()[depth];
-		String className = getClassName(t);
-		System.out.println(className + "." + t.getMethodName() + " " + msg);
-	}
-
-	
 	public static void dump(byte[] b)
 	{
 		if(CKit.isEclipse())
@@ -364,55 +364,6 @@ public class D
 		if(CKit.isEclipse())
 		{
 			print(Dump.describe(x));
-		}
-	}
-	
-	
-	// TODO what is it?
-	public static void where(Object ... ss)
-	{
-		if(CKit.isEclipse())
-		{
-			StackTraceElement[] tr = new Throwable().getStackTrace();
-			int start = 1;
-			int max = 5;
-			boolean space = false;
-			
-			SB sb = new SB();
-			if(ss.length > 0)
-			{
-				space = true;
-				
-				for(Object x: ss)
-				{
-					sb.a(String.valueOf(x));
-					sb.a(' ');
-				}
-				
-				sb.nl();
-			}
-			
-			for(int i=0; i<max; i++)
-			{
-				int ix = start + i;
-				if(ix >= tr.length)
-				{
-					break;
-				}
-				
-				StackTraceElement t = tr[ix];
-				if(space)
-				{
-					sb.a("  ");
-				}
-				else
-				{
-					space = true;
-				}
-				
-				sb.a(getClassName(t) + "." + t.getMethodName() + " (" + t.getFileName() + ":" + t.getLineNumber() + ")\n");
-			}
-			System.out.println(sb);
 		}
 	}
 	
@@ -468,5 +419,47 @@ public class D
 		{
 			throw new RuntimeException();
 		}
+	}
+
+
+	private static Executor createExecutor()
+	{
+		ThreadPoolExecutor ex = new ThreadPoolExecutor
+		(
+			1, 
+			1, 
+			0L, 
+			TimeUnit.MILLISECONDS, 
+			new ArrayBlockingQueue<Runnable>(65536),
+			new ThreadFactory()
+			{
+				public Thread newThread(Runnable r)
+				{
+					return new Thread(r, "debug printout");
+				}
+			}
+		);
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			public void run()
+			{
+				ex.shutdown();
+			}
+		});
+		return ex;
+	}
+
+
+	private static void log(String msg, int depth)
+	{
+		StackTraceElement t = new Throwable().getStackTrace()[depth];
+		String className = getClassName(t);
+		String s = className + "." + t.getMethodName() + " " + msg;
+		
+		if(exec == null)
+		{
+			exec = createExecutor();
+		}
+		exec.execute(() -> System.out.println(s));
 	}
 }

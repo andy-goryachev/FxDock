@@ -4,6 +4,7 @@ import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.WeakList;
+import goryachev.fx.CAction;
 import goryachev.fx.FxWindow;
 import goryachev.fx.OnWindowClosing;
 import java.util.List;
@@ -94,6 +95,12 @@ public class WindowsFx
 		{
 			exitPrivate();
 		}
+	}
+	
+	
+	public CAction exitAction()
+	{
+		return new CAction(this::exit);
 	}
 	
 	

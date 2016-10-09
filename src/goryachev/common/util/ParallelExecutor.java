@@ -27,7 +27,6 @@ public class ParallelExecutor
 		this.name = name;
 		
 		exec = new ThreadPoolExecutor(0, Integer.MAX_VALUE, keepAliveTimeSeconds, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), this);
-
 		exec.allowCoreThreadTimeOut(true);
 	}
 	

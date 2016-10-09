@@ -28,10 +28,9 @@
 			target="1.8"
 			includeantruntime="false"
 		>
-			
-			<compilerarg value="-Xlint:unchecked"/>
+			<compilerarg value="-Xlint:none"/>
 		
-			<classpath></classpath>
+			<classpath refid="libs" />
 		</javac>
 	</target>
 	

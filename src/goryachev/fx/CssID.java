@@ -3,7 +3,7 @@ package goryachev.fx;
 
 
 /**
- * CssId.
+ * Css ID
  */
 public class CssID
 {

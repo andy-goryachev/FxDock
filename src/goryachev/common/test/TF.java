@@ -85,6 +85,13 @@ public class TF
 	}
 	
 	
+	/** adds stack trace to the test case printout */
+	public static void print(Throwable e)
+	{
+		TestCase.print(CKit.stackTrace(e));
+	}
+	
+	
 	/** list elements of an array, map, collection, iterator, iterable. */
 	public static void list(Object x)
 	{

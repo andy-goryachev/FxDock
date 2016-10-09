@@ -15,11 +15,15 @@ import javafx.application.Platform;
 
 
 /**
- * CssLoader.
+ * Css Loader.
  */
 public class CssLoader
 {
-	public static final String CONTINUOUS_REFRESH_PROPERTY = "CssLoader.ContinuousRefresh";
+	/** -Dcss.continuous.refresh=true forces periodic check for css changes */ 
+	public static final String CONTINUOUS_REFRESH_PROPERTY = "css.continuous.refresh";
+	/** -Dcss.dump=true results in CSS being dumped to stderr */
+	public static final String DUMP_CSS_PROPERTY = "css.dump";
+	
 	public static final String PREFIX = "embeddedcss";
 	private static CssLoader instance;
 	private String url;
@@ -141,9 +145,16 @@ public class CssLoader
 				}
 				else
 				{
+					// stderr is ok here
 					System.err.println("reloading css");
 					
 					Platform.runLater(() -> update(old, url));
+				}
+				
+				if(Boolean.getBoolean(CONTINUOUS_REFRESH_PROPERTY))
+				{
+					// stderr is ok here
+					System.err.println(css);
 				}
 			}
 		}

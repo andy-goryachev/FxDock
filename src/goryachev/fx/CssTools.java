@@ -1,10 +1,11 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.paint.Color;
 
 
 /**
- * CssTools.
+ * Css Tools.
  */
 public class CssTools
 {
@@ -72,5 +73,23 @@ public class CssTools
 		{
 			return x.toString();
 		}
+	}
+	
+	
+	public static String toValue(double x)
+	{
+		return String.valueOf(x);
+	}
+	
+	
+	public static String toValue(ScrollBarPolicy x)
+	{
+		switch(x)
+		{
+		case ALWAYS: return "always";
+		case AS_NEEDED: return "as-needed";
+		case NEVER: return "never";
+		}
+		throw new Error("?" + x);
 	}
 }

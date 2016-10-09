@@ -429,7 +429,7 @@ public final class CKit
 		}
 		finally
 		{
-			CKit.close(in);
+			close(in);
 		}
 	}
 	
@@ -443,7 +443,7 @@ public final class CKit
 		}
 		finally
 		{
-			CKit.close(is);
+			close(is);
 		}
 	}
 	
@@ -505,7 +505,7 @@ public final class CKit
 		}
 		finally
 		{
-			CKit.close(is);
+			close(is);
 		}
 	}
 	
@@ -545,7 +545,7 @@ public final class CKit
 		}
 		finally
 		{
-			CKit.close(in);
+			close(in);
 		}
 	}
 
@@ -818,7 +818,7 @@ public final class CKit
 			for(int i=0; i<sz; i++)
 			{
 				char c = s.charAt(i);
-				if(CKit.isBlank(c))
+				if(isBlank(c))
 				{
 					if(!white)
 					{
@@ -1033,20 +1033,6 @@ public final class CKit
 		}
 	}
 
-
-	@Deprecated // FIX remove
-	public static String toString(Object a)
-	{
-		return (a == null ? null : a.toString());
-	}
-
-	
-	@Deprecated // FIX use Charset
-	public static String toString(byte[] bytes, String encoding) throws Exception
-	{
-		return (encoding == null ? new String(bytes) : new String(bytes, encoding));
-	}
-	
 	
 	/** converts byte array to a String assuming UTF-8 encoding */
 	public static String toString(byte[] b)
@@ -1235,7 +1221,7 @@ public final class CKit
 		long count = 0;
 		for(;;)
 		{
-			CKit.checkCancelled();
+			checkCancelled();
 			
 			int rd = in.read(buf);
 			if(rd < 0)
@@ -1632,7 +1618,7 @@ public final class CKit
 	public static void append(File f, String s) throws Exception
 	{
 		FileTools.ensureParentFolder(f);
-		CWriter wr = new CWriter(new FileOutputStream(f, true), CKit.CHARSET_UTF8);
+		CWriter wr = new CWriter(new FileOutputStream(f, true), CHARSET_UTF8);
 		try
 		{
 			if(s != null)
@@ -1800,34 +1786,34 @@ public final class CKit
 		boolean force = false;
 		SB sb = new SB();
 
-		int d = (int)(t / CKit.MS_IN_A_DAY);
+		int d = (int)(t / MS_IN_A_DAY);
 		if(d != 0)
 		{
 			sb.append(d);
 			sb.append(':');
-			t %= CKit.MS_IN_A_DAY;
+			t %= MS_IN_A_DAY;
 			force = true;
 		}
 
-		int h = (int)(t / CKit.MS_IN_AN_HOUR);
+		int h = (int)(t / MS_IN_AN_HOUR);
 		if(force || (h != 0))
 		{
 			append(sb, h, 2);
 			sb.append(':');
-			t %= CKit.MS_IN_AN_HOUR;
+			t %= MS_IN_AN_HOUR;
 			force = true;
 		}
 
-		int m = (int)(t / CKit.MS_IN_A_MINUTE);
+		int m = (int)(t / MS_IN_A_MINUTE);
 		if(force || (m != 0))
 		{
 			append(sb, m, 2);
 			sb.append(':');
-			t %= CKit.MS_IN_A_MINUTE;
+			t %= MS_IN_A_MINUTE;
 			force = true;
 		}
 
-		int s = (int)(t / CKit.MS_IN_A_SECOND);
+		int s = (int)(t / MS_IN_A_SECOND);
 		if(force)
 		{
 			append(sb, s, 2);
@@ -1838,7 +1824,7 @@ public final class CKit
 		}
 		sb.append('.');
 
-		int ms = (int)(t % CKit.MS_IN_A_SECOND);
+		int ms = (int)(t % MS_IN_A_SECOND);
 		append(sb, ms, 3);
 
 		return sb.toString();
@@ -1885,7 +1871,7 @@ public final class CKit
 			}
 			finally
 			{
-				CKit.close(in);
+				close(in);
 			}
 		}
 		catch(Exception ignore)
