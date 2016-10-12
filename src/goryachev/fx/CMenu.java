@@ -54,4 +54,11 @@ public class CMenu
 		m.setDisable(true);
 		return add(m);
 	}
+	
+	
+	/** remove all menu items */
+	public void clear()
+	{
+		getItems().clear();
+	}
 }

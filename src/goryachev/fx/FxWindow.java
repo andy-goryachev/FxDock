@@ -1,10 +1,14 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.fx.internal.FxSchema;
 import goryachev.fx.internal.FxWindowBoundsMonitor;
+import goryachev.fx.internal.LocalBindings;
+import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 
 /**
@@ -27,6 +31,7 @@ public class FxWindow
 	private final String name;
 	private final BorderPane pane;
 	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
+	private LocalBindings bindings;
 	
 	
 	public FxWindow(String name)
@@ -137,6 +142,59 @@ public class FxWindow
 		if(!ch.isCancelled())
 		{
 			close();
+		}
+	}
+	
+	
+	/** bind a property to be saved in window-specific settings using the specified subkey */
+	public <T> void bind(String subKey, Property<T> p)
+	{
+		bindings().add(subKey, p, null);
+	}
+	
+	
+	/** bind a property to be saved in window-specific settings using the specified subkey */
+	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
+	{
+		bindings().add(subKey, p, c);
+	}
+	
+	
+	/** bind a property to be saved in window-specific settings using the specified subkey */
+	public <T> void bind(String subKey, Property<T> p, SSConverter<T> c)
+	{
+		bindings().add(subKey, c, p);
+	}
+	
+	
+	protected LocalBindings bindings()
+	{
+		if(bindings == null)
+		{
+			bindings = new LocalBindings();
+		}
+		return bindings;
+	}
+	
+
+	/** invoked by the framework after the window and its content is created. */
+	public void loadSettings(String prefix)
+	{
+		if(bindings != null)
+		{
+			String k = prefix + FxSchema.SFX_BINDINGS;
+			bindings.loadValues(k);
+		}
+	}
+
+
+	/** invoked by the framework as necessary to store the window-specific settings */
+	public void storeSettings(String prefix)
+	{
+		if(bindings != null)
+		{
+			String k = prefix + FxSchema.SFX_BINDINGS;
+			bindings.saveValues(k);
 		}
 	}
 }

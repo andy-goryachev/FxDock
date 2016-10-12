@@ -174,7 +174,7 @@ public abstract class FxDockWindow
 
 
 	/** invoked by the framework as necessary to store the window-specific settings */
-	public void saveSettings(String prefix)
+	public void storeSettings(String prefix)
 	{
 		if(bindings != null)
 		{

@@ -108,7 +108,7 @@ public class FrameworkBase
 	{
 		String prefix = FxDockSchema.windowID(ix);
 		FxDockSchema.saveLayout(prefix, w.getContent());
-		w.saveSettings(prefix);
+		w.storeSettings(prefix);
 		FxDockSchema.storeWindow(prefix, w);
 	}
 	
