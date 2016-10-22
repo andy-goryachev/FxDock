@@ -1,11 +1,12 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 
 /**
- * Application-wide Settings.
+ * Application-wide settings.
  */
 public class GlobalSettings
 {
@@ -107,5 +108,51 @@ public class GlobalSettings
 	public static void setStream(String key, SStream s)
 	{
 		provider().setStream(key, s);
+	}
+	
+	
+	public static File getFile(String key)
+	{
+		String s = getString(key);
+		if(s != null)
+		{
+			return new File(s);
+		}
+		return null;
+	}
+	
+	
+	public static void setFile(String key, File f)
+	{
+		String s = (f == null ? null : f.getAbsolutePath());
+		setString(key, s);
+	}
+	
+	
+	public static List<File> getFiles(String key)
+	{
+		SStream ss = GlobalSettings.getStream(key);
+		int sz = ss.size();
+		CList<File> list = new CList<>(sz);
+		for(int i=0; i<sz; i++)
+		{
+			String s = ss.nextString();
+			list.add(s == null ? null : new File(s));
+		}
+		return list;
+	}
+	
+	
+	public static void setFiles(String key, Collection<File> files)
+	{
+		SStream ss = new SStream();
+		if(files != null)
+		{
+			for(File f: files)
+			{
+				ss.add(f);
+			}
+		}
+		setStream(key, ss);
 	}
 }

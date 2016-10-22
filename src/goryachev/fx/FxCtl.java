@@ -7,6 +7,7 @@ package goryachev.fx;
  */
 public enum FxCtl
 {
+	BOLD,
 	EDITABLE,
 	FOCUSABLE,
 	FORCE_MIN_HEIGHT,

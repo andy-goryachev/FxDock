@@ -4,6 +4,8 @@ import goryachev.common.util.GlobalSettings;
 import goryachev.fx.internal.WindowsFx;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -26,6 +28,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -130,6 +133,9 @@ public final class FX
 			{
 				switch((FxCtl)a)
 				{
+				case BOLD:
+					n.getStyleClass().add(CommonStyles.BOLD.getName());
+					break;
 				case FOCUSABLE:
 					n.setFocusTraversable(true);
 					break;
@@ -179,6 +185,60 @@ public final class FX
 	}
 	
 	
+	/** creates a text segment */
+	public static Text text(Object ... attrs)
+	{
+		Text n = new Text();
+		
+		for(Object a: attrs)
+		{
+			if(a == null)
+			{
+				// ignore
+			}
+			else if(a instanceof CssStyle)
+			{
+				n.getStyleClass().add(((CssStyle)a).getName());
+			}
+			else if(a instanceof CssID)
+			{
+				n.setId(((CssID)a).getID());
+			}
+			else if(a instanceof FxCtl)
+			{
+				switch((FxCtl)a)
+				{
+				case BOLD:
+					n.getStyleClass().add(CommonStyles.BOLD.getName());
+					break;
+				case FOCUSABLE:
+					n.setFocusTraversable(true);
+					break;
+				case NON_FOCUSABLE:
+					n.setFocusTraversable(false);
+					break;
+				default:
+					throw new Error("?" + a);
+				}
+			}
+			else if(a instanceof String)
+			{
+				n.setText((String)a);
+			}
+			else if(a instanceof TextAlignment)
+			{
+				n.setTextAlignment((TextAlignment)a);
+			}
+			else
+			{
+				throw new Error("?" + a);
+			}			
+		}
+		
+		return n;
+	}
+	
+	
 	/** apply styles to a Node */
 	public static void style(Node n, Object ... attrs)
 	{
@@ -202,6 +262,9 @@ public final class FX
 				{
 					switch((FxCtl)a)
 					{
+					case BOLD:
+						n.getStyleClass().add(CommonStyles.BOLD.getName());
+						break;
 					case EDITABLE:
 						((TextInputControl)n).setEditable(true);
 						break;
@@ -426,6 +489,13 @@ public final class FX
 	}
 	
 	
+	/** bind an object with settings to be saved as part of FxWindow settings using the specified subkey */
+	public static <T> void bind(Node n, String subKey, HasSettings x)
+	{
+		windowsFx.bindings(n, true).add(subKey, x);
+	}
+	
+	
 	/** bind a property to be saved as part of FxWindow settings using the specified subkey */
 	public static <T> void bind(Node n, String subKey, Property<T> p, StringConverter<T> c)
 	{
@@ -587,6 +657,29 @@ public final class FX
 		else
 		{
 			n.setTooltip(new Tooltip(tooltip.toString()));
+		}
+	}
+	
+	
+	public static void storeSettings()
+	{
+		windowsFx.storeSettings();
+	}
+	
+	
+	public static ObservableValue toObservableValue(Object x)
+	{
+		if(x == null)
+		{
+			return null;
+		}
+		else if(x instanceof ObservableValue)
+		{
+			return (ObservableValue)x;
+		}
+		else
+		{
+			return new SimpleObjectProperty(x);
 		}
 	}
 }

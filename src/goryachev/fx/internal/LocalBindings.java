@@ -4,6 +4,7 @@ import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
 import goryachev.fx.Converters;
+import goryachev.fx.HasSettings;
 import goryachev.fx.SSConverter;
 import javafx.beans.property.Property;
 import javafx.util.StringConverter;
@@ -71,6 +72,23 @@ public class LocalBindings
 					T v = c.fromStream(s);
 					p.setValue(v);
 				}
+			}
+		});
+	}
+	
+	
+	public <T> void add(String subKey, HasSettings x)
+	{
+		entries.put(subKey, new Entry()
+		{
+			public void saveValue(String prefix)
+			{
+				x.storeSettings(prefix + "." + subKey);
+			}
+
+			public void loadValue(String prefix)
+			{
+				x.restoreSettings(prefix + "." + subKey);
 			}
 		});
 	}

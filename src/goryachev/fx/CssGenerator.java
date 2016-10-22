@@ -224,6 +224,8 @@ public abstract class CssGenerator
 	public void fitToHeight(boolean x) { prop("-fx-fit-to-height", x); }
 	public void fitToWidth(boolean x) { prop("-fx-fit-to-width", x); }
 	public void fontSize(Object x) { prop("-fx-font-size", x); }
+	/** [ normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ] */
+	public void fontWeight(Object x) { prop("-fx-font-weight", x); }
 	// H
 	public void hBarPolicy(ScrollPane.ScrollBarPolicy x) { prop("-fx-hbar-policy", CssTools.toValue(x)); }
 	// M

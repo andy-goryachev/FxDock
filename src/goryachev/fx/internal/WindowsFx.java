@@ -84,17 +84,23 @@ public class WindowsFx
 	
 	public void exit()
 	{
-		for(FxWindow w: getWindows())
-		{
-			storeWindow(w);
-		}
-		
-		GlobalSettings.save();
+		storeSettings();
 		
 		if(confirmExit())
 		{
 			exitPrivate();
 		}
+	}
+	
+	
+	public void storeSettings()
+	{
+		for(FxWindow w: getWindows())
+		{
+			storeWindow(w);
+		}
+		
+		GlobalSettings.save();		
 	}
 	
 	

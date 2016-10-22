@@ -153,6 +153,13 @@ public class FxWindow
 	}
 	
 	
+	/** bind an object with settings to be saved in window-specific settings using the specified subkey */
+	public <T> void bind(String subKey, HasSettings x)
+	{
+		bindings().add(subKey, x);
+	}
+	
+	
 	/** bind a property to be saved in window-specific settings using the specified subkey */
 	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
 	{
