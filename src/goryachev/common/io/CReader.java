@@ -40,7 +40,7 @@ public class CReader
 	
 	public CReader(String text)
 	{
-		super(new StringReader(text));
+		super(text == null ? new StringReader("") : new StringReader(text));
 	}
 	
 	
