@@ -14,10 +14,10 @@ import javafx.scene.control.ToggleButton;
 
 
 /**
- * Action - an AbstractAction equivalent for FX, using method references.
+ * An AbstractAction equivalent for FX, using method references.
  * 
  * Usage:
- *    public final Action backAction = new Action(this::actionBack);
+ *    public final CAction backAction = new CAction(this::actionBack);
  */
 public class CAction
     implements EventHandler<ActionEvent>

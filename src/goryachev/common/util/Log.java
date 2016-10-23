@@ -271,6 +271,12 @@ public class Log
 	}
 	
 	
+	public static void info(String message)
+	{
+		errorChannel.print(message);
+	}
+	
+	
 	protected static void append(SB sb, Object x)
 	{
 		if(sb.isNotEmpty())

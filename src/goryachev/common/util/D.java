@@ -424,21 +424,26 @@ public class D
 
 	private static Executor createExecutor()
 	{
+		ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(65536);
+		
 		ThreadPoolExecutor ex = new ThreadPoolExecutor
 		(
 			1, 
 			1, 
 			0L, 
 			TimeUnit.MILLISECONDS, 
-			new ArrayBlockingQueue<Runnable>(65536),
+			queue,
 			new ThreadFactory()
 			{
 				public Thread newThread(Runnable r)
 				{
-					return new Thread(r, "debug printout");
+					Thread t = new Thread(r, "debug printout");
+					t.setDaemon(true);
+					return t;
 				}
 			}
 		);
+		
 		Runtime.getRuntime().addShutdownHook(new Thread()
 		{
 			public void run()
@@ -460,6 +465,7 @@ public class D
 		{
 			exec = createExecutor();
 		}
+		
 		exec.execute(() -> System.out.println(s));
 	}
 }

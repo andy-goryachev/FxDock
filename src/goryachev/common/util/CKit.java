@@ -1433,6 +1433,7 @@ public final class CKit
 	}
 	
 	
+	/** returns true if text string contains any character from the pattern string */
 	public static boolean containsAny(String text, String pattern)
 	{
 		if(text != null)
