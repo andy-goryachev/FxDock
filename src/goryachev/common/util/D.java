@@ -2,6 +2,7 @@
 package goryachev.common.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -9,6 +10,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 
 /** debug printing */
@@ -467,5 +469,33 @@ public class D
 		}
 		
 		exec.execute(() -> System.out.println(s));
+	}
+	
+	
+	/** list content of a collection-type or array-type object */
+	public static <T> void list(Iterable<T> iterable, Function<T,String> f)
+	{
+		if(iterable == null)
+		{
+			print("null");
+		}
+		else
+		{
+			SB sb = new SB();
+			for(T item: iterable)
+			{
+				try
+				{
+					String s = f.apply(item);
+					sb.a(s);
+				}
+				catch(Throwable e)
+				{
+					sb.a("ERR: ").a(CKit.stackTrace(e));
+				}
+				sb.nl();
+			}
+			print(sb);
+		}
 	}
 }
