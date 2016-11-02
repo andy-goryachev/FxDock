@@ -682,4 +682,21 @@ public final class FX
 			return new SimpleObjectProperty(x);
 		}
 	}
+	
+	
+	public static double clip(double val, double min, double max)
+	{
+		if(val < min)
+		{
+			return min;
+		}
+		else if(val > max)
+		{
+			return max;
+		}
+		else
+		{
+			return val;
+		}
+	}
 }

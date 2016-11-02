@@ -408,7 +408,7 @@ public final class CKit
 		}
 		catch(Exception e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 			return null;
 		}
 	}
@@ -1970,7 +1970,7 @@ public final class CKit
 				}
 				catch(Exception e)
 				{
-					Log.fail(e);
+					Log.ex(e);
 				}
 			}
 		}

@@ -213,7 +213,7 @@ public abstract class CPlatform
 		}
 		catch(Exception e)
 		{ 
-			Log.fail(e);
+			Log.ex(e);
 		}
 		
 		// for all practical purposes

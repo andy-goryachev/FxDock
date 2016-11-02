@@ -35,7 +35,7 @@ public class CPlatformWindows
 		}
 		catch(Exception e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 		}
 		
 		return null;

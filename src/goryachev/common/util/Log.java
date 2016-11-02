@@ -16,7 +16,7 @@ import java.io.File;
  * Log.configFromFile(File);
  * Log.reset();
  * Log. TODO connect loggers to appenders
- * Log.fail()
+ * Log.ex()
  * 
  * Log.conf("ChannelName", Log.Level.INFO);
  * 
@@ -259,13 +259,15 @@ public class Log
 	}
 	
 	
-	public static void fail(Throwable e)
+	/** sends an exception to the error channel */
+	public static void ex(Throwable e)
 	{
 		errorChannel.err(e);
 	}
 	
 	
-	public static void fail(String message)
+	/** sends a message to the error channel */
+	public static void ex(String message)
 	{
 		errorChannel.err(message, 2);
 	}
@@ -529,7 +531,7 @@ public class Log
 		}
 		catch(Exception e)
 		{
-			fail(e);
+			ex(e);
 		}
 	}
 	

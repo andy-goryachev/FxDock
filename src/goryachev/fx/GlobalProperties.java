@@ -46,7 +46,7 @@ public class GlobalProperties
 		}
 		catch(Exception e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 		}
 	}
 	
@@ -65,7 +65,7 @@ public class GlobalProperties
 		}
 		catch(Exception e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 		}
 	}
 }

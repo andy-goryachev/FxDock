@@ -55,7 +55,7 @@ public class CAction
 			}
 			catch(Exception e)
 			{
-				Log.fail(e);
+				Log.ex(e);
 			}
 		}
 	}
@@ -184,7 +184,7 @@ public class CAction
 			}
 			catch(Exception e)
 			{
-				Log.fail(e);
+				Log.ex(e);
 			}
 		}
 	}

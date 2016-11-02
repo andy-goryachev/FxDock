@@ -157,7 +157,7 @@ public class TestFxIconBuilder
 		}
 		catch(Exception e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 		}
 		
 		b.setEffect(null);
