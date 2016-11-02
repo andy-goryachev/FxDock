@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright ©2016 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.SB;
 import goryachev.fx.CInsets;
