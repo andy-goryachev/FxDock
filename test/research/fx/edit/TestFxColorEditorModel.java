@@ -2,6 +2,8 @@
 package research.fx.edit;
 import goryachev.common.util.CList;
 import goryachev.common.util.SB;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -14,6 +16,9 @@ import javafx.scene.text.TextFlow;
 public class TestFxColorEditorModel
 	extends FxPlainEditorModel
 {
+	private NumberFormat format = NumberFormat.getInstance();
+	
+	
 	public TestFxColorEditorModel()
 	{
 	}
@@ -65,6 +70,9 @@ public class TestFxColorEditorModel
 		int sz = s.length();
 		
 		CList<Segment> ss = new CList<>();
+		
+		ss.add(new Segment(format.format(line) + ": ", Color.BLACK));
+		
 		for(int i=0; i<sz; i++)
 		{
 			char c = s.charAt(i);
