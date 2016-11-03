@@ -23,8 +23,14 @@ public class TextPos
 	{
 		return index + ":" + (leading ? "leading" : "trailing");
 	}
-	
-	
+
+
+	public int getInsertionIndex()
+	{
+		return leading ? index : index + 1;
+	}
+
+
 	public int getIndex()
 	{
 		return index;
