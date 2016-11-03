@@ -29,4 +29,17 @@ public class CMethod<T>
 			throw new RuntimeException(e);
 		}
 	}
+	
+	
+	public T invokeStatic(Object ... args)
+	{
+		try
+		{
+			return (T)method.invoke(null, args);
+		}
+		catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 }
