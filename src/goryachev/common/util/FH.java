@@ -10,6 +10,12 @@ import java.util.Arrays;
  */
 public class FH
 {
+	public static int hash(Class c)
+	{
+		return c.hashCode();
+	}
+	
+	
 	public static int hash(int h, Object val)
 	{
 		if(val == null)

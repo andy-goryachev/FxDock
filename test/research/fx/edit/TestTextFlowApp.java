@@ -9,9 +9,9 @@ import javafx.stage.Stage;
 
 
 /**
- * Test FxEditor app.
+ * Test CTextFlow app
  */
-public class TestFxEditorApp
+public class TestTextFlowApp
 	extends Application
 {
 	public static void main(String[] args)
@@ -37,6 +37,6 @@ public class TestFxEditorApp
 
 	public void start(Stage stage) throws Exception
 	{
-		new TestFxEditorWindow().open();
+		new TestTextFlowWindow().open();
 	}
 }
