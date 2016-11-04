@@ -33,7 +33,7 @@ public class FileSettingsProvider
 		}
 		catch(Exception e)
 		{
-			log.err(e);
+			Log.ex(e);
 		}
 	}
 	
@@ -53,7 +53,7 @@ public class FileSettingsProvider
 		}
 		catch(Exception e)
 		{
-			log.err(e);
+			Log.ex(e);
 		}
 	}
 	
@@ -73,7 +73,7 @@ public class FileSettingsProvider
 		}
 		catch(Exception e)
 		{
-			log.err(e);
+			Log.ex(e);
 		}
 	}
 }

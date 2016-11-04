@@ -21,7 +21,7 @@ import java.io.File;
  * Log.conf("ChannelName", Log.Level.INFO);
  * 
  * Log log = Log.get("ChannelName");
- * log.err(...);
+ * Log.ex(...);
  * log.warn(...);
  * log.info(...);
  * log.debug(...);

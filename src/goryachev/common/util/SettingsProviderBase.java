@@ -251,7 +251,7 @@ public abstract class SettingsProviderBase
 		}
 		catch(Exception e)
 		{
-			log.err(e);
+			Log.ex(e);
 		}
 		return null;
 	}
