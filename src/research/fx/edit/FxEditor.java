@@ -19,6 +19,10 @@ public class FxEditor
 {
 	private ReadOnlyObjectWrapper<FxEditorModel> model = new ReadOnlyObjectWrapper<>();
 	private ReadOnlyObjectWrapper<Boolean> wrap = new ReadOnlyObjectWrapper<>();
+	// TODO editable
+	// TODO multiple selection enabled
+	// TODO selection model
+	// TODO caret model
 	private Handler handler = new Handler();
 	private ScrollBar vscroll;
 	private ScrollBar hscroll;
