@@ -1,10 +1,8 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package research.fx.edit;
-import goryachev.fx.FX;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.geometry.HPos;
-import javafx.geometry.Orientation;
 import javafx.geometry.VPos;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Pane;
@@ -23,13 +21,11 @@ public class FxEditor
 	// TODO multiple selection enabled
 	// TODO selection model
 	// TODO caret model
-	private Handler handler = new Handler();
-	private ScrollBar vscroll;
-	private ScrollBar hscroll;
+	private FxEditorController control = new FxEditorController(this);
+	private FxEditorLayout layout;
 	private int offsetx;
 	private int offsety;
 	private int startIndex;
-	private FxEditorLayout layout;
 	
 	
 	public FxEditor()
@@ -40,14 +36,7 @@ public class FxEditor
 	
 	public FxEditor(FxEditorModel m)
 	{
-		// TODO move to handler
-		vscroll = new ScrollBar();
-		vscroll.setOrientation(Orientation.VERTICAL);
-		vscroll.setManaged(true);
-		vscroll.setMin(0.0);
-		vscroll.setMax(1.0);
-		vscroll.valueProperty().addListener((s,p,val) -> handler.setAbsolutePosition(val.doubleValue()));
-		getChildren().add(vscroll);
+		getChildren().add(control.vscroll());
 		
 		setModel(m);
 	}
@@ -58,14 +47,14 @@ public class FxEditor
 		FxEditorModel old = getModel();
 		if(old != null)
 		{
-			old.removeListener(handler);
+			old.removeListener(control);
 		}
 		
 		model.set(m);
 		
 		if(m != null)
 		{
-			m.addListener(handler);
+			m.addListener(control);
 		}
 		
 		requestLayout();
@@ -108,6 +97,7 @@ public class FxEditor
 		double height = getHeight();
 
 		// position the scrollbar(s)
+		ScrollBar vscroll = control.vscroll();
 		if(vscroll.isVisible())
 		{
 			double w = vscroll.prefWidth(-1);
@@ -150,35 +140,5 @@ public class FxEditor
 	public void scroll(double pixels)
 	{
 		// TODO
-	}
-	
-	
-	//
-	
-	
-	public class Handler
-		implements FxEditorModel.Listener
-	{
-		public void eventLinesDeleted(int start, int count)
-		{
-		}
-
-
-		public void eventLinesInserted(int start, int count)
-		{
-		}
-
-
-		public void eventLinesModified(int start, int count)
-		{
-		}
-		
-		
-		public void setAbsolutePosition(double pos)
-		{
-			// TODO account for visible line count
-			int start = FX.round(getModel().getLineCount() * pos);
-			setStartIndex(start);
-		}
 	}
 }

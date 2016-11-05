@@ -3,6 +3,8 @@ package research.fx.edit;
 import goryachev.common.util.FileSettingsProvider;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
+import goryachev.fx.FxDump;
+import goryachev.fx.FxWindow;
 import java.io.File;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -38,5 +40,28 @@ public class TestFxEditorApp
 	public void start(Stage stage) throws Exception
 	{
 		new TestFxEditorWindow().open();
+	}
+	
+	
+	//
+	
+	
+	public static class TestFxEditorWindow
+		extends FxWindow
+	{
+		public TestFxEditorWindow()
+		{
+			super("TestFxEditorWindow");
+			
+			FxEditorModel m =
+				// new TestFxPlainEditorModel();
+				new TestFxColorEditorModel();
+			
+			setTitle("FxEditor Test");
+			setCenter(new FxEditor(m));
+			setSize(600, 700);
+			
+			FxDump.attach(this);
+		}
 	}
 }
