@@ -39,6 +39,7 @@ public class FxEditor
 	
 	public FxEditor(FxEditorModel m)
 	{
+		setFocusTraversable(true);
 		setModel(m);
 	}
 	
@@ -137,12 +138,6 @@ public class FxEditor
 		return la;
 	}
 	
-	
-	public void scroll(double pixels)
-	{
-		// TODO
-	}
-
 	
 	/** returns text position at the specified screen coordinates */
 	public TextPos getTextPos(double screenx, double screeny)

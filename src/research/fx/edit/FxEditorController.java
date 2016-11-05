@@ -1,5 +1,6 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package research.fx.edit;
+import goryachev.common.util.D;
 import goryachev.fx.FX;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
@@ -28,7 +29,10 @@ public class FxEditorController
 		
 		ed.getChildren().addAll(selection.highlight, vscroll(), selection.caret);
 		
-		ed.addEventFilter(KeyEvent.ANY, (ev) -> handleKeyEvent(ev));
+		ed.addEventFilter(KeyEvent.KEY_PRESSED, (ev) -> handleKeyPressed(ev));
+		ed.addEventFilter(KeyEvent.KEY_RELEASED, (ev) -> handleKeyReleased(ev));
+		ed.addEventFilter(KeyEvent.KEY_TYPED, (ev) -> handleKeyTyped(ev));
+		
 		ed.addEventFilter(MouseEvent.MOUSE_PRESSED, (ev) -> handleMousePressed(ev));
 		ed.addEventFilter(MouseEvent.MOUSE_RELEASED, (ev) -> handleMouseReleased(ev));
 		ed.addEventFilter(MouseEvent.MOUSE_DRAGGED, (ev) -> handleMouseDragged(ev));
@@ -86,9 +90,45 @@ public class FxEditorController
 	}
 	
 	
-	protected void handleKeyEvent(KeyEvent ev)
+	public void scrollRelative(double pixels)
 	{
 		// TODO
+		// using the current layout, add lines until scrolled up to the necessary number of pixels
+		// or the first/last line
+	}
+
+
+	protected void handleKeyPressed(KeyEvent ev)
+	{
+		switch(ev.getCode())
+		{
+		case PAGE_DOWN:
+			scrollRelative(editor.getHeight());
+			break;
+		case LEFT:
+			// TODO
+			break;
+		case PAGE_UP:
+			scrollRelative(-editor.getHeight());
+			break;
+		case RIGHT:
+			// TODO
+			break;
+		}
+	}
+	
+	
+	protected void handleKeyReleased(KeyEvent ev)
+	{
+		// TODO
+		D.print(ev);
+	}
+	
+	
+	protected void handleKeyTyped(KeyEvent ev)
+	{
+		// TODO
+		D.print(ev);
 	}
 	
 	
@@ -96,17 +136,10 @@ public class FxEditorController
 	{
 		if(ev.isShiftDown())
 		{
-			
+			// TODO multiple selection
 		}
 		else
 		{
-//			TextPos p = editor.getTextPos(ev.getScreenX(), ev.getScreenY());
-//			if(p != null)
-//			{
-//				selection.clear();
-//				selection.setCaret(p);
-//			}
-			
 			PathElement[] p = editor.getCaretShape(ev.getScreenX(), ev.getScreenY());
 			if(p != null)
 			{
