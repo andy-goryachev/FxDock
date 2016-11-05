@@ -10,6 +10,7 @@ public class LineBox
 {
 	public final int index;
 	public final Region box;
+	public boolean invalid;
 	// TODO line numbers
 	
 	

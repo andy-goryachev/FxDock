@@ -2,7 +2,11 @@
 package research.fx.edit;
 import goryachev.common.util.CList;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
+import javafx.scene.shape.PathElement;
+import research.fx.edit.internal.TextPosExt;
 
 
 /**
@@ -19,6 +23,58 @@ public class FxEditorLayout
 	{
 		this.startIndex = startIndex;
 		this.offsety = offsety;
+	}
+	
+	
+	/** returns text position at the screen coordinates, or null */
+	public TextPosExt getTextPos(double screenx, double screeny)
+	{
+		for(LineBox b: lines)
+		{
+			Region box = b.box;
+			Point2D p = box.screenToLocal(screenx, screeny);
+			double y = p.getY();
+			
+			if(y > 0)
+			{
+				if(y < box.getHeight())
+				{
+					if(box instanceof CTextFlow)
+					{
+						TextPos pos = ((CTextFlow)box).getTextPos(p.getX(), y);
+						if(pos != null)
+						{
+							return new TextPosExt(b, pos);
+						}
+					}
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+		return null;
+	}
+	
+	
+	/** returns caret shape at the screen coordinates, or null */
+	public PathElement[] getCaretShape(Region parent, double screenx, double screeny)
+	{
+		TextPosExt pos = getTextPos(screenx, screeny);
+		if(pos != null)
+		{
+			Region box = pos.line.box;
+			if(box instanceof CTextFlow)
+			{
+				PathElement[] es = ((CTextFlow)box).getCaretShape(pos.getIndex(), pos.isLeading());
+				if(es != null)
+				{
+					return EditorTools.translate(parent, box, es);
+				}
+			}
+		}
+		return null;
 	}
 	
 	

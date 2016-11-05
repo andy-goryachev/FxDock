@@ -7,6 +7,7 @@ import javafx.geometry.VPos;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.shape.PathElement;
 
 
 /**
@@ -17,10 +18,12 @@ public class FxEditor
 {
 	private ReadOnlyObjectWrapper<FxEditorModel> model = new ReadOnlyObjectWrapper<>();
 	private ReadOnlyObjectWrapper<Boolean> wrap = new ReadOnlyObjectWrapper<>();
+	private ReadOnlyObjectWrapper<Boolean> singleSelection = new ReadOnlyObjectWrapper<>();
 	// TODO editable
-	// TODO multiple selection enabled
-	// TODO selection model
-	// TODO caret model
+	// TODO multiple selection
+	// TODO caret visible
+	// TODO caret blink rate
+	// TODO line decorations/line numbers
 	private FxEditorController control = new FxEditorController(this);
 	private FxEditorLayout layout;
 	private int offsetx;
@@ -36,8 +39,6 @@ public class FxEditor
 	
 	public FxEditor(FxEditorModel m)
 	{
-		getChildren().add(control.vscroll());
-		
 		setModel(m);
 	}
 	
@@ -140,5 +141,19 @@ public class FxEditor
 	public void scroll(double pixels)
 	{
 		// TODO
+	}
+
+	
+	/** returns text position at the specified screen coordinates */
+	public TextPos getTextPos(double screenx, double screeny)
+	{
+		return layout.getTextPos(screenx, screeny);
+	}
+	
+	
+	/** returns caret shape at the specified screen coordinates */
+	public PathElement[] getCaretShape(double screenx, double screeny)
+	{
+		return layout.getCaretShape(this, screenx, screeny);
 	}
 }

@@ -2,12 +2,10 @@
 package research.fx.edit;
 import goryachev.common.util.CList;
 import goryachev.common.util.SB;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
 
 /**
@@ -28,7 +26,7 @@ public class TestFxColorEditorModel
 	{
 		CList<Segment> ss = getSegments(line, true);
 		
-		TextFlow f = new TextFlow();
+		CTextFlow f = new CTextFlow();
 		for(Segment s: ss)
 		{
 			Text t = new Text(s.text);

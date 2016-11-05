@@ -3,7 +3,6 @@ package research.fx.edit;
 import goryachev.common.util.SB;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
 
 /**
@@ -19,14 +18,14 @@ public class TestFxPlainEditorModel
 	
 	public Region getDecoratedLine(int line)
 	{
-		TextFlow t = new TextFlow();
+		CTextFlow f = new CTextFlow();
 		String s = getSearchText(line);
 		if(s != null)
 		{
-			Text tx = new Text(s);
-			t.getChildren().add(tx); 
+			Text t = new Text(s);
+			f.getChildren().add(t); 
 		}
-		return t;
+		return f;
 	}
 
 
