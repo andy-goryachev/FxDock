@@ -1,6 +1,7 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 
 /**
@@ -40,8 +41,14 @@ public class FileSettingsProvider
 	
 	public void load() throws Exception
 	{
-		String s = CKit.readString(file);
-		loadFromString(s);
+		try
+		{
+			String s = CKit.readString(file);
+			loadFromString(s);
+		}
+		catch(FileNotFoundException ignore)
+		{
+		}
 	}
 	
 	

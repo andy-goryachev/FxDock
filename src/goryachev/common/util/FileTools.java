@@ -912,4 +912,12 @@ public class FileTools
 			return f.getAbsolutePath();
 		}
 	}
+	
+	
+	/** creates a file in the same directory */
+	public static File createSiblingFile(File file, String name)
+	{
+		File parent = file.getParentFile();
+		return new File(parent, name);
+	}
 }

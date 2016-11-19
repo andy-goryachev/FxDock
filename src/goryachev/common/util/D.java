@@ -374,7 +374,7 @@ public class D
 	{
 		if(CKit.isEclipse())
 		{
-			System.out.print(a == null ? "<null>" : a.toString());
+			System.err.print(a == null ? "<null>" : a.toString());
 		}
 	}
 	
@@ -383,7 +383,7 @@ public class D
 	{
 		if(CKit.isEclipse())
 		{
-			System.out.println(a == null ? "<null>" : a.toString());
+			System.err.println(a == null ? "<null>" : a.toString());
 		}
 	}
 	
@@ -401,7 +401,7 @@ public class D
 				}
 				sb.append(x);
 			}
-			System.out.println(sb.toString());
+			System.err.println(sb.toString());
 		}
 	}
 	
@@ -410,7 +410,7 @@ public class D
 	{
 		if(CKit.isEclipse())
 		{
-			System.out.println(Dump.simpleName(x));
+			System.err.println(Dump.simpleName(x));
 		}
 	}
 	
@@ -468,7 +468,7 @@ public class D
 			exec = createExecutor();
 		}
 		
-		exec.execute(() -> System.out.println(s));
+		exec.execute(() -> System.err.println(s));
 	}
 	
 	

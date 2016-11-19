@@ -92,9 +92,27 @@ public class FxEditorController
 	
 	public void scrollRelative(double pixels)
 	{
-		// TODO
-		// using the current layout, add lines until scrolled up to the necessary number of pixels
-		// or the first/last line
+		if(pixels < 0)
+		{
+			double toScroll = pixels;
+			int ix = editor.getViewStartLine();
+			int offsety = editor.getOffsetY();
+			
+			// TODO
+			// using the current layout, add lines until scrolled up to the necessary number of pixels
+			// or the first/last line
+			while(toScroll > 0)
+			{
+				if(ix <= 0)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			
+		}
 	}
 
 

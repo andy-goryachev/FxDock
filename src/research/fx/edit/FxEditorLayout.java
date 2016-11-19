@@ -100,4 +100,10 @@ public class FxEditorLayout
 	{
 		lines.add(b);
 	}
+
+
+	public int startLine()
+	{
+		return startIndex;
+	}
 }

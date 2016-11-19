@@ -175,6 +175,10 @@ public final class FX
 			{
 				n.setTextAlignment((TextAlignment)a);
 			}
+			else if(a instanceof Color)
+			{
+				n.setTextFill((Color)a);
+			}
 			else
 			{
 				throw new Error("?" + a);

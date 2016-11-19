@@ -151,4 +151,22 @@ public class FxEditor
 	{
 		return layout.getCaretShape(this, screenx, screeny);
 	}
+	
+	
+	protected int getOffsetX()
+	{
+		return offsetx;
+	}
+	
+	
+	protected int getOffsetY()
+	{
+		return offsety;
+	}
+	
+	
+	protected int getViewStartLine()
+	{
+		return layout.startLine();
+	}
 }
