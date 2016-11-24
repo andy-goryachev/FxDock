@@ -1,5 +1,6 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package research.fx.edit;
+import goryachev.fx.CssStyle;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.geometry.HPos;
@@ -16,6 +17,11 @@ import javafx.scene.shape.PathElement;
 public class FxEditor
 	extends Pane
 {
+	/** caret style */
+	public static final CssStyle CARET = new CssStyle("FxEditor_CARET");
+	/** selection highlight */
+	public static final CssStyle HIGHLIGHT = new CssStyle("FxEditor_HIGHLIGHT");
+	
 	private ReadOnlyObjectWrapper<FxEditorModel> model = new ReadOnlyObjectWrapper<>();
 	private ReadOnlyObjectWrapper<Boolean> wrap = new ReadOnlyObjectWrapper<>();
 	private ReadOnlyObjectWrapper<Boolean> singleSelection = new ReadOnlyObjectWrapper<>();
