@@ -28,4 +28,11 @@ public class CCheckMenuItem
 		super(text);
 		selectedProperty().bindBidirectional(p);
 	}
+	
+	
+	public CCheckMenuItem(String text, GlobalBooleanProperty op)
+	{
+		super(text);
+		selectedProperty().bindBidirectional(op);
+	}
 }

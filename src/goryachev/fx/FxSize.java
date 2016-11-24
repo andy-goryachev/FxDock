@@ -1,7 +1,7 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-
 import goryachev.common.util.FH;
+
 
 /**
  * Width x Height

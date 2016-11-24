@@ -66,6 +66,12 @@ public abstract class CssGenerator
 	}
 	
 	
+	protected String getStylesPrivate()
+	{
+		return sb.toString();
+	}
+	
+	
 	/** starts a new selector or adds to an existing selector */
 	public void sel(Object x)
 	{
@@ -140,6 +146,18 @@ public abstract class CssGenerator
 		default:
 			throw new Error("unexpected state: " + state);
 		}
+	}
+	
+	
+	// FIX duplicate closing }
+	public void include(CssGenerator g)
+	{
+		g.state = state;
+		
+		g.generate();
+		sb.append(g.getStylesPrivate());
+		
+		state = g.state;
 	}
 	
 	
@@ -220,6 +238,16 @@ public abstract class CssGenerator
 	public void backgroundImage(Object x) { prop("-fx-background-image", CssTools.toValue(x)); }
 	public void backgroundInsets(Object x) { prop("-fx-background-insets", CssTools.toValue(x)); }
 	public void backgroundRadius(Object x) { prop("-fx-background-radius", CssTools.toValue(x)); }
+	
+	/** A series of paint values or sets of four paint values, separated by commas. For each item in the series, if a single paint value is specified, then that paint is used as the border for all sides of the region; and if a set of four paints is specified, they are used for the top, right, bottom, and left borders of the region, in that order. If the border is not rectangular, only the first paint value in the set is used. */
+	public void borderColor(Object x) { prop("-fx-border-color", CssTools.toColor(x)); }
+	/** A series of paint values or sets of four paint values, separated by commas. For each item in the series, if a single paint value is specified, then that paint is used as the border for all sides of the region; and if a set of four paints is specified, they are used for the top, right, bottom, and left borders of the region, in that order. If the border is not rectangular, only the first paint value in the set is used. */
+	public void borderColor(Object ... xs) { prop("-fx-border-color", CssTools.toColors(xs)); }
+	/** A series of width or sets of four width values, separated by commas. For each item in the series, a single width value means that all border widths are the same; and if a set of four width values is specified, they are used for the top, right, bottom, and left border widths, in that order. If the border is not rectangular, only the first width value is used. Each item in the series of widths applies to the corresponding item in the series of border colors.  */
+	public void borderWidth(Object x) { prop("-fx-border-width", CssTools.toValue(x)); }
+	/** A series of width or sets of four width values, separated by commas. For each item in the series, a single width value means that all border widths are the same; and if a set of four width values is specified, they are used for the top, right, bottom, and left border widths, in that order. If the border is not rectangular, only the first width value is used. Each item in the series of widths applies to the corresponding item in the series of border colors.  */
+	public void borderWidth(Object ... xs) { prop("-fx-border-width", CssTools.toValues(xs)); }
+
 	// F
 	public void fitToHeight(boolean x) { prop("-fx-fit-to-height", x); }
 	public void fitToWidth(boolean x) { prop("-fx-fit-to-width", x); }

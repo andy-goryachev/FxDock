@@ -16,6 +16,8 @@ import javafx.application.Platform;
 
 /**
  * Css Loader.
+ * -Dcss.continuous.refresh=true
+ * -Dcss.dump=true
  */
 public class CssLoader
 {

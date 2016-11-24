@@ -5,7 +5,7 @@ import javafx.util.StringConverter;
 
 
 /**
- * GlobalBooleanProperty.
+ * Global Boolean Property.
  */
 public class GlobalBooleanProperty
 	extends BooleanPropertyBase

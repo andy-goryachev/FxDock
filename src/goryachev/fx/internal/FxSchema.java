@@ -423,6 +423,7 @@ public class FxSchema
 			return "R";
 		}
 		
-		throw new Error("?" + n);
+		//throw new Error("?" + n);
+		return null;
 	}
 }

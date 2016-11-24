@@ -45,6 +45,12 @@ public class CPane
 	}
 	
 	
+	public CPane(Node n)
+	{
+		setCenter(n);
+	}
+	
+	
 	/** sets horizontal gap for the table layout portion of the layout */
 	public void setHGap(int gap)
 	{

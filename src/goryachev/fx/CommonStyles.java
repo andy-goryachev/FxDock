@@ -6,6 +6,7 @@ package goryachev.fx;
  * Common Styles.
  */
 public class CommonStyles
+	extends CssGenerator
 {
 	/** bold type face */
 	public static final CssStyle BOLD = new CssStyle("CommonStyles_BOLD");
@@ -14,20 +15,20 @@ public class CommonStyles
 	public static final CssStyle NO_HORIZONTAL_SCROLL_BAR = new CssStyle("CommonStyles_NO_HORIZONTAL_SCROLL_BAR");
 
 	
-	public static void generate(CssGenerator g)
+	protected void generate()
 	{
 		// bold
-		g.sel(BOLD);
-		g.fontWeight("bold");
+		sel(BOLD);
+		fontWeight("bold");
 		
 		// disables horizontal scroll bar
-		g.sel(NO_HORIZONTAL_SCROLL_BAR, ".scroll-bar:horizontal");
-		g.maxHeight(0);
-		g.padding(0);
-		g.opacity(0);
-		g.sel(NO_HORIZONTAL_SCROLL_BAR, ".scroll-bar:horizontal *");
-		g.maxHeight(0);
-		g.padding(0);
-		g.opacity(0);
+		sel(NO_HORIZONTAL_SCROLL_BAR, ".scroll-bar:horizontal");
+		maxHeight(0);
+		padding(0);
+		opacity(0);
+		sel(NO_HORIZONTAL_SCROLL_BAR, ".scroll-bar:horizontal *");
+		maxHeight(0);
+		padding(0);
+		opacity(0);
 	}
 }
