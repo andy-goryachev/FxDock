@@ -114,6 +114,12 @@ public class FxEditorController
 			
 		}
 	}
+	
+	
+	public void moveCaret(boolean right)
+	{
+		// TODO
+	}
 
 
 	protected void handleKeyPressed(KeyEvent ev)
@@ -124,13 +130,13 @@ public class FxEditorController
 			scrollRelative(editor.getHeight());
 			break;
 		case LEFT:
-			// TODO
+			moveCaret(false);
 			break;
 		case PAGE_UP:
 			scrollRelative(-editor.getHeight());
 			break;
 		case RIGHT:
-			// TODO
+			moveCaret(true);
 			break;
 		}
 	}
