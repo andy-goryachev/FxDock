@@ -4,7 +4,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import research.fx.edit.FxHacks;
+import research.fx.edit.EditorTools;
 
 
 // http://stackoverflow.com/questions/15593287/binding-textarea-height-to-its-content/19717901#19717901
@@ -66,7 +66,7 @@ public class ScrollFreeTextArea
 		
 //		return super.computePrefWidth(height);
 		
-		FxSize d = FxHacks.getTextBounds(this, -1);
+		FxSize d = EditorTools.getTextBounds(this, -1);
 		Insets insets = getInsets();
 		double w = Math.ceil(d.getWidth() + insets.getLeft() + insets.getRight());
 		return w;
@@ -78,7 +78,7 @@ public class ScrollFreeTextArea
 	{
 //		return super.computePrefHeight(width);
 
-		FxSize d = FxHacks.getTextBounds(this, width);
+		FxSize d = EditorTools.getTextBounds(this, width);
 		return d.getHeight();
 	}
 }

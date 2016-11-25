@@ -6,6 +6,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.shape.PathElement;
 
 
@@ -19,6 +20,7 @@ public class FxEditorController
 	protected final FxEditor editor;
 	protected ScrollBar vscroll;
 	protected ScrollBar hscroll;
+	protected boolean dragging;
 
 
 	public FxEditorController(FxEditor ed)
@@ -36,6 +38,7 @@ public class FxEditorController
 		ed.addEventFilter(MouseEvent.MOUSE_PRESSED, (ev) -> handleMousePressed(ev));
 		ed.addEventFilter(MouseEvent.MOUSE_RELEASED, (ev) -> handleMouseReleased(ev));
 		ed.addEventFilter(MouseEvent.MOUSE_DRAGGED, (ev) -> handleMouseDragged(ev));
+		ed.addEventFilter(ScrollEvent.ANY, (ev) -> handleScroll(ev));
 	}
 	
 	
@@ -101,13 +104,13 @@ public class FxEditorController
 			// TODO
 			// using the current layout, add lines until scrolled up to the necessary number of pixels
 			// or the first/last line
-			while(toScroll > 0)
-			{
-				if(ix <= 0)
-				{
-					break;
-				}
-			}
+//			while(toScroll > 0)
+//			{
+//				if(ix <= 0)
+//				{
+//					break;
+//				}
+//			}
 		}
 		else
 		{
@@ -160,7 +163,12 @@ public class FxEditorController
 	{
 		if(ev.isShiftDown())
 		{
-			// TODO multiple selection
+			// TODO expand selection from (last) anchor (first click) to the current position
+			// clearing existing multiple selection
+		}
+		else if(ev.isControlDown())
+		{
+			// TODO create another caret
 		}
 		else
 		{
@@ -169,19 +177,32 @@ public class FxEditorController
 			{
 				selection.clear();
 				selection.setCaret(p);
+				// TODO update current position
 			}
 		}
+	}
+	
+	
+	protected void handleMouseDragged(MouseEvent ev)
+	{
+		dragging = true;
+		// TODO expand selection from (last) anchor
+		D.print(ev);
 	}
 	
 	
 	protected void handleMouseReleased(MouseEvent ev)
 	{
 		// TODO
+		D.print(ev);
+		
+		dragging = false;
 	}
 	
 	
-	protected void handleMouseDragged(MouseEvent ev)
+	protected void handleScroll(ScrollEvent ev)
 	{
-		// TODO
+		// TODO mouse wheel scroll
+		D.print(ev);
 	}
 }

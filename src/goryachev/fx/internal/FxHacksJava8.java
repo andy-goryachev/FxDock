@@ -1,11 +1,12 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
-package research.fx.edit;
+package goryachev.fx.internal;
 import goryachev.common.util.CMethod;
 import goryachev.common.util.Reflector;
 import com.sun.javafx.scene.text.HitInfo;
 import com.sun.javafx.scene.text.TextLayout;
 import javafx.scene.shape.PathElement;
 import javafx.scene.text.TextFlow;
+import research.fx.edit.TextPos;
 
 
 /**

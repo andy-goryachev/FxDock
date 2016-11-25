@@ -1,12 +1,8 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
-package research.fx.edit;
-import goryachev.fx.FxSize;
-import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
-import javafx.scene.control.TextArea;
+package goryachev.fx.internal;
 import javafx.scene.shape.PathElement;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import research.fx.edit.TextPos;
 
 
 /**
@@ -30,7 +26,6 @@ public abstract class FxHacks
 	//
 	
 	private static FxHacks instance;
-	private static Text helper = new Text();
 
 	
 	protected FxHacks()
@@ -46,33 +41,5 @@ public abstract class FxHacks
 			instance = new FxHacksJava8();
 		}
 		return instance;
-	}
-	
-
-	// from http://stackoverflow.com/questions/15593287/binding-textarea-height-to-its-content/19717901#19717901
-	// FIX return Dimension2D (or Dim)
-	public static FxSize getTextBounds(TextArea t, double width)
-	{
-		String text = t.getText();
-		if(width < 0)
-		{
-			// Note that the wrapping width needs to be set to zero before
-			// getting the text's real preferred width.
-			helper.setWrappingWidth(0);
-		}
-		else
-		{
-			helper.setWrappingWidth(width);
-		}
-		helper.setText(text);
-		helper.setFont(t.getFont());
-		Bounds r = helper.getLayoutBounds();
-		
-		Insets m = t.getInsets();
-		Insets p = t.getPadding();
-		double w = Math.ceil(r.getWidth() + m.getLeft() + m.getRight());
-		double h = Math.ceil(r.getHeight() + m.getTop() + m.getBottom());
-		
-		return new FxSize(w, h);
 	}
 }
