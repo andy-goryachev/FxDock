@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -24,7 +24,7 @@ public class CMenu
 	}
 	
 	
-	public SeparatorMenuItem addSeparator()
+	public SeparatorMenuItem separator()
 	{
 		SeparatorMenuItem m = new SeparatorMenuItem();
 		getItems().add(m);
@@ -44,5 +44,21 @@ public class CMenu
 	{
 		getItems().add(m);
 		return m;
+	}
+	
+	
+	/** adds a disabled menu item */
+	public MenuItem add(String text)
+	{
+		CMenuItem m = new CMenuItem(text);
+		m.setDisable(true);
+		return add(m);
+	}
+	
+	
+	/** remove all menu items */
+	public void clear()
+	{
+		getItems().clear();
 	}
 }

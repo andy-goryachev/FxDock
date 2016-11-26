@@ -1,15 +1,25 @@
-// Copyright (c) 2007-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 
 /** debug printing */
 // TODO move conversion to Dump
 public class D
 {
+	private static Executor exec;
+	
+	
 	// convert milliseconds to MM:SS or HHH:MM:SS String
 	public static String msToString(long ms)
 	{
@@ -319,14 +329,6 @@ public class D
 	}
 	
 	
-	private static void log(String msg, int depth)
-	{
-		StackTraceElement t = new Throwable().getStackTrace()[depth];
-		String className = getClassName(t);
-		System.out.println(className + "." + t.getMethodName() + " " + msg);
-	}
-
-	
 	public static void dump(byte[] b)
 	{
 		if(CKit.isEclipse())
@@ -368,60 +370,11 @@ public class D
 	}
 	
 	
-	// TODO what is it?
-	public static void where(Object ... ss)
-	{
-		if(CKit.isEclipse())
-		{
-			StackTraceElement[] tr = new Throwable().getStackTrace();
-			int start = 1;
-			int max = 5;
-			boolean space = false;
-			
-			SB sb = new SB();
-			if(ss.length > 0)
-			{
-				space = true;
-				
-				for(Object x: ss)
-				{
-					sb.a(String.valueOf(x));
-					sb.a(' ');
-				}
-				
-				sb.nl();
-			}
-			
-			for(int i=0; i<max; i++)
-			{
-				int ix = start + i;
-				if(ix >= tr.length)
-				{
-					break;
-				}
-				
-				StackTraceElement t = tr[ix];
-				if(space)
-				{
-					sb.a("  ");
-				}
-				else
-				{
-					space = true;
-				}
-				
-				sb.a(getClassName(t) + "." + t.getMethodName() + " (" + t.getFileName() + ":" + t.getLineNumber() + ")\n");
-			}
-			System.out.println(sb);
-		}
-	}
-	
-	
 	public static void pp(Object a)
 	{
 		if(CKit.isEclipse())
 		{
-			System.out.print(a == null ? "<null>" : a.toString());
+			System.err.print(a == null ? "<null>" : a.toString());
 		}
 	}
 	
@@ -430,7 +383,7 @@ public class D
 	{
 		if(CKit.isEclipse())
 		{
-			System.out.println(a == null ? "<null>" : a.toString());
+			System.err.println(a == null ? "<null>" : a.toString());
 		}
 	}
 	
@@ -448,7 +401,7 @@ public class D
 				}
 				sb.append(x);
 			}
-			System.out.println(sb.toString());
+			System.err.println(sb.toString());
 		}
 	}
 	
@@ -457,7 +410,7 @@ public class D
 	{
 		if(CKit.isEclipse())
 		{
-			System.out.println(Dump.simpleName(x));
+			System.err.println(Dump.simpleName(x));
 		}
 	}
 	
@@ -467,6 +420,82 @@ public class D
 		if(true)
 		{
 			throw new RuntimeException();
+		}
+	}
+
+
+	private static Executor createExecutor()
+	{
+		ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(65536);
+		
+		ThreadPoolExecutor ex = new ThreadPoolExecutor
+		(
+			1, 
+			1, 
+			0L, 
+			TimeUnit.MILLISECONDS, 
+			queue,
+			new ThreadFactory()
+			{
+				public Thread newThread(Runnable r)
+				{
+					Thread t = new Thread(r, "debug printout");
+					t.setDaemon(true);
+					return t;
+				}
+			}
+		);
+		
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			public void run()
+			{
+				ex.shutdown();
+			}
+		});
+		return ex;
+	}
+
+
+	private static void log(String msg, int depth)
+	{
+		StackTraceElement t = new Throwable().getStackTrace()[depth];
+		String className = getClassName(t);
+		String s = className + "." + t.getMethodName() + " " + msg;
+		
+		if(exec == null)
+		{
+			exec = createExecutor();
+		}
+		
+		exec.execute(() -> System.err.println(s));
+	}
+	
+	
+	/** list content of a collection-type or array-type object */
+	public static <T> void list(Iterable<T> iterable, Function<T,String> f)
+	{
+		if(iterable == null)
+		{
+			print("null");
+		}
+		else
+		{
+			SB sb = new SB();
+			for(T item: iterable)
+			{
+				try
+				{
+					String s = f.apply(item);
+					sb.a(s);
+				}
+				catch(Throwable e)
+				{
+					sb.a("ERR: ").a(CKit.stackTrace(e));
+				}
+				sb.nl();
+			}
+			print(sb);
 		}
 	}
 }

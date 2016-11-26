@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.Set;
 
@@ -110,8 +110,25 @@ public class CMultiMap<K,V>
 	}
 	
 	
-	public CList<V> remove(K k)
+	/** removes all values for a given key */
+	public CList<V> remove(K key)
 	{
-		return map.remove(k);
+		return map.remove(key);
+	}
+	
+	
+	/** removes key-value pair from the map */
+	public void remove(K key, V val)
+	{
+		CList<V> list = map.get(key);
+		if(list != null)
+		{
+			list.remove(val);
+			
+			if(list.size() == 0)
+			{
+				map.remove(key);
+			}
+		}
 	}
 }

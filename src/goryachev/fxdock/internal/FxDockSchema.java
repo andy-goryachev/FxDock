@@ -1,8 +1,9 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
+import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -24,10 +25,10 @@ public class FxDockSchema
 	public static final String NAME_TAB = ".T";
 	public static final String NAME_SPLIT = ".S";
 
-	public static final String STAGE_FULL_SCEEN = "F";
-	public static final String STAGE_ICONIFIED = "I";
-	public static final String STAGE_MAXIMIZED = "X";
-	public static final String STAGE_NORMAL = "N";
+	public static final String WINDOW_FULL_SCEEN = "F";
+	public static final String WINDOW_ICONIFIED = "I";
+	public static final String WINDOW_MAXIMIZED = "X";
+	public static final String WINDOW_NORMAL = "N";
 	
 	public static final String SUFFIX_BINDINGS = ".bindings";
 	public static final String SUFFIX_LAYOUT = ".layout";
@@ -73,62 +74,77 @@ public class FxDockSchema
 	}
 
 
-	public static void storeWindow(String prefix, FxDockWindow w)
+	public static void storeWindow(String prefix, FxDockWindow win)
 	{
+		double x = win.getNormalX();
+		double y = win.getNormalY();
+		double w = win.getNormalWidth();
+		double h = win.getNormalHeight();
+		
 		SStream s = new SStream();
-		s.add(w.getX());
-		s.add(w.getY());
-		s.add(w.getWidth());
-		s.add(w.getHeight());
-
-		if(w.isFullScreen())
+		s.add(x);
+		s.add(y);
+		s.add(w);
+		s.add(h);
+		
+		if(win.isFullScreen())
 		{
-			s.add(STAGE_FULL_SCEEN);
+			s.add(WINDOW_FULL_SCEEN);
 		}
-		else if(w.isMaximized())
+		else if(win.isMaximized())
 		{
-			s.add(STAGE_MAXIMIZED);
+			s.add(WINDOW_MAXIMIZED);
 		}
-		else if(w.isIconified())
+		else if(win.isIconified())
 		{
-			s.add(STAGE_ICONIFIED);
+			s.add(WINDOW_ICONIFIED);
 		}
 		else
 		{
-			s.add(STAGE_NORMAL);
+			s.add(WINDOW_NORMAL);
 		}
 
 		GlobalSettings.setStream(prefix + SUFFIX_WINDOW, s);
 	}
 	
 	
-	public static void restoreWindow(String prefix, FxDockWindow w)
+	public static void restoreWindow(String prefix, FxDockWindow win)
 	{
 		SStream s = GlobalSettings.getStream(prefix + SUFFIX_WINDOW);
 		if(s.size() == 5)
 		{
 			double x = s.nextDouble();
 			double y = s.nextDouble();
-			double width = s.nextDouble();
+			double w = s.nextDouble();
 			double h = s.nextDouble();
 			String t = s.nextString();
 			
-			w.setX(x);
-			w.setY(y);
-			w.setWidth(width);
-			w.setHeight(h);
-
-			if(STAGE_FULL_SCEEN.equals(t))
+			if((w > 0) && (h > 0))
 			{
-				w.setFullScreen(true);
-			}
-			else if(STAGE_MAXIMIZED.equals(t))
-			{
-				w.setMaximized(true);
-			}
-			else if(STAGE_ICONIFIED.equals(t))
-			{
-				w.setIconified(true);
+				// TODO unnecessary anymore
+				if(FX.isValidCoordinates(x, y))
+				{
+					// iconified windows have (x,y) of -32000 for some reason
+					// their coordinates are essentially lost (unless there is a way to get them in FX)
+					win.setX(x);
+					win.setY(y);
+				}
+				win.setWidth(w);
+				win.setHeight(h);
+				
+				switch(t)
+				{
+				// there is no point in restoring to minimized state
+//				case WINDOW_ICONIFIED:
+//					win.setIconified(true);
+//					break;
+				case WINDOW_FULL_SCEEN:
+					win.setFullScreen(true);
+					break;
+				case WINDOW_MAXIMIZED:
+					win.setMaximized(true);
+					break;
+				}
 			}
 		}
 	}

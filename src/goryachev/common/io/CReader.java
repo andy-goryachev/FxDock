@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.io;
 import goryachev.common.util.CKit;
 import java.io.BufferedReader;
@@ -40,7 +40,7 @@ public class CReader
 	
 	public CReader(String text)
 	{
-		super(new StringReader(text));
+		super(text == null ? new StringReader("") : new StringReader(text));
 	}
 	
 	

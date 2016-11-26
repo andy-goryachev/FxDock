@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2006-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.util.log.ConsoleLogWriter;
 import goryachev.common.util.log.ErrorLogWriter;
@@ -16,7 +16,7 @@ import java.io.File;
  * Log.configFromFile(File);
  * Log.reset();
  * Log. TODO connect loggers to appenders
- * Log.fail()
+ * Log.ex()
  * 
  * Log.conf("ChannelName", Log.Level.INFO);
  * 
@@ -38,6 +38,11 @@ public class Log
 	private static final CMap<String,Log> channels = new CMap<>();
 	private static final CMap<String,LogWriter> writerByName = new CMap<>();
 	private static volatile Log errorChannel = initErrorChannel();
+	
+	static
+	{
+		initConsole();
+	}
 	
 	
 	public Log(String name)
@@ -254,15 +259,23 @@ public class Log
 	}
 	
 	
-	public static void fail(Throwable e)
+	/** sends an exception to the error channel */
+	public static void ex(Throwable e)
 	{
 		errorChannel.err(e);
 	}
 	
 	
-	public static void fail(String message)
+	/** sends a message to the error channel */
+	public static void ex(String message)
 	{
 		errorChannel.err(message, 2);
+	}
+	
+	
+	public static void info(String message)
+	{
+		errorChannel.print(message);
 	}
 	
 	
@@ -452,7 +465,7 @@ public class Log
 	}
 	
 	
-	public static synchronized void addWriter(LogWriter wr)
+	public static synchronized void addLogWriter(LogWriter wr)
 	{
 		writerByName.put(wr.getName(), wr);
 	}
@@ -502,7 +515,7 @@ public class Log
 	{
 		FileLogWriter wr = new FileLogWriter(name, file, maxSize, rounds);
 		wr.setAsync(async);
-		addWriter(wr);
+		addLogWriter(wr);
 		return wr;
 	}
 	
@@ -518,7 +531,7 @@ public class Log
 		}
 		catch(Exception e)
 		{
-			fail(e);
+			ex(e);
 		}
 	}
 	

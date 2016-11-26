@@ -1,10 +1,12 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.SB;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.paint.Color;
 
 
 /**
- * CssTools.
+ * Css Tools.
  */
 public class CssTools
 {
@@ -47,6 +49,41 @@ public class CssTools
 	}
 	
 	
+	public static String toColors(Object ... xs)
+	{
+		int sz = xs.length;
+		if(sz == 1)
+		{
+			return toColor(xs[0]);
+		}
+		
+		if((sz % 4) != 0)
+		{
+			throw new Error("please specify colors in groups of four");
+		}
+		
+		SB sb = new SB();
+		for(int i=0; i<sz; i++)
+		{
+			if(i == 0)
+			{
+				// nothing
+			}
+			else if((i % 4) == 0)
+			{
+				sb.a(',');
+			}
+			else
+			{
+				sb.sp();
+			}
+			
+			sb.a(toColor(xs[i]));
+		}
+		return sb.toString();
+	}
+	
+	
 	private static int to8bit(double x)
 	{
 		int v = (int)Math.round(255 * x);
@@ -72,5 +109,59 @@ public class CssTools
 		{
 			return x.toString();
 		}
+	}
+	
+	
+	public static String toValue(double x)
+	{
+		return String.valueOf(x);
+	}
+	
+	
+	public static String toValue(ScrollBarPolicy x)
+	{
+		switch(x)
+		{
+		case ALWAYS: return "always";
+		case AS_NEEDED: return "as-needed";
+		case NEVER: return "never";
+		}
+		throw new Error("?" + x);
+	}
+	
+	
+	public static String toValues(Object ... xs)
+	{
+		int sz = xs.length;
+		if(sz == 1)
+		{
+			return toValue(xs[0]);
+		}
+		
+		if((sz % 4) != 0)
+		{
+			throw new Error("please specify values in groups of four");
+		}
+		
+		SB sb = new SB();
+		for(int i=0; i<sz; i++)
+		{
+			if(i == 0)
+			{
+				// nothing
+			}
+			else if((i % 4) == 0)
+			{
+				sb.a(',');
+			}
+			else
+			{
+				sb.sp();
+			}
+			
+			sb.a(toValue(xs[i]));
+		}
+		return sb.toString();
+
 	}
 }

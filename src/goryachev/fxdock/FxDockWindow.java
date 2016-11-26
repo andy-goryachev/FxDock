@@ -1,11 +1,14 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fx.CAction;
+import goryachev.fx.FxDump;
+import goryachev.fx.OnWindowClosing;
 import goryachev.fx.SSConverter;
+import goryachev.fx.internal.FxWindowBoundsMonitor;
+import goryachev.fx.internal.LocalBindings;
 import goryachev.fxdock.internal.FxDockRootPane;
 import goryachev.fxdock.internal.FxDockSchema;
 import goryachev.fxdock.internal.FxWindowBase;
-import goryachev.fxdock.internal.LocalBindings;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -19,9 +22,12 @@ import javafx.util.StringConverter;
 public abstract class FxDockWindow
 	extends FxWindowBase
 {
-	/** override to ask the user to confirm closing of window.
-	 * make sure to check if the argument already has the user's choice and
-	 * perform the necessary action */
+	/** 
+	 * Override to ask the user to confirm closing of window.
+	 * Make sure to check if the argument already has the user's choice and
+	 * perform the necessary action.
+	 * If a dialog must be shown, make sure to call toFront().
+	 */
 	public void confirmClosing(OnWindowClosing choice) { }
 	
 	//
@@ -30,6 +36,7 @@ public abstract class FxDockWindow
 	private final BorderPane frame;
 	private final FxDockRootPane root;
 	private LocalBindings bindings;
+	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
 	
 	
 	public FxDockWindow()
@@ -39,7 +46,31 @@ public abstract class FxDockWindow
 		Scene s = new Scene(frame);
 		setScene(s);
 		
-		FxDockFramework.registerWindow(this);
+		new FxDump().attach(this);
+	}
+	
+	
+	public double getNormalX()
+	{
+		return normalBoundsMonitor.getX();
+	}
+	
+	
+	public double getNormalY()
+	{
+		return normalBoundsMonitor.getY();
+	}
+	
+	
+	public double getNormalWidth()
+	{
+		return normalBoundsMonitor.getWidth();
+	}
+	
+	
+	public double getNormalHeight()
+	{
+		return normalBoundsMonitor.getHeight();
 	}
 	
 	
@@ -143,7 +174,7 @@ public abstract class FxDockWindow
 
 
 	/** invoked by the framework as necessary to store the window-specific settings */
-	public void saveSettings(String prefix)
+	public void storeSettings(String prefix)
 	{
 		if(bindings != null)
 		{
@@ -162,14 +193,14 @@ public abstract class FxDockWindow
 	}
 	
 	
-	/** bind a property to be saved in tile-specific settings using the specified subkey, using subkey */
+	/** bind a property to be saved in tile-specific settings using the specified subkey */
 	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
 	{
 		bindings().add(subKey, p, c);
 	}
 	
 	
-	/** bind a property to be saved in tile-specific settings using the specified subkey, using subkey */
+	/** bind a property to be saved in tile-specific settings using the specified subkey */
 	public <T> void bind(String subKey, Property<T> p, SSConverter<T> c)
 	{
 		bindings().add(subKey, c, p);

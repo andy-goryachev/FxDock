@@ -1,6 +1,6 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
-import goryachev.common.util.CKit;
+import goryachev.common.util.FH;
 
 
 /**
@@ -41,7 +41,9 @@ public class WhereScreen
 	
 	public int hashCode()
 	{
-		return CKit.hashCode(WhereScreen.class, screenx, screeny);
+		int h = FH.hash(0, WhereScreen.class);
+		h = FH.hash(h, screenx);
+		return FH.hash(h, screeny);
 	}
 	
 	

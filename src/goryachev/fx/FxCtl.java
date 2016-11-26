@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 
 
@@ -7,10 +7,12 @@ package goryachev.fx;
  */
 public enum FxCtl
 {
+	BOLD,
 	EDITABLE,
 	FOCUSABLE,
 	FORCE_MIN_HEIGHT,
 	FORCE_MIN_WIDTH,
 	NON_EDITABLE,
 	NON_FOCUSABLE,
+	WRAP_TEXT
 }

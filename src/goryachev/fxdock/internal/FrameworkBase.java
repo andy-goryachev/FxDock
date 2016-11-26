@@ -1,13 +1,13 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
 import goryachev.common.util.WeakList;
+import goryachev.fx.OnWindowClosing;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
-import goryachev.fxdock.OnWindowClosing;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -35,9 +35,7 @@ public class FrameworkBase
 	
 	public FxDockWindow createWindow()
 	{
-		FxDockWindow w = generator().createWindow();
-		addFocusListener(w);
-		return w;
+		return generator().createWindow();
 	}
 	
 	
@@ -110,7 +108,7 @@ public class FrameworkBase
 	{
 		String prefix = FxDockSchema.windowID(ix);
 		FxDockSchema.saveLayout(prefix, w.getContent());
-		w.saveSettings(prefix);
+		w.storeSettings(prefix);
 		FxDockSchema.storeWindow(prefix, w);
 	}
 	
@@ -124,7 +122,7 @@ public class FrameworkBase
 	
 	protected void registerWindow(FxDockWindow w)
 	{
-		w.setOnCloseRequest((ev) -> handleClose(w, ev));
+		w.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, (ev) -> handleClose(w, ev));
 		
 		w.showingProperty().addListener((src,old,cur) ->
 		{
@@ -133,34 +131,8 @@ public class FrameworkBase
 				unlinkWindow(w);
 			}
 		});
-	}
-	
-	
-	protected void handleClose(FxDockWindow w, WindowEvent ev)
-	{
-		OnWindowClosing ch = new OnWindowClosing(false);
-		w.confirmClosing(ch);
-		if(ch.isCancelled())
-		{
-			// don't close the window
-			ev.consume();
-		}
-	}
-	
-	
-	protected void unlinkWindow(FxDockWindow w)
-	{
-		if(getWindowCount() == 1)
-		{
-			saveLayout();
-			exitPrivate();
-		}
-	}
-
-	
-	// FX cannot tell us which window is on top, so we have to do the dirty work ourselves
-	public void addFocusListener(FxDockWindow w)
-	{
+		
+		// FX cannot tell us which window is on top, so we have to do the dirty work ourselves
 		w.focusedProperty().addListener((src,old,v) ->
 		{
 			if(v)
@@ -170,6 +142,39 @@ public class FrameworkBase
 		});
 	}
 	
+	
+	protected void handleClose(FxDockWindow w, WindowEvent ev)
+	{
+		int ct = getWindowCount(); 
+		if(ct == 1)
+		{
+			saveLayout();
+		}
+		
+		OnWindowClosing ch = new OnWindowClosing(false);
+		w.confirmClosing(ch);
+		if(ch.isCancelled())
+		{
+			// don't close the window
+			ev.consume();
+		}
+		else if(ct != 1)
+		{
+			w.hide();
+			saveLayout();
+		}
+	}
+	
+	
+	protected void unlinkWindow(FxDockWindow w)
+	{
+		int ct = getWindowCount();
+		if(ct == 0)
+		{
+			exitPrivate();
+		}
+	}
+
 	
 	protected void onWindowFocused(FxDockWindow win)
 	{
@@ -215,7 +220,7 @@ public class FrameworkBase
 	}
 	
 	
-	/** returns a list of vidible windows, topmost window first */
+	/** returns a list of visible windows, topmost window first */
 	public List<FxDockWindow> getWindows()
 	{
 		int sz = windowStack.size();
@@ -247,7 +252,10 @@ public class FrameworkBase
 			}
 			else
 			{
-				ct++;
+				if(w.isShowing())
+				{
+					ct++;
+				}
 			}
 		}
 		return ct;
@@ -256,10 +264,11 @@ public class FrameworkBase
 	
 	protected boolean confirmExit()
 	{
-		OnWindowClosing choice = new OnWindowClosing(true);
-		for(FxDockWindow w: getWindows())
+		List<FxDockWindow> ws = getWindows(); 
+		OnWindowClosing choice = new OnWindowClosing(ws.size() > 1);
+		
+		for(FxDockWindow w: ws)
 		{
-			w.toFront();
 			w.confirmClosing(choice);
 
 			if(choice.isCancelled())

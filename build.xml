@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright (c) 2016 Andy Goryachev <andy@goryachev.com> -->
+<!-- Copyright © 2016 Andy Goryachev <andy@goryachev.com> -->
 
-<project default="all" basedir=".">
+<project default="build-all" basedir=".">
 	
+	<!-- libraries -->
+	<path id="libs">
+	</path>
+		
+
 	<target name="clean">
 		<delete includeEmptyDirs="true" dir="build" failonerror="false" />
 	</target>
@@ -27,11 +32,10 @@
 			source="1.8"
 			target="1.8"
 			includeantruntime="false"
-			>
-			
-			<compilerarg value="-Xlint:unchecked"/>
+		>
+			<compilerarg value="-Xlint:none"/>
 		
-			<classpath></classpath>
+			<classpath refid="libs" />
 		</javac>
 	</target>
 	
@@ -65,7 +69,7 @@
 			filesonly="true"
 			manifest="config/FxDock.manifest"
 			excludes="demo/**"
-			>
+		>
 		</jar>
 	</target>
 	
@@ -78,6 +82,6 @@
 	
 
 	<!-- build all -->
-	<target name="all" depends="compile, copy-resources, make-jar, make-lib-jar, sha-jar" />
+	<target name="build-all" depends="compile, copy-resources, make-jar, make-lib-jar, sha-jar" />
 	
 </project>

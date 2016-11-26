@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2011-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.ByteArrayOutputStream;
 
@@ -73,6 +73,13 @@ public class Hex
 	public static String toHexString(byte[] b, int start, int length)
 	{
 		SB sb = new SB(b.length);
+		appendHexString(sb, b, start, length);
+		return sb.toString();
+	}
+	
+	
+	public static void appendHexString(SB sb, byte[] b, int start, int length)
+	{
 		int end = start + length;
 		for(int i=start; i<end; i++)
 		{
@@ -80,7 +87,7 @@ public class Hex
 			sb.append(HEX.charAt((x >> 4) & 0x0f));
 			sb.append(HEX.charAt(x & 0x0f));
 		}
-		return sb.toString();
+		
 	}
 	
 	

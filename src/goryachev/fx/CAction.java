@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.Log;
 import javafx.beans.property.BooleanProperty;
@@ -14,22 +14,50 @@ import javafx.scene.control.ToggleButton;
 
 
 /**
- * CAction - an AbstractAction equivalent for FX.
+ * An AbstractAction equivalent for FX, using method references.
+ * 
+ * Usage:
+ *    public final CAction backAction = new CAction(this::actionBack);
  */
-public abstract class CAction
+public class CAction
     implements EventHandler<ActionEvent>
 {
-	/** simple action event */
-	protected abstract void action();
-
-	//
-	
 	private final BooleanProperty selectedProperty = new SimpleBooleanProperty(this, "selected");
 	private final BooleanProperty disabledProperty = new SimpleBooleanProperty(this, "disabled");
-
+	private Runnable onAction;
+	
+	
+	public CAction(Runnable onAction, boolean enabled)
+	{
+		this.onAction = onAction;
+		setEnabled(enabled);
+	}
+	
+	
+	public CAction(Runnable onAction)
+	{
+		this.onAction = onAction;
+	}
+	
 	
 	public CAction()
 	{
+	}
+	
+	
+	protected void action()
+	{
+		if(onAction != null)
+		{
+			try
+			{
+				onAction.run();
+			}
+			catch(Exception e)
+			{
+				Log.ex(e);
+			}
+		}
 	}
 
 
@@ -41,7 +69,6 @@ public abstract class CAction
 		if(b instanceof ToggleButton)
 		{
 			((ToggleButton)b).selectedProperty().bindBidirectional(selectedProperty());
-			b.setOnAction(this);
 		}
 	}
 
@@ -54,12 +81,10 @@ public abstract class CAction
 		if(m instanceof CheckMenuItem)
 		{
 			((CheckMenuItem)m).selectedProperty().bindBidirectional(selectedProperty());
-			m.setOnAction(this);
 		}
 		else if(m instanceof RadioMenuItem)
 		{
 			((RadioMenuItem)m).selectedProperty().bindBidirectional(selectedProperty());
-			m.setOnAction(this);
 		}
 	}
 
@@ -112,6 +137,18 @@ public abstract class CAction
 	}
 	
 	
+	public final void enable()
+	{
+		setEnabled(true);
+	}
+	
+	
+	public final void disable()
+	{
+		setEnabled(false);
+	}
+	
+	
 	public void fire()
 	{
 		if(isEnabled())
@@ -121,19 +158,24 @@ public abstract class CAction
 	}
 
 
-	/** override to obtain the actual event */
+	/** override to obtain the ActionEvent */
 	public void handle(ActionEvent ev)
 	{
 		if(isEnabled())
 		{
-			if(ev.getSource() instanceof Menu)
+			if(ev != null)
 			{
-				if(ev.getSource() != ev.getTarget())
+				if(ev.getSource() instanceof Menu)
 				{
-					// selection of a cascading child menu triggers action event for the parent 
-					// for some unknown reason.  ignore this.
-					return;
+					if(ev.getSource() != ev.getTarget())
+					{
+						// selection of a cascading child menu triggers action event for the parent 
+						// for some unknown reason.  ignore this.
+						return;
+					}
 				}
+				
+				ev.consume();
 			}
 			
 			try
@@ -142,9 +184,8 @@ public abstract class CAction
 			}
 			catch(Exception e)
 			{
-				Log.fail(e);
+				Log.ex(e);
 			}
-			ev.consume();
 		}
 	}
 }

@@ -1,9 +1,9 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 
 
 /**
- * CssId.
+ * Css ID
  */
 public class CssID
 {

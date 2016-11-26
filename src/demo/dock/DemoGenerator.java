@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
@@ -16,7 +16,15 @@ public class DemoGenerator
 {
 	/** type id for a browser pane */
 	public static final String BROWSER = "BROWSER";
-
+	/** type id for a CPane demo */
+	public static final String CPANE = "CPANE";
+	/** type id for a HPane demo */
+	public static final String HPANE = "HPANE";
+	/** type id for a login pane */
+	public static final String LOGIN = "LOGIN";
+	/** type id for a VPane demo */
+	public static final String VPANE = "VPANE";
+	
 
 	/** creates custom window */
 	public FxDockWindow createWindow()
@@ -32,6 +40,12 @@ public class DemoGenerator
 		{
 		case BROWSER:
 			return new DemoBrowser();
+		case CPANE:
+			return new DemoCPane();
+		case HPANE:
+			return new DemoHPane();
+		case LOGIN:
+			return new DemoLoginPane();
 		default:
 			// type here codes for background color
 			return new DemoPane(type);

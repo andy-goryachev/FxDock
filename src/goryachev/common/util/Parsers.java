@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2011-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.File;
 import java.math.BigDecimal;
@@ -320,7 +320,7 @@ public class Parsers
 		}
 		catch(Exception e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 		}
 		
 		return null;
@@ -357,7 +357,7 @@ public class Parsers
 			}
 			catch(Exception e)
 			{
-				Log.fail(e);
+				Log.ex(e);
 			}
 		}
 		return null;
@@ -388,13 +388,13 @@ public class Parsers
 					}
 					catch(Exception e)
 					{
-						Log.fail(e);
+						Log.ex(e);
 					}
 				}
 			}
 			catch(Exception e)
 			{
-				Log.fail(e);
+				Log.ex(e);
 			}
 		}
 		return null;

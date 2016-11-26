@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2006-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util.log;
 import goryachev.common.util.CKit;
 

@@ -1,5 +1,6 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.FH;
 
 
 /**
@@ -67,6 +68,7 @@ public class FxSize
 	
 	public int hashCode()
 	{
-		return FxSize.class.hashCode() ^ Double.hashCode(width) ^ Double.hashCode(height);
+		int h = FH.hash(FxSize.class.hashCode(), width);
+		return FH.hash(h, height);
 	}
 }

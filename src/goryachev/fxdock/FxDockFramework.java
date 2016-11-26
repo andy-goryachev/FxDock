@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fxdock.internal.FrameworkBase;
 import java.util.List;
@@ -43,12 +43,6 @@ public class FxDockFramework
 	}
 	
 	
-	protected static void registerWindow(FxDockWindow w)
-	{
-		base.addFocusListener(w);
-	}
-	
-	
 	public static FxDockPane createPane(String type)
 	{
 		return base.createPane(type);
@@ -73,19 +67,21 @@ public class FxDockFramework
 	}
 	
 	
+	/** returns topmost window */
 	public static FxDockWindow findTopWindow(List<FxDockWindow> ws)
 	{
 		return base.findTopWindow(ws);
 	}
 	
 	
-	/** returns a list of vidible windows, topmost window first */
+	/** returns a list of visible windows, topmost window first */
 	public static List<FxDockWindow> getWindows()
 	{
 		return base.getWindows();
 	}
 	
 	
+	/** returns the number of visible windows */
 	public static int getWindowCount()
 	{
 		return base.getWindowCount();

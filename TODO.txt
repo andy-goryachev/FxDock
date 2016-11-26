@@ -1,0 +1,11 @@
+FxEditor
+	view
+		...
+	layout
+		...
+	caret
+		update when scrolling
+		blink rate
+		enabled
+	highlight
+		update when scrolling 

@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
@@ -82,6 +82,13 @@ public class TF
 		}
 		
 		TestCase.print(sb);
+	}
+	
+	
+	/** adds stack trace to the test case printout */
+	public static void print(Throwable e)
+	{
+		TestCase.print(CKit.stackTrace(e));
 	}
 	
 	

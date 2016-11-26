@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.Hex;
 import goryachev.fx.CPopupMenu;
@@ -62,7 +62,7 @@ public class DemoPane
 		// set up context menu off the title field
 		titleField.setContextMenu(new CPopupMenu()
 		{
-			protected void populateMenu()
+			protected void createPopupMenu()
 			{
 				add("Pop up in Window", popToWindowAction);
 				add("Close", closeAction);
@@ -78,7 +78,7 @@ public class DemoPane
 		for(double w: specs)
 		{
 			Color c = Color.gray(0.5 + 0.5 * ix / (specs.length - 1));
-			String text = getDescription(w);
+			String text = DemoTools.spec(w);
 			TextField t = new TextField(text);
 			t.setEditable(false);
 			t.setPrefColumnCount(3);
@@ -88,23 +88,6 @@ public class DemoPane
 			ix++;
 		}
 		p.getChildren().add(hp);
-	}
-
-
-	private static String getDescription(double w)
-	{
-		if(w == HPane.FILL)
-		{
-			return "fill";
-		}
-		else if(w == HPane.PREF)
-		{
-			return "pref";
-		}
-		else
-		{
-			return new DecimalFormat("#0.##").format(w);
-		}
 	}
 
 

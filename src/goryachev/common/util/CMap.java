@@ -1,5 +1,6 @@
-// Copyright (c) 2011-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2011-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,19 @@ public class CMap<K,V>
 	}
 	
 	
+	/** removes values identified by the supplied keys.  passing null has no effect */
+	public void removeAll(Collection<K> keys)
+	{
+		if(keys != null)
+		{
+			for(K k: keys)
+			{
+				remove(k);
+			}
+		}
+	}
+	
+	
 	public V set(K k, V v)
 	{
 		if(v == null)
@@ -55,7 +69,6 @@ public class CMap<K,V>
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public void loadArray(Object ... xx)
 	{
 		if(xx != null)
@@ -68,9 +81,9 @@ public class CMap<K,V>
 			
 			for(int i=0; i<sz; )
 			{
-				Object k = xx[i++];
-				Object v = xx[i++];
-				put((K)k, (V)v);
+				K k = (K)xx[i++];
+				V v = (V)xx[i++];
+				put(k, v);
 			}
 		}
 	}

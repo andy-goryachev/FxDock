@@ -1,14 +1,14 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fx.CAction;
 import goryachev.fx.FX;
 import goryachev.fx.SSConverter;
+import goryachev.fx.internal.LocalBindings;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.DragAndDropHandler;
 import goryachev.fxdock.internal.FxDockBorderPane;
 import goryachev.fxdock.internal.FxDockSchema;
 import goryachev.fxdock.internal.FxDockTabPane;
-import goryachev.fxdock.internal.LocalBindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -132,14 +132,14 @@ public abstract class FxDockPane
 	}
 	
 	
-	/** bind a property to be saved in tile-specific settings using the specified subkey, using subkey */
+	/** bind a property to be saved in tile-specific settings using the specified subkey */
 	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
 	{
 		bindings().add(subKey, p, c);
 	}
 	
 	
-	/** bind a property to be saved in tile-specific settings using the specified subkey, using subkey */
+	/** bind a property to be saved in tile-specific settings using the specified subkey */
 	public <T> void bind(String subKey, Property<T> p, SSConverter<T> c)
 	{
 		bindings().add(subKey, c, p);

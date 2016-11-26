@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
@@ -10,16 +10,16 @@ import goryachev.fx.CDialog;
 import goryachev.fx.CMenu;
 import goryachev.fx.CMenuBar;
 import goryachev.fx.FX;
+import goryachev.fx.GlobalBooleanProperty;
+import goryachev.fx.OnWindowClosing;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockWindow;
-import goryachev.fxdock.OnWindowClosing;
 import goryachev.fxdock.WindowListMenuItem;
 import goryachev.fxdock.internal.DockTools;
 import java.util.Random;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
@@ -30,12 +30,17 @@ import javafx.scene.layout.BorderPane;
 public class DemoWindow
     extends FxDockWindow
 {
-	public static final CAction newBrowserAction = new CAction() { public void action() { actionNewBrowser(); }};
-	public static final CAction newWindowAction = new CAction() { public void action() { actionNewWindow(); }};
-	public static final CAction quitApplicationAction = new CAction() { public void action() { FxDockFramework.exit(); }};
-	public static final CAction saveSettingsAction = new CAction() { public void action() { actionSaveSettings(); }};
-	public final CAction windowCheckAction = new CAction() { public void action() {  }};
+	public static final CAction newBrowserAction = new CAction(DemoWindow::actionNewBrowser);
+	public static final CAction newCPaneAction = new CAction(DemoWindow::actionNewCPane);
+	public static final CAction newHPaneAction = new CAction(DemoWindow::actionNewHPane);
+	public static final CAction newVPaneAction = new CAction(DemoWindow::actionNewVPane);
+	public static final CAction newLoginAction = new CAction(DemoWindow::actionNewLogin);
+	public static final CAction newWindowAction = new CAction(DemoWindow::actionNewWindow);
+	public static final CAction quitApplicationAction = new CAction(FxDockFramework::exit);
+	public static final CAction saveSettingsAction = new CAction(DemoWindow::actionSaveSettings);
+	public final CAction windowCheckAction = new CAction();
 	public final Label statusField = new Label();
+	private static GlobalBooleanProperty showCloseDialogProperty = new GlobalBooleanProperty("show.close.dialog", true);
 
 	
 	public DemoWindow()
@@ -56,14 +61,21 @@ public class DemoWindow
 		// file
 		mb.add(m = new CMenu("File"));
 		m.add("Save Settings", saveSettingsAction);
-		m.addSeparator();
+		m.separator();
 		m.add("Close Window", closeWindowAction);
-		m.addSeparator();
+		m.separator();
 		m.add("Quit Application", quitApplicationAction);
 		// window
 		mb.add(m = new CMenu("Window"));
 		m.add("New Browser", newBrowserAction);
 		m.add("New Demo Window", newWindowAction);
+		m.add("New Login Window", newLoginAction);
+		m.separator();
+		m.add("CPane Example", newCPaneAction);
+		m.add("HPane Example", newHPaneAction);
+//		m.add("VPane Example", newVPaneAction);
+		m.separator();
+		m.add(new CCheckMenuItem("Confirm Window Closing", showCloseDialogProperty));
 		m.add(new WindowListMenuItem(this, m));
 		// help
 		mb.add(m = new CMenu("Help"));
@@ -103,7 +115,54 @@ public class DemoWindow
 	
 	public static DemoWindow actionNewBrowser()
 	{
-		return openBrowser("");
+		return openBrowser("https://github.com/andy-goryachev/FxDock");
+	}
+	
+	
+	public static DemoWindow actionNewCPane()
+	{
+		DemoWindow w = new DemoWindow();
+		w.setTitle("CPane Demo");
+		w.setContent(new DemoCPane());
+		w.setWidth(1000);
+		w.setHeight(750);
+		w.open();
+		return w;
+	}
+	
+	
+	public static DemoWindow actionNewHPane()
+	{
+		DemoWindow w = new DemoWindow();
+		w.setTitle("HPane Demo");
+		w.setContent(new DemoHPane());
+		w.setWidth(1000);
+		w.setHeight(750);
+		w.open();
+		return w;
+	}
+	
+	
+	public static DemoWindow actionNewVPane()
+	{
+		DemoWindow w = new DemoWindow();
+		w.setTitle("VPane Demo");
+//		w.setContent(new DemoVPane());
+		w.setWidth(1000);
+		w.setHeight(750);
+		w.open();
+		return w;
+	}
+	
+	
+	public static DemoWindow actionNewLogin()
+	{
+		DemoWindow w = new DemoWindow();
+		w.setContent(new DemoLoginPane());
+		w.setWidth(400);
+		w.setHeight(300);
+		w.open();
+		return w;
 	}
 	
 	
@@ -136,9 +195,9 @@ public class DemoWindow
 	}
 
 
-	public void saveSettings(String prefix)
+	public void storeSettings(String prefix)
 	{
-		super.saveSettings(prefix);
+		super.storeSettings(prefix);
 		
 		String s = DockTools.saveLayout(getContent()).toString();
 		statusField.setText(s);
@@ -156,6 +215,11 @@ public class DemoWindow
 	// or closing multiple window when quitting the application.
 	public void confirmClosing(OnWindowClosing ch)
 	{
+		if(!showCloseDialogProperty.get())
+		{
+			return;
+		}
+		
 		if(ch.isSaveAll())
 		{
 			save();
@@ -165,6 +229,8 @@ public class DemoWindow
 		{
 			return;
 		}
+		
+		toFront();
 		
 		CDialog d = new CDialog(this);
 		d.setTitle("Save Changes?");

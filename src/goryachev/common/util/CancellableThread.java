@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 
 
@@ -57,5 +57,11 @@ public class CancellableThread
 		{
 			throw new CancelledException();
 		}
+	}
+	
+	
+	public static boolean isCurrentThreadCancelled()
+	{
+		return ((CancellableThread)Thread.currentThread()).isCancelled();
 	}
 }

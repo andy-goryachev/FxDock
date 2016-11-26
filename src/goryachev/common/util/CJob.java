@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.util.platform.ApplicationSupport;
 import java.util.Collection;
@@ -13,7 +13,7 @@ public abstract class CJob
 	/** called in a background thread when the job has been completed or has thrown an exception */
 	protected void onThisJobCompleted() { }
 	
-	protected void handleJobError(Throwable e) { Log.fail(e); }
+	protected void handleJobError(Throwable e) { Log.ex(e); }
 	
 	//
 	
@@ -136,7 +136,7 @@ public abstract class CJob
 		}
 		catch(Throwable e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 		}
 		
 		currentJob.set(null);
@@ -193,7 +193,7 @@ public abstract class CJob
 				}
 				catch(Exception e)
 				{
-					Log.fail(e);
+					Log.ex(e);
 				}
 			}
 		}
@@ -255,7 +255,7 @@ public abstract class CJob
 		}
 		catch(Exception e)
 		{ 
-			Log.fail(e);
+			Log.ex(e);
 		}
 	}
 	

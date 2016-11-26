@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CWriter;
 import java.io.BufferedInputStream;
@@ -40,7 +40,7 @@ import java.util.zip.ZipFile;
 
 public final class CKit
 {
-	public static final String COPYRIGHT = "Copyright (c) 1996-2016 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
+	public static final String COPYRIGHT = "Copyright © 1996-2016 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
 	public static final char APPLE = '\u2318';
 	public static final char BOM = '\ufeff';
 	public static final String[] emptyStringArray = new String[0];
@@ -408,7 +408,7 @@ public final class CKit
 		}
 		catch(Exception e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 			return null;
 		}
 	}
@@ -429,7 +429,7 @@ public final class CKit
 		}
 		finally
 		{
-			CKit.close(in);
+			close(in);
 		}
 	}
 	
@@ -443,7 +443,7 @@ public final class CKit
 		}
 		finally
 		{
-			CKit.close(is);
+			close(is);
 		}
 	}
 	
@@ -505,7 +505,7 @@ public final class CKit
 		}
 		finally
 		{
-			CKit.close(is);
+			close(is);
 		}
 	}
 	
@@ -545,7 +545,7 @@ public final class CKit
 		}
 		finally
 		{
-			CKit.close(in);
+			close(in);
 		}
 	}
 
@@ -818,7 +818,7 @@ public final class CKit
 			for(int i=0; i<sz; i++)
 			{
 				char c = s.charAt(i);
-				if(CKit.isBlank(c))
+				if(isBlank(c))
 				{
 					if(!white)
 					{
@@ -1033,76 +1033,16 @@ public final class CKit
 		}
 	}
 
-
-	public static String toString(Object a)
+	
+	/** converts byte array to a String assuming UTF-8 encoding */
+	public static String toString(byte[] b)
 	{
-		return (a == null ? null : a.toString());
-	}
-
-
-	public static int hashCode(Object ... xs)
-	{
-		return hashCodeArray(xs);
-	}
-	
-	
-	public static int hashCode(Object a, Object b)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b);
-	}
-	
-	
-	public static int hashCode(Object a, Object b, Object c)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b) ^ hashCodeObject(c);
-	}
-
-	
-	public static int hashCode(Object a, Object b, Object c, Object d)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b) ^ hashCodeObject(c) ^ hashCodeObject(d);
-	}
-	
-	
-	public static int hashCode(Object a, Object b, Object c, Object d, Object e)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b) ^ hashCodeObject(c) ^ hashCodeObject(d) ^ hashCodeObject(e);
-	}
-	
-	
-	public static int hashCode(Object a, Object b, Object c, Object d, Object e, Object f)
-	{
-		return hashCodeObject(a) ^ hashCodeObject(b) ^ hashCodeObject(c) ^ hashCodeObject(d) ^ hashCodeObject(e) ^ hashCodeObject(f);
-	}
-	
-	
-	public static int hashCodeArray(Object[] xs)
-	{
-		if(xs == null)
+		if(b == null)
 		{
-			return 0xABBAABBA;
+			return null;
 		}
-		else
-		{
-			int h = 0;
-			for(Object x: xs)
-			{
-				h ^= hashCodeObject(x);
-			}
-			return h;
-		}
-	}
-	
-	
-	public static int hashCodeObject(Object x)
-	{
-		return x == null ? 0xBADBEEF : x.hashCode();
-	}
-	
-	
-	public static String toString(byte[] bytes, String encoding) throws Exception
-	{
-		return (encoding == null ? new String(bytes) : new String(bytes, encoding));
+		
+		return new String(b, CHARSET_UTF8);
 	}
 
 
@@ -1272,11 +1212,16 @@ public final class CKit
 	/** copies input stream into the output stream using 64K buffer.  returns the number of bytes copied.  supports cancellation */
 	public static long copy(InputStream in, OutputStream out) throws Exception
 	{
+		if(in == null)
+		{
+			return 0;
+		}
+		
 		byte[] buf = new byte[65536];
 		long count = 0;
 		for(;;)
 		{
-			CKit.checkCancelled();
+			checkCancelled();
 			
 			int rd = in.read(buf);
 			if(rd < 0)
@@ -1488,6 +1433,7 @@ public final class CKit
 	}
 	
 	
+	/** returns true if text string contains any character from the pattern string */
 	public static boolean containsAny(String text, String pattern)
 	{
 		if(text != null)
@@ -1521,7 +1467,7 @@ public final class CKit
 		int read = 0;
 		byte[] buf = new byte[Math.min(max, 65536)];
 		ByteArrayOutputStream ba = new ByteArrayOutputStream(65536);
-		for(;;)
+		while(read < max)
 		{
 			int rd = in.read(buf);
 			if(rd < 0)
@@ -1673,7 +1619,7 @@ public final class CKit
 	public static void append(File f, String s) throws Exception
 	{
 		FileTools.ensureParentFolder(f);
-		CWriter wr = new CWriter(new FileOutputStream(f, true), CKit.CHARSET_UTF8);
+		CWriter wr = new CWriter(new FileOutputStream(f, true), CHARSET_UTF8);
 		try
 		{
 			if(s != null)
@@ -1841,34 +1787,34 @@ public final class CKit
 		boolean force = false;
 		SB sb = new SB();
 
-		int d = (int)(t / CKit.MS_IN_A_DAY);
+		int d = (int)(t / MS_IN_A_DAY);
 		if(d != 0)
 		{
 			sb.append(d);
 			sb.append(':');
-			t %= CKit.MS_IN_A_DAY;
+			t %= MS_IN_A_DAY;
 			force = true;
 		}
 
-		int h = (int)(t / CKit.MS_IN_AN_HOUR);
+		int h = (int)(t / MS_IN_AN_HOUR);
 		if(force || (h != 0))
 		{
 			append(sb, h, 2);
 			sb.append(':');
-			t %= CKit.MS_IN_AN_HOUR;
+			t %= MS_IN_AN_HOUR;
 			force = true;
 		}
 
-		int m = (int)(t / CKit.MS_IN_A_MINUTE);
+		int m = (int)(t / MS_IN_A_MINUTE);
 		if(force || (m != 0))
 		{
 			append(sb, m, 2);
 			sb.append(':');
-			t %= CKit.MS_IN_A_MINUTE;
+			t %= MS_IN_A_MINUTE;
 			force = true;
 		}
 
-		int s = (int)(t / CKit.MS_IN_A_SECOND);
+		int s = (int)(t / MS_IN_A_SECOND);
 		if(force)
 		{
 			append(sb, s, 2);
@@ -1879,7 +1825,7 @@ public final class CKit
 		}
 		sb.append('.');
 
-		int ms = (int)(t % CKit.MS_IN_A_SECOND);
+		int ms = (int)(t % MS_IN_A_SECOND);
 		append(sb, ms, 3);
 
 		return sb.toString();
@@ -1926,7 +1872,7 @@ public final class CKit
 			}
 			finally
 			{
-				CKit.close(in);
+				close(in);
 			}
 		}
 		catch(Exception ignore)
@@ -2024,7 +1970,7 @@ public final class CKit
 				}
 				catch(Exception e)
 				{
-					Log.fail(e);
+					Log.ex(e);
 				}
 			}
 		}

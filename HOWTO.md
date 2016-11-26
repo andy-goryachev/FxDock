@@ -35,15 +35,15 @@ public class DemoGenerator
 {
 	/** type id for a browser pane */
 	public static final String BROWSER = "BROWSER";
-
-
+	
+	
 	/** creates custom window */
 	public FxDockWindow createWindow()
 	{
 		return new DemoWindow();
 	}
-
-
+	
+	
 	/** creates custom pane using the type id */
 	public FxDockPane createPane(String type)
 	{
@@ -88,7 +88,7 @@ which, alas, is still a work in progress.
 
 Here is an example of startup code.  The framework attempts to load an existing layout first, the proceeds to creating the initial window if no prior layout exists:
 ```java
-	// load saved layout
+	// load a saved layout
 	int ct = FxDockFramework.loadLayout();
 	if(ct == 0)
 	{

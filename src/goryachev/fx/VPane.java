@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.Log;
 import goryachev.common.util.Parsers;
@@ -13,7 +13,7 @@ import javafx.scene.layout.Region;
 
 /**
  * Vertically arranged Pane that lays out its child nodes using the following constraints:
- * PREF, FILL, percentage, exact pixels.
+ * PREF, FILL, percentage, or exact pixels.
  */
 public class VPane
 	extends Pane
@@ -35,31 +35,74 @@ public class VPane
 	}
 	
 	
+	public void setGap(int gap)
+	{
+		this.gap = gap;
+	}
+	
+	
+	/** adds a node with preferred height constraint */
 	public void add(Node n)
 	{
+		massage(n);
 		getChildren().add(n);
 	}
 	
 	
-	public void fill(Node n)
+	/** adds a node at the specified position */
+	public void add(int ix, Node n)
 	{
-		getChildren().add(n);
-		FX.setProperty(n, KEY_CONSTRAINT, FILL);
+		massage(n);
+		getChildren().add(ix, n);
 	}
 	
 	
+	/** adds a node with the specified height constraint */
+	public void add(Node n, double constraint)
+	{
+		massage(n);
+		getChildren().add(n);
+		FX.setProperty(n, KEY_CONSTRAINT, Double.valueOf(constraint));
+	}
+	
+	
+	/** adds an empty region with the FILL constraint */
 	public void fill()
 	{
 		Region n = new Region();
+		massage(n);
 		getChildren().add(n);
 		FX.setProperty(n, KEY_CONSTRAINT, FILL);
 	}
 	
 	
-	public void add(Node n, double constraint)
+	/** adds a node with the FILL constraint */
+	public void fill(Node n)
 	{
+		massage(n);
 		getChildren().add(n);
-		FX.setProperty(n, KEY_CONSTRAINT, Double.valueOf(constraint));
+		FX.setProperty(n, KEY_CONSTRAINT, FILL);
+	}
+	
+	
+	/** adds a node with the FILL constraint at the specified position */
+	public void fill(int ix, Node n)
+	{
+		massage(n);
+		getChildren().add(ix, n);
+		FX.setProperty(n, KEY_CONSTRAINT, FILL);
+	}
+	
+	
+	protected void massage(Node n)
+	{
+		// once in an VPane, surrender your limitations!
+		if(n instanceof Region)
+		{
+			Region r = (Region)n;
+			r.setMaxHeight(Double.MAX_VALUE);
+			r.setMaxWidth(Double.MAX_VALUE);
+		}
 	}
 
 	
@@ -95,7 +138,7 @@ public class VPane
 		}
 		catch(Exception e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 		}
 	}
 	
@@ -109,6 +152,33 @@ public class VPane
 	protected void setBounds(Node nd, double left, double top, double width, double height)
 	{
 		layoutInArea(nd, left, top, width, height, 0, HPos.CENTER, VPos.CENTER);
+	}
+	
+	
+	/** a shortcut to set padding on the panel */
+	public void setPadding(double gap)
+	{
+		setPadding(new CInsets(gap));
+	}
+	
+	
+	/** a shortcut to set padding on the panel */
+	public void setPadding(double ver, double hor)
+	{
+		setPadding(new CInsets(ver, hor));
+	}
+	
+	
+	/** a shortcut to set padding on the panel */
+	public void setPadding(double top, double right, double bottom, double left)
+	{
+		setPadding(new CInsets(top, right, bottom, left));
+	}
+
+
+	public void remove(Node n)
+	{
+		getChildren().remove(n);
 	}
 	
 	
@@ -167,7 +237,8 @@ public class VPane
 		
 		protected int computeSizes(boolean preferred)
 		{
-			int sum = 0;
+			int total = 0;
+			
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
@@ -181,7 +252,7 @@ public class VPane
 				{
 					if(preferred)
 					{
-						d = FX.ceil(n.prefHeight(-1));
+						d = FX.ceil(Math.max(n.prefHeight(-1), n.minHeight(-1)));
 					}
 					else
 					{
@@ -194,10 +265,10 @@ public class VPane
 					size[i] = d;
 				}
 				
-				sum += d;
+				total += d;
 			}
 			
-			return sum + top + bottom + gaps;
+			return total + top + bottom + gaps;
 		}
 		
 		
@@ -226,143 +297,6 @@ public class VPane
 		}
 		
 		
-		/** size to allocate extra space between FILL and PERCENT cells */
-		protected void expand()
-		{
-			int sum = 0;
-			double totalPercent = 0;
-			int fills = 0;
-			
-			for(int i=0; i<sz; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				if(isPercent(cc))
-				{
-					totalPercent += cc;
-				}
-				else if(isFill(cc))
-				{
-					fills++;
-				}
-				else
-				{
-					sum += size[i];
-				}
-			}
-			
-			double extra = (getHeight() - top - bottom - gaps - sum);
-			double percentRatio = (totalPercent > 1.0) ? (1 / totalPercent) : 1.0;
-			double fillRatio = (1.0 - totalPercent * percentRatio) / fills;
-			
-			// keeping a double cumulative value in addition to the integer one
-			// in order to avoid accumulating rounding errors
-			int isum = gaps + top + bottom;
-			double dsum = isum;
-			
-			// compute sizes
-			int last = sz - 1;
-			for(int i=0; i<=last; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				int d = size[i];
-				int di;
-				
-				if(isFixed(cc))
-				{
-					di = d;
-					dsum += di;
-				}
-				else if(isFill(cc))
-				{
-					dsum += (extra * fillRatio);
-					di = FX.round(dsum - isum);
-				}
-				else if(isPercent(cc))
-				{
-					dsum += (extra * percentRatio * cc);
-					di = FX.round(dsum - isum);
-				}
-				else
-				{
-					dsum += d;
-					di = d;
-				}
-				
-				if(i == last)
-				{
-					di = FX.floor(getHeight() - isum);
-				}
-				
-				size[i] = di;
-				isum += di;
-			}
-		}
-		
-		
-		/** keep minimum sizes, redistributing extra space between PERCENT and FILL components */
-		protected void contract()
-		{
-			int ct = 0;
-			int sum = 0;
-			
-			for(int i=0; i<sz; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				if(!isFixed(cc))
-				{
-					ct++;
-				}
-				
-				sum += size[i];
-			}
-			
-			double extra = (getHeight() - top - bottom - gaps - sum);
-			if(extra < 0)
-			{
-				// do not make it smaller than permitted by the minimum size
-				extra = 0;
-			}
-			
-			// keeping a double cumulative value in addition to the integer one
-			// in order to avoid accumulating rounding errors
-			int isum = gaps + top + bottom;
-			double dsum = isum;
-			
-			// compute sizes
-			int last = sz - 1;
-			for(int i=0; i<=last; i++)
-			{
-				Node n = nodes.get(i);
-				double cc = getConstraint(n);
-				int d0 = size[i];
-				int di;
-				
-				if(isFixed(cc))
-				{
-					di = FX.ceil(cc);
-					dsum += di;
-				}
-				else
-				{
-					// TODO multiply by percent, fill, preferred ratios
-					dsum += (d0 + extra / ct);
-					di = FX.round(dsum - isum);
-				}
-				
-				if(i == last)
-				{
-					di = FX.floor(getHeight() - isum);
-				}
-				
-				size[i] = di;
-				isum += di;
-			}
-		}
-		
-		
 		protected void computePositions()
 		{
 			int start = left;
@@ -376,7 +310,94 @@ public class VPane
 			}
 		}
 		
+		protected void adjust(int delta)
+		{
+			// space available for FILL/PERCENT columns
+			int available = delta;
+			// ratio of columns with percentage explicitly set
+			double percent = 0;
+			// number of FILL columns
+			int fillsCount = 0;
+			
+			for(int i=0; i<sz; i++)
+			{
+				Node n = nodes.get(i);
+				double cc = getConstraint(n);
+				if(isPercent(cc))
+				{
+					// percent
+					percent += cc;
+					available += size[i];
+				}
+				else if(isFill(cc))
+				{
+					// fill
+					fillsCount++;
+					available += size[i];
+				}
+			}
+			
+			if(available < 0)
+			{
+				available = 0;
+			}
+			
+			double percentFactor = (percent > 1.0) ? (1 / percent) : percent;
+			int remaining = available;
+			
+			// PERCENT sizes first
+			for(int i=0; i<sz; i++)
+			{
+				Node n = nodes.get(i);
+				double cc = getConstraint(n);
+				if(isPercent(cc))
+				{
+					double w;
+					if(remaining > 0)
+					{
+						w = cc * available * percentFactor;
+					}
+					else
+					{
+						w = 0;
+					}
+					
+					int d = FX.round(w);
+					size[i] = d;
+					remaining -= d;
+				}
+			}
+			
+			// FILL sizes after PERCENT
+			if(fillsCount > 0)
+			{
+				double cw = remaining / (double)fillsCount;
+				
+				for(int i=0; i<sz; i++)
+				{
+					Node n = nodes.get(i);
+					double cc = getConstraint(n);
+					if(isFill(cc))
+					{
+						double w;
+						if(remaining >= 0)
+						{
+							w = Math.min(cw, remaining);
+						}
+						else
+						{
+							w = 0;
+						}
+						
+						int d = FX.ceil(w);
+						size[i] = d;
+						remaining -= d;
+					}
+				}
+			}
+		}
 		
+
 		public void applySizes()
 		{
 			computePositions();
@@ -399,18 +420,10 @@ public class VPane
 			
 			// populate size[] with preferred sizes
 			int ph = computeSizes(true);
-			double dh = getHeight() - ph;
-			if(dh < 0)
+			int dh = FX.floor(getHeight()) - ph;
+			if(dh != 0)
 			{
-				// populate size[] array with minimum sizes
-				computeSizes(false);
-				
-				// contract between min size and pref size
-				contract();
-			}
-			else if(dh > 0)
-			{
-				expand();
+				adjust(dh);
 			}
 
 			applySizes();

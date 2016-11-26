@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.Parsers;
 import javafx.beans.property.BooleanProperty;
@@ -13,9 +13,10 @@ import javafx.util.StringConverter;
  */
 public class Converters
 {
-	public static StringConverter<Boolean> cboolean;
-	public static StringConverter<Integer> cint;
-	public static StringConverter<String> cstring;
+	protected static StringConverter<Boolean> cboolean;
+	protected static StringConverter<Integer> cint;
+	protected static StringConverter<String> cstring;
+	protected static StringConverter<Object> cobject;
 	
 	
 	@SuppressWarnings("unchecked")
@@ -100,5 +101,26 @@ public class Converters
 			};
 		}
 		return cstring;
+	}
+	
+	
+	public static StringConverter<Object> OBJECT()
+	{
+		if(cobject == null)
+		{
+			cobject = new StringConverter<Object>()
+			{
+				public String toString(Object x)
+				{
+					return x == null ? null : x.toString();
+				}
+
+				public Object fromString(String s)
+				{
+					return s;
+				}
+			};
+		}
+		return cobject;
 	}
 }

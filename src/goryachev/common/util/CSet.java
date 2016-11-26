@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2015-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,6 +43,19 @@ public class CSet<T>
 			for(int i=0; i<sz; i++)
 			{
 				add(items[i]);
+			}
+		}
+	}
+	
+	
+	public void removeAll(T[] items)
+	{
+		if(items != null)
+		{
+			int sz = items.length;
+			for(int i=0; i<sz; i++)
+			{
+				remove(items[i]);
 			}
 		}
 	}

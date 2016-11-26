@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
@@ -27,7 +27,6 @@ public class ParallelExecutor
 		this.name = name;
 		
 		exec = new ThreadPoolExecutor(0, Integer.MAX_VALUE, keepAliveTimeSeconds, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), this);
-
 		exec.allowCoreThreadTimeOut(true);
 	}
 	
@@ -57,7 +56,7 @@ public class ParallelExecutor
 			}
 			catch(Exception e)
 			{
-				Log.fail(e);
+				Log.ex(e);
 			}
 			closed = true;
 		}

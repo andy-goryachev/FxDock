@@ -1,8 +1,14 @@
-// Copyright (c) 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.Log;
-import java.util.function.Function;
+import java.util.List;
+import javafx.beans.value.ObservableValue;
+import javafx.css.CssMetaData;
+import javafx.css.Styleable;
+import javafx.css.StyleableProperty;
+import javafx.css.StyleablePropertyFactory;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -12,7 +18,7 @@ import javafx.scene.layout.Region;
 
 
 /**
- * CPane is like my Swing CPanel - lays out nodes with an outer BorderLaoyut and inner TableLayout.
+ * CPane is like my Swing CPanel, lays out nodes with an outer border layout and an inner table layout.
  */
 public class CPane
 	extends Pane
@@ -26,58 +32,123 @@ public class CPane
 	public static final CC RIGHT = new CC(true);
 	public static final CC CENTER = new CC(true);
 	
-	protected int hgap;
-	protected int vgap;
 	protected CList<Entry> entries = new CList<>();
 	protected CList<LC> cols = new CList<>();
 	protected CList<LC> rows = new CList<>();
-
+	private static final StyleablePropertyFactory<CPane> SPF = new StyleablePropertyFactory<>(Pane.getClassCssMetaData());
+	private final StyleableProperty<Number> hgap = SPF.createStyleableNumberProperty(this, "hgap", "-ag-hgap", s -> s.hgap);
+	private final StyleableProperty<Number> vgap = SPF.createStyleableNumberProperty(this, "vgap", "-ag-vgap", s -> s.vgap);
+	
 
 	public CPane()
 	{
 	}
 	
 	
+	public CPane(Node n)
+	{
+		setCenter(n);
+	}
+	
+	
+	/** sets horizontal gap for the table layout portion of the layout */
 	public void setHGap(int gap)
 	{
-		hgap = gap;
+		hgap.setValue(gap);
 	}
 
 
-	public void setVGap(int gap)
-	{
-		vgap = gap;
-	}
-
-
+	/** returns horizontal gap */
 	public int getHGap()
 	{
-		return hgap;
+		return hgap.getValue().intValue();
+	}
+	
+	
+	public ObservableValue<Number> hgapProperty()
+	{
+		return (ObservableValue<Number>)hgap;
+	}
+	
+
+	/** sets vertical gap for the table layout portion of the layout */
+	public void setVGap(int gap)
+	{
+		vgap.setValue(gap);
 	}
 
 
+	/** returns vertical gap */
 	public int getVGap()
 	{
-		return vgap;
+		return vgap.getValue().intValue();
 	}
 	
 	
+	public ObservableValue<Number> vgapProperty()
+	{
+		return (ObservableValue<Number>)vgap;
+	}
+
+
+	public static List<CssMetaData<? extends Styleable,?>> getClassCssMetaData()
+	{
+		return SPF.getCssMetaData();
+	}
+
+
+	public List<CssMetaData<? extends Styleable,?>> getCssMetaData()
+	{
+		return SPF.getCssMetaData();
+	}
+
+
+	/** sets horizontal and vertical gaps. */
 	public void setGaps(int horizontal, int vertical)
 	{
 		setHGap(horizontal);
 		setVGap(vertical);
 	}
+	
+	
+	/** sets horizontal and vertical gaps. */
+	public void setGaps(int gaps)
+	{
+		setHGap(gaps);
+		setVGap(gaps);
+	}
+	
+	
+	/** a shortcut to set padding on the panel */
+	public void setPadding(double gap)
+	{
+		setPadding(new CInsets(gap));
+	}
+	
+	
+	/** a shortcut to set padding on the panel */
+	public void setPadding(double ver, double hor)
+	{
+		setPadding(new CInsets(ver, hor));
+	}
+	
+	
+	/** a shortcut to set padding on the panel */
+	public void setPadding(double top, double right, double bottom, double left)
+	{
+		setPadding(new CInsets(top, right, bottom, left));
+	}
 
 
 	/** returns number of columns for the table portion of the layout (ignoring border components) */
-	public int getColumnCount()
+	public int getCenterColumnCount()
 	{
 		return cols.size();
 	}
 	
 
 	/** returns number of rows for the table portion of the layout (ignoring border components) */
-	public int getRowCount()
+	public int getCenterRowCount()
 	{
 		return rows.size();
 	}
@@ -101,6 +172,7 @@ public class CPane
 	public void insertColumn(int ix, double spec)
 	{
 		// TODO
+		CKit.todo();
 	}
 	
 	
@@ -121,13 +193,35 @@ public class CPane
 	
 	public void insertRow(int ix, double spec)
 	{
-		// TODO
+		if(ix < 0)
+		{
+			throw new IllegalArgumentException("negative row: " + ix);
+		}
+		if(ix >= getCenterRowCount())
+		{
+			ix = getCenterRowCount();
+		}
+		
+		rows.add(ix, new LC());
+		
+		for(Entry en: entries)
+		{
+			if(en.cc.row >= ix)
+			{
+				en.cc.row++;
+				en.cc.row2++;
+			}
+			else if(en.cc.row2 >= ix)
+			{
+				en.cc.row2++;
+			}
+		}
 	}
 	
 	
 	protected LC getColumnSpec(int col)
 	{
-		while(getColumnCount() <= col)
+		while(getCenterColumnCount() <= col)
 		{
 			addColumn(PREF);
 		}
@@ -151,7 +245,7 @@ public class CPane
 	
 	protected LC getRowSpec(int row)
 	{
-		while(getRowCount() <= row)
+		while(getCenterRowCount() <= row)
 		{
 			addRow(PREF);
 		}
@@ -166,7 +260,7 @@ public class CPane
 	}
 	
 	
-	public void setRow(int row, float spec)
+	public void setRow(int row, double spec)
 	{
 		LC c = getRowSpec(row);
 		c.width = spec;
@@ -331,16 +425,19 @@ public class CPane
 			
 			entries.add(en);
 			
-			int mxc = cc.col2;
-			while(cols.size() <= mxc)
+			if(!cc.border)
 			{
-				cols.add(new LC());
-			}
-			
-			int mxr = cc.row2;
-			while(rows.size() <= mxr)
-			{
-				rows.add(new LC());
+				int mxc = cc.col2;
+				while(cols.size() <= mxc)
+				{
+					cols.add(new LC());
+				}
+				
+				int mxr = cc.row2;
+				while(rows.size() <= mxr)
+				{
+					rows.add(new LC());
+				}
 			}
 		}
 
@@ -374,25 +471,25 @@ public class CPane
 
 	protected double computePrefWidth(double height)
 	{
-		return new Helper().computeWidth((nd) -> nd.prefWidth(height));
+		return new Helper().computeWidth(true);
 	}
 	
 	
 	protected double computePrefHeight(double width)
 	{
-		return new Helper().computeHeight((nd) -> nd.prefHeight(width));
+		return new Helper().computeHeight(true);	
 	}
 
 
 	protected double computeMinWidth(double height)
 	{
-		return new Helper().computeWidth((nd) -> nd.minWidth(height));
+		return new Helper().computeWidth(false);
 	}
 	
 	
 	protected double computeMinHeight(double width)
 	{
-		return new Helper().computeHeight((nd) -> nd.minHeight(width));
+		return new Helper().computeHeight(false);
 	}
 	
 	
@@ -404,7 +501,7 @@ public class CPane
 		}
 		catch(Exception e)
 		{
-			Log.fail(e);
+			Log.ex(e);
 		}
 	}
 
@@ -513,12 +610,6 @@ public class CPane
 			this.horAlign = horAlign;
 			this.verAlign = verAlign;
 		}
-		
-		
-		public boolean isTable()
-		{
-			return !border;
-		}
 	}
 	
 	
@@ -547,15 +638,22 @@ public class CPane
 		
 		public abstract int end(CC cc);
 		
+		public abstract double sizingMethod(boolean pref, Node c, double other);
+		
+		public abstract double otherDimension(Entry en, boolean doingLayout);
+		
 		//
 		
 		public final int gap;
+		/** row/column specifications */
 		public final CList<LC> specs;
 		public Entry left;
 		public Entry center;
 		public Entry right;
+		/** row/column sizes */
 		public int[] size;
 		public int[] pos;
+		public Axis otherAxis;
 		
 		
 		public Axis(CList<LC> specs, int gap)
@@ -646,7 +744,7 @@ public class CPane
 		}
 		
 		
-		protected int computeSizes(Function<Node,Double> sizingMethod, boolean doingLayout)
+		protected int computeSizes(boolean pref, boolean doingLayout)
 		{
 			// total width
 			int total = 0;
@@ -668,7 +766,7 @@ public class CPane
 						int end = end(cc);
 						
 						// only if the component ends on this row/col
-						if(cc.isTable() && (end == i))
+						if((!cc.border) && (end == i))
 						{
 							int start = start(cc);
 							
@@ -677,8 +775,8 @@ public class CPane
 							boolean skip = doingLayout && spansScaled(start, end);
 							if(!skip)
 							{
-								Node c = en.node;
-								int d = FX.ceil(sizingMethod.apply(c));
+								double other = otherDimension(en, doingLayout);
+								int d = FX.ceil(sizingMethod(pref, en.node, other));
 								
 								// amount of space component occupies in this column
 								int cw = d - aggregateSize(start, i, gap);
@@ -873,20 +971,42 @@ public class CPane
 		}
 		
 		
-		protected int computeBorderHeight(Function<Node,Double> sizingMethod)
+		protected double sizeHeight(boolean pref, Node n)
+		{
+			double d = n.minHeight(-1);
+			if(pref)
+			{
+				d = Math.max(d, n.prefHeight(-1));
+			}
+			return d;
+		}
+		
+		
+		protected double sizeWidth(boolean pref, Node n)
+		{
+			double d = n.minWidth(-1);
+			if(pref)
+			{
+				d = Math.max(d, n.prefWidth(-1));
+			}
+			return d;
+		}
+		
+		
+		protected int computeBorderHeight(boolean pref)
 		{
 			int h = 0;
 			Node c;
 			
 			if((c = ltr ? leftComp : rightComp) != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(c));
+				int d = FX.ceil(sizeHeight(pref, c));
 				h = Math.max(d, h);
 			}
 			
 			if((c = ltr ? rightComp : leftComp) != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(c));
+				int d = FX.ceil(sizeHeight(pref, c));
 				h = Math.max(d, h);
 			}
 			
@@ -894,83 +1014,132 @@ public class CPane
 			
 			if(centerComp != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(centerComp));
+				int d = FX.ceil(sizeHeight(pref, centerComp));
 				h = Math.max(d, h);
 			}
 			
 			if(topComp != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(topComp));
-				h += (d + vgap);
+				int d = FX.ceil(sizeHeight(pref, topComp));
+				h += (d + getVGap());
 			}
 			
 			if(bottomComp != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(bottomComp));
-				h += (d + vgap);
+				int d = FX.ceil(sizeHeight(pref, bottomComp));
+				h += (d + getVGap());
 			}
 
-			h += mtop + mbottom;
+			h += (mtop + mbottom);
 			return h;
 		}
 		
 		
-		protected int computeBorderWidth(Function<Node,Double> sizingMethod)
+		protected int computeBorderWidth(boolean pref)
 		{
 			int w = 0;
 			Node c;
 			
 			if((c = ltr ? leftComp : rightComp) != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(c));
-				w += (d + hgap);
+				int d = FX.ceil(sizeWidth(pref, c));
+				w += (d + getHGap());
 			}
 			
 			if((c = ltr ? rightComp : leftComp) != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(c));
-				w += (d + hgap);
+				int d = FX.ceil(sizeWidth(pref, c));
+				w += (d + getHGap());
 			}
 			
 			if(centerComp != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(centerComp));
+				int d = FX.ceil(sizeWidth(pref, centerComp));
 				w += d;
 			}
 			
 			if(topComp != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(topComp));
+				int d = FX.ceil(sizeWidth(pref, topComp));
 				w = Math.max(d, w);
 			}
 			
 			if(bottomComp != null)
 			{
-				int d = FX.ceil(sizingMethod.apply(bottomComp));
+				int d = FX.ceil(sizeWidth(pref, bottomComp));
 				w = Math.max(d, w);
 			}
 
-			w += mleft + mright;
+			w += (mleft + mright);
 			return w;
 		}
 		
 		
 		protected Axis createHorAxis()
 		{
-			return new Axis(cols, hgap)
+			return new Axis(cols, getHGap())
 			{
 				public int start(CC cc) { return cc.col; }
 				public int end(CC cc) { return cc.col2; }
+				
+				public double sizingMethod(boolean pref, Node n, double other)
+				{
+					double d = n.minWidth(other);
+					if(pref)
+					{
+						d = Math.max(n.prefWidth(other), d);
+					}
+					return d;
+				}
+				
+				public double otherDimension(Entry en, boolean doingLayout)
+				{
+					// asymmetry: horizontal layout is first, and no other dimension is available
+					return -1;
+				}
 			};
 		}
 		
 		
 		protected Axis createVerAxis()
 		{
-			return new Axis(rows, vgap)
+			return new Axis(rows, getVGap())
 			{
 				public int start(CC cc) { return cc.row; }
 				public int end(CC cc) { return cc.row2; }
+				
+				public double sizingMethod(boolean pref, Node n, double other)
+				{
+					double d = n.minHeight(other);
+					if(pref)
+					{
+						d = Math.max(n.prefHeight(other), d);
+					}
+					return d;
+				}
+				
+				public double otherDimension(Entry en, boolean doingLayout)
+				{
+					if(doingLayout)
+					{
+						// needs other dimension to compute sizes properly
+						int start = otherAxis.start(en.cc);
+						int end = otherAxis.end(en.cc);
+						double other = 0;
+						for(int i=start; i<=end; i++)
+						{
+							other += otherAxis.size[i];
+						}
+						
+						other += (gap * (end - start));
+						
+						return other;
+					}
+					else
+					{
+						return -1;
+					}
+				}
 			};
 		}
 		
@@ -989,7 +1158,7 @@ public class CPane
 				c = topComp;
 				int h = FX.ceil(c.prefHeight(right - left));
 				setBounds(c, left, top, right - left, h);
-				top += (h + vgap);
+				top += (h + getVGap());
 			}
 			
 			if(bottomComp != null)
@@ -997,21 +1166,21 @@ public class CPane
 				c = bottomComp;
 				int h = FX.ceil(c.prefHeight(right - left));
 				setBounds(c, left, bottom - h, right - left, h);
-				bottom -= (h + vgap);
+				bottom -= (h + getVGap());
 			}
 			
 			if((c = (ltr ? rightComp : leftComp)) != null)
 			{
 				int w = FX.ceil(c.prefWidth(bottom - top));
 				setBounds(c, right - w, top, w, bottom - top);
-				right -= (w + hgap);
+				right -= (w + getHGap());
 			}
 			
 			if((c = (ltr ? leftComp : rightComp)) != null)
 			{
 				int w = FX.ceil(c.prefWidth(bottom - top));
 				setBounds(c, left, top, w, bottom - top);
-				left += (w + hgap);
+				left += (w + getHGap());
 			}
 
 			if(centerComp != null)
@@ -1029,11 +1198,11 @@ public class CPane
 		}
 		
 		
-		public double computeWidth(Function<Node,Double> sizingMethod)
+		public double computeWidth(boolean pref)
 		{
 			scanBorderComponents();
 			
-			int d = computeBorderWidth(sizingMethod);
+			int d = computeBorderWidth(pref);
 			
 			if(centerComp != null)
 			{
@@ -1042,16 +1211,16 @@ public class CPane
 			}
 			
 			Axis hor = createHorAxis();
-			int w = hor.computeSizes(sizingMethod, false);
+			int w = hor.computeSizes(pref, false);
 			return w + d;
 		}
 		
 		
-		public double computeHeight(Function<Node,Double> sizingMethod)
+		public double computeHeight(boolean pref)
 		{
 			scanBorderComponents();
 			
-			double d = computeBorderHeight(sizingMethod);
+			double d = computeBorderHeight(pref);
 			
 			if(centerComp != null)
 			{
@@ -1060,7 +1229,7 @@ public class CPane
 			}
 			
 			Axis ver = createVerAxis();
-			double h = ver.computeSizes(sizingMethod, false);
+			double h = ver.computeSizes(pref, false);
 
 			// height is maximum of border midsection or table section
 			h = Math.max(h, midHeight) + (d - midHeight);
@@ -1070,8 +1239,8 @@ public class CPane
 		
 		public void sizeComponents(Axis hor, Axis ver)
 		{
-			hor.computePositions(tableLeft, hgap);
-			ver.computePositions(tableTop, vgap);
+			hor.computePositions(tableLeft, getHGap());
+			ver.computePositions(tableTop, getVGap());
 			
 			int xr = ltr ? 0 : tableRight + mright;
 			
@@ -1081,13 +1250,13 @@ public class CPane
 				Entry en = entries.get(i);
 				CC cc = en.cc;
 				
-				if(cc.isTable())
+				if(!cc.border)
 				{
 					int x = hor.pos[cc.col];
-					int w = hor.pos[cc.col2 + 1] - x - hgap;
+					int w = hor.pos[cc.col2 + 1] - x - getHGap();
 	
 					int y = ver.pos[cc.row];
-					int h = ver.pos[cc.row2 + 1] - y - vgap;
+					int h = ver.pos[cc.row2 + 1] - y - getVGap();
 
 					if(ltr)
 					{
@@ -1108,7 +1277,7 @@ public class CPane
 			layoutBorderComponents();
 
 			Axis hor = createHorAxis();
-			int w = hor.computeSizes((n) -> n.prefWidth(-1), true);
+			int w = hor.computeSizes(true, true);
 
 			int dw = tableRight - tableLeft - w;
 			if(dw != 0)
@@ -1117,7 +1286,8 @@ public class CPane
 			}
 
 			Axis ver = createVerAxis();
-			int h = ver.computeSizes((n) -> n.prefHeight(-1), true);
+			ver.otherAxis = hor;
+			int h = ver.computeSizes(true, true);
 			
 			int dh = tableBottom - tableTop - h;
 			if(dh != 0)
