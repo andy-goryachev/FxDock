@@ -20,7 +20,7 @@ Please refer to [HOWTO.md](HOWTO.md) for detailed instructions on how to use the
 
 ## Download
 
-Library JAR: [FxDock-0.00.02.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDock-0.00.03.jar)
+Library JAR: [FxDock-0.00.03.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDock-0.00.03.jar)
 
 [![Donate](https://cdn.rawgit.com/andy-goryachev/FxDock/master/doc/test.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q7JAWD7FK99QC)
 
