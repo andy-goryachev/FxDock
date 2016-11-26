@@ -122,7 +122,7 @@ public class FrameworkBase
 	
 	protected void registerWindow(FxDockWindow w)
 	{
-		w.setOnCloseRequest((ev) -> handleClose(w, ev));
+		w.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, (ev) -> handleClose(w, ev));
 		
 		w.showingProperty().addListener((src,old,cur) ->
 		{
