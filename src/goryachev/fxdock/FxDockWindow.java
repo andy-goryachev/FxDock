@@ -74,6 +74,7 @@ public abstract class FxDockWindow
 	}
 	
 	
+	/** opens a window.  please use this method instead of show() */ 
 	public void open()
 	{
 		FxDockFramework.open(this);
