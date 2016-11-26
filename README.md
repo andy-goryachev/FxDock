@@ -12,7 +12,7 @@ Please [contact me](http://goryachev.com/contact.html) if you want to acquire th
 
 ## Try It
 
-Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/blob/master/lib/FxDock/FxDockDemo.jar)
+Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDockDemo.jar)
 
 ## How to Use the Library
 
