@@ -28,6 +28,8 @@ SHA-256: 1f9ae325b34df279d55b39a4e0a99fbe81ff724cebd9be977681d53665f94ce5
 
 [![Donate](https://cdn.rawgit.com/andy-goryachev/FxDock/master/doc/test.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q7JAWD7FK99QC)
 
+[Release Notes](https://github.com/andy-goryachev/FxDock/blob/master/ReleaseNotes.md)
+
 ## Similar Projects
 
 [DockFX](https://github.com/RobertBColton/DockFX) by Robert B. Colton.
