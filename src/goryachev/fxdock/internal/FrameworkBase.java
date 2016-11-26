@@ -145,7 +145,8 @@ public class FrameworkBase
 	
 	protected void handleClose(FxDockWindow w, WindowEvent ev)
 	{
-		if(getWindowCount() == 1)
+		int ct = getWindowCount(); 
+		if(ct == 1)
 		{
 			saveLayout();
 		}
@@ -156,6 +157,11 @@ public class FrameworkBase
 		{
 			// don't close the window
 			ev.consume();
+		}
+		else if(ct != 1)
+		{
+			w.hide();
+			saveLayout();
 		}
 	}
 	
@@ -214,7 +220,7 @@ public class FrameworkBase
 	}
 	
 	
-	/** returns a list of vidible windows, topmost window first */
+	/** returns a list of visible windows, topmost window first */
 	public List<FxDockWindow> getWindows()
 	{
 		int sz = windowStack.size();
