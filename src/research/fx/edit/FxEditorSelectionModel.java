@@ -24,8 +24,8 @@ import javafx.util.Duration;
 public class FxEditorSelectionModel
 {
 	protected final FxEditor editor;
-	protected final Path caret;
 	protected final Timeline caretTimeline;
+	protected final Path caret;
 	protected final Path highlight;
 	protected final ObservableList<SelectionSegment> segments = FXCollections.observableArrayList();
 	private TextPos anchor;
@@ -125,7 +125,8 @@ public class FxEditorSelectionModel
 	{
 		SelectionSegment s = new SelectionSegment(start, end);
 		segments.add(s);
-		highlight.getElements().addAll(createHighlight(s));
+		highlight.getElements().addAll(createHighlightPath(s));
+		caret.getElements().addAll(createCaretPath(s.getEnd()));
 	}
 	
 	
@@ -150,7 +151,21 @@ public class FxEditorSelectionModel
 	}
 	
 	
-	protected CList<PathElement> createHighlight(SelectionSegment s)
+	protected CList<PathElement> createCaretPath(TextPos p)
+	{
+		CList<PathElement> rv = new CList<>();
+		CaretLocation c = editor.getCaretLocation(p);
+		if(c != null)
+		{
+			// TODO insert shape?
+			rv.add(new MoveTo(c.x0, c.y0));
+			rv.add(new LineTo(c.x0, c.y1));
+		}
+		return rv;
+	}
+	
+	
+	protected CList<PathElement> createHighlightPath(SelectionSegment s)
 	{
 		TextPos start = s.getStart();
 		TextPos end = s.getEnd();
