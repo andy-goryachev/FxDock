@@ -92,16 +92,19 @@ public class FxEditorLayout
 	
 	public CaretLocation getCaretLocation(Region parent, TextPos pos)
 	{
-		LineBox b = getLineBox(pos.getLine());
-		if(b != null)
+		if(pos != null)
 		{
-			Region box = b.box;
-			if(box instanceof CTextFlow)
+			LineBox b = getLineBox(pos.getLine());
+			if(b != null)
 			{
-				PathElement[] es = ((CTextFlow)box).getCaretShape(pos.getIndex(), pos.isLeading());
-				if(es != null)
+				Region box = b.box;
+				if(box instanceof CTextFlow)
 				{
-					return EditorTools.translateCaretLocation(parent, box, es);
+					PathElement[] es = ((CTextFlow)box).getCaretShape(pos.getIndex(), pos.isLeading());
+					if(es != null)
+					{
+						return EditorTools.translateCaretLocation(parent, box, es);
+					}
 				}
 			}
 		}

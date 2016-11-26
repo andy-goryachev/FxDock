@@ -177,7 +177,6 @@ public class FxEditorController
 			// clearing existing (possibly multiple) selection
 			selection.clear();
 			selection.addSegment(selection.getAnchor(), pos);
-			selection.setAnchor(pos);
 		}
 		else if(ev.isShortcutDown())
 		{
@@ -196,15 +195,16 @@ public class FxEditorController
 		else
 		{
 			// FIX move shapes to selection, use only text positions
-			double x = ev.getScreenX();
-			double y = ev.getScreenY();
-			PathElement[] p = editor.getCaretShape(x, y);
-			if(p != null)
-			{
+//			double x = ev.getScreenX();
+//			double y = ev.getScreenY();
+//			PathElement[] p = editor.getCaretShape(x, y);
+//			if(p != null)
+//			{
 				selection.clear();
-				selection.setCaretElements(p);
+				// FIX
+//				selection.setCaretElements(p);
 				selection.setAnchor(pos);
-			}
+//			}
 		}
 	}
 	
@@ -212,8 +212,7 @@ public class FxEditorController
 	protected void handleMouseDragged(MouseEvent ev)
 	{
 		dragging = true;
-		// TODO expand selection from (last) anchor
-		D.print(ev);
+		handleMousePressed(ev);
 	}
 	
 	
@@ -221,7 +220,6 @@ public class FxEditorController
 	{
 		// TODO
 		D.print(ev);
-		
 		dragging = false;
 	}
 	

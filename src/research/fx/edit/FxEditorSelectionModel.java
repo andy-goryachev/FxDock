@@ -1,6 +1,7 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package research.fx.edit;
 import goryachev.common.util.CList;
+import goryachev.common.util.D;
 import goryachev.fx.FX;
 import goryachev.fx.FxInvalidationListener;
 import javafx.animation.Animation;
@@ -160,10 +161,17 @@ public class FxEditorSelectionModel
 			end = s.getStart();
 		}
 		
+		CList<PathElement> rv = new CList<>();
+
 		CaretLocation top = editor.getCaretLocation(start);
 		CaretLocation bot = editor.getCaretLocation(end);
 		
-		CList<PathElement> rv = new CList<>();
+		if(bot == null)
+		{
+			D.print("null");
+			return rv;
+		}
+		
 		rv.add(new MoveTo(top.x0, top.y0));
 		if(isNearlySame(top.y0, bot.y0))
 		{
