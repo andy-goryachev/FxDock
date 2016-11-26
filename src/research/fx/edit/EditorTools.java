@@ -22,9 +22,10 @@ public class EditorTools
 	private static Text helper = new Text();
 
 	
-	public static PathElement[] translate(Region target, Node dst, PathElement[] es)
+	@Deprecated
+	public static PathElement[] translate(Region target, Node src, PathElement[] es)
 	{
-		Point2D p = dst.localToScreen(0, 0);
+		Point2D p = src.localToScreen(0, 0);
 		p = target.screenToLocal(p);
 		double dx = p.getX();
 		double dy = p.getY();
@@ -52,6 +53,50 @@ public class EditorTools
 		}
 		
 		return rv;
+	}
+	
+	
+	public static CaretLocation translateCaretLocation(Region target, Node src, PathElement[] es)
+	{
+		double x = 0.0;
+		double y0 = 0.0;
+		double y1 = 0.0;
+		
+		Point2D p = src.localToScreen(0, 0);
+		p = target.screenToLocal(p);
+		double dx = p.getX();
+		double dy = p.getY();
+		
+		int sz = es.length;
+		for(int i=0; i<sz; i++)
+		{
+			PathElement em = es[i];
+			if(em instanceof LineTo)
+			{
+				LineTo m = (LineTo)em;
+				x = halfPixel(m.getX() + dx);
+				y0 =  halfPixel(m.getY() + dy);
+			}
+			else if(em instanceof MoveTo)
+			{
+				MoveTo m = (MoveTo)em;
+				x = halfPixel(m.getX() + dx);
+				y1 = halfPixel(m.getY() + dy);
+			}
+			else
+			{
+				D.print(em); // FIX
+			}
+		}
+		
+		if(y0 > y1)
+		{
+			return new CaretLocation(x, x, y1, y0);
+		}
+		else
+		{
+			return new CaretLocation(x, x, y0, y1);
+		}
 	}
 	
 	

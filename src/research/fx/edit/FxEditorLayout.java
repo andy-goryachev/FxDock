@@ -15,13 +15,13 @@ import research.fx.edit.internal.TextPosExt;
 public class FxEditorLayout
 {
 	private int offsety;
-	private int startIndex;
+	private int startLine;
 	private CList<LineBox> lines = new CList<>();
 	
 
-	public FxEditorLayout(int startIndex, int offsety)
+	public FxEditorLayout(int startLine, int offsety)
 	{
-		this.startIndex = startIndex;
+		this.startLine = startLine;
 		this.offsety = offsety;
 	}
 	
@@ -41,7 +41,7 @@ public class FxEditorLayout
 				{
 					if(box instanceof CTextFlow)
 					{
-						TextPos pos = ((CTextFlow)box).getTextPos(p.getX(), y);
+						TextPos pos = ((CTextFlow)box).getTextPos(b.line, p.getX(), y);
 						if(pos != null)
 						{
 							return new TextPosExt(b, pos);
@@ -58,7 +58,19 @@ public class FxEditorLayout
 	}
 	
 	
+	public LineBox getLineBox(int line)
+	{
+		line -= startLine;
+		if((line >= 0) && (line < lines.size()))
+		{
+			return lines.get(line);
+		}
+		return null;
+	}
+	
+	
 	/** returns caret shape at the screen coordinates, or null */
+	@Deprecated
 	public PathElement[] getCaretShape(Region parent, double screenx, double screeny)
 	{
 		TextPosExt pos = getTextPos(screenx, screeny);
@@ -71,6 +83,25 @@ public class FxEditorLayout
 				if(es != null)
 				{
 					return EditorTools.translate(parent, box, es);
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+	public CaretLocation getCaretLocation(Region parent, TextPos pos)
+	{
+		LineBox b = getLineBox(pos.getLine());
+		if(b != null)
+		{
+			Region box = b.box;
+			if(box instanceof CTextFlow)
+			{
+				PathElement[] es = ((CTextFlow)box).getCaretShape(pos.getIndex(), pos.isLeading());
+				if(es != null)
+				{
+					return EditorTools.translateCaretLocation(parent, box, es);
 				}
 			}
 		}
@@ -104,6 +135,6 @@ public class FxEditorLayout
 
 	public int startLine()
 	{
-		return startIndex;
+		return startLine;
 	}
 }

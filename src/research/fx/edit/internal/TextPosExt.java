@@ -15,7 +15,7 @@ public class TextPosExt
 	
 	public TextPosExt(LineBox b, TextPos p)
 	{
-		super(p.getIndex(), p.isLeading());
+		super(p.getLine(), p.getIndex(), p.isLeading());
 		
 		line = b;
 	}

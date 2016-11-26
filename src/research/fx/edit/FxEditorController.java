@@ -159,20 +159,43 @@ public class FxEditorController
 	}
 	
 	
+	protected TextPos getTextPos(MouseEvent ev)
+	{
+		double x = ev.getScreenX();
+		double y = ev.getScreenY();
+		return editor.getTextPos(x, y);
+	}
+	
+	
 	protected void handleMousePressed(MouseEvent ev)
 	{
+		TextPos pos = getTextPos(ev);
+		
 		if(ev.isShiftDown())
 		{
-			// TODO expand selection from (last) anchor (first click) to the current position
-			// clearing existing multiple selection
+			// expand selection from the anchor point to the current position
+			// clearing existing (possibly multiple) selection
+			selection.clear();
+			selection.addSegment(selection.getAnchor(), pos);
+			selection.setAnchor(pos);
 		}
-		else if(ev.isControlDown())
+		else if(ev.isShortcutDown())
 		{
-			// TODO create another caret (unless inside of an existing selection)
+			if(selection.isInsideSelection(pos))
+			{
+				// replace selection with a single caret
+				selection.clear();
+				selection.setAnchor(pos);
+			}
+			else
+			{
+				// FIX add a new caret
+				selection.setAnchor(pos);
+			}
 		}
 		else
 		{
-			// TODO move shapes to selection, use only text positions
+			// FIX move shapes to selection, use only text positions
 			double x = ev.getScreenX();
 			double y = ev.getScreenY();
 			PathElement[] p = editor.getCaretShape(x, y);
@@ -180,7 +203,7 @@ public class FxEditorController
 			{
 				selection.clear();
 				selection.setCaretElements(p);
-				selection.setAnchor(editor.getTextPos(x, y));
+				selection.setAnchor(pos);
 			}
 		}
 	}

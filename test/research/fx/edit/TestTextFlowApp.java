@@ -98,7 +98,7 @@ public class TestTextFlowApp
 		protected void handleMouseEvent(CTextFlow t, MouseEvent ev)
 		{
 			Point2D p = t.screenToLocal(ev.getScreenX(), ev.getScreenY());
-			TextPos pos = t.getTextPos(p.getX(), p.getY());
+			TextPos pos = t.getTextPos(0, p.getX(), p.getY());
 			
 			highlight.getElements().setAll(t.getRange(0, pos.getInsertionIndex()));
 			

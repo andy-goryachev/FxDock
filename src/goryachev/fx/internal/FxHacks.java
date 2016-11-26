@@ -21,7 +21,7 @@ public abstract class FxHacks
 	public abstract PathElement[] getRange(TextFlow t, int start, int end);
 	
 	/** returns the text position at the specified local coordinates */
-	public abstract TextPos getTextPos(TextFlow t, double x, double y);
+	public abstract TextPos getTextPos(TextFlow t, int line, double x, double y);
 	
 	//
 	

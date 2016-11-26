@@ -36,8 +36,8 @@ public class CTextFlow
 
 
 	/** returns text position at the specified local coordinates */
-	public TextPos getTextPos(double x, double y)
+	public TextPos getTextPos(int line, double x, double y)
 	{
-		return FxHacks.get().getTextPos(this, x, y);
+		return FxHacks.get().getTextPos(this, line, x, y);
 	}
 }

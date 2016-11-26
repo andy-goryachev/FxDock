@@ -155,9 +155,16 @@ public class FxEditor
 	
 	
 	/** returns caret shape at the specified screen coordinates */
+	@Deprecated
 	public PathElement[] getCaretShape(double screenx, double screeny)
 	{
 		return layout.getCaretShape(this, screenx, screeny);
+	}
+	
+	
+	public CaretLocation getCaretLocation(TextPos pos)
+	{
+		return layout.getCaretLocation(this, pos);
 	}
 	
 	

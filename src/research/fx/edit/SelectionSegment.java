@@ -28,4 +28,20 @@ public class SelectionSegment
 	{
 		return end;
 	}
+
+
+	public boolean contains(TextPos p)
+	{
+		if(p != null)
+		{
+			if(start.compareTo(p) >= 0)
+			{
+				if(end.compareTo(p) <= 0)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

@@ -8,15 +8,15 @@ import javafx.scene.layout.Region;
  */
 public class LineBox
 {
-	public final int index;
+	public final int line;
 	public final Region box;
 	public boolean invalid;
 	// TODO line numbers
 	
 	
-	public LineBox(int index, Region box)
+	public LineBox(int line, Region box)
 	{
-		this.index = index;
+		this.line = line;
 		this.box = box;
 	}
 }
