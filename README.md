@@ -16,7 +16,7 @@ Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/raw/m
 
 ## How to Use the Library
 
-Please refer to [doc/HOWTO.md](HOWTO.md) for detailed instructions on how to use the FxDock docking framework in your project. 
+Please refer to [HOWTO.md](doc/HOWTO.md) for detailed instructions on how to use the FxDock docking framework in your project. 
 
 ## Download
 
