@@ -93,7 +93,8 @@ Here is an example of startup code.  The framework attempts to load an existing 
 	if(ct == 0)
 	{
 		// when no saved layout exists, open the first window
-		DemoWindow.openBrowser("https://github.com/andy-goryachev/FxDock");
+		// make sure to call open() instead of show()
+		new MyWindow().open();
 	}
 ```
 
