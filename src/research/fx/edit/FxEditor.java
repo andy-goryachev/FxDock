@@ -9,6 +9,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.PathElement;
+import javafx.util.Duration;
 
 
 /**
@@ -25,6 +26,7 @@ public class FxEditor
 	private ReadOnlyObjectWrapper<FxEditorModel> model = new ReadOnlyObjectWrapper<>();
 	private ReadOnlyObjectWrapper<Boolean> wrap = new ReadOnlyObjectWrapper<>();
 	private ReadOnlyObjectWrapper<Boolean> singleSelection = new ReadOnlyObjectWrapper<>();
+	private ReadOnlyObjectWrapper<Duration> blinkRate = new ReadOnlyObjectWrapper(Duration.millis(500));
 	// TODO editable
 	// TODO multiple selection
 	// TODO caret visible
@@ -174,5 +176,23 @@ public class FxEditor
 	protected int getViewStartLine()
 	{
 		return layout.startLine();
+	}
+	
+	
+	public ReadOnlyObjectProperty<Duration> blinkRateProperty()
+	{
+		return blinkRate.getReadOnlyProperty();
+	}
+	
+	
+	public Duration getBlinkRate()
+	{
+		return blinkRate.get();
+	}
+	
+	
+	public void setBlinkRate(Duration d)
+	{
+		blinkRate.set(d);
 	}
 }

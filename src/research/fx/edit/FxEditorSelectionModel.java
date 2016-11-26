@@ -1,9 +1,12 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package research.fx.edit;
 import goryachev.fx.FX;
+import goryachev.fx.FxInvalidationListener;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
@@ -15,14 +18,18 @@ import javafx.util.Duration;
  */
 public class FxEditorSelectionModel
 {
-	// TODO move to FxCaret?
+	protected final FxEditor editor;
 	protected final Path caret;
 	protected final Timeline caretTimeline;
 	protected final Path highlight;
+	protected final ObservableList<SelectionSegment> segments = FXCollections.observableArrayList();
+	private TextPos anchor;
 	
 	
-	public FxEditorSelectionModel()
+	public FxEditorSelectionModel(FxEditor ed)
 	{
+		this.editor = ed;
+		
 		highlight = new Path();
 		FX.style(highlight, FxEditor.HIGHLIGHT);
 		highlight.setManaged(false);
@@ -36,13 +43,8 @@ public class FxEditorSelectionModel
 		
 		caretTimeline = new Timeline();
 		caretTimeline.setCycleCount(Animation.INDEFINITE);
-		caretTimeline.getKeyFrames().addAll
-		(
-			new KeyFrame(Duration.ZERO, (ev) -> setCaretVisible(true)),
-			new KeyFrame(Duration.millis(500), (ev) -> setCaretVisible(false)),
-			new KeyFrame(Duration.millis(1000))
-		);
-		caretTimeline.play();
+		new FxInvalidationListener(ed.blinkRateProperty(), true, () -> updateBlinkRate(ed.getBlinkRate()));
+
 	}
 	
 	
@@ -52,18 +54,40 @@ public class FxEditorSelectionModel
 	}
 	
 	
+	protected void updateBlinkRate(Duration d)
+	{
+		Duration period = d.multiply(2);
+		
+		caretTimeline.stop();
+		caretTimeline.getKeyFrames().setAll
+		(
+			new KeyFrame(Duration.ZERO, (ev) -> setCaretVisible(true)),
+			new KeyFrame(d, (ev) -> setCaretVisible(false)),
+			new KeyFrame(period)
+		);
+		caretTimeline.play();
+	}
+	
+	
 	public void clear()
 	{
 		caret.getElements().clear();
 		highlight.getElements().clear();
+		segments.clear();
 	}
 
 
-	public void setCaret(PathElement[] es)
+	public void setCaretElements(PathElement[] es)
 	{
 		// reset caret so it's always on when moving, unlike MS Word
 		caretTimeline.stop();
 		caret.getElements().setAll(es);
 		caretTimeline.play();
+	}
+
+
+	public void setAnchor(TextPos pos)
+	{
+		anchor = pos;
 	}
 }

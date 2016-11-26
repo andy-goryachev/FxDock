@@ -8,6 +8,7 @@ import goryachev.fx.FxWindow;
 import java.io.File;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 
 /**
@@ -57,8 +58,11 @@ public class TestFxEditorApp
 				// new TestFxPlainEditorModel();
 				new TestFxColorEditorModel();
 			
+			FxEditor ed = new FxEditor(m);
+			ed.setBlinkRate(Duration.millis(300));
+			
 			setTitle("FxEditor Test");
-			setCenter(new FxEditor(m));
+			setCenter(ed);
 			setSize(600, 700);
 			
 			FxDump.attach(this);

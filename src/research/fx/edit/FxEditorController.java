@@ -27,7 +27,7 @@ public class FxEditorController
 	{
 		this.editor = ed;
 		
-		selection = new FxEditorSelectionModel();
+		selection = new FxEditorSelectionModel(ed);
 		
 		ed.getChildren().addAll(selection.highlight, vscroll(), selection.caret);
 		
@@ -168,16 +168,19 @@ public class FxEditorController
 		}
 		else if(ev.isControlDown())
 		{
-			// TODO create another caret
+			// TODO create another caret (unless inside of an existing selection)
 		}
 		else
 		{
-			PathElement[] p = editor.getCaretShape(ev.getScreenX(), ev.getScreenY());
+			// TODO move shapes to selection, use only text positions
+			double x = ev.getScreenX();
+			double y = ev.getScreenY();
+			PathElement[] p = editor.getCaretShape(x, y);
 			if(p != null)
 			{
 				selection.clear();
-				selection.setCaret(p);
-				// TODO update current position
+				selection.setCaretElements(p);
+				selection.setAnchor(editor.getTextPos(x, y));
 			}
 		}
 	}
