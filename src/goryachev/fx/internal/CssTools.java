@@ -1,7 +1,10 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
-package goryachev.fx;
+package goryachev.fx.internal;
 import goryachev.common.util.SB;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import goryachev.fx.CssID;
+import goryachev.fx.CssPseudo;
+import goryachev.fx.CssStyle;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 
 
@@ -10,6 +13,12 @@ import javafx.scene.paint.Color;
  */
 public class CssTools
 {
+	/** bold type face */
+	public static final CssStyle BOLD = new CssStyle("CommonStyles_BOLD");
+	/** disables horizontal scroll bar */
+	public static final CssStyle NO_HORIZONTAL_SCROLL_BAR = new CssStyle("CommonStyles_NO_HORIZONTAL_SCROLL_BAR");
+
+	
 	public static String toColor(Object x)
 	{
 		if(x == null)
@@ -39,7 +48,8 @@ public class CssTools
 			else
 			{
 				double a = c.getOpacity();
-				return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+				return String.format("#%02x%02x%02x%02x", to8bit(r), to8bit(g), to8bit(b), to8bit(a));
+//				return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 			}
 		}
 		else
@@ -105,6 +115,24 @@ public class CssTools
 		{
 			return "null";
 		}
+		else if(x instanceof Number)
+		{
+			Number n = (Number)x;
+			int vi = n.intValue();
+			double vd = n.doubleValue();
+			if(vd == vi)
+			{
+				return String.valueOf(vi);
+			}
+			else
+			{
+				return String.valueOf(vd);
+			}
+		}
+		else if(x instanceof Color)
+		{
+			return toColor(x);
+		}
 		else
 		{
 			return x.toString();
@@ -118,7 +146,7 @@ public class CssTools
 	}
 	
 	
-	public static String toValue(ScrollBarPolicy x)
+	public static String toValue(ScrollPane.ScrollBarPolicy x)
 	{
 		switch(x)
 		{
@@ -162,6 +190,66 @@ public class CssTools
 			sb.a(toValue(xs[i]));
 		}
 		return sb.toString();
+	}
 
+
+	/** constructs selector string */
+	public static String selector(Object[] sel)
+	{
+		SB sb = new SB();
+		for(Object x: sel)
+		{
+			addSelector(sb, x);
+		}
+		return sb.toString();
+	}
+	
+	
+	private static void addSelector(SB sb, Object x)
+	{
+		if(x instanceof CssStyle)
+		{
+			if(sb.isNotEmpty())
+			{
+				sb.a(' ');
+			}
+			
+			CssStyle s = (CssStyle)x;
+			sb.a('.');
+			sb.a(s.getName());
+		}
+		else if(x instanceof CssID)
+		{
+			if(sb.isNotEmpty())
+			{
+				sb.a(' ');
+			}
+			
+			CssID s = (CssID)x;
+			sb.a('#');
+			sb.a(s.getID());
+		}
+		else if(x instanceof String)
+		{
+			String s = (String)x;
+			if(!s.startsWith(":"))
+			{
+				if(sb.isNotEmpty())
+				{
+					sb.a(' ');
+				}
+			}
+			
+			sb.a(s);
+		}
+		else if(x instanceof CssPseudo)
+		{
+			CssPseudo s = (CssPseudo)x;
+			sb.a(s.getName());
+		}
+		else
+		{
+			throw new Error("?" + x);
+		}
 	}
 }

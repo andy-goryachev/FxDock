@@ -1044,6 +1044,13 @@ public final class CKit
 		
 		return new String(b, CHARSET_UTF8);
 	}
+	
+	
+	/** converts argument to its toString() representation or null */
+	public static String toString(Object x)
+	{
+		return (x == null) ? null : x.toString(); 
+	}
 
 
 	public static void forceGC()

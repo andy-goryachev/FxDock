@@ -1,7 +1,7 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
-import goryachev.fx.CommonStyles;
 import goryachev.fx.FX;
+import goryachev.fx.internal.CssTools;
 import java.util.Collection;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -111,7 +111,7 @@ public class FxTable<T>
 	public void setResizePolicyConstrained()
 	{
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		FX.style(table, CommonStyles.NO_HORIZONTAL_SCROLL_BAR);
+		FX.style(table, CssTools.NO_HORIZONTAL_SCROLL_BAR);
 	}
 	
 	

@@ -1,12 +1,11 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 
-
 /**
  * Common Styles.
  */
 public class CommonStyles
-	extends CssGenerator
+	extends FxStyleSheet
 {
 	/** bold type face */
 	public static final CssStyle BOLD = new CssStyle("CommonStyles_BOLD");
@@ -15,20 +14,32 @@ public class CommonStyles
 	public static final CssStyle NO_HORIZONTAL_SCROLL_BAR = new CssStyle("CommonStyles_NO_HORIZONTAL_SCROLL_BAR");
 
 	
-	protected void generate()
+	public CommonStyles()
 	{
-		// bold
-		sel(BOLD);
-		fontWeight("bold");
-		
-		// disables horizontal scroll bar
-		sel(NO_HORIZONTAL_SCROLL_BAR, ".scroll-bar:horizontal");
-		maxHeight(0);
-		padding(0);
-		opacity(0);
-		sel(NO_HORIZONTAL_SCROLL_BAR, ".scroll-bar:horizontal *");
-		maxHeight(0);
-		padding(0);
-		opacity(0);
+		add
+		(
+			// bold
+			new Selector(BOLD).defines
+			(
+				fontWeight("bold")
+			),
+			
+			// disables horizontal scroll bar
+			new Selector(NO_HORIZONTAL_SCROLL_BAR).defines
+			(
+				new Selector(".scroll-bar:horizontal").defines
+				(
+					maxHeight(0),
+					padding(0),
+					opacity(0)
+				),
+				new Selector(".scroll-bar:horizontal *").defines
+				(
+					maxHeight(0),
+					padding(0),
+					opacity(0)
+				)
+			)
+		);
 	}
 }

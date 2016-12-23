@@ -1,11 +1,13 @@
 // Copyright © 2016 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.GlobalSettings;
+import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.WindowsFx;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -18,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
@@ -134,7 +137,7 @@ public final class FX
 				switch((FxCtl)a)
 				{
 				case BOLD:
-					n.getStyleClass().add(CommonStyles.BOLD.getName());
+					n.getStyleClass().add(CssTools.BOLD.getName());
 					break;
 				case FOCUSABLE:
 					n.setFocusTraversable(true);
@@ -213,7 +216,7 @@ public final class FX
 				switch((FxCtl)a)
 				{
 				case BOLD:
-					n.getStyleClass().add(CommonStyles.BOLD.getName());
+					n.getStyleClass().add(CssTools.BOLD.getName());
 					break;
 				case FOCUSABLE:
 					n.setFocusTraversable(true);
@@ -267,7 +270,7 @@ public final class FX
 					switch((FxCtl)a)
 					{
 					case BOLD:
-						n.getStyleClass().add(CommonStyles.BOLD.getName());
+						n.getStyleClass().add(CssTools.BOLD.getName());
 						break;
 					case EDITABLE:
 						((TextInputControl)n).setEditable(true);
@@ -288,7 +291,18 @@ public final class FX
 						n.setFocusTraversable(false);
 						break;
 					case WRAP_TEXT:
-						((Labeled)n).setWrapText(true);
+						if(n instanceof Labeled)
+						{
+							((Labeled)n).setWrapText(true);
+						}
+						else if(n instanceof TextArea)
+						{
+							((TextArea)n).setWrapText(true);
+						}
+						else
+						{
+							throw new Error("?wrap for " + n);
+						}
 						break;
 					default:
 						throw new Error("?" + a);
@@ -544,9 +558,9 @@ public final class FX
 	
 	
 	/** sets an opacity value for a color */
-	public static Color alpha(Color c, double alpha)
+	public static Color alpha(Color c, double opacity)
 	{
-		return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+		return new Color(c.getRed(), c.getGreen(), c.getBlue(), opacity);
 	}
 	
 	
@@ -701,6 +715,34 @@ public final class FX
 		else
 		{
 			return val;
+		}
+	}
+	
+
+	/** adds or removes the specified style */
+	public static void setStyle(Node n, CssStyle st, boolean on)
+	{
+		if(n == null)
+		{
+			return;
+		}
+		else if(st == null)
+		{
+			return;
+		}
+		
+		String name = st.getName();
+		ObservableList<String> ss = n.getStyleClass();
+		if(on)
+		{
+			if(!ss.contains(name))
+			{
+				ss.add(st.getName());
+			}
+		}
+		else
+		{
+			ss.remove(name);
 		}
 	}
 }
