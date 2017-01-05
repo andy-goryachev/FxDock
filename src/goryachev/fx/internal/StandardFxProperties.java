@@ -1,4 +1,4 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.fx.CssPseudo;
 import javafx.scene.control.ScrollPane;
@@ -77,4 +77,7 @@ public class StandardFxProperties
 	
 	
 	public static FxCssProp prop(String name, Object val) { return new FxCssProp(name, val); }
+	
+	public static String commas(Object ... xs) { return CssTools.list(",", xs); }
+	public static String spaces(Object ... xs) { return CssTools.list(" ", xs); }
 }

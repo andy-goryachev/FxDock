@@ -1,8 +1,9 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.GlobalSettings;
 import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.WindowsFx;
+import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -744,5 +745,35 @@ public final class FX
 		{
 			ss.remove(name);
 		}
+	}
+	
+	
+	public static void setDisable(boolean on, Object ... nodes)
+	{
+		for(Object x: nodes)
+		{
+			if(x instanceof Node)
+			{
+				((Node)x).setDisable(on);
+			}
+			else if(x instanceof CAction)
+			{
+				((CAction)x).setDisabled(on);
+			}
+		}
+	}
+	
+	
+	/** adds a callback which will be invoked before any FxWindow gets shown */
+	public static void addWindowMonitor(Consumer<FxWindow> monitor)
+	{
+		windowsFx.addWindowMonitor(monitor);
+	}
+	
+	
+	/** removes a window monitor */
+	public static void removeWindowMonitor(Consumer<FxWindow> monitor)
+	{
+		windowsFx.removeWindowMonitor(monitor);
 	}
 }

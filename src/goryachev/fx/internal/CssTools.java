@@ -1,4 +1,4 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.util.SB;
 import goryachev.fx.CssID;
@@ -188,6 +188,26 @@ public class CssTools
 			}
 			
 			sb.a(toValue(xs[i]));
+		}
+		return sb.toString();
+	}
+	
+	
+	public static String list(String separator, Object[] items)
+	{
+		SB sb = new SB();
+		boolean sep = false;
+		for(Object x: items)
+		{
+			if(sep)
+			{
+				sb.a(separator);
+			}
+			else
+			{
+				sep = true;
+			}
+			sb.a(toValue(x));
 		}
 		return sb.toString();
 	}

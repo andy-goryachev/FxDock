@@ -1,4 +1,4 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import java.util.function.Function;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -9,7 +9,7 @@ import javafx.scene.control.TableColumn;
 
 
 /**
- * FxTableColumn.
+ * FxTable Column.
  */
 public class FxTableColumn<T>
 	extends TableColumn<T,T>

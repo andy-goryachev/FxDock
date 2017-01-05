@@ -1,4 +1,4 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.Base64;
 import goryachev.common.util.CKit;
@@ -10,26 +10,29 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.util.function.Supplier;
 import com.sun.javafx.css.StyleManager;
 import javafx.application.Platform;
 
 
 /**
- * Css Loader.
- * -Dcss.continuous.refresh=true
+ * JavaFX CSS Loader uses a URL stream factory to register a special protocol
+ * in order to be able to change fx style sheets dynamically. 
+ * 
+ * -Dcss.refresh=true
  * -Dcss.dump=true
  */
 public class CssLoader
 {
-	/** -Dcss.continuous.refresh=true forces periodic check for css changes */ 
-	public static final String CONTINUOUS_REFRESH_PROPERTY = "css.continuous.refresh";
+	/** -Dcss.refresh=true forces periodic check for css changes */ 
+	public static final String CONTINUOUS_REFRESH_PROPERTY = "css.refresh";
 	/** -Dcss.dump=true results in CSS being dumped to stderr */
 	public static final String DUMP_CSS_PROPERTY = "css.dump";
 	
-	public static final String PREFIX = "embeddedCSS";
+	public static final String PREFIX = "javafxcss";
 	private static CssLoader instance;
 	private String url;
-	private FxStyleSheet generator;
+	private Supplier<FxStyleSheet> generator;
 	
 	
 	protected CssLoader()
@@ -80,7 +83,7 @@ public class CssLoader
 	}
 	
 	
-	public static void setStyles(FxStyleSheet g)
+	public static void setStyles(Supplier<FxStyleSheet> g)
 	{
 		instance().setGenerator(g);
 	}
@@ -96,9 +99,9 @@ public class CssLoader
 	}
 	
 	
-	public void setGenerator(FxStyleSheet g)
+	public void setGenerator(Supplier<FxStyleSheet> g)
 	{
-		generator = g;
+		this.generator = g;
 		updateStyles();
 	}
 	
@@ -120,7 +123,12 @@ public class CssLoader
 	{
 		try
 		{
-			String css = generator.generateStyleSheet();
+			if(generator == null)
+			{
+				return;
+			}
+			
+			String css = generator.get().generateStyleSheet();
 			String encoded = encode(css);
 			
 			// there is no way to set the stylesheet programmatically
@@ -143,7 +151,7 @@ public class CssLoader
 					Platform.runLater(() -> update(old, url));
 				}
 				
-				if(Boolean.getBoolean(CONTINUOUS_REFRESH_PROPERTY))
+				if(Boolean.getBoolean(DUMP_CSS_PROPERTY))
 				{
 					// stderr is ok here
 					System.err.println(css);

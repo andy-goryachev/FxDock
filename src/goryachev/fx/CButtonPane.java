@@ -1,6 +1,5 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import javafx.geometry.Insets;
 
 
 /**
@@ -12,10 +11,13 @@ import javafx.geometry.Insets;
 public class CButtonPane
 	extends HPane
 {
+	public static final CssStyle PANE = new CssStyle("CButtonPane_PANE");
+
+	
 	public CButtonPane()
 	{
 		super(10);
-		setPadding(new Insets(10, 10, 10, 10));
+		FX.style(this, PANE);
 	}
 	
 	

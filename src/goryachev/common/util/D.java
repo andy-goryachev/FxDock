@@ -1,4 +1,4 @@
-// Copyright © 2007-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;

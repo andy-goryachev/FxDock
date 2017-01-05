@@ -1,4 +1,4 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.GlobalSettings;
@@ -122,7 +122,7 @@ public class FrameworkBase
 	
 	protected void registerWindow(FxDockWindow w)
 	{
-		w.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, (ev) -> handleClose(w, ev));
+		w.setOnCloseRequest((ev) -> handleClose(w, ev));
 		
 		w.showingProperty().addListener((src,old,cur) ->
 		{
@@ -145,8 +145,7 @@ public class FrameworkBase
 	
 	protected void handleClose(FxDockWindow w, WindowEvent ev)
 	{
-		int ct = getWindowCount(); 
-		if(ct == 1)
+		if(getWindowCount() == 1)
 		{
 			saveLayout();
 		}
@@ -157,11 +156,6 @@ public class FrameworkBase
 		{
 			// don't close the window
 			ev.consume();
-		}
-		else if(ct != 1)
-		{
-			w.hide();
-			saveLayout();
 		}
 	}
 	
@@ -220,7 +214,7 @@ public class FrameworkBase
 	}
 	
 	
-	/** returns a list of visible windows, topmost window first */
+	/** returns a list of vidible windows, topmost window first */
 	public List<FxDockWindow> getWindows()
 	{
 		int sz = windowStack.size();

@@ -1,13 +1,15 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
+import goryachev.common.util.Log;
 import goryachev.common.util.WeakList;
 import goryachev.fx.CAction;
 import goryachev.fx.FxWindow;
 import goryachev.fx.OnWindowClosing;
 import java.util.List;
+import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.stage.WindowEvent;
@@ -22,6 +24,8 @@ public class WindowsFx
 	protected final WeakList<FxWindow> windowStack = new WeakList<>();
 	/** prefix->window and window->prefix */
 	protected final CMap<Object,Object> windows = new CMap<>();
+	/** window open callbacks */
+	protected final CList<Consumer<FxWindow>> monitors = new CList<>();
 	
 	
 	/** returns a list of vidible windows, topmost window first */
@@ -137,6 +141,12 @@ public class WindowsFx
 
 	public void open(FxWindow w)
 	{
+		if(w.isShowing())
+		{
+			// design error: you should use open() instead of show()
+			throw new Error();
+		}
+		
 		w.setOnCloseRequest((ev) -> handleClose(w, ev));
 		
 		w.showingProperty().addListener((src,old,cur) ->
@@ -149,6 +159,21 @@ public class WindowsFx
 		
 		addWindow(w);
 		restoreWindow(w);
+		
+		try
+		{
+			if(monitors.size() > 0)
+			{
+				for(Consumer<FxWindow> m: monitors)
+				{
+					m.accept(w);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			Log.ex(e);
+		}
 		
 		w.show();
 	}
@@ -289,5 +314,19 @@ public class WindowsFx
 	public LocalBindings bindings(Node n, boolean create)
 	{
 		return FxSchema.bindings(n, create);
+	}
+	
+	
+	/** adds a callback which will be invoked before any FxWindow gets shown */
+	public void addWindowMonitor(Consumer<FxWindow> m)
+	{
+		monitors.add(m);
+	}
+	
+	
+	/** removes a window monitor */
+	public void removeWindowMonitor(Consumer<FxWindow> m)
+	{
+		monitors.remove(m);
 	}
 }

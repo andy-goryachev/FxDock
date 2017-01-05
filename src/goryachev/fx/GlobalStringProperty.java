@@ -1,20 +1,20 @@
 // Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import javafx.beans.property.BooleanPropertyBase;
+import javafx.beans.property.StringPropertyBase;
 import javafx.util.StringConverter;
 
 
 /**
- * Global Boolean Property.
+ * Global String Property.
  */
-public class GlobalBooleanProperty
-	extends BooleanPropertyBase
-	implements GlobalProperty<Boolean>
+public class GlobalStringProperty
+	extends StringPropertyBase
+	implements GlobalProperty<String>
 {
 	private final String key;
 	
 	
-	public GlobalBooleanProperty(String key, boolean defaultValue)
+	public GlobalStringProperty(String key, String defaultValue)
 	{
 		super(defaultValue);
 		this.key = key;
@@ -23,9 +23,9 @@ public class GlobalBooleanProperty
 	}
 	
 	
-	public GlobalBooleanProperty(String key)
+	public GlobalStringProperty(String key)
 	{
-		this(key, false);
+		this(key, null);
 	}
 
 
@@ -42,8 +42,8 @@ public class GlobalBooleanProperty
 	}
 	
 	
-	public StringConverter<Boolean> getConverter()
+	public StringConverter<String> getConverter()
 	{
-		return Converters.BOOLEAN();
+		return Converters.STRING();
 	}
 }

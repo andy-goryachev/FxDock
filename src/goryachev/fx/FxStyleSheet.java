@@ -1,4 +1,4 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CList;
 import goryachev.common.util.SB;
@@ -8,7 +8,11 @@ import goryachev.fx.internal.StandardFxProperties;
 
 
 /**
- * Css Style Sheet Generator.
+ * FX CSS Style Sheet Generator.
+ * 
+ * The following debugging options are defined by CssLoader:
+ *    -Dcss.refresh=true
+ *    -Dcss.dump=true
  */
 public class FxStyleSheet
 	extends StandardFxProperties

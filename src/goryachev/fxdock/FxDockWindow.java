@@ -1,4 +1,4 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fx.CAction;
 import goryachev.fx.FxDump;
@@ -74,7 +74,6 @@ public abstract class FxDockWindow
 	}
 	
 	
-	/** opens a window.  please use this method instead of show() */ 
 	public void open()
 	{
 		FxDockFramework.open(this);

@@ -1,4 +1,4 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.Node;

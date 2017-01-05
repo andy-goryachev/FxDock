@@ -1,4 +1,4 @@
-// Copyright © 2009-2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2009-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util.log;
 import goryachev.common.util.ILogWriter;
 import goryachev.common.util.SB;

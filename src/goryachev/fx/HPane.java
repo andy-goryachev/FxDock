@@ -1,4 +1,4 @@
-// Copyright © 2016 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.Log;
 import goryachev.common.util.Parsers;
@@ -32,6 +32,15 @@ public class HPane
 	
 	public HPane()
 	{
+	}
+	
+	
+	public HPane(Node ... nodes)
+	{
+		for(Node n: nodes)
+		{
+			add(n);
+		}
 	}
 	
 	
