@@ -1092,4 +1092,51 @@ public class TextTools
 		}
 		return false;
 	}
+	
+	
+	private static String printable(int c)
+	{
+		switch(c)
+		{
+		case '\b': return "\\b";
+		case '\f': return "\\f";
+		case '\n': return "\\n";
+		case '\r': return "\\r";
+		case '\t': return "\\t";
+		case '\\': return "\\\\";
+		}
+		return null;
+	}
+	
+	
+	/** escape control characters (<0x20) and backslash for debugging. */
+	public static String escapeControlsForPrintout(String text)
+	{
+		if(text == null)
+		{
+			return null;
+		}
+		
+		SB sb = new SB(text.length() + 64);
+		text.codePoints().forEach((c) ->
+		{
+			if(c < ' ')
+			{
+				String s = printable(c);
+				if(s == null)
+				{
+					sb.append(Hex.toHexString((short)c));
+				}
+				else
+				{
+					sb.append(s);
+				}
+			}
+			else
+			{
+				sb.appendCodePoint(c);
+			}
+		});
+		return sb.toString();
+	}
 }

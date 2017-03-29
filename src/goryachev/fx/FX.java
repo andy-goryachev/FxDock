@@ -776,4 +776,11 @@ public final class FX
 	{
 		windowsFx.removeWindowMonitor(monitor);
 	}
+	
+	
+	/** creates an instance of Insets(horizontal,vertical).  why there is not such a constructor you might ask? */
+	public static Insets insets(double vertical, double horizontal)
+	{
+		return new Insets(vertical, horizontal, vertical, horizontal);
+	}
 }

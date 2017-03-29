@@ -159,6 +159,47 @@ public class CList<T>
 	}
 	
 	
+	/** remove elements from 'fromInclusive' onwards, silently ignoring out-of-bounds argument */
+	public void prune(int fromInclusive)
+	{
+		if(fromInclusive >= 0)
+		{
+			int ct = size() - fromInclusive;
+			if(ct > 0)
+			{
+				removeRange(fromInclusive, size());
+			}
+		}
+	}
+	
+	
+	/** 
+	 * returns last element of null if the list is empty.  
+	 * keep in mind this method does not distingush between two scenarios:
+	 * when the list is empty and when the last element is null.
+	 */
+	public T getLast()
+	{
+		if(size() > 0)
+		{
+			return get(size() - 1);
+		}
+		return null;
+	}
+	
+	
+	/** removes last element */
+	public T removeLast()
+	{
+		int ix = size() - 1;
+		if(ix >= 0)
+		{
+			return remove(ix);
+		}
+		return null;
+	}
+	
+	
 	public static CList parse(Object x)
 	{
 		if(x instanceof CList)

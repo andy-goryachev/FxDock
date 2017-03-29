@@ -5,6 +5,7 @@ import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.D;
 import goryachev.common.util.SB;
+import goryachev.common.util.TextTools;
 import javafx.css.CssMetaData;
 import javafx.css.PseudoClass;
 import javafx.css.Styleable;
@@ -15,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.text.Text;
 import javafx.stage.Window;
 
 
@@ -224,6 +226,14 @@ public class FxDump
 			}
 			
 			sb.nl();
+			
+			if(n instanceof Text)
+			{
+				sb.sp(4);
+				sb.a("text: ");
+				sb.a(TextTools.escapeControlsForPrintout(((Text)n).getText()));
+				sb.nl();
+			}
 			
 			CList<CssMetaData<? extends Styleable,?>> md = new CList<>(n.getCssMetaData());
 			sort(md);

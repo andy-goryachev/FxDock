@@ -23,6 +23,12 @@ public class FxInvalidationListener
 			handler.run();
 		}
 	}
+	
+	
+	public FxInvalidationListener(Observable prop, Runnable handler)
+	{
+		this(prop, false, handler);
+	}
 
 
 	public void invalidated(Observable src)
