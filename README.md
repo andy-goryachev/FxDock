@@ -6,9 +6,7 @@ This library was created to provide JavaFX developers with a simple docking fram
 
 ## License
 
-This project and its source code is licensed under the [GNU General Public License version 3](https://www.gnu.org/licenses/gpl-3.0.en.html) and you should feel free to make adaptations of this work. Please see the included LICENSE file for further details.
-
-Please [contact me](http://goryachev.com/contact.html) if you want to acquire this library under a business-friendly license.
+This project and its source code is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) and you should feel free to make adaptations of this work. Please see the included LICENSE file for further details.
 
 ## Try It
 
@@ -20,7 +18,7 @@ Please refer to [HOWTO.md](doc/HOWTO.md) for detailed instructions on how to use
 
 ## Download
 
-Library JAR: [FxDock-0.00.03.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDock-0.00.03.jar)
+Library JAR: [FxDock-0.00.04.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDock-0.00.04.jar)
 
 [![Donate](https://cdn.rawgit.com/andy-goryachev/FxDock/master/doc/donate.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q7JAWD7FK99QC)
 
