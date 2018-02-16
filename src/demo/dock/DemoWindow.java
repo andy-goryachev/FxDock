@@ -47,7 +47,7 @@ public class DemoWindow
 	{
 		setTop(createMenu());
 		setBottom(createStatusBar());
-		setTitle("FxDock Docking Framework Demo");
+		setTitle(DockDemoApp.TITLE);
 		
 		bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
 	}
@@ -91,7 +91,7 @@ public class DemoWindow
 	{
 		BorderPane p = new BorderPane();
 		p.setLeft(statusField);
-		p.setRight(FX.label("copyright © 2016 andy goryachev", new Insets(1, 20, 1, 10)));
+		p.setRight(FX.label(DockDemoApp.COPYRIGHT, new Insets(1, 20, 1, 10)));
 		return p;
 	}
 

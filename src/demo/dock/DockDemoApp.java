@@ -18,6 +18,10 @@ import javafx.stage.Stage;
 public class DockDemoApp
 	extends Application
 {
+	public static final String COPYRIGHT = "copyright © 2018 andy goryachev";
+	public static final String TITLE = "FxDock Docking Framework Demo";
+
+
 	public static void main(String[] args)
 	{
 		// init logger
