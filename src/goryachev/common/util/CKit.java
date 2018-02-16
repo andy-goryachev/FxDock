@@ -1,4 +1,4 @@
-// Copyright © 2007-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CWriter;
 import java.io.BufferedInputStream;
@@ -19,7 +19,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -40,7 +42,7 @@ import java.util.zip.ZipFile;
 
 public final class CKit
 {
-	public static final String COPYRIGHT = "Copyright © 1996-2017 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
+	public static final String COPYRIGHT = "Copyright © 1996-2018 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
 	public static final char APPLE = '\u2318';
 	public static final char BOM = '\ufeff';
 	public static final String[] emptyStringArray = new String[0];
@@ -375,7 +377,7 @@ public final class CKit
 	
 	public static String readString(InputStream is) throws Exception
 	{
-		Reader in = new InputStreamReader(is, "UTF-8");
+		Reader in = new InputStreamReader(is, CHARSET_UTF8);
 		try
 		{
 			SB sb = new SB(16384);
@@ -416,11 +418,11 @@ public final class CKit
 
 	public static String readString(String resource) throws Exception
 	{
-		return readString(resource, "UTF-8");
+		return readString(resource, CHARSET_UTF8);
 	}
 
 
-	public static String readString(String resource, String encoding) throws Exception
+	public static String readString(String resource, Charset encoding) throws Exception
 	{
 		InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resource);
 		try
@@ -430,20 +432,6 @@ public final class CKit
 		finally
 		{
 			close(in);
-		}
-	}
-	
-	
-	public static String readString(InputStream is, String encoding) throws Exception
-	{
-		Reader in = new InputStreamReader(is, encoding);
-		try
-		{
-			return readString(in);
-		}
-		finally
-		{
-			close(is);
 		}
 	}
 	
@@ -485,6 +473,26 @@ public final class CKit
 	}
 	
 	
+	public static String readString(InputStream is, String encoding) throws Exception
+	{
+		Reader in = new InputStreamReader(is, encoding);
+		try
+		{
+			return readString(in);
+		}
+		finally
+		{
+			close(is);
+		}
+	}
+	
+	
+	public static String readString(Reader in) throws Exception
+	{
+		return readString(in, Integer.MAX_VALUE);
+	}
+	
+
 	public static String readString(InputStream is, Charset cs) throws Exception
 	{
 		return readString(is, Integer.MAX_VALUE, cs);
@@ -507,12 +515,6 @@ public final class CKit
 		{
 			close(is);
 		}
-	}
-	
-	
-	public static String readString(Reader in) throws Exception
-	{
-		return readString(in, Integer.MAX_VALUE);
 	}
 	
 	
@@ -546,6 +548,40 @@ public final class CKit
 		finally
 		{
 			close(in);
+		}
+	}
+	
+	
+	public static String[] readLines(Class cs, String resource) throws Exception
+	{
+		String s = readString(cs, resource);
+		return readLines(s);
+	}
+	
+	
+	public static String[] readLines(File f) throws Exception
+	{
+		String s = readString(f);
+		return readLines(s);
+	}
+	
+	
+	private static String[] readLines(String text) throws Exception
+	{
+		BufferedReader rd = new BufferedReader(new StringReader(text));
+		try
+		{
+			CList<String> lines = new CList();
+			String s;
+			while((s = rd.readLine()) != null)
+			{
+				lines.add(s);
+			}
+			return toArray(lines);
+		}
+		finally
+		{
+			close(rd);
 		}
 	}
 
@@ -1051,6 +1087,36 @@ public final class CKit
 	{
 		return (x == null) ? null : x.toString(); 
 	}
+	
+	
+	public static <T> String toString(T[] items)
+	{
+		if(items == null)
+		{
+			return "null";
+		}
+		else
+		{
+			SB sb = new SB(512);
+			boolean comma = false;
+			sb.a("[");
+			for(T item: items)
+			{
+				if(comma)
+				{
+					sb.a(", ");
+				}
+				else
+				{
+					comma = true;
+				}
+				
+				sb.a(item == null ? "null" : item.toString());
+			}
+			sb.a("]");
+			return sb.toString();
+		}
+	}
 
 
 	public static void forceGC()
@@ -1388,6 +1454,7 @@ public final class CKit
 	}
 	
 	
+	/** reads byte array from a resource local to the parent object or class */
 	public static byte[] readLocalBytes(Object parent, String name) throws Exception
 	{
 		ByteArrayOutputStream out = new ByteArrayOutputStream(65536);
@@ -1395,6 +1462,20 @@ public final class CKit
 		InputStream in = c.getResourceAsStream(name);
 		copy(in, out);
 		return out.toByteArray();
+	}
+	
+	
+	/** reads byte array from a resource local to the parent object or class, without throwing an exception */
+	public static byte[] readLocalBytesQuiet(Object parent, String name)
+	{
+		try
+		{
+			return readLocalBytes(parent, name);
+		}
+		catch(Exception ignore)
+		{
+			return null;
+		}
 	}
 
 
@@ -1417,7 +1498,10 @@ public final class CKit
 			throw new CancelledException();
 		}
 		
-		// TODO also check for low memory
+		if(isLowMemory())
+		{
+			throw new LowMemoryException();
+		}
 	}
 	
 	
@@ -1437,6 +1521,35 @@ public final class CKit
 		{
 			return t.isInterrupted();
 		}
+	}
+	
+	
+	private static final double LOW_MEMORY_CHECK_THRESHOLD = 0.9;
+	private static final double LOW_MEMORY_FAIL_AFTER_GC_THRESHOLD = 0.87;
+	
+	
+	public static boolean isLowMemory()
+	{
+		Runtime r = Runtime.getRuntime();
+		
+		long total = r.totalMemory();
+		long used = total - r.freeMemory();
+		long max = r.maxMemory();
+		
+		if(used > (long)(max * LOW_MEMORY_CHECK_THRESHOLD))
+		{
+			// let's see if gc can help
+			System.gc();
+			System.runFinalization();
+			
+			total = r.totalMemory();
+			used = total - r.freeMemory();
+			if(used > (long)(max * LOW_MEMORY_FAIL_AFTER_GC_THRESHOLD))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	
@@ -1905,20 +2018,20 @@ public final class CKit
 	}
 	
 	
-	/** returns row count for itemCount and specified number of columns */
-	public static int rowCount(int itemCount, int cols)
+	/** determines the number of bins required to divide items into the specified number of bins */
+	public static int binCount(int itemCount, int binSize)
 	{
 		if(itemCount == 0)
 		{
 			return 0;
 		}
-		else if(cols == 0)
+		else if(binSize == 0)
 		{
 			return itemCount;
 		}
 		else
 		{
-			return 1 + (itemCount - 1) / cols;
+			return 1 + (itemCount - 1) / binSize;
 		}
 	}
 
@@ -1947,18 +2060,32 @@ public final class CKit
 	}
 	
 	
-	/** alias to Math.round(), returns int */
+	/** alias to Math.round() typecast returns int */
 	public static int round(double x)
 	{
 		return (int)Math.round(x);
 	}
 	
 	
+	/** alias to Math.ceil() typecast returns int */
+	public static int ceil(double x)
+	{
+		return (int)Math.ceil(x);
+	}
+	
+	
+	/** alias to Math.floor() typecast returns int */
+	public static int floor(double x)
+	{
+		return (int)Math.floor(x);
+	}
+	
+	
 	/** collect public static fields from a class, of specified type */
 	@SuppressWarnings("unchecked")
-	public static <T> CSet<T> collectPublicStaticFields(Class<?> c, Class<T> type)
+	public static <T> CList<T> collectPublicStaticFields(Class<?> c, Class<T> type)
 	{
-		CSet<T> rv = new CSet();
+		CList<T> rv = new CList();
 		for(Field f: c.getFields())
 		{
 			int m = f.getModifiers();
@@ -1993,5 +2120,145 @@ public final class CKit
 			eclipseDetected = new File(".project").exists() && new File(".classpath").exists();
 		}
 		return eclipseDetected;
+	}
+
+
+	public static <T> Collection<T> asList(T ... items)
+	{
+		return new CList<>(items);
+	}
+
+
+	/** utility method converts a String Collection to a String[] */ 
+	public static String[] toArray(Collection<String> x)
+	{
+		return x.toArray(new String[x.size()]);
+	}
+	
+	
+	/** creates a string containing the specified number of tabs */
+	public static String tabs(int count)
+	{
+		if(count <= 0)
+		{
+			return "";
+		}
+		return new SB(count).tab(count).toString();
+	}
+	
+	
+	/** creates a string containing the specified number of spaces */
+	public static String spaces(int count)
+	{
+		if(count <= 0)
+		{
+			return "";
+		}
+		return new SB(count).sp(count).toString();
+	}
+
+	
+	public static <T> T[] addAndGrow(T[] items, T item)
+	{
+		int len = items.length;
+		T[] rv = Arrays.copyOf(items, len + 1);
+		rv[len] = item;
+		return rv;
+	}
+	
+	
+	public static <T> T[] removeAndShrink(T[] items, T item)
+	{
+		int ix = indexOf(items, item);
+		if(ix < 0)
+		{
+			return items;
+		}
+		else
+		{
+			int len = items.length;
+			T[] rv = (T[])Array.newInstance(items.getClass().getComponentType(), len - 1);
+			
+			if(ix > 0)
+			{
+				System.arraycopy(items, 0, rv, 0, ix);
+			}
+			
+			if(ix + 1 < len)
+			{
+				System.arraycopy(items, ix + 1, rv, ix, len - ix - 1);
+			}
+			return rv;
+		}
+	}
+
+
+	public static <K,V> CMap<K,V> toMap(Class<K> keyType, Class<V> valueType, Object ... pairs)
+	{
+		int sz = pairs.length;
+		CMap<K,V> m = new CMap(sz / 2);
+		for(int i=0; i<sz; )
+		{
+			K k = (K)pairs[i];
+			if(!k.getClass().isAssignableFrom(keyType))
+			{
+				throw new Error("Expecting " + keyType + " at index " + i);
+			}
+			
+			i++;
+			
+			V v = (V)pairs[i];
+			if(v != null)
+			{
+				if(!v.getClass().isAssignableFrom(valueType))
+				{
+					throw new Error("Expecting " + valueType + " at index " + i);
+				}
+			}
+			
+			Object old = m.put(k, v);
+			if(old != null)
+			{
+				throw new Error("Duplicate key " + k + " at index " + (i - 1));
+			}
+			
+			i++;
+		}
+		return m;
+	}
+
+
+	public static <T> CSet<T> toSet(Class<T> type, T ... items)
+	{
+		int sz = items.length;
+		CSet<T> rv = new CSet(sz);
+		for(int i=0; i<sz; i++)
+		{
+			T item = items[i];
+			if(!item.getClass().isAssignableFrom(type))
+			{
+				throw new Error("Expecting " + type + " at index " + i);
+			}
+			
+			rv.add(item);
+		}
+		return rv;
+	}
+	
+	
+	public static String codePointToString(int cp)
+	{
+		 char[] cs = Character.toChars(cp);
+		 return new String(cs);
+	}
+	
+	
+	public static boolean inRange(int value, int min, int max)
+	{
+		if(min > max)
+		{
+			throw new Error("min > max");
+		}
+		return (value >= min) && (value <= max);
 	}
 }

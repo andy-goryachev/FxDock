@@ -1,4 +1,4 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.Base64;
 import goryachev.common.util.CKit;
@@ -157,6 +157,11 @@ public class CssLoader
 					System.err.println(css);
 				}
 			}
+		}
+		catch(Error e)
+		{
+			Log.ex(e);
+			throw e;
 		}
 		catch(Throwable e)
 		{

@@ -1,4 +1,4 @@
-// Copyright © 2004-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2004-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -172,13 +172,18 @@ public class Dump
 	
 	
 	// dumps byte array into a nicely formatted String
-	// printing address first, then 16 bytes of hex then ascii representation then newline
+	// printing address first, then 16 bytes of hex then ASCII representation then newline
 	//     "0000  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................" or
 	// "00000000  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................" 
 	// depending on startAddress
 	// address starts with startAddress
 	public static String hex(byte[] bytes, long startAddress)
 	{
+		if(bytes == null)
+		{
+			return "";
+		}
+		
 		SB sb = new SB(((bytes.length/16)+1) * 77 + 1);
 		hex(sb, bytes, startAddress, 0);
 		return sb.toString();
@@ -226,7 +231,7 @@ public class Dump
 			// space or newline
 			if(col >= 15)
 			{
-				dumpAscii(sb, bytes, lineStart);
+				dumpASCII(sb, bytes, lineStart);
 				col = 0;
 			}
 			else
@@ -244,13 +249,13 @@ public class Dump
 				sb.append("   ");
 			}
 
-			dumpAscii(sb, bytes, lineStart);
+			dumpASCII(sb, bytes, lineStart);
 		}
 	}
 	
 	
 	// dumps byte array into a nicely formatted String
-	// printing address first, then 16 bytes of hex then ascii representation then newline
+	// printing address first, then 16 bytes of hex then ASCII representation then newline
 	//     "0000  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................" or
 	// "00000000  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................" 
 	public static String hex(byte[] bytes)
@@ -376,7 +381,7 @@ public class Dump
 	}
 	
 	
-	private static void dumpAscii(SB sb, byte[] bytes, int lineStart)
+	private static void dumpASCII(SB sb, byte[] bytes, int lineStart)
 	{
 		// first, print padding
 		sb.append(' ');
@@ -756,5 +761,51 @@ public class Dump
 			return s.substring(0, max);
 		}
 		return s;
+	}
+	
+	
+	public static String toPrintable(Object x)
+	{
+		if(x == null)
+		{
+			return "";
+		}
+		
+		String s = x.toString();
+		int len = s.length();
+		SB sb = new SB(len);
+		for(int i=0; i<len; i++)
+		{
+			char c = s.charAt(i);
+			switch(c)
+			{
+			case '\b':
+				sb.append("\\b");
+				break;
+			case '\t':
+				sb.append("\\t");
+				break;
+			case '\r':
+				sb.append("\\r");
+				break;
+			case '\n':
+				sb.append("\\n");
+				break;
+			case '\f':
+				sb.append("\\f");
+				break;
+			default:
+				if(c < 0x20)
+				{
+					sb.append("\\x");
+					sb.append(Hex.toHexByte(c));
+				}
+				else
+				{
+					sb.append(c);
+				}
+			}
+		}
+		return sb.toString();
 	}
 }

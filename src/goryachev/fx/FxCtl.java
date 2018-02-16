@@ -1,4 +1,4 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 
 
@@ -10,6 +10,7 @@ public enum FxCtl
 	BOLD,
 	EDITABLE,
 	FOCUSABLE,
+	FORCE_MAX_WIDTH,
 	FORCE_MIN_HEIGHT,
 	FORCE_MIN_WIDTH,
 	NON_EDITABLE,

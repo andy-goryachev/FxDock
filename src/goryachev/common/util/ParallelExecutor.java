@@ -1,4 +1,4 @@
-// Copyright © 2012-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
@@ -33,7 +33,9 @@ public class ParallelExecutor
 	
 	public Thread newThread(Runnable r)
 	{
-		return new Thread(r, name + "." + number.getAndIncrement());
+		Thread t = new Thread(r, name + "." + number.getAndIncrement());
+		t.setDaemon(true);
+		return t;
 	}
 	
 	

@@ -1,5 +1,6 @@
-// Copyright © 2013-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -97,6 +98,12 @@ public class CMultiMap<K,V>
 	}
 	
 	
+	public CList<K> keys()
+	{
+		return new CList<>(keySet());
+	}
+	
+	
 	/** Collects all the values in the map.  The order of values is not defined and may vary */
 	public CList<V> collectValues()
 	{
@@ -128,6 +135,18 @@ public class CMultiMap<K,V>
 			if(list.size() == 0)
 			{
 				map.remove(key);
+			}
+		}
+	}
+
+
+	public void putAll(CMultiMap<K,V> m)
+	{
+		for(K k: m.keySet())
+		{
+			for(V v: m.get(k))
+			{
+				put(k, v);
 			}
 		}
 	}

@@ -1,9 +1,13 @@
-// Copyright © 2013-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.Dump;
+import goryachev.common.util.Rex;
 import goryachev.common.util.SB;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.BiFunction;
 
 
 /** Simple test framework */
@@ -17,6 +21,37 @@ public class TF
 			throw new TestException
 			(
 				"Unexpected value=" + 
+				Dump.describe(value) + 
+				", expected=" + 
+				Dump.describe(expected)
+			);
+		}
+	}
+	
+	
+	/** checks if two arguments are not CKit.equals() and throws a meaningful exception if not */
+	public static void notEquals(Object value, Object expected)
+	{
+		if(CKit.equals(value, expected))
+		{
+			throw new TestException
+			(
+				"Values are not expected to be equals: " + 
+				Dump.describe(value) 
+			);
+		}
+	}
+	
+	
+	/** checks if two arguments are CKit.equals() and throws a meaningful exception if not */
+	public static void eq(Object value, Object expected, Object message)
+	{
+		if(CKit.notEquals(value, expected))
+		{
+			throw new TestException
+			(
+				message +
+				", unexpected value=" + 
 				Dump.describe(value) + 
 				", expected=" + 
 				Dump.describe(expected)
@@ -54,9 +89,24 @@ public class TF
 	}
 	
 	
+	public static void isFalse(boolean x)
+	{
+		if(x)
+		{
+			throw new TestException("expression is not false");
+		}
+	}
+	
+	
 	public static void fail()
 	{
 		throw new TestException("test failed");
+	}
+	
+	
+	public static void fail(String message)
+	{
+		throw new TestException(message);
 	}
 
 	
@@ -121,5 +171,143 @@ public class TF
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	
+	private static String get(List<?> items, int ix, String ifNone)
+	{
+		if(items == null)
+		{
+			return ifNone;
+		}
+		else if(ix < 0)
+		{
+			return "";
+		}
+		else if(ix >= items.size())
+		{
+			return ifNone;
+		}
+		
+		return items.get(ix).toString();
+	}
+	
+	
+	private static String frame(Object x, int maxWidth, String ifNull)
+	{
+		String s = (x == null ? ifNull : x.toString());
+		int diff = maxWidth - s.length();
+		if(diff < 0)
+		{
+			return s.substring(0, maxWidth);
+		}
+		else if(diff > 0)
+		{
+			return s + CKit.spaces(diff);
+		}
+		else
+		{
+			return s;
+		}
+	}
+	
+	
+	private static String num(int ix, int maxWidth)
+	{
+		String s = String.valueOf(ix);
+		int diff = maxWidth - s.length();
+		if(diff > 0)
+		{
+			s = CKit.spaces(diff) + s;
+		}
+		return s;
+	}
+	
+	
+	private static String sep(boolean mismatch)
+	{
+		return mismatch ? " ≠ " : "   ";
+	}
+	
+	
+	private static void append(CList<String> lines, int ix, String sep, String s)
+	{
+		s = lines.get(ix) + sep + s;
+		lines.set(ix, s);
+	}
+	
+	
+	private static <T> int findMismatchIndex(List<T> left, List<T> right, BiFunction<T,T,Boolean> eqTest)
+	{
+		int leftSize = (left == null ? 0 : left.size()); 
+		int rightSize = (right == null ? 0 : right.size());
+			
+		for(int i=0; i<10000; i++)
+		{
+			if((i >= leftSize) || (i >= rightSize))
+			{
+				return i;
+			}
+			
+			T a = (left == null ? null : left.get(i));
+			T b = (right == null ? null : right.get(i));
+			
+			if(!eqTest.apply(a, b))
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
+
+	/** prints two collections side by side, returning a descriptive exception */
+	public static <T> RuntimeException printDiff(String nameLeft, List<T> left, String nameRight, List<T> right, BiFunction<T,T,Boolean> eqTest)
+	{
+		int leftSize = (left == null ? 0 : left.size());
+		int rightSize = (right == null ? 0 : right.size());
+		int sz = Math.max(leftSize, rightSize);
+		CList<String> lines = new CList(sz);
+		int numWidth = 5;
+		int maxWidth = 40;
+		SB sb =  new SB(lines.size() * 128);
+		
+		int mismatchIndex = findMismatchIndex(left, right, eqTest);
+		
+		// left
+		for(int i=0; i<sz; i++)
+		{
+			sb.clear();
+			sb.a(num(i, numWidth));
+			sb.sp();
+			sb.a(frame(get(left, i, ""), maxWidth, ""));
+			lines.add(sb.getAndClear());
+		}
+		
+		// right
+		for(int i=0; i<sz; i++)
+		{
+			sb.clear();
+			sb.a(num(i, numWidth));
+			sb.sp();
+			sb.a(frame(get(right, i, ""), maxWidth, ""));
+			
+			String sep = sep(i == mismatchIndex);
+			append(lines, i, sep, sb.getAndClear());
+		}
+		
+		// result
+		sb.clear();
+		sb.sp(numWidth + 1).a(frame(nameLeft, maxWidth, "LEFT"));
+		sb.a(sep(false));
+		sb.sp(numWidth).a(frame(nameRight, maxWidth, "RIGHT")).nl();
+
+		for(String s: lines)
+		{
+			sb.a(s).nl();
+		}
+		print(sb);
+		
+		return new Rex("Mismatch at index " + mismatchIndex + ": " + get(left, mismatchIndex, "N/A") + " " + get(right, mismatchIndex, "N/A"));
 	}
 }

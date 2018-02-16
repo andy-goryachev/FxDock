@@ -1,8 +1,9 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CList;
 import java.io.ByteArrayInputStream;
 import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -136,14 +137,14 @@ public class FxIconBuilder
 	protected Path createPath()
 	{
 		Path p = new Path();
-		configNode(p);
-		configShape(p);
+		applyNodeProperties(p);
+		applyShapeProperties(p);
 		p.setFillRule(fillRule);
 		return p;
 	}
 	
 	
-	protected void configNode(Node n)
+	protected void applyNodeProperties(Node n)
 	{
 		n.setOpacity(opacity);
 		n.setScaleX(scale);
@@ -155,7 +156,7 @@ public class FxIconBuilder
 	}
 	
 	
-	protected void configShape(Shape p)
+	protected void applyShapeProperties(Shape p)
 	{
 		p.setFill(fill);
 		p.setStroke(strokeColor);
@@ -171,8 +172,8 @@ public class FxIconBuilder
 	protected SVGPath createSVGPath()
 	{
 		SVGPath p = new SVGPath();
-		configNode(p);
-		configShape(p);
+		applyNodeProperties(p);
+		applyShapeProperties(p);
 		p.setFillRule(fillRule);
 		return p;
 	}
@@ -187,15 +188,28 @@ public class FxIconBuilder
 	}
 	
 	
-	/** add SVG path */
+	/** add autoscaling SVG path */
 	public SVGPath svgPath(String svg)
+	{
+		return svgPath(svg, true);
+	}
+	
+	
+	/** add SVG path */
+	public SVGPath svgPath(String svg, boolean autoScale)
 	{
 		SVGPath p = createSVGPath();
 		p.setContent(svg);
 		
-		Label r = new Label();
-		r.setGraphic(p);
-		elements.add(r);
+//		Label r = new Label();
+//		r.setGraphic(p);
+		elements.add(p);
+		
+		if(autoScale)
+		{
+			autoFitLastElement();
+		}
+		
 		return p;
 	}
 	
@@ -205,7 +219,7 @@ public class FxIconBuilder
 	{
 		ImageView v = new ImageView();
 		v.setImage(new Image(new ByteArrayInputStream(bytes)));
-		configNode(v);
+		applyNodeProperties(v);
 		v.setTranslateX(xtranslate + xorigin);
 		v.setTranslateY(ytranslate + yorigin);
 		
@@ -422,6 +436,33 @@ public class FxIconBuilder
 		boolean sweep = (angle > 0);
 		
 		add(new ArcTo(radius, radius, 0, xe, ye, large, sweep));
+	}
+	
+	
+	public Node last()
+	{
+		return elements.get(elements.size() - 1);
+	}
+	
+	
+	/** auto fit last node, useful for svg paths */
+	public void autoFitLastElement()
+	{
+		Node n = last();
+		double w = n.prefHeight(width);
+		double h = n.prefWidth(height);
+		double sx = width / w;
+		double sy = height / h;
+		
+		double sc = Math.min(sx, sy);
+		n.setScaleX(sc);
+		n.setScaleY(sc);
+		
+		Bounds b = n.getBoundsInLocal();
+		double dx = (width / 2.0) - b.getMinX() - (b.getWidth() / 2.0);
+		double dy = (height / 2.0) - b.getMinY() - (b.getHeight() / 2.0);
+		n.setTranslateX(dx);
+		n.setTranslateY(dy);
 	}
 	
 	

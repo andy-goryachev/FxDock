@@ -1,4 +1,4 @@
-// Copyright © 2013-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.text.Collator;
 import java.util.Arrays;
@@ -171,7 +171,7 @@ public class CSorter
 	
 	
 	@SuppressWarnings("unchecked")
-	protected static int smartCompare(Object a, Object b)
+	public static int smartCompare(Object a, Object b)
 	{
 		if(a instanceof Comparable)
 		{

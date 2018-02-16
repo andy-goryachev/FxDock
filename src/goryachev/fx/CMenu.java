@@ -1,5 +1,6 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -35,6 +36,14 @@ public class CMenu
 	public CMenuItem add(String text, CAction a)
 	{
 		CMenuItem m = new CMenuItem(text, a);
+		getItems().add(m);
+		return m;
+	}
+	
+	
+	public CCheckMenuItem add(String text, BooleanProperty prop)
+	{
+		CCheckMenuItem m = new CCheckMenuItem(text, prop);
 		getItems().add(m);
 		return m;
 	}

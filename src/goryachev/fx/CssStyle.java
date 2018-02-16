@@ -1,5 +1,6 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.FH;
 
 
 /**
@@ -13,6 +14,32 @@ public class CssStyle
 	public CssStyle(String name)
 	{
 		this.name = name;
+	}
+	
+	
+	public boolean equals(Object x)
+	{
+		if(x == this)
+		{
+			return true;
+		}
+		else if(x instanceof CssStyle)
+		{
+			CssStyle z = (CssStyle)x;
+			return name.equals(z.name);
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	
+	public int hashCode()
+	{
+		int h = FH.hash(CssStyle.class);
+		h = FH.hash(h, name);
+		return h;
 	}
 	
 	

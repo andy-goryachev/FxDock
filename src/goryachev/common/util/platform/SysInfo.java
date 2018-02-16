@@ -1,4 +1,4 @@
-// Copyright © 2009-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2009-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util.platform;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;

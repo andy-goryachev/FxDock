@@ -1,11 +1,13 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.util.SB;
 import goryachev.fx.CssID;
 import goryachev.fx.CssPseudo;
 import goryachev.fx.CssStyle;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
 
 
 /**
@@ -146,6 +148,35 @@ public class CssTools
 	}
 	
 	
+	public static String toValue(boolean x)
+	{
+		return x ? "true" : "false";
+	}
+	
+	
+	public static String toValue(OverrunStyle s)
+	{
+		switch(s)
+		{
+		case CENTER_ELLIPSIS:
+			return "center-ellipsis";
+		case CENTER_WORD_ELLIPSIS:
+			return "center-word-ellipsis";
+		case CLIP:
+			return "clip";
+		case ELLIPSIS:
+			return "ellipsis";
+		case LEADING_ELLIPSIS:
+			return "leading-ellipsis";
+		case LEADING_WORD_ELLIPSIS:
+			return "leading-word-ellipsis";
+		case WORD_ELLIPSIS:
+			return "word-ellipsis";
+		}
+		throw new Error("?" + s);
+	}
+	
+	
 	public static String toValue(ScrollPane.ScrollBarPolicy x)
 	{
 		switch(x)
@@ -153,6 +184,18 @@ public class CssTools
 		case ALWAYS: return "always";
 		case AS_NEEDED: return "as-needed";
 		case NEVER: return "never";
+		}
+		throw new Error("?" + x);
+	}
+	
+	
+	public static String toValue(StrokeLineCap x)
+	{
+		switch(x)
+		{
+		case BUTT: return "butt";
+		case ROUND: return "round";
+		case SQUARE: return "square";
 		}
 		throw new Error("?" + x);
 	}
@@ -270,6 +313,25 @@ public class CssTools
 		else
 		{
 			throw new Error("?" + x);
+		}
+	}
+	
+	
+	public static String toQuotedString(Object x)
+	{
+		if(x == null)
+		{
+			return "null";
+		}
+		
+		String s = x.toString();
+		if(s.startsWith("\"") && s.endsWith("\""))
+		{
+			return s;
+		}
+		else
+		{
+			return "\"" + s + "\"";
 		}
 	}
 }

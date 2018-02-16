@@ -1,4 +1,4 @@
-// Copyright © 2009-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2009-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.text.Collator;
 import java.util.Arrays;
@@ -28,7 +28,15 @@ public abstract class CComparator<T>
 	}
 	
 	
+	/** use collate() */
+	@Deprecated
 	protected int compareText(Object a, Object b)
+	{
+		return collate(a, b);
+	}
+	
+	
+	protected int collate(Object a, Object b)
 	{
 		String sa = toString(a);
 		String sb = toString(b);

@@ -1,9 +1,10 @@
-// Copyright © 2010-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2010-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 
 
-/** StringBuilder with a few convenient methods */
+/** More convenient StringBuilder */
 public class SB
+	implements Appendable, CharSequence
 {
 	protected StringBuilder sb;
 
@@ -48,6 +49,13 @@ public class SB
 		{
 			sb.append("\n");
 		}
+		return this;
+	}
+	
+	
+	public SB comma()
+	{
+		sb.append(',');
 		return this;
 	}
 	
@@ -148,6 +156,13 @@ public class SB
 	public SB append(String s)
 	{
 		sb.append(s);
+		return this;
+	}
+	
+	
+	public Appendable append(CharSequence cs)
+	{
+		sb.append(cs);
 		return this;
 	}
 
@@ -671,5 +686,11 @@ public class SB
 			
 			a(s);
 		}
+	}
+
+
+	public CharSequence subSequence(int start, int end)
+	{
+		return sb.subSequence(start, end);
 	}
 }

@@ -1,5 +1,6 @@
-// Copyright © 2005-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2005-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import java.lang.reflect.Array;
 import java.util.Collection;
 
 
@@ -26,6 +27,8 @@ public class TextTools
 		{
 			return "";
 		}
+		
+		s = s.trim();
 		
 		if(s.length() < max)
 		{
@@ -107,6 +110,60 @@ public class TextTools
 				}
 			}
 		}
+		return -1;
+	}
+	
+	
+	public static int skipWhitespace(String text, int start)
+	{
+		if(text == null)
+		{
+			return -1;
+		}
+		else if(start < 0)
+		{
+			return -1;
+		}
+		
+		int sz = text.length();
+		for(int i=start; i<sz; i++)
+		{
+			if(CKit.isNotBlank(text.charAt(i)))
+			{
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	
+	public static int skipNonWhitespace(String text)
+	{
+		return skipNonWhitespace(text, 0);
+	}
+	
+	
+	public static int skipNonWhitespace(String text, int start)
+	{
+		if(text == null)
+		{
+			return -1;
+		}
+		else if(start < 0)
+		{
+			return -1;
+		}
+		
+		int sz = text.length();
+		for(int i=start; i<sz; i++)
+		{
+			if(CKit.isBlank(text.charAt(i)))
+			{
+				return i;
+			}
+		}
+		
 		return -1;
 	}
 	
@@ -713,6 +770,40 @@ public class TextTools
 	}
 	
 	
+	public static int lastIndexOfWhitespace(String s, int pos)
+	{
+		if(s != null)
+		{
+			int len = s.length();
+			if(pos < 0)
+			{
+				throw new IllegalArgumentException("pos<0");
+			}
+			else if(pos >= len)
+			{
+				pos = len;
+			}
+			
+			for(int i=pos-1; i>=0; i--)
+			{
+				char c = s.charAt(i);
+				if(CKit.isBlank(c))
+				{
+					return i+1;
+				}
+			}
+		}
+		
+		return -1;
+	}
+	
+	
+	public static int lastIndexOfWhitespace(String s)
+	{
+		return lastIndexOfWhitespace(s, Integer.MAX_VALUE);
+	}
+	
+	
 	public static int indexOfSeparator(String s, int pos, SeparatorFunction f)
 	{
 		int len = s.length();
@@ -1138,5 +1229,45 @@ public class TextTools
 			}
 		});
 		return sb.toString();
+	}
+	
+	
+	/** creates a single String[], using Object.toString(), skipping nulls, and recursively unpacking Collection's and arrays */ 
+	public static String[] array(Object ... items)
+	{
+		CList<String> rv = new CList(128);
+		array(rv, items);
+		return CKit.toArray(rv);
+	}
+	
+	
+	private static void array(CList<String> list, Object x)
+	{
+		CKit.checkCancelled();
+		
+		if(x == null)
+		{
+			return;
+		}
+		
+		if(x.getClass().isArray())
+		{
+			int sz = Array.getLength(x);
+			for(int i=0; i<sz; i++)
+			{
+				array(list, Array.get(x, i));
+			}
+		}
+		else if(x instanceof Collection)
+		{
+			for(Object item: (Collection)x)
+			{
+				array(list, item);
+			}
+		}
+		else
+		{
+			list.add(x.toString());
+		}
 	}
 }

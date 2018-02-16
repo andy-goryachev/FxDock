@@ -1,4 +1,4 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CComparator;
 import goryachev.common.util.CKit;
@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
 
@@ -137,26 +138,93 @@ public class FxDump
 	}
 	
 	
+	protected String describeBackground(Background b)
+	{
+		SB sb = new SB();
+		sb.a("Background<");
+		boolean sep = false;
+		for(BackgroundFill f: b.getFills())
+		{
+			if(sep)
+			{
+				sb.a(",");
+			}
+			else
+			{
+				sep = true;
+			}
+			sb.a(describe(f));
+		}
+		sb.a(">");
+		return sb.toString();
+	}
+	
+	
+	protected String describeBackgroundFill(BackgroundFill f)
+	{
+		SB sb = new SB();
+		sb.a("Fill<").a(describe(f.getFill())).a(",");
+		sb.a(describe(f.getInsets())).a(", ");
+		sb.a(describe(f.getRadii())).a(">");
+		return sb.toString();		
+	}
+	
+	
+	protected String describeDouble(Double x)
+	{
+		if(x == null)
+		{
+			return "null";
+		}
+		
+		double v = x.doubleValue();
+		if(v == Double.MAX_VALUE)
+		{
+			return "MAX_VALUE";
+		}
+		else if(v == Double.MIN_VALUE)
+		{
+			return "MAX_VALUE";
+		}
+		else if(Double.isNaN(v))
+		{
+			return "NaN";
+		}
+		else
+		{
+			long n = x.longValue();
+			if(n == v)
+			{
+				return String.valueOf(n);
+			}
+			else
+			{
+				return String.valueOf(v);
+			}
+		}
+	}
+	
+	
+	protected String describeFont(Font f)
+	{
+		SB sb = new SB();
+		sb.a(f.getName()).sp().a(f.getStyle()).sp().a(f.getSize());
+		return sb.toString();
+	}
+
+	
 	protected Object describe(Object x)
 	{
 		if(x instanceof Double)
 		{
-			double v = (Double)x;
-			if(v == Double.MAX_VALUE)
-			{
-				return "MAX_VALUE";
-			}
-			else if(v == Double.MIN_VALUE)
-			{
-				return "MAX_VALUE";
-			}
+			return describeDouble((Double)x);
 		}
 		else if(x instanceof Double[])
 		{
 			Double[] v = (Double[])x;
 			
 			SB sb = new SB();
-			sb.a("[");
+			sb.a("<");
 			boolean sep = false;
 			for(int i=0; i<v.length; i++)
 			{
@@ -168,37 +236,28 @@ public class FxDump
 				{
 					sep = true;
 				}
-				sb.a(v[i]);
+				sb.a(describeDouble(v[i]));
 			}
-			sb.a("]");
+			sb.a(">");
 			return sb.toString();
 		}
 		else if(x instanceof Background)
 		{
-			Background b = (Background)x;
-			SB sb = new SB();
-			sb.a("Background[");
-			boolean sep = false;
-			for(BackgroundFill f: b.getFills())
-			{
-				if(sep)
-				{
-					sb.a(",");
-				}
-				else
-				{
-					sep = true;
-				}
-				sb.a(describe(f.getFill()));
-			}
-			sb.a("]");
-			return sb.toString();
+			return describeBackground((Background)x);
+		}
+		else if(x instanceof BackgroundFill)
+		{
+			return describeBackgroundFill((BackgroundFill)x);
+		}
+		else if(x instanceof Font)
+		{
+			return describeFont((Font)x);
 		}
 		
 		return x;
 	}
 	
-	
+
 	protected void dump(Node n)
 	{
 		SB sb = new SB(4096);

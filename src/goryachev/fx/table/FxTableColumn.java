@@ -1,8 +1,10 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
+import goryachev.common.util.CKit;
 import java.util.function.Function;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -12,45 +14,20 @@ import javafx.scene.control.TableColumn;
  * FxTable Column.
  */
 public class FxTableColumn<T>
-	extends TableColumn<T,T>
+	extends TableColumn<T,Object>
 {
 	protected Function<T,Node> renderer;
+	protected Function<T,Object> formatter;
+	protected Pos alignment = Pos.CENTER_LEFT;
 	
 	
 	public FxTableColumn(String id, String text, boolean sortable)
 	{
 		super(text);
 		setId(id);
+		setSortable(sortable);
 		setCellValueFactory((f) -> getCellValueProperty(f.getValue()));
 		setCellFactory((f) -> getCellFactory(f));
-	}
-
-	
-	private TableCell<T,T> getCellFactory(TableColumn<T,T> f)
-	{
-		return new TableCell<T,T>()
-		{
-			@Override
-			protected void updateItem(T item, boolean empty)
-			{
-				super.updateItem(item, empty);
-				
-				if(empty)
-				{
-					item = null;
-				}
-				
-				if(renderer == null)
-				{
-					setText(item == null ? null : item.toString());
-				}
-				else
-				{
-					Node n = (renderer == null ? null : renderer.apply(item));
-					setGraphic(n);
-				}
-			}
-		};
 	}
 
 
@@ -72,14 +49,76 @@ public class FxTableColumn<T>
 	}
 
 
-	protected ObservableValue<T> getCellValueProperty(T item)
+	protected ObservableValue getCellValueProperty(T item)
 	{
-		return new ReadOnlyObjectWrapper<T>(item);
+		if(formatter == null)
+		{
+			return new ReadOnlyObjectWrapper(item);
+		}
+		else
+		{
+			Object val = formatter.apply(item);
+			return new ReadOnlyObjectWrapper(val);
+		}
 	}
 	
 	
-	public void setRenderer(Function<T,Node> r)
+	public FxTableColumn<T> setAlignment(Pos a)
+	{
+		alignment = a;
+		return this;
+	}
+	
+	
+	public FxTableColumn<T> setRenderer(Function<T,Node> r)
 	{
 		renderer = r;
+		return this;
+	}
+	
+
+	/** value converter generates cell values for sorting and display
+	 * (the latter only if renderer is not set */
+	public FxTableColumn<T> setConverter(Function<T,Object> f)
+	{
+		formatter = f;
+		return this;
+	}
+	
+	
+	private TableCell<T,Object> getCellFactory(TableColumn<T,Object> f)
+	{
+		return new TableCell<T,Object>()
+		{
+			@Override
+			protected void updateItem(Object item, boolean empty)
+			{
+				super.updateItem(item, empty);
+				
+				if(empty)
+				{
+					setText(null);
+					setGraphic(null);
+				}
+				else
+				{
+					if(renderer == null)
+					{
+						String s = CKit.toString(item);
+						setText(s);
+						setGraphic(null);
+						setAlignment(alignment);
+					}
+					else
+					{
+						// damn, typecast
+						Node n = renderer.apply((T)item);
+						
+						setText(null);
+						setGraphic(n);
+					}
+				}
+			}
+		};
 	}
 }

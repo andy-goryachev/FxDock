@@ -1,4 +1,4 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CList;
 import goryachev.common.util.SB;
@@ -26,10 +26,26 @@ public class FxStyleSheet
 	}
 	
 	
+	public Selector selector(Object ... sel)
+	{
+		return new Selector(sel);
+	}
+	
+	
 	/** adds multiple selectors or style sheets */
 	public void add(Object ... sel)
 	{
-		elements.addAll(sel);
+		for(Object x: sel)
+		{
+			if(x instanceof Object[])
+			{
+				add((Object[])x);
+			}
+			else
+			{
+				elements.add(x);
+			}
+		}
 	}
 	
 	

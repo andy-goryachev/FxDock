@@ -1,4 +1,4 @@
-// Copyright © 2006-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2006-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.util.log.ConsoleLogWriter;
 import goryachev.common.util.log.ErrorLogWriter;
@@ -405,6 +405,7 @@ public class Log
 	}
 
 
+	// FIX hierarchy
 	public synchronized static Log get(String name)
 	{
 		Log ch = channels.get(name);

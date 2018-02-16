@@ -1,4 +1,4 @@
-// Copyright © 2007-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -207,5 +207,11 @@ public class CList<T>
 			return (CList)x;
 		}
 		return null;
+	}
+
+
+	public boolean isValidIndex(int ix)
+	{
+		return (ix >= 0) && (ix < size());
 	}
 }

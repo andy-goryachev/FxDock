@@ -1,13 +1,16 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.GlobalSettings;
 import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.WindowsFx;
 import java.util.function.Consumer;
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -49,7 +52,8 @@ public final class FX
 	public static final double PI_2 = Math.PI / 2.0;
 	public static final double DEGREES_PER_RADIAN = 180.0 / Math.PI;
 	private static WindowsFx windowsFx = new WindowsFx();
-	
+	private static Text helper;
+
 	
 	public static FxWindow getWindow(Node n)
 	{
@@ -143,6 +147,9 @@ public final class FX
 				case FOCUSABLE:
 					n.setFocusTraversable(true);
 					break;
+				case FORCE_MAX_WIDTH:
+					n.setMaxWidth(Double.MAX_VALUE);
+					break;
 				case FORCE_MIN_HEIGHT:
 					n.setMinHeight(Control.USE_PREF_SIZE);
 					break;
@@ -182,6 +189,18 @@ public final class FX
 			else if(a instanceof Color)
 			{
 				n.setTextFill((Color)a);
+			}
+			else if(a instanceof StringProperty)
+			{
+				n.textProperty().bind((StringProperty)a);
+			}
+			else if(a instanceof Node)
+			{
+				n.setGraphic((Node)a);
+			}
+			else if(a instanceof Background)
+			{
+				n.setBackground((Background)a);
 			}
 			else
 			{
@@ -379,6 +398,16 @@ public final class FX
 		int b = (rgb      ) & 0xff;
 		return Color.rgb(r, g, b);
 	}
+	
+	
+	/** Creates Color from an RGB value + alpha. */
+	public static Color rgba(int rgb, double alpha)
+	{
+		int r = (rgb >> 16) & 0xff;
+		int g = (rgb >>  8) & 0xff;
+		int b = (rgb      ) & 0xff;
+		return Color.rgb(r, g, b, alpha);
+	}
 
 
 	public static boolean contains(Node n, double screenx, double screeny)
@@ -389,6 +418,22 @@ public final class FX
 			if(p != null)
 			{
 				return n.contains(p);
+			}
+		}
+		return false;
+	}
+	
+	
+	/** returns true if (x,y) point in eventSource coordinates is contained by eventTarget node */
+	public static boolean contains(Node eventSource, Node eventTarget, double x, double y)
+	{
+		Point2D p = eventSource.localToScreen(x, y);
+		if(p != null)
+		{
+			p = eventTarget.screenToLocal(p);
+			if(p != null)
+			{
+				return eventTarget.contains(p);
 			}
 		}
 		return false;
@@ -782,5 +827,98 @@ public final class FX
 	public static Insets insets(double vertical, double horizontal)
 	{
 		return new Insets(vertical, horizontal, vertical, horizontal);
+	}
+	
+	
+	/** adds an invalidation listener to an observable */
+	public static void listen(Runnable handler, Observable prop)
+	{
+		prop.addListener((src) -> handler.run());
+	}
+	
+	
+	/** adds an invalidation listener to an observable */
+	public static void listen(Runnable handler, boolean fireImmediately, Observable prop)
+	{
+		prop.addListener((src) -> handler.run());
+			
+		if(fireImmediately)
+		{
+			handler.run();
+		}
+	}
+	
+	
+	/** adds an invalidation listener to multiple observables */
+	public static void listen(Runnable handler, Observable ... props)
+	{
+		for(Observable prop: props)
+		{
+			prop.addListener((src) -> handler.run());
+		}
+	}
+	
+	
+	/** adds an invalidation listener to multiple observables */
+	public static void listen(Runnable handler, boolean fireImmediately, Observable ... props)
+	{
+		for(Observable prop: props)
+		{
+			prop.addListener((src) -> handler.run());
+		}
+			
+		if(fireImmediately)
+		{
+			handler.run();
+		}
+	}
+
+
+	public static <T> ObservableList<T> observableArrayList()
+	{
+		return FXCollections.observableArrayList();
+	}
+
+
+	/** creates a fixed spacer */
+	public static Region spacer(double size)
+	{
+		Region r = new Region();
+		r.setMinSize(size, size);
+		r.setMaxSize(size, size);
+		r.setPrefSize(size, size);
+		return r;
+	}
+	
+	
+	// from http://stackoverflow.com/questions/15593287/binding-textarea-height-to-its-content/19717901#19717901
+	public static FxSize getTextBounds(TextArea t, double width)
+	{
+		if(helper == null)
+		{
+			helper = new Text();
+		}
+		
+		String text = t.getText();
+		if(width < 0)
+		{
+			// Note that the wrapping width needs to be set to zero before
+			// getting the text's real preferred width.
+			helper.setWrappingWidth(0);
+		}
+		else
+		{
+			helper.setWrappingWidth(width);
+		}
+		helper.setText(text);
+		helper.setFont(t.getFont());
+		Bounds r = helper.getLayoutBounds();
+		
+		Insets m = t.getInsets();
+		Insets p = t.getPadding();
+		double w = Math.ceil(r.getWidth() + m.getLeft() + m.getRight());
+		double h = Math.ceil(r.getHeight() + m.getTop() + m.getBottom());
+		
+		return new FxSize(w, h);
 	}
 }

@@ -1,9 +1,11 @@
-// Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.fx.internal.FxSchema;
 import goryachev.fx.internal.FxWindowBoundsMonitor;
 import goryachev.fx.internal.LocalBindings;
 import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -31,6 +33,7 @@ public class FxWindow
 	private final String name;
 	private final BorderPane pane;
 	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
+	private final ReadOnlyObjectWrapper<Node> lastFocusOwner = new ReadOnlyObjectWrapper();
 	private LocalBindings bindings;
 	
 	
@@ -38,7 +41,32 @@ public class FxWindow
 	{
 		this.name = name;
 		this.pane = new BorderPane();
-		setScene(new Scene(pane));
+		
+		Scene sc = new Scene(pane);
+		setScene(sc);
+		
+		sc.focusOwnerProperty().addListener((s,p,val) -> updateFocusOwner(val));
+	}
+	
+	
+	protected void updateFocusOwner(Node n)
+	{
+		if(n != null)
+		{
+			lastFocusOwner.set(n);
+		}
+	}
+	
+	
+	public Node getLastFocusOwner()
+	{
+		return lastFocusOwner.get();
+	}
+	
+	
+	public ReadOnlyObjectProperty<Node> lastFocusOwnerProperty()
+	{
+		return lastFocusOwner.getReadOnlyProperty();
 	}
 	
 	
