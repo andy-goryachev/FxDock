@@ -4,6 +4,7 @@ import goryachev.common.util.Base64;
 import goryachev.common.util.CKit;
 import goryachev.common.util.Log;
 import goryachev.common.util.UrlStreamFactory;
+import goryachev.fx.hacks.FxHacks;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +12,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.function.Supplier;
-import com.sun.javafx.css.StyleManager;
 import javafx.application.Platform;
 
 
@@ -145,9 +145,6 @@ public class CssLoader
 				}
 				else
 				{
-					// stderr is ok here
-					System.err.println("reloading css");
-					
 					Platform.runLater(() -> update(old, url));
 				}
 				
@@ -172,10 +169,6 @@ public class CssLoader
 		
 	protected void update(String old, String cur)
 	{
-		if(old != null)
-		{
-			StyleManager.getInstance().removeUserAgentStylesheet(old);
-		}
-		StyleManager.getInstance().addUserAgentStylesheet(cur);
+		FxHacks.get().applyStyleSheet(old, cur);
 	}
 }

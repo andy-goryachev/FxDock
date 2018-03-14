@@ -56,6 +56,8 @@ public final class CKit
 	public static final long MS_IN_A_WEEK = 604800000;
 	private static AtomicInteger id = new AtomicInteger(); 
 	private static Boolean eclipseDetected;
+	private static final JavaVersion JAVA8 = JavaVersion.parse("1.8.0");
+	private static final JavaVersion JAVA9 = JavaVersion.parse("9");
 	
 	
 	public static void close(Closeable x)
@@ -1454,23 +1456,31 @@ public final class CKit
 	}
 	
 	
-	/** reads byte array from a resource local to the parent object or class */
-	public static byte[] readLocalBytes(Object parent, String name) throws Exception
+	/** reads byte array from a resource local to the parent object (or class) */
+	public static byte[] readBytes(Object parent, String name) throws Exception
 	{
 		ByteArrayOutputStream out = new ByteArrayOutputStream(65536);
 		Class c = (parent instanceof Class ? (Class)parent : parent.getClass()); 
 		InputStream in = c.getResourceAsStream(name);
-		copy(in, out);
+		try
+		{
+			copy(in, out);
+		}
+		finally
+		{
+			close(in);
+			close(out);
+		}
 		return out.toByteArray();
 	}
 	
 	
-	/** reads byte array from a resource local to the parent object or class, without throwing an exception */
-	public static byte[] readLocalBytesQuiet(Object parent, String name)
+	/** reads byte array from a resource local to the parent object (or class), without throwing an exception */
+	public static byte[] readBytesQuiet(Object parent, String name)
 	{
 		try
 		{
-			return readLocalBytes(parent, name);
+			return readBytes(parent, name);
 		}
 		catch(Exception ignore)
 		{
@@ -2260,5 +2270,11 @@ public final class CKit
 			throw new Error("min > max");
 		}
 		return (value >= min) && (value <= max);
+	}
+	
+	
+	public static boolean isJava9OrLater()
+	{
+		return JavaVersion.getJavaVersion().isSameOrLaterThan(JAVA9);
 	}
 }

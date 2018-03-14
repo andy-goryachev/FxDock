@@ -153,7 +153,7 @@ public class TestFxIconBuilder
 		b.setTranslate(-150, -150);
 		try
 		{
-			b.image(CKit.readLocalBytes(TestFxIconBuilder.class, "ground.png"));
+			b.image(CKit.readBytes(TestFxIconBuilder.class, "ground.png"));
 		}
 		catch(Exception e)
 		{

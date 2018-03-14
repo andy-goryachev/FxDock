@@ -1,6 +1,7 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
 import goryachev.common.util.SB;
+import goryachev.fx.hacks.FxHacks;
 import javafx.scene.Node;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
