@@ -46,7 +46,7 @@ public abstract class FxDockWindow
 		Scene s = new Scene(frame);
 		setScene(s);
 		
-		new FxDump().attach(this);
+		FxDump.attach(this);
 	}
 	
 	

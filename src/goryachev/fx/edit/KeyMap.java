@@ -48,7 +48,7 @@ public class KeyMap
 	
 	public void shortcut(KeyCode k, Runnable r)
 	{
-		int flags = KEY_PRESSED | (CPlatform.get().isMac() ? META : CTRL);
+		int flags = KEY_PRESSED | (CPlatform.isMac() ? META : CTRL);
 		add(flags, k, r);
 	}
 	
