@@ -58,6 +58,12 @@ public final class CKit
 	private static Boolean eclipseDetected;
 	private static final JavaVersion JAVA8 = JavaVersion.parse("1.8.0");
 	private static final JavaVersion JAVA9 = JavaVersion.parse("9");
+	public static final long KB = 1024;
+	public static final long MB = 1024 * KB;
+	public static final long GB = 1024 * MB;
+	public static final long TB = 1024 * GB;
+	private static final double LOW_MEMORY_CHECK_THRESHOLD = 0.9;
+	private static final double LOW_MEMORY_FAIL_AFTER_GC_THRESHOLD = 0.87;
 	
 	
 	public static void close(Closeable x)
@@ -1534,11 +1540,13 @@ public final class CKit
 	}
 	
 	
-	private static final double LOW_MEMORY_CHECK_THRESHOLD = 0.9;
-	private static final double LOW_MEMORY_FAIL_AFTER_GC_THRESHOLD = 0.87;
-	
-	
 	public static boolean isLowMemory()
+	{
+		return isLowMemory(LOW_MEMORY_CHECK_THRESHOLD, LOW_MEMORY_FAIL_AFTER_GC_THRESHOLD);
+	}
+	
+	
+	public static boolean isLowMemory(double triggerThreshold, double failThreshold)
 	{
 		Runtime r = Runtime.getRuntime();
 		
@@ -1546,7 +1554,7 @@ public final class CKit
 		long used = total - r.freeMemory();
 		long max = r.maxMemory();
 		
-		if(used > (long)(max * LOW_MEMORY_CHECK_THRESHOLD))
+		if(used > (long)(max * triggerThreshold))
 		{
 			// let's see if gc can help
 			System.gc();
@@ -1554,7 +1562,7 @@ public final class CKit
 			
 			total = r.totalMemory();
 			used = total - r.freeMemory();
-			if(used > (long)(max * LOW_MEMORY_FAIL_AFTER_GC_THRESHOLD))
+			if(used > (long)(max * failThreshold))
 			{
 				return true;
 			}
@@ -2276,5 +2284,49 @@ public final class CKit
 	public static boolean isJava9OrLater()
 	{
 		return JavaVersion.getJavaVersion().isSameOrLaterThan(JAVA9);
+	}
+
+
+	public static long kebi(int x)
+	{
+		return KB * x;
+	}
+	
+	
+	public static long mebi(int x)
+	{
+		return MB * x;
+	}
+	
+	
+	public static long gibi(int x)
+	{
+		return GB * x;
+	}
+	
+	
+	public static long tebi(int x)
+	{
+		return TB * x;
+	}
+	
+	
+	/** converts seconds to milliseconds */
+	public static int seconds(int seconds)
+	{
+		return seconds * 1000;
+	}
+	
+	
+	public static byte[] copy(byte[] b)
+	{
+		if(b == null)
+		{
+			return null;
+		}
+		
+		byte[] c = new byte[b.length];
+		System.arraycopy(b, 0, c, 0, b.length);
+		return c;
 	}
 }

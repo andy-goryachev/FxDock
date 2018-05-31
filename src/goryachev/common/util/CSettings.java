@@ -103,6 +103,12 @@ public class CSettings
 	}
 	
 	
+	public void setBool(String key, boolean val)
+	{
+		set(key, val);
+	}
+	
+	
 	public void setInt(String key, int val)
 	{
 		set(key, val);

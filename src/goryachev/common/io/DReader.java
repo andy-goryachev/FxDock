@@ -75,6 +75,17 @@ public class DReader
 	}
 	
 	
+	public int readInt8() throws IOException
+	{
+		int ch = in.read();
+		if(ch < 0)
+		{
+			throw new EOFException();
+		}
+		return (ch & 0xff);
+	}
+	
+	
 	public int readByteRaw() throws IOException
 	{
 		return in.read();
@@ -209,5 +220,11 @@ public class DReader
 	public void close() throws IOException
 	{
 		in.close();
+	}
+	
+	
+	public long skip(long nbytes) throws IOException
+	{
+		return in.skip(nbytes);
 	}
 }

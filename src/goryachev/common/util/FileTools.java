@@ -933,7 +933,7 @@ public class FileTools
 		int ix = name.lastIndexOf('.');
 		if(ix >= 0)
 		{
-			return name.substring(ix);
+			return name.substring(ix + 1);
 		}
 		else
 		{

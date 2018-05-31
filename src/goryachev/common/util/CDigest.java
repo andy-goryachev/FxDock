@@ -162,7 +162,9 @@ public class CDigest
 	
 	public byte[] digest()
 	{
-		return md.digest();
+		byte[] rv = md.digest();
+		md.reset();
+		return rv;
 	}
 	
 	

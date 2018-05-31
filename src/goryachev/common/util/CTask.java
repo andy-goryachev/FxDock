@@ -23,7 +23,7 @@ public class CTask<T>
 	}
 	
 	
-	public CTask<T> setGenerator(ValueGenerator<? extends T> generator)
+	public CTask<T> producer(ValueGenerator<? extends T> generator)
 	{
 		this.generator = generator;
 		return this;
