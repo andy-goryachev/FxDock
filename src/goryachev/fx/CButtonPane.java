@@ -21,7 +21,7 @@ public class CButtonPane
 	}
 	
 	
-	public CButton addButton(String text, CAction a)
+	public CButton addButton(String text, FxAction a)
 	{
 		CButton b = new CButton(text, a);
 		b.setMinWidth(70);

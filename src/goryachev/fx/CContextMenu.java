@@ -25,7 +25,7 @@ public class CContextMenu
 	}
 	
 	
-	public void add(String text, CAction a)
+	public void add(String text, FxAction a)
 	{
 		CMenuItem m = new CMenuItem(text, a);
 		add(m);

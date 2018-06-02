@@ -18,7 +18,7 @@ public class CMenu
 	}
 	
 	
-	public CMenu(String text, CAction a)
+	public CMenu(String text, FxAction a)
 	{
 		super(text);
 		a.attach(this);
@@ -33,7 +33,7 @@ public class CMenu
 	}
 	
 	
-	public CMenuItem add(String text, CAction a)
+	public CMenuItem add(String text, FxAction a)
 	{
 		CMenuItem m = new CMenuItem(text, a);
 		getItems().add(m);

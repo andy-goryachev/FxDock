@@ -2,10 +2,10 @@
 package demo.dock;
 import goryachev.common.util.CKit;
 import goryachev.common.util.D;
-import goryachev.fx.CAction;
 import goryachev.fx.CButton;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
+import goryachev.fx.FxAction;
 import goryachev.fx.HPane;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockStyles;
@@ -31,7 +31,7 @@ import javafx.scene.web.WebView;
 public class DemoBrowser
 	extends FxDockPane
 {
-	public final CAction reloadAction = new CAction() { public void action() { reload(); }};
+	public final FxAction reloadAction = new FxAction(this::reload);
 	public final TextField addressField;
 	public final WebView view;
 	public final Label statusField;

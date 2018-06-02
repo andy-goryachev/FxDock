@@ -3,7 +3,7 @@ package goryachev.fx.edit;
 import goryachev.common.util.D;
 import goryachev.common.util.Log;
 import goryachev.fx.Binder;
-import goryachev.fx.CAction;
+import goryachev.fx.FxAction;
 import goryachev.fx.CBooleanProperty;
 import goryachev.fx.CssStyle;
 import goryachev.fx.FX;
@@ -63,8 +63,8 @@ public class FxEditor
 	/** vflow */
 	public static final CssStyle VFLOW = new CssStyle("FxEditor_VFLOW");
 	
-	public final CAction copyAction = new CAction(this::copy);
-	public final CAction selectAllAction = new CAction(this::selectAll);
+	public final FxAction copyAction = new FxAction(this::copy);
+	public final FxAction selectAllAction = new FxAction(this::selectAll);
 	
 	protected final SimpleBooleanProperty editableProperty = new SimpleBooleanProperty(false);
 	protected final ReadOnlyObjectWrapper<FxEditorModel> modelProperty = new ReadOnlyObjectWrapper<>();

@@ -49,6 +49,12 @@ public class EditablePlainTextEditorModel
 	}
 	
 	
+	public String getPlainText(int line)
+	{
+		return lines.get(line);
+	}
+	
+	
 	public LoadInfo getLoadInfo()
 	{
 		return null; 

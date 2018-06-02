@@ -16,7 +16,7 @@ public class CCheckMenuItem
 	}
 	
 	
-	public CCheckMenuItem(String text, CAction a)
+	public CCheckMenuItem(String text, FxAction a)
 	{
 		super(text);
 		a.attach(this);

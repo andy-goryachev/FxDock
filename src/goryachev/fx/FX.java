@@ -112,7 +112,7 @@ public final class FX
 	}
 	
 	
-	public static CAction exitAction()
+	public static FxAction exitAction()
 	{
 		return windowsFx.exitAction();
 	}
@@ -801,9 +801,9 @@ public final class FX
 			{
 				((Node)x).setDisable(on);
 			}
-			else if(x instanceof CAction)
+			else if(x instanceof FxAction)
 			{
-				((CAction)x).setDisabled(on);
+				((FxAction)x).setDisabled(on);
 			}
 		}
 	}

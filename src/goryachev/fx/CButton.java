@@ -9,7 +9,7 @@ import javafx.scene.control.Button;
 public class CButton
 	extends Button
 {
-	public CButton(String text, CAction a)
+	public CButton(String text, FxAction a)
 	{
 		super(text);
 		a.attach(this);
@@ -24,6 +24,6 @@ public class CButton
 	
 	public CButton(String text, Runnable handler)
 	{
-		this(text, new CAction(handler));
+		this(text, new FxAction(handler));
 	}
 }

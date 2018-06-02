@@ -4,12 +4,12 @@ import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SB;
-import goryachev.fx.CAction;
 import goryachev.fx.CCheckMenuItem;
 import goryachev.fx.CDialog;
 import goryachev.fx.CMenu;
 import goryachev.fx.CMenuBar;
 import goryachev.fx.FX;
+import goryachev.fx.FxAction;
 import goryachev.fx.GlobalBooleanProperty;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fxdock.FxDockFramework;
@@ -30,15 +30,15 @@ import javafx.scene.layout.BorderPane;
 public class DemoWindow
     extends FxDockWindow
 {
-	public static final CAction newBrowserAction = new CAction(DemoWindow::actionNewBrowser);
-	public static final CAction newCPaneAction = new CAction(DemoWindow::actionNewCPane);
-	public static final CAction newHPaneAction = new CAction(DemoWindow::actionNewHPane);
-	public static final CAction newVPaneAction = new CAction(DemoWindow::actionNewVPane);
-	public static final CAction newLoginAction = new CAction(DemoWindow::actionNewLogin);
-	public static final CAction newWindowAction = new CAction(DemoWindow::actionNewWindow);
-	public static final CAction quitApplicationAction = new CAction(FxDockFramework::exit);
-	public static final CAction saveSettingsAction = new CAction(DemoWindow::actionSaveSettings);
-	public final CAction windowCheckAction = new CAction();
+	public static final FxAction newBrowserAction = new FxAction(DemoWindow::actionNewBrowser);
+	public static final FxAction newCPaneAction = new FxAction(DemoWindow::actionNewCPane);
+	public static final FxAction newHPaneAction = new FxAction(DemoWindow::actionNewHPane);
+	public static final FxAction newVPaneAction = new FxAction(DemoWindow::actionNewVPane);
+	public static final FxAction newLoginAction = new FxAction(DemoWindow::actionNewLogin);
+	public static final FxAction newWindowAction = new FxAction(DemoWindow::actionNewWindow);
+	public static final FxAction quitApplicationAction = new FxAction(FxDockFramework::exit);
+	public static final FxAction saveSettingsAction = new FxAction(DemoWindow::actionSaveSettings);
+	public final FxAction windowCheckAction = new FxAction();
 	public final Label statusField = new Label();
 	private static GlobalBooleanProperty showCloseDialogProperty = new GlobalBooleanProperty("show.close.dialog", true);
 
@@ -80,9 +80,9 @@ public class DemoWindow
 		// help
 		mb.add(m = new CMenu("Help"));
 		m.add(new CCheckMenuItem("Check Box Menu", windowCheckAction));
-		m.add(m2 = new CMenu("Test", new CAction() { public void action() { D.print("test"); }}));
-		m2.add("T2", new CAction() { public void action() { D.print("t2"); }});
-		m.add("T3", new CAction() { public void action() { D.print("t3"); }});
+		m.add(m2 = new CMenu("Test", new FxAction(() -> D.print("test"))));
+		m2.add("T2", new FxAction(() -> D.print("t2")));
+		m.add("T3", new FxAction(() -> D.print("t3")));
 		return mb;
 	}
 

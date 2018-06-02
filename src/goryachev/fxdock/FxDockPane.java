@@ -1,7 +1,7 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
-import goryachev.fx.CAction;
 import goryachev.fx.FX;
+import goryachev.fx.FxAction;
 import goryachev.fx.SSConverter;
 import goryachev.fx.internal.LocalBindings;
 import goryachev.fxdock.internal.DockTools;
@@ -29,8 +29,8 @@ import javafx.util.StringConverter;
 public abstract class FxDockPane
 	extends FxDockBorderPane
 {
-	public final CAction closeAction = new CAction() { public void action() { actionClose(); }};
-	public final CAction popToWindowAction = new CAction() { public void action() { actionPopToWindow(); }}; 
+	public final FxAction closeAction = new FxAction(this::actionClose);
+	public final FxAction popToWindowAction = new FxAction(this::actionPopToWindow); 
 	public final Label titleField;
 	private final ReadOnlyBooleanWrapper tabMode = new ReadOnlyBooleanWrapper();
 	private final SimpleStringProperty title = new SimpleStringProperty();

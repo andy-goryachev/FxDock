@@ -29,7 +29,7 @@ public class FxWindow
 	
 	//
 	
-	public final CAction closeWindowAction = new CAction() { public void action() { closeWithConfirmation(); }};
+	public final FxAction closeWindowAction = new FxAction() { public void action() { closeWithConfirmation(); }};
 	private final String name;
 	private final BorderPane pane;
 	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);

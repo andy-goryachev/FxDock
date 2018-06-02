@@ -99,6 +99,16 @@ public class CssLoader
 	}
 	
 	
+	public static String getCurrentStyleSheet()
+	{
+		if(instance != null)
+		{
+			return instance.url;
+		}
+		return null;
+	}
+	
+	
 	public void setGenerator(Supplier<FxStyleSheet> g)
 	{
 		this.generator = g;

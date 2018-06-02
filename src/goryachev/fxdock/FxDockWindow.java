@@ -1,6 +1,6 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
-import goryachev.fx.CAction;
+import goryachev.fx.FxAction;
 import goryachev.fx.FxDump;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fx.SSConverter;
@@ -32,7 +32,7 @@ public abstract class FxDockWindow
 	
 	//
 	
-	public final CAction closeWindowAction = new CAction() { public void action() { actionClose(); } };
+	public final FxAction closeWindowAction = new FxAction(this::actionClose);
 	private final BorderPane frame;
 	private final FxDockRootPane root;
 	private LocalBindings bindings;
