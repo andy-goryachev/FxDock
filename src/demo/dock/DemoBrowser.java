@@ -2,10 +2,10 @@
 package demo.dock;
 import goryachev.common.util.CKit;
 import goryachev.common.util.D;
-import goryachev.fx.CButton;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
 import goryachev.fx.FxAction;
+import goryachev.fx.FxButton;
 import goryachev.fx.HPane;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockStyles;
@@ -90,7 +90,7 @@ public class DemoBrowser
 			t.add(b);
 		}
 		t.fill(addressField);
-		t.add(new CButton("Reload", reloadAction));
+		t.add(new FxButton("Reload", reloadAction));
 		return t;
 	}
 	

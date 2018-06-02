@@ -1,6 +1,6 @@
 // Copyright © 2017-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
-import goryachev.fx.CButton;
+import goryachev.fx.FxButton;
 import goryachev.fx.CComboBox;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
@@ -13,10 +13,10 @@ public class FindPane
 	extends CPane
 {
 	public final CComboBox searchField;
-	public final CButton ignoreCaseButton;
-	public final CButton wholeWordButton;
-	public final CButton prevButton;
-	public final CButton nextButton;
+	public final FxButton ignoreCaseButton;
+	public final FxButton wholeWordButton;
+	public final FxButton prevButton;
+	public final FxButton nextButton;
 	
 	
 	public FindPane()
@@ -26,13 +26,13 @@ public class FindPane
 		searchField = new CComboBox();
 		searchField.setEditable(true);
 		
-		ignoreCaseButton = new CButton("Aa");
+		ignoreCaseButton = new FxButton("Aa");
 		
-		wholeWordButton = new CButton("[]");
+		wholeWordButton = new FxButton("[]");
 		
-		prevButton = new CButton("<");
+		prevButton = new FxButton("<");
 		
-		nextButton = new CButton(">");
+		nextButton = new FxButton(">");
 		
 		setHGap(5);
 		addColumns

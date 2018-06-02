@@ -1,8 +1,8 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
-import goryachev.fx.CButton;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
+import goryachev.fx.FxButton;
 import goryachev.fxdock.FxDockPane;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -20,7 +20,7 @@ public class DemoLoginPane
 	public final TextFlow infoField;
 	public final TextField userNameField;
 	private final PasswordField passwordField;
-	public final CButton loginButton;
+	public final FxButton loginButton;
 	
 	
 	public DemoLoginPane()
@@ -36,7 +36,7 @@ public class DemoLoginPane
 
 		passwordField = new PasswordField();
 
-		loginButton = new CButton("Login");
+		loginButton = new FxButton("Login");
 		loginButton.setMinWidth(100);
 
 		CPane p = new CPane();

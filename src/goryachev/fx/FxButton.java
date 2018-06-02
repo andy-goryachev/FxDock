@@ -4,25 +4,25 @@ import javafx.scene.control.Button;
 
 
 /**
- * Convenient Button.
+ * Convenient Fx Button.
  */
-public class CButton
+public class FxButton
 	extends Button
 {
-	public CButton(String text, FxAction a)
+	public FxButton(String text, FxAction a)
 	{
 		super(text);
 		a.attach(this);
 	}
 	
 	
-	public CButton(String text)
+	public FxButton(String text)
 	{
 		super(text);
 	}
 	
 	
-	public CButton(String text, Runnable handler)
+	public FxButton(String text, Runnable handler)
 	{
 		this(text, new FxAction(handler));
 	}

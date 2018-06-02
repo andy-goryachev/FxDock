@@ -21,9 +21,9 @@ public class CButtonPane
 	}
 	
 	
-	public CButton addButton(String text, FxAction a)
+	public FxButton addButton(String text, FxAction a)
 	{
-		CButton b = new CButton(text, a);
+		FxButton b = new FxButton(text, a);
 		b.setMinWidth(70);
 		
 		if(getChildren().size() == 0)
@@ -36,9 +36,9 @@ public class CButtonPane
 	}
 	
 	
-	public CButton addButton(String text)
+	public FxButton addButton(String text)
 	{
-		CButton b = new CButton(text);
+		FxButton b = new FxButton(text);
 		b.setMinWidth(70);
 		b.setDisable(true);
 		

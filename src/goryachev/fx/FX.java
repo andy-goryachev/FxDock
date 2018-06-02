@@ -921,4 +921,11 @@ public final class FX
 		
 		return new FxSize(w, h);
 	}
+	
+
+	/** requests focus in Platform.runLater() */
+	public static void focusLater(Node n)
+	{
+		later(() -> n.requestFocus());
+	}
 }
