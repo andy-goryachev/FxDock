@@ -928,4 +928,29 @@ public final class FX
 	{
 		later(() -> n.requestFocus());
 	}
+	
+	
+	/** returns a parent of the specified type, or null.  if comp is an instance of the specified class, returns comp */
+	public static <T> T getAncestorOfClass(Class<T> c, Node comp)
+	{
+		while(comp != null)
+		{
+			if(c.isInstance(comp))
+			{
+				return (T)comp;
+			}
+			
+//			if(comp instanceof JPopupMenu)
+//			{
+//				if(comp.getParent() == null)
+//				{
+//					comp = ((JPopupMenu)comp).getInvoker();
+//					continue;
+//				}
+//			}
+			
+			comp = comp.getParent();
+		}
+		return null;
+	}
 }

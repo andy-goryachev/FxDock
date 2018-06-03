@@ -7,10 +7,10 @@ import javafx.scene.control.MenuItem;
 /**
  * CMenuItem.
  */
-public class CMenuItem
+public class FxMenuItem
 	extends MenuItem
 {
-	public CMenuItem(String text, Node icon, FxAction a)
+	public FxMenuItem(String text, Node icon, FxAction a)
 	{
 		super(text);
 		a.attach(this);
@@ -18,21 +18,21 @@ public class CMenuItem
 	}
 	
 	
-	public CMenuItem(Node icon, FxAction a)
+	public FxMenuItem(Node icon, FxAction a)
 	{
 		a.attach(this);
 		setGraphic(icon);
 	}
 	
 	
-	public CMenuItem(String text, FxAction a)
+	public FxMenuItem(String text, FxAction a)
 	{
 		super(text);
 		a.attach(this);
 	}
 	
 	
-	public CMenuItem(String text)
+	public FxMenuItem(String text)
 	{
 		super(text);
 	}

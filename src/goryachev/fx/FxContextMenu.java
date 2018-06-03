@@ -6,12 +6,12 @@ import javafx.scene.control.SeparatorMenuItem;
 
 
 /**
- * ContextMenu.
+ * Context Menu.
  */
-public class CContextMenu
+public class FxContextMenu
 	extends ContextMenu
 {
-	public CContextMenu()
+	public FxContextMenu()
 	{
 		setHideOnEscape(true);
 		setAutoHide(true);
@@ -27,14 +27,14 @@ public class CContextMenu
 	
 	public void add(String text, FxAction a)
 	{
-		CMenuItem m = new CMenuItem(text, a);
+		FxMenuItem m = new FxMenuItem(text, a);
 		add(m);
 	}
 	
 	
 	public void add(String text)
 	{
-		CMenuItem m = new CMenuItem(text);
+		FxMenuItem m = new FxMenuItem(text);
 		m.setDisable(true);
 		add(m);
 	}

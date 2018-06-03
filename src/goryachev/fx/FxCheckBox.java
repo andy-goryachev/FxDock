@@ -6,29 +6,29 @@ import javafx.scene.control.CheckBox;
 /**
  * CCheckBox.
  */
-public class CCheckBox
+public class FxCheckBox
 	extends CheckBox
 {
-	public CCheckBox(String text, boolean selected)
+	public FxCheckBox(String text, boolean selected)
 	{
 		super(text);
 		setSelected(selected);
 	}
 	
 	
-	public CCheckBox(boolean selected)
+	public FxCheckBox(boolean selected)
 	{
 		setSelected(selected);
 	}
 
 	
-	public CCheckBox(String text)
+	public FxCheckBox(String text)
 	{
 		super(text);
 	}
 	
 	
-	public CCheckBox()
+	public FxCheckBox()
 	{
 	}
 }

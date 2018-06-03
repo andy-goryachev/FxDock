@@ -7,18 +7,18 @@ import javafx.scene.control.SeparatorMenuItem;
 
 
 /**
- * CMenu.
+ * FX Menu.
  */
-public class CMenu
+public class FxMenu
 	extends Menu
 {
-	public CMenu(String text)
+	public FxMenu(String text)
 	{
 		super(text);
 	}
 	
 	
-	public CMenu(String text, FxAction a)
+	public FxMenu(String text, FxAction a)
 	{
 		super(text);
 		a.attach(this);
@@ -33,17 +33,17 @@ public class CMenu
 	}
 	
 	
-	public CMenuItem add(String text, FxAction a)
+	public FxMenuItem item(String text, FxAction a)
 	{
-		CMenuItem m = new CMenuItem(text, a);
+		FxMenuItem m = new FxMenuItem(text, a);
 		getItems().add(m);
 		return m;
 	}
 	
 	
-	public CCheckMenuItem add(String text, BooleanProperty prop)
+	public FxCheckMenuItem item(String text, BooleanProperty prop)
 	{
-		CCheckMenuItem m = new CCheckMenuItem(text, prop);
+		FxCheckMenuItem m = new FxCheckMenuItem(text, prop);
 		getItems().add(m);
 		return m;
 	}
@@ -57,9 +57,9 @@ public class CMenu
 	
 	
 	/** adds a disabled menu item */
-	public MenuItem add(String text)
+	public MenuItem item(String text)
 	{
-		CMenuItem m = new CMenuItem(text);
+		FxMenuItem m = new FxMenuItem(text);
 		m.setDisable(true);
 		return add(m);
 	}

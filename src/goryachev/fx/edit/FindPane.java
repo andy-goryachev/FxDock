@@ -1,7 +1,7 @@
 // Copyright © 2017-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
 import goryachev.fx.FxButton;
-import goryachev.fx.CComboBox;
+import goryachev.fx.FxComboBox;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
 
@@ -12,7 +12,7 @@ import goryachev.fx.FX;
 public class FindPane
 	extends CPane
 {
-	public final CComboBox searchField;
+	public final FxComboBox searchField;
 	public final FxButton ignoreCaseButton;
 	public final FxButton wholeWordButton;
 	public final FxButton prevButton;
@@ -23,7 +23,7 @@ public class FindPane
 	{
 		setPadding(2);
 		
-		searchField = new CComboBox();
+		searchField = new FxComboBox();
 		searchField.setEditable(true);
 		
 		ignoreCaseButton = new FxButton("Aa");

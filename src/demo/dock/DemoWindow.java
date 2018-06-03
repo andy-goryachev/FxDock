@@ -4,12 +4,12 @@ import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SB;
-import goryachev.fx.CCheckMenuItem;
-import goryachev.fx.CDialog;
-import goryachev.fx.CMenu;
-import goryachev.fx.CMenuBar;
 import goryachev.fx.FX;
 import goryachev.fx.FxAction;
+import goryachev.fx.FxCheckMenuItem;
+import goryachev.fx.FxDialog;
+import goryachev.fx.FxMenu;
+import goryachev.fx.FxMenuBar;
 import goryachev.fx.GlobalBooleanProperty;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fxdock.FxDockFramework;
@@ -53,37 +53,35 @@ public class DemoWindow
 	}
 	
 	
-	protected Node createMenu()
+	protected FxMenuBar createMenu()
 	{
-		CMenuBar mb = new CMenuBar();
-		CMenu m;
-		CMenu m2;
+		FxMenuBar m = new FxMenuBar();
 		// file
-		mb.add(m = new CMenu("File"));
-		m.add("Save Settings", saveSettingsAction);
+		m.menu("File");
+		m.item("Save Settings", saveSettingsAction);
 		m.separator();
-		m.add("Close Window", closeWindowAction);
+		m.item("Close Window", closeWindowAction);
 		m.separator();
-		m.add("Quit Application", quitApplicationAction);
+		m.item("Quit Application", quitApplicationAction);
 		// window
-		mb.add(m = new CMenu("Window"));
-		m.add("New Browser", newBrowserAction);
-		m.add("New Demo Window", newWindowAction);
-		m.add("New Login Window", newLoginAction);
+		m.menu("Window");
+		m.item("New Browser", newBrowserAction);
+		m.item("New Demo Window", newWindowAction);
+		m.item("New Login Window", newLoginAction);
 		m.separator();
-		m.add("CPane Example", newCPaneAction);
-		m.add("HPane Example", newHPaneAction);
+		m.item("CPane Example", newCPaneAction);
+		m.item("HPane Example", newHPaneAction);
 //		m.add("VPane Example", newVPaneAction);
 		m.separator();
-		m.add(new CCheckMenuItem("Confirm Window Closing", showCloseDialogProperty));
-		m.add(new WindowListMenuItem(this, m));
+		m.add(new FxCheckMenuItem("Confirm Window Closing", showCloseDialogProperty));
+		m.add(new WindowListMenuItem(this, m.lastMenu()));
 		// help
-		mb.add(m = new CMenu("Help"));
-		m.add(new CCheckMenuItem("Check Box Menu", windowCheckAction));
-		m.add(m2 = new CMenu("Test", new FxAction(() -> D.print("test"))));
-		m2.add("T2", new FxAction(() -> D.print("t2")));
-		m.add("T3", new FxAction(() -> D.print("t3")));
-		return mb;
+		m.menu("Help");
+		m.add(new FxCheckMenuItem("Check Box Menu", windowCheckAction));
+		FxMenu m2 = m.menu("Test", new FxAction(() -> D.print("test")));
+		m2.item("T2", new FxAction(() -> D.print("t2")));
+		m.item("T3", new FxAction(() -> D.print("t3")));
+		return m;
 	}
 
 
@@ -232,7 +230,7 @@ public class DemoWindow
 		
 		toFront();
 		
-		CDialog d = new CDialog(this);
+		FxDialog d = new FxDialog(this);
 		d.setTitle("Save Changes?");
 		d.setContentText("This is an example of a dialog shown when closing a window.");
 		

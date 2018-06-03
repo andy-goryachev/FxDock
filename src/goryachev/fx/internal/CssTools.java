@@ -61,6 +61,7 @@ public class CssTools
 	}
 	
 	
+	// FIX this needs to support things like "c1 c1 c3 c4, c5 c6, c7"
 	public static String toColors(Object ... xs)
 	{
 		int sz = xs.length;

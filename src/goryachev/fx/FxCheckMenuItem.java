@@ -7,30 +7,30 @@ import javafx.scene.control.CheckMenuItem;
 /**
  * CheckMenuItem that knows how to deal with CAction or a Property.
  */
-public class CCheckMenuItem
+public class FxCheckMenuItem
 	extends CheckMenuItem
 {
-	public CCheckMenuItem(String text)
+	public FxCheckMenuItem(String text)
 	{
 		super(text);
 	}
 	
 	
-	public CCheckMenuItem(String text, FxAction a)
+	public FxCheckMenuItem(String text, FxAction a)
 	{
 		super(text);
 		a.attach(this);
 	}
 	
 	
-	public CCheckMenuItem(String text, Property<Boolean> p)
+	public FxCheckMenuItem(String text, Property<Boolean> p)
 	{
 		super(text);
 		selectedProperty().bindBidirectional(p);
 	}
 	
 	
-	public CCheckMenuItem(String text, GlobalBooleanProperty op)
+	public FxCheckMenuItem(String text, GlobalBooleanProperty op)
 	{
 		super(text);
 		selectedProperty().bindBidirectional(op);

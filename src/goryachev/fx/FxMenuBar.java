@@ -4,28 +4,37 @@ import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 
 
 /**
  * Convenient MenuBar.
  */
-public class CMenuBar
+public class FxMenuBar
 	extends MenuBar
 {
-	public CMenuBar()
+	public FxMenuBar()
 	{
 	}
 	
 	
-	public void add(CMenu m)
+	public void add(FxMenu m)
 	{
 		getMenus().add(m);
 	}
 	
 	
-	public CMenu addMenu(String text)
+	public FxMenu menu(String text)
 	{
-		CMenu m = new CMenu(text);
+		FxMenu m = new FxMenu(text);
+		getMenus().add(m);
+		return m;
+	}
+	
+	
+	public FxMenu menu(String text, FxAction a)
+	{
+		FxMenu m = new FxMenu(text, a);
 		getMenus().add(m);
 		return m;
 	}
@@ -46,38 +55,38 @@ public class CMenuBar
 	}
 	
 	
-	public CMenu menu(String name)
-	{
-		return addMenu(name);
-	}
-	
-	
 	public void separator()
 	{
 		lastMenu().separator();
 	}
 	
 	
-	protected CMenu lastMenu()
+	public FxMenu lastMenu()
 	{
 		List<Menu> ms = getMenus();
-		return (CMenu)ms.get(ms.size() - 1);
+		return (FxMenu)ms.get(ms.size() - 1);
 	}
 	
 	
-	public CMenuItem item(String name)
+	public FxMenuItem item(String name)
 	{
-		CMenuItem m = new CMenuItem(name);
+		FxMenuItem m = new FxMenuItem(name);
 		m.setDisable(true);
-		lastMenu().add(m);
+		add(m);
 		return m;
 	}
 	
 	
-	public CMenuItem item(String name, FxAction a)
+	public FxMenuItem item(String name, FxAction a)
 	{
-		CMenuItem m = new CMenuItem(name, a);
-		lastMenu().add(m);
+		FxMenuItem m = new FxMenuItem(name, a);
+		add(m);
 		return m;
+	}
+	
+	
+	public void add(MenuItem m)
+	{
+		lastMenu().add(m);
 	}
 }

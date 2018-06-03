@@ -8,7 +8,7 @@ import javafx.scene.Node;
  * Dynamic popup menu.
  */
 public abstract class CPopupMenu
-	extends CContextMenu
+	extends FxContextMenu
 {
 	/**
 	 * Implement this method to populate the menu dynamically.

@@ -14,7 +14,7 @@ import javafx.scene.shape.PathElement;
 public class TextFlowWithHighlights
 	extends CTextFlow
 {
-	private final CList<HL> highlights = new CList();;
+	private final CList<HL> highlights = new CList();
 	
 	
 	public TextFlowWithHighlights()
