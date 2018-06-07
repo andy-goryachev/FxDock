@@ -26,6 +26,11 @@ Library JAR: [FxDock-0.00.04.jar](https://github.com/andy-goryachev/FxDock/raw/m
 
 ## Similar Projects
 
-[DockFX](https://github.com/RobertBColton/DockFX) by Robert B. Colton.
+(in alphabetical order)
 
-[AnchorFX](https://github.com/alexbodogit/AnchorFX) by Alessio Vinerbi.
+[AnchorFX](https://github.com/alexbodogit/AnchorFX) by Alessio Vinerbi (LGPL v.3).
+
+[Drombler FX](http://www.drombler.org/drombler-fx/) (CDDL v.1.0)
+
+[DockFX](https://github.com/RobertBColton/DockFX) by Robert B. Colton (LGPL v.3).
+
