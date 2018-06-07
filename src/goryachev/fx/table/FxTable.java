@@ -113,7 +113,7 @@ public class FxTable<T>
 	}
 	
 	
-	public void setItems(T[] items)
+	public void setItems(T ... items)
 	{
 		clearSelection();
 		if(items == null)

@@ -1,6 +1,7 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import java.util.List;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -82,6 +83,12 @@ public class FxMenuBar
 		FxMenuItem m = new FxMenuItem(name, a);
 		add(m);
 		return m;
+	}
+	
+	
+	public FxCheckMenuItem item(String text, BooleanProperty prop)
+	{
+		return lastMenu().item(text, prop);
 	}
 	
 	

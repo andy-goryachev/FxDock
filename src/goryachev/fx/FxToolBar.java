@@ -17,7 +17,7 @@ public class FxToolBar
 	public FxButton button(String text, FxAction a)
 	{
 		FxButton b = new FxButton(text, a);
-		getChildren().add(b);
+		getItems().add(b);
 		return b;
 	}
 	
