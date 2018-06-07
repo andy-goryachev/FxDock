@@ -20,6 +20,12 @@ public class CSystem
 	}
 	
 	
+	public static String getJavaVersion()
+	{
+		return System.getProperty("java.version");
+	}
+	
+	
 	public static String listEnvironment()
 	{
 		return listEnvironment(0);

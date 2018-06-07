@@ -1,6 +1,7 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.CKit;
+import goryachev.common.util.CSystem;
 import goryachev.common.util.D;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
@@ -40,7 +41,7 @@ public class DemoBrowser
 	public DemoBrowser()
 	{
 		super(DemoGenerator.BROWSER);
-		setTitle("Browser");
+		setTitle("Browser / " + CSystem.getJavaVersion());
 		
 		addressField = new TextField();
 		addressField.addEventHandler(KeyEvent.KEY_PRESSED, (ev) -> handleKeyTyped(ev));
