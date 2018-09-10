@@ -32,9 +32,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipFile;
@@ -2147,9 +2149,16 @@ public final class CKit
 	}
 
 
-	/** utility method converts a String Collection to a String[] */ 
+	/** 
+	 * utility method converts a String Collection to a String[].
+	 * returns null if input is null 
+	 */ 
 	public static String[] toArray(Collection<String> x)
 	{
+		if(x == null)
+		{
+			return null;
+		}
 		return x.toArray(new String[x.size()]);
 	}
 	
@@ -2328,5 +2337,29 @@ public final class CKit
 		byte[] c = new byte[b.length];
 		System.arraycopy(b, 0, c, 0, b.length);
 		return c;
+	}
+	
+	
+	public static <S,T> List<T> transform(List<S> src, Function<S,T> converter)
+	{
+		return transform(src, null, converter);
+	}
+	
+	
+	public static <S,T> List<T> transform(List<S> src, List<T> target, Function<S,T> converter)
+	{
+		int sz = src.size();
+		if(target == null)
+		{
+			target = new CList<T>(sz);
+		}
+		
+		for(int i=0; i<sz; i++)
+		{
+			S s = src.get(i);
+			T t = converter.apply(s);
+			target.add(t);
+		}
+		return target;
 	}
 }

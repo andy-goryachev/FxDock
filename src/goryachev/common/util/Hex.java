@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 public class Hex
 {
 	public static final String HEX = "0123456789ABCDEF";
+	public static final String HEX_ALL = "0123456789ABCDEFabcdef";
 
 	
 	public static String toHexString(int d, int digits)
@@ -335,8 +336,7 @@ public class Hex
 
 	public static boolean isHexChar(char c)
 	{
-		c = Character.toUpperCase(c);
-		return (HEX.indexOf(c) >= 0);
+		return (HEX_ALL.indexOf(c) >= 0);
 	}
 	
 	

@@ -214,4 +214,14 @@ public class CList<T>
 	{
 		return (ix >= 0) && (ix < size());
 	}
+	
+	
+	public void prepareFor(int ix)
+	{
+		int sz = ix + 1;
+		while(size() < sz)
+		{
+			super.add(null);
+		}
+	}
 }

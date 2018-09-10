@@ -32,6 +32,13 @@ public class FxMenuItem
 	}
 	
 	
+	public FxMenuItem(String text, Runnable r)
+	{
+		super(text);
+		new FxAction(r).attach(this);
+	}
+	
+	
 	public FxMenuItem(String text)
 	{
 		super(text);

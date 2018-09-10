@@ -14,10 +14,14 @@ public class StandardThemes
 	/** standard light theme */
 	public static CMap<Key,Object> createDefaultLightTheme()
 	{
+		Color base = FX.rgb(0xececec);
+		
 		return createFromArray
 		(
-			Key.BASE, FX.rgb(0xececec),
+			Key.AFFIRM, FX.mix(base, Color.LIGHTGREEN, 0.8),
+			Key.BASE, base,
 			Key.CONTROL, FX.rgb(0x666666),
+			Key.DESTRUCT, FX.mix(base, Color.MAGENTA, 0.7),
 			Key.FOCUS, FX.rgb(0xff6d00),
 			Key.OUTLINE, FX.rgb(0xdddddd),
 			Key.SELECTED_TEXT_BG, FX.rgb(0xffff00),

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Prevents obfuscation of an annotated constructor, field, method, or class name.
+ * Prevents obfuscation of an annotated field, method, or an entire class.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

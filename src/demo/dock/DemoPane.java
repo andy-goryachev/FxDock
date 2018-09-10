@@ -1,11 +1,10 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.Hex;
-import goryachev.fx.CPopupMenu;
 import goryachev.fx.FX;
+import goryachev.fx.FxPopupMenu;
 import goryachev.fx.HPane;
 import goryachev.fxdock.FxDockPane;
-import java.text.DecimalFormat;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -60,14 +59,16 @@ public class DemoPane
 		setTitle("pane " + pseq);
 		
 		// set up context menu off the title field
-		titleField.setContextMenu(new CPopupMenu()
-		{
-			protected void createPopupMenu()
-			{
-				add("Pop up in Window", popToWindowAction);
-				add("Close", closeAction);
-			}
-		});
+		FX.setPopupMenu(titleField, this::createTitleFieldPopupMenu);
+	}
+	
+	
+	protected FxPopupMenu createTitleFieldPopupMenu()
+	{
+		FxPopupMenu m = new FxPopupMenu();
+		m.item("Pop up in Window", popToWindowAction);
+		m.item("Close", closeAction);
+		return m;
 	}
 	
 	

@@ -5,8 +5,8 @@ import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
 import goryachev.common.util.WeakList;
-import goryachev.fx.FxAction;
 import goryachev.fx.CssLoader;
+import goryachev.fx.FxAction;
 import goryachev.fx.FxWindow;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fx.hacks.FxHacks;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 
@@ -118,8 +119,8 @@ public class WindowsFx
 	
 	protected void exitPrivate()
 	{
+		// calls Application.close()
 		Platform.exit();
-		System.exit(0);
 	}
 
 	
@@ -162,14 +163,7 @@ public class WindowsFx
 		addWindow(w);
 		restoreWindow(w);
 		
-		try
-		{
-			FxHacks.get().applyStyleSheet(w, null, CssLoader.getCurrentStyleSheet());
-		}
-		catch(Throwable e)
-		{
-			Log.ex(e);
-		}
+		applyStyleSheet(w);
 		
 		try
 		{
@@ -339,5 +333,18 @@ public class WindowsFx
 	public void removeWindowMonitor(Consumer<FxWindow> m)
 	{
 		monitors.remove(m);
+	}
+	
+	
+	public static void applyStyleSheet(Window w)
+	{
+		try
+		{
+			FxHacks.get().applyStyleSheet(w, null, CssLoader.getCurrentStyleSheet());
+		}
+		catch(Throwable e)
+		{
+			Log.ex(e);
+		}
 	}
 }

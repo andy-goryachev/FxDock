@@ -1,6 +1,7 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.fx.edit.FxEditor;
+import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.FxCssProp;
 import javafx.scene.paint.Color;
 
@@ -39,6 +40,7 @@ public class CommonStyles
 				prop("-fx-faint-focus-color", TRANSPARENT)
 			),
 			
+			button(theme),
 			// FIX
 //			checkbox(theme),						
 			comboBox(theme),
@@ -50,6 +52,8 @@ public class CommonStyles
 			text(theme),
 			// FIX
 			//radioButton(theme),
+			buttonPane(theme),
+			cpane(),
 						
 			// andy's hacks
 			
@@ -82,6 +86,35 @@ public class CommonStyles
 				)
 			)
 		);
+	}
+	
+	
+	protected Object button(Theme theme)
+	{
+//	    -fx-body-color: ;
+	
+		String affirm = CssTools.toColor(theme.affirm);
+		String destruct = CssTools.toColor(theme.destruct);
+		
+		return new Object[]
+		{
+			selector(FxButton.AFFIRM).defines
+			(
+				prop
+				(
+					"-fx-background-color", 
+					String.format("-fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, linear-gradient(to bottom, ladder(%1$s, derive(%1$s,8%%) 75%%, derive(%1$s,10%%) 80%% ), derive(%1$s,-8%%))", affirm)
+				)
+			),
+			selector(FxButton.DESTRUCT).defines
+			(
+				prop
+				(
+					"-fx-background-color", 
+					String.format("-fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, linear-gradient(to bottom, ladder(%1$s, derive(%1$s,8%%) 75%%, derive(%1$s,10%%) 80%% ), derive(%1$s,-8%%))", destruct)
+				)
+			)
+		};
 	}
 	
 	
@@ -283,12 +316,6 @@ public class CommonStyles
 				padding(3)
 			)
 		};
-	}
-	
-	
-	protected Object shadow()
-	{
-		return effect("dropshadow(two-pass-box, rgba(0, 0, 0, 0.4), 12, 0, 2, 2)");
 	}
 	
 	
@@ -516,6 +543,33 @@ public class CommonStyles
 					//effect("dropshadow(two-pass-box, rgba(0, 0, 0, 0.4), 12, 0, 2, 2)")
 					shadow()
 				)
+			)
+		};
+	}
+	
+	
+	protected Object buttonPane(Theme theme)
+	{
+		return new Object[]
+		{
+			selector(FxButtonPane.PANE).defines
+			(
+				borderColor(TRANSPARENT),
+				borderWidth(10)
+			)
+		};
+	}
+	
+	
+	protected Object cpane()
+	{
+		return new Object[]
+		{
+			selector(CPane.CPANE).defines
+			(
+				padding(10),
+				prop("-ag-hgap", 10),
+				prop("-ag-vgap", 5)
 			)
 		};
 	}

@@ -114,4 +114,10 @@ public class StandardFxProperties
 	
 	public static String commas(Object ... xs) { return CssTools.list(",", xs); }
 	public static String spaces(Object ... xs) { return CssTools.list(" ", xs); }
+	
+	
+	public static Object shadow()
+	{
+		return effect("dropshadow(two-pass-box, rgba(0, 0, 0, 0.4), 12, 0, 2, 2)");
+	}
 }

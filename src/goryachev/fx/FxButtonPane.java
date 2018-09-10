@@ -3,20 +3,22 @@ package goryachev.fx;
 
 
 /**
- * CButtonPane.
+ * Fx Button Pane.
  * 
  * TODO default button
  * TODO fix HPane layout
+ * TODO set minimum button width
+ * TODO own layout, sets min width and alignment (to avoid fill())
  */
-public class CButtonPane
+public class FxButtonPane
 	extends HPane
 {
-	public static final CssStyle PANE = new CssStyle("CButtonPane_PANE");
+	public static final CssStyle PANE = new CssStyle("FxButtonPane_PANE");
 
 	
-	public CButtonPane()
+	public FxButtonPane()
 	{
-		super(10);
+		super(5);
 		FX.style(this, PANE);
 	}
 	
@@ -33,6 +35,12 @@ public class CButtonPane
 		
 		add(b);
 		return b;
+	}
+	
+	
+	public FxButton addButton(String text, Runnable r)
+	{
+		return addButton(text, new FxAction(r));
 	}
 	
 	

@@ -1,39 +1,89 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
+import javafx.stage.Modality;
 import javafx.stage.Window;
 
 
 /**
- * CDialog is an easier-to-use Dialog.
- * This is a first attempt at this.
+ * FX Dialogs might be a nice idea, but completely unacceptable:
+ * buttons cannot be FxButtons, FxAction cannot be used,
+ * too many hoops need to be jumped through to get even a simple dialog 
+ * (converters, button types).
+ * 
+ * This is a different take which uses FxWindow and plugs in into our
+ * FX framework.
  */
 public class FxDialog
-	extends Dialog<Object>
+	extends FxWindow
 {
-	public FxDialog(Window owner)
+	public final FxAction closeDialogAction = new FxAction(this::close);
+	protected FxButtonPane buttonPane;
+	
+	
+	public FxDialog(Object owner, String name)
 	{
-		initOwner(owner);
+		super(name);
+		
+		initModality(Modality.APPLICATION_MODAL);
+
+		Window win = FX.getParentWindow(owner);
+		initOwner(win);
+		
+		// TODO center around parent window, but not outside of the current device
+		double x = win.getX();
+		double y = win.getY();
+		double w = win.getWidth();
+		double h = win.getHeight();
 	}
 	
 	
-	public FxDialog()
+	protected FxButtonPane buttonPane()
 	{
+		if(buttonPane == null)
+		{
+			buttonPane = new FxButtonPane();
+			setBottom(buttonPane);
+		}
+		return buttonPane;
 	}
 	
 	
-	public Object addButton(String text)
+	public FxButton addButton(String text, FxAction a, CssStyle style)
 	{
-		return addButton(text, 	ButtonBar.ButtonData.OTHER);
-	}
-	
-	
-	public Object addButton(String text, ButtonBar.ButtonData d)
-	{
-		ButtonType b = new ButtonType(text, d);
-		getDialogPane().getButtonTypes().add(b);
+		FxButton b = new FxButton(text, a, style);
+		buttonPane().add(b);
 		return b;
+	}
+	
+	
+	public FxButton addButton(String text, FxAction a)
+	{
+		FxButton b = new FxButton(text, a);
+		buttonPane().add(b);
+		return b;
+	}
+	
+	
+	public FxButton addButton(String text)
+	{
+		FxButton b = new FxButton(text, FxAction.DISABLED);
+		buttonPane().add(b);
+		return b;
+	}
+	
+	
+	public void fill()
+	{
+		buttonPane().fill();
+	}
+	
+	
+	public void open()
+	{
+		double w = getWidth();
+		double h = getHeight();
+		// TODO center over parent, but not to go outside of the screen
+		
+		super.open();
 	}
 }

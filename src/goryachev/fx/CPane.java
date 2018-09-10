@@ -11,18 +11,23 @@ import javafx.css.StyleableProperty;
 import javafx.css.StyleablePropertyFactory;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 
 
 /**
  * CPane is like my Swing CPanel, lays out nodes with an outer border layout and an inner table layout.
+ * 
+ * TODO ignore unmanaged components
  */
 public class CPane
 	extends Pane
 {
+	public static final CssStyle CPANE = new CssStyle();
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;
 	
@@ -48,6 +53,13 @@ public class CPane
 	public CPane(Node n)
 	{
 		setCenter(n);
+	}
+	
+	
+	/** sets standard padding and gaps */
+	public void setDefaultStyle()
+	{
+		FX.style(this, CPANE);
 	}
 	
 	
@@ -102,7 +114,7 @@ public class CPane
 		return SPF.getCssMetaData();
 	}
 
-
+	
 	/** sets horizontal and vertical gaps. */
 	public void setGaps(int horizontal, int vertical)
 	{
@@ -137,6 +149,13 @@ public class CPane
 	public void setPadding(double top, double right, double bottom, double left)
 	{
 		setPadding(new CInsets(top, right, bottom, left));
+	}
+	
+	
+	/** convenience method creates a right-aligned Label */
+	public static Label rlabel(String text)
+	{
+		return FX.label(text, Pos.BASELINE_RIGHT);
 	}
 
 
@@ -444,6 +463,13 @@ public class CPane
 		en.cc = cc;
 		getChildren().add(nd);
 	}
+	
+	
+	/** removes all children */
+	public void clear()
+	{
+		getChildren().clear();
+	}
 
 
 	protected void removeLayoutComponent(Node nd)
@@ -460,6 +486,12 @@ public class CPane
 		}
 	}
 
+	
+	public void remove(Node c)
+	{
+		getChildren().remove(c);
+	}
+	
 	
 	protected void setBounds(Node nd, int left, int top, int width, int height)
 	{

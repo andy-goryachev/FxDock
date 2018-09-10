@@ -22,7 +22,7 @@ import javafx.scene.control.ToggleButton;
 public class FxAction
     implements EventHandler<ActionEvent>
 {
-	public static final FxAction TODO = new FxAction(null, false);
+	public static final FxAction DISABLED = new FxAction(null, false);
 	private final BooleanProperty selectedProperty = new SimpleBooleanProperty(this, "selected");
 	private final BooleanProperty disabledProperty = new SimpleBooleanProperty(this, "disabled");
 	private Runnable onAction;

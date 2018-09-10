@@ -693,4 +693,14 @@ public class SB
 	{
 		return sb.subSequence(start, end);
 	}
+	
+	
+	public SB repeat(char c, int count)
+	{
+		for(int i=0; i<count; i++)
+		{
+			sb.append(c);
+		}
+		return this;
+	}
 }

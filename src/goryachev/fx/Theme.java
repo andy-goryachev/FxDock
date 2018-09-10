@@ -13,10 +13,14 @@ public class Theme
 {
 	public enum Key
 	{
+		/** affirm button type background */
+		AFFIRM("accept", Color.class),
 		/** base color for all objects */
 		BASE("base", Color.class),
 		/** checkbox, etc. color */
 		CONTROL("control", Color.class),
+		/** destructive button type background */
+		DESTRUCT("destruct", Color.class),
 		/** focus outline color */
 		FOCUS("focus", Color.class),
 		OUTLINE("outline", Color.class),
@@ -38,8 +42,10 @@ public class Theme
 	
 	//
 	
+	public final Color affirm;
 	public final Color base;
 	public final Color control;
+	public final Color destruct;
 	public final Color focus;
 	public final Color outline;
 	public final Color selectedTextBG;
@@ -55,8 +61,10 @@ public class Theme
 	{	
 		this.data = data;
 		
+		affirm = c(Key.AFFIRM);
 		base = c(Key.BASE);
 		control = c(Key.CONTROL);
+		destruct = c(Key.DESTRUCT);
 		focus = c(Key.FOCUS);
 		outline = c(Key.OUTLINE);
 		selectedTextBG = c(Key.SELECTED_TEXT_BG);

@@ -22,6 +22,12 @@ public class FxToolBar
 	}
 	
 	
+	public FxButton button(String text)
+	{
+		return button(text, FxAction.DISABLED);
+	}
+	
+	
 	public void fill()
 	{
 		// TODO

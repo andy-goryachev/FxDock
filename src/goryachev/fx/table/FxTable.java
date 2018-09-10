@@ -135,6 +135,18 @@ public class FxTable<T>
 	}
 	
 	
+	public void addItem(T item)
+	{
+		table.getItems().add(item);
+	}
+	
+	
+	public void addItems(T ... items)
+	{
+		table.getItems().addAll(items);
+	}
+	
+	
 	public void clearItems()
 	{
 		clearSelection();
@@ -183,6 +195,14 @@ public class FxTable<T>
 	{
 		table.getSelectionModel().selectFirst();
 		table.scrollTo(0);
+	}
+	
+	
+	public void select(T item)
+	{
+		table.getSelectionModel().select(item);
+		// TODO
+//		table.scrollTo(0);
 	}
 	
 	

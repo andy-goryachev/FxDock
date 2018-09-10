@@ -7,7 +7,6 @@ import goryachev.common.util.SB;
 import goryachev.fx.FX;
 import goryachev.fx.FxAction;
 import goryachev.fx.FxCheckMenuItem;
-import goryachev.fx.FxDialog;
 import goryachev.fx.FxMenu;
 import goryachev.fx.FxMenuBar;
 import goryachev.fx.GlobalBooleanProperty;
@@ -20,6 +19,8 @@ import java.util.Random;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
@@ -230,23 +231,25 @@ public class DemoWindow
 		
 		toFront();
 		
-		FxDialog d = new FxDialog(this);
+		// FIX switch to FxDialog
+		Dialog d = new Dialog();
+		d.initOwner(this);
 		d.setTitle("Save Changes?");
 		d.setContentText("This is an example of a dialog shown when closing a window.");
 		
-		Object save = d.addButton("Save");
+		Object save = addButton(d, "Save", ButtonBar.ButtonData.OTHER);
 		Object saveAll = null;
 		if(ch.isClosingMultipleWindows())
 		{
-			saveAll = d.addButton("Save All");
+			saveAll = addButton(d, "Save All", ButtonBar.ButtonData.OTHER);
 		}
-		d.addButton("Discard");
+		addButton(d, "Discard", ButtonBar.ButtonData.OTHER);
 		Object discardAll = null;
 		if(ch.isClosingMultipleWindows())
 		{
-			discardAll = d.addButton("Discard All");
+			discardAll = addButton(d, "Discard All", ButtonBar.ButtonData.OTHER);
 		}
-		Object cancel = d.addButton("Cancel", ButtonBar.ButtonData.APPLY);
+		Object cancel = addButton(d, "Cancel", ButtonBar.ButtonData.APPLY);
 		
 		d.showAndWait();
 		Object rv = d.getResult();
@@ -268,5 +271,13 @@ public class DemoWindow
 		{
 			ch.setDiscardAll();
 		}
+	}
+	
+	
+	protected static Object addButton(Dialog d, String text, ButtonBar.ButtonData type)
+	{
+		ButtonType b = new ButtonType(text, type);
+		d.getDialogPane().getButtonTypes().add(b);
+		return b;
 	}
 }
