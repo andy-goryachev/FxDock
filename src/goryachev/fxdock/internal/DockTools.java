@@ -846,10 +846,10 @@ public class DockTools
 			switch(where)
 			{
 			case LEFT:
-				ix = 0;
+				ix = index;
 				break;
 			case RIGHT:
-				ix = sp.getPaneCount() - 1;
+				ix = index+1;
 				break;
 			default:
 				ix = -1;
@@ -861,10 +861,10 @@ public class DockTools
 			switch(where)
 			{
 			case BOTTOM:
-				ix = sp.getPaneCount() - 1;
+				ix = index+1;
 				break;
 			case TOP:
-				ix = 0;
+				ix =  index;
 				break;
 			default:
 				ix = -1;
