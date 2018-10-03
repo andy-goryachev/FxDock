@@ -67,7 +67,7 @@ public class Dump
 			}
 			else
 			{
-				return "Can't list " + CKit.simpleName(x);
+				return "Can't list " + CKit.getSimpleName(x);
 			}
 		}
 	}
@@ -507,7 +507,7 @@ public class Dump
 			}
 			else if(isPrimitive(x.getClass()))
 			{
-				sb.a(CKit.simpleName(x)).a("=").a(x);
+				sb.a(CKit.getSimpleName(x)).a("=").a(x);
 			}
 			else if(x instanceof Enum)
 			{
@@ -671,7 +671,7 @@ public class Dump
 	
 	private static void describeMap(Map x, SB sb, int indent)
 	{
-		sb.a(CKit.simpleName(x)).a("(").a(x.size()).a(")").nl();
+		sb.a(CKit.getSimpleName(x)).a("(").a(x.size()).a(")").nl();
 		
 		for(Object k: x.keySet())
 		{
@@ -686,7 +686,7 @@ public class Dump
 	
 	private static void describeCollection(Collection x, SB sb, int indent)
 	{
-		sb.a(CKit.simpleName(x)).a("(").a(x.size()).a(")").nl();
+		sb.a(CKit.getSimpleName(x)).a("(").a(x.size()).a(")").nl();
 		
 		for(Object item: x.toArray())
 		{
@@ -699,7 +699,7 @@ public class Dump
 	private static void describeArray(Object x, SB sb, int indent)
 	{
 		int sz = Array.getLength(x);
-		sb.a(CKit.simpleName(x.getClass().getComponentType())).a("[").a(sz).a("]\n");
+		sb.a(CKit.getSimpleName(x.getClass().getComponentType())).a("[").a(sz).a("]\n");
 		for(int i=0; i<sz; i++)
 		{
 			describe(Array.get(x, i), sb, indent+1);

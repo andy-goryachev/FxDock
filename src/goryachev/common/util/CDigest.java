@@ -55,7 +55,7 @@ public class CDigest
 		}
 		catch(Exception e)
 		{
-			throw new Rex(e);
+			throw new Error(e);
 		}
 	}
 	

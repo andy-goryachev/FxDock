@@ -3,12 +3,13 @@ package goryachev.fx.edit;
 import goryachev.common.util.D;
 import goryachev.common.util.Log;
 import goryachev.fx.Binder;
-import goryachev.fx.FxAction;
-import goryachev.fx.CBooleanProperty;
 import goryachev.fx.CssStyle;
 import goryachev.fx.FX;
 import goryachev.fx.Formatters;
+import goryachev.fx.FxAction;
+import goryachev.fx.FxBoolean;
 import goryachev.fx.FxFormatter;
+import goryachev.fx.FxObject;
 import goryachev.fx.edit.internal.CaretLocation;
 import goryachev.fx.edit.internal.Markers;
 import java.io.StringWriter;
@@ -20,8 +21,6 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -66,15 +65,15 @@ public class FxEditor
 	public final FxAction copyAction = new FxAction(this::copy);
 	public final FxAction selectAllAction = new FxAction(this::selectAll);
 	
-	protected final SimpleBooleanProperty editableProperty = new SimpleBooleanProperty(false);
+	protected final FxBoolean editableProperty = new FxBoolean(false);
 	protected final ReadOnlyObjectWrapper<FxEditorModel> modelProperty = new ReadOnlyObjectWrapper<>();
-	protected final CBooleanProperty wrapTextProperty = new CBooleanProperty(true, this::updateLayout);
+	protected final FxBoolean wrapTextProperty = new FxBoolean(true);
 	protected final ReadOnlyBooleanWrapper multipleSelectionProperty = new ReadOnlyBooleanWrapper(false);
-	protected final BooleanProperty displayCaretProperty = new SimpleBooleanProperty(true);
-	protected final BooleanProperty showLineNumbersProperty = new SimpleBooleanProperty(false);
-	protected final BooleanProperty highlightCaretLineProperty = new SimpleBooleanProperty(true);
+	protected final FxBoolean displayCaretProperty = new FxBoolean(true);
+	protected final FxBoolean showLineNumbersProperty = new FxBoolean(false);
+	protected final FxBoolean highlightCaretLineProperty = new FxBoolean(true);
 	protected final ReadOnlyObjectWrapper<Duration> caretBlinkRateProperty = new ReadOnlyObjectWrapper(Duration.millis(500));
-	protected final SimpleObjectProperty<FxFormatter> lineNumberFormatterProperty = new SimpleObjectProperty<>();
+	protected final FxObject<FxFormatter> lineNumberFormatterProperty = new FxObject<>();
 	protected final Markers markers = new Markers(32);
 	protected final VFlow vflow;
 	protected final ScrollBar vscroll;
@@ -114,6 +113,7 @@ public class FxEditor
 
 		Binder.onChange(vflow::updateBlinkRate, true, blinkRateProperty());
 		Binder.onChange(this::updateLayout, widthProperty(), heightProperty(), showLineNumbersProperty);
+		wrapTextProperty.addListener((s,p,c) -> updateLayout());
 		
 		keymap = createKeyMap();
 		

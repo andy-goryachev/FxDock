@@ -265,7 +265,7 @@ public class FxDump
 		
 		while(n != null)
 		{
-			sb.a(CKit.simpleName(n));
+			sb.a(CKit.getSimpleName(n));
 			
 			String id = n.getId();
 			if(CKit.isNotBlank(id))

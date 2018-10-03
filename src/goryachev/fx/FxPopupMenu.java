@@ -25,25 +25,36 @@ public class FxPopupMenu
 	}
 	
 	
-	public void item(String text, FxAction a)
+	public FxCheckMenuItem checkItem(String text, FxAction a)
 	{
-		FxMenuItem m = new FxMenuItem(text, a);
+		FxCheckMenuItem m = new FxCheckMenuItem(text, a);
 		add(m);
+		return m;
 	}
 	
 	
-	public void item(String text, Runnable a)
+	public FxMenuItem item(String text, FxAction a)
 	{
 		FxMenuItem m = new FxMenuItem(text, a);
 		add(m);
+		return m;
 	}
 	
 	
-	public void item(String text)
+	public FxMenuItem item(String text, Runnable a)
+	{
+		FxMenuItem m = new FxMenuItem(text, a);
+		add(m);
+		return m;
+	}
+	
+	
+	public FxMenuItem item(String text)
 	{
 		FxMenuItem m = new FxMenuItem(text);
 		m.setDisable(true);
 		add(m);
+		return m;
 	}
 	
 	

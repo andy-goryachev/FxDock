@@ -1,8 +1,8 @@
 // Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.Log;
+import java.util.function.Consumer;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ButtonBase;
@@ -17,21 +17,40 @@ import javafx.scene.control.ToggleButton;
  * An AbstractAction equivalent for FX, using method references.
  * 
  * Usage:
- *    public final FxAction backAction = new CAction(this::actionBack);
+ *    public final FxAction backAction = new FxAction(this::actionBack);
  */
 public class FxAction
     implements EventHandler<ActionEvent>
 {
 	public static final FxAction DISABLED = new FxAction(null, false);
-	private final BooleanProperty selectedProperty = new SimpleBooleanProperty(this, "selected");
-	private final BooleanProperty disabledProperty = new SimpleBooleanProperty(this, "disabled");
+	private final FxBoolean selectedProperty = new FxBoolean();
+	private final FxBoolean disabledProperty = new FxBoolean();
 	private Runnable onAction;
+	private Consumer<Boolean> onSelected;
+	
+	
+	public FxAction(Runnable onAction, Consumer<Boolean> onSelected, boolean enabled)
+	{
+		this.onAction = onAction;
+		this.onSelected = onSelected;
+		setEnabled(enabled);
+		
+		if(onSelected != null)
+		{
+			selectedProperty.addListener((src,prev,cur) -> fireSelected(cur)); 
+		}
+	}
+	
+	
+	public FxAction(Runnable onAction, Consumer<Boolean> onSelected)
+	{
+		this(onAction, onSelected, true);
+	}
 	
 	
 	public FxAction(Runnable onAction, boolean enabled)
 	{
-		this.onAction = onAction;
-		setEnabled(enabled);
+		this(onAction, null, enabled);
 	}
 	
 	
@@ -157,6 +176,19 @@ public class FxAction
 			handle(null);
 		}
 	}
+	
+	
+	protected void fireSelected(boolean on)
+	{
+		try
+		{
+			onSelected.accept(on);
+		}
+		catch(Throwable e)
+		{
+			Log.ex(e);
+		}
+	}
 
 
 	/** override to obtain the ActionEvent */
@@ -183,7 +215,7 @@ public class FxAction
 			{
 				action();
 			}
-			catch(Exception e)
+			catch(Throwable e)
 			{
 				Log.ex(e);
 			}

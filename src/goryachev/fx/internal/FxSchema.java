@@ -3,23 +3,16 @@ package goryachev.fx.internal;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
-import goryachev.fx.CPane;
 import goryachev.fx.FX;
 import goryachev.fx.FxWindow;
 import javafx.collections.ObservableList;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeTableView;
-import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
 
 
@@ -45,9 +38,11 @@ public class FxSchema
 	public static final String WINDOW_NORMAL = "N";
 	
 	private static final Object PROP_BINDINGS = new Object();
-
+	private static final Object PROP_LOAD_HANDLER = new Object();
+	private static final Object PROP_NAME = new Object();
 	
-	public static void storeWindow(FxWindow win, String prefix)
+	
+	public static void storeWindow(String prefix, FxWindow win)
 	{
 		double x = win.getNormalX();
 		double y = win.getNormalY();
@@ -81,7 +76,7 @@ public class FxSchema
 	}
 	
 	
-	public static void restoreWindow(FxWindow win, String prefix)
+	public static void restoreWindow(String prefix, FxWindow win)
 	{
 		try
 		{
@@ -257,7 +252,8 @@ public class FxSchema
 	}
 	
 	
-	private static String findName(String wprefix, Node n)
+	/** returns full path for the Node, starting with the window id, or null if saving is not permitted */
+	private static String getFullName(String windowPrefix, Node root, Node n)
 	{
 		String name = getName(n);
 		if(name == null)
@@ -265,88 +261,124 @@ public class FxSchema
 			return null;
 		}
 		
-		SB sb = new SB();
-		sb.a(FX_PREFIX);
-		sb.a(wprefix);
-		sb.a('.');
-		findPrefixPrivate(sb, n);
-		return sb.toString();
+		SB sb = getFullNamePrivate(windowPrefix, null, root, n);
+		return sb == null ? null : sb.toString();
 	}
 
 
-	private static void findPrefixPrivate(SB sb, Node n)
+	private static SB getFullNamePrivate(String windowPrefix, SB sb, Node root, Node n)
 	{
-		if(n != null)
+		if(n == null)
 		{
-			String name = getName(n);
-			
+			return null;
+		}
+		
+		String name = getName(n);
+		if(name == null)
+		{
+			return null;
+		}
+		
+		if(n == root)
+		{
+			sb = new SB();
+			sb.a(FX_PREFIX);
+			sb.a(windowPrefix);
+		}
+		else
+		{
 			Parent p = n.getParent();
-			if(p != null)
+			if(p == null)
 			{
-				findPrefixPrivate(sb, p);
-				sb.a('.');
+				return null;
 			}
 			
+			sb = getFullNamePrivate(windowPrefix, sb, root, p);
+			if(sb == null)
+			{
+				return null;
+			}
+			
+			sb.a('.');
 			sb.a(name);
 		}
+		return sb;
 	}
 	
 
-	public static void storeNode(String wprefix, Node n)
+	public static void storeNode(String windowPrefix, Node root, Node n)
 	{
-		// TODO skip is storing is not supported
+		// TODO skip property
 		
-		storeBindings(wprefix, bindings(n, false));
-		
-		String prefix = findName(wprefix, n);
-		if(prefix != null)
+		String name = getFullName(windowPrefix, root, n);
+		if(name == null)
 		{
-			if(n instanceof SplitPane)
+			return;
+		}
+		
+		storeBindings(name, bindings(n, false));
+		
+		if(n instanceof SplitPane)
+		{
+			storeSplitPane(name, (SplitPane)n);
+		}
+		else if(n instanceof TableView)
+		{
+			storeTableView(name, (TableView)n);
+		}
+		
+		if(n instanceof Parent)
+		{
+			for(Node ch: ((Parent)n).getChildrenUnmodifiable())
 			{
-				storeSplitPane(prefix, (SplitPane)n);
+				storeNode(windowPrefix, root, ch);
 			}
-			else if(n instanceof TableView)
+		}
+		
+		// TODO trigger runnable
+	}
+	
+	
+	public static void restoreNode(String windowPrefix, Node root, Node n)
+	{
+		// TODO skip property
+				
+		String name = getFullName(windowPrefix, root, n);
+		if(name == null)
+		{
+			return;
+		}
+		
+		if(n instanceof SplitPane)
+		{
+			restoreSplitPane(name, (SplitPane)n);
+		}
+		else if(n instanceof TableView)
+		{
+			restoreTableView(name, (TableView)n);
+		}
+		
+		if(n instanceof Parent)
+		{
+			for(Node ch: ((Parent)n).getChildrenUnmodifiable())
 			{
-				storeTableView(prefix, (TableView)n);
+				restoreNode(windowPrefix, root, ch);
 			}
-			
-			if(n instanceof Parent)
-			{
-				for(Node ch: ((Parent)n).getChildrenUnmodifiable())
-				{
-					storeNode(wprefix, ch);
-				}
-			}
+		}
+		
+		restoreBindings(name, bindings(n, false));
+		
+		Runnable r = getOnSettingsLoaded(n);
+		if(r != null)
+		{
+			r.run();
 		}
 	}
 	
 	
-	public static void restoreNode(String wprefix, Node n)
+	public static void setName(Node n, String name)
 	{
-		// TODO skip is storing is not supported
-		
-		String prefix = findName(wprefix, n);
-		if(prefix != null)
-		{
-			if(n instanceof SplitPane)
-			{
-				restoreSplitPane(prefix, (SplitPane)n);
-			}
-			else if(n instanceof TableView)
-			{
-				restoreTableView(prefix, (TableView)n);
-			}
-			
-			if(n instanceof Parent)
-			{
-				for(Node ch: ((Parent)n).getChildrenUnmodifiable())
-				{
-					restoreNode(wprefix, ch);
-				}
-			}
-		}
-		
-		restoreBindings(wprefix, bindings(n, false));
+		n.getProperties().put(PROP_NAME, name);
 	}
 	
 	
@@ -367,6 +399,12 @@ public class FxSchema
 	
 	private static String getName(Node n)
 	{
+		Object x = n.getProperties().get(PROP_NAME);
+		if(x instanceof String)
+		{
+			return (String)x;
+		}
+		
 		if(n instanceof MenuBar)
 		{
 			return null;
@@ -385,45 +423,24 @@ public class FxSchema
 		{
 			return id;
 		}
-		
-		if(n instanceof CPane)
+				
+		return n.getClass().getSimpleName();
+	}
+	
+	
+	public static void setOnSettingsLoaded(Node n, Runnable r)
+	{
+		n.getProperties().put(PROP_LOAD_HANDLER, r);
+	}
+	
+	
+	private static Runnable getOnSettingsLoaded(Node n)
+	{
+		Object x = n.getProperties().get(PROP_LOAD_HANDLER);
+		if(x instanceof Runnable)
 		{
-			return "CPANE";
+			return (Runnable)x;
 		}
-		else if(n instanceof BorderPane)
-		{
-			return "BP";
-		}
-		else if(n instanceof Group)
-		{
-			return "GR";
-		}
-		else if(n instanceof SplitPane)
-		{
-			return "SPLIT";
-		}
-		else if(n instanceof StackPane)
-		{
-			return "SP";
-		}
-		else if(n instanceof TableView)
-		{
-			return "TABLE";
-		}
-		else if(n instanceof TreeTableView)
-		{
-			return "TREETABLE";
-		}
-		else if(n instanceof TreeView)
-		{
-			return "TREE";
-		}
-		else if(n instanceof Region)
-		{
-			return "R";
-		}
-		
-		//throw new Error("?" + n);
 		return null;
 	}
 }

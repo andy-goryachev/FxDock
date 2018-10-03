@@ -4,14 +4,12 @@ import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.common.util.Log;
-import goryachev.fx.CBooleanProperty;
-import java.io.StringWriter;
+import goryachev.fx.FxBoolean;
 import java.io.Writer;
 import java.util.function.Consumer;
 import javafx.beans.property.BooleanProperty;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
-import javafx.scene.layout.Region;
 
 
 /**
@@ -60,7 +58,7 @@ public abstract class FxEditorModel
 	
 	//
 
-	protected CBooleanProperty editableProperty = new CBooleanProperty(false);
+	protected FxBoolean editableProperty = new FxBoolean(false);
 	protected CList<FxEditor> listeners = new CList<>();
 	protected final CMap<DataFormat,ClipboardHandlerBase> clipboardHandlers = new CMap(); 
 	private static FxEditorModel empty;

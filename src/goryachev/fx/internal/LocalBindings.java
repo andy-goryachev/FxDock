@@ -77,6 +77,25 @@ public class LocalBindings
 	}
 	
 	
+	public void add(String subKey, Property<String> p)
+	{
+		entries.put(subKey, new Entry()
+		{
+			public void saveValue(String prefix)
+			{
+				String v = p.getValue();
+				GlobalSettings.setString(prefix + "." + subKey, v);
+			}
+
+			public void loadValue(String prefix)
+			{
+				String v = GlobalSettings.getString(prefix + "." + subKey);
+				p.setValue(v);
+			}
+		});
+	}
+	
+	
 	public <T> void add(String subKey, HasSettings x)
 	{
 		entries.put(subKey, new Entry()

@@ -1,8 +1,6 @@
 // Copyright © 2017-2018 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
-import goryachev.common.util.CComparator;
 import goryachev.common.util.CKit;
-import goryachev.common.util.Rex;
 
 
 /**
@@ -38,7 +36,7 @@ public class EditorSelection
 			{
 				if(!prev.isBefore(s))
 				{
-					throw new Rex("selection is not ordered " + this);
+					throw new Error("selection is not ordered " + this);
 				}
 			}
 			prev = s;

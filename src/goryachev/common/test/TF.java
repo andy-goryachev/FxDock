@@ -3,9 +3,7 @@ package goryachev.common.test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.Dump;
-import goryachev.common.util.Rex;
 import goryachev.common.util.SB;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -308,6 +306,6 @@ public class TF
 		}
 		print(sb);
 		
-		return new Rex("Mismatch at index " + mismatchIndex + ": " + get(left, mismatchIndex, "N/A") + " " + get(right, mismatchIndex, "N/A"));
+		return new RuntimeException("Mismatch at index " + mismatchIndex + ": " + get(left, mismatchIndex, "N/A") + " " + get(right, mismatchIndex, "N/A"));
 	}
 }

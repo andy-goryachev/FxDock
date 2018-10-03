@@ -64,7 +64,7 @@ public abstract class Range<T extends Comparable<T>>
 		int sz = ranges.size();
 		if(CKit.isOdd(sz))
 		{
-			throw new Rex("should have even number of elements (min,max)[]");
+			throw new Error("should have even number of elements (min,max)[]");
 		}
 		
 		for(int i=0; i<sz-1; i++)
@@ -75,7 +75,7 @@ public abstract class Range<T extends Comparable<T>>
 			int n = ((Comparable)min).compareTo(max);
 			if(n > 0)
 			{
-				throw new Rex("elements in sequence (min,max)[] should increase monotonically");
+				throw new Error("elements in sequence (min,max)[] should increase monotonically");
 			}
 		}
 	}
@@ -1028,7 +1028,7 @@ public abstract class Range<T extends Comparable<T>>
 		
 		public int getItemCountInt()
 		{
-			throw new Rex("please use getItemCountLong()");
+			throw new Error("please use getItemCountLong()");
 		}
 		
 		
@@ -1113,13 +1113,13 @@ public abstract class Range<T extends Comparable<T>>
 		
 		public int getItemCountInt()
 		{
-			throw new Rex("please use getItemCountBigInteger()");
+			throw new Error("please use getItemCountBigInteger()");
 		}
 		
 		
 		public long getItemCountLong()
 		{
-			throw new Rex("please use getItemCountBigInteger()");
+			throw new Error("please use getItemCountBigInteger()");
 		}
 		
 		

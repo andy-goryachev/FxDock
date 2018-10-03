@@ -22,7 +22,7 @@ public class StandardThemes
 			Key.BASE, base,
 			Key.CONTROL, FX.rgb(0x666666),
 			Key.DESTRUCT, FX.mix(base, Color.MAGENTA, 0.7),
-			Key.FOCUS, FX.rgb(0xff6d00),
+			Key.FOCUS, FX.rgb(0x48dd48), //FX.rgb(0xff6d00),
 			Key.OUTLINE, FX.rgb(0xdddddd),
 			Key.SELECTED_TEXT_BG, FX.rgb(0xffff00),
 			Key.SELECTED_TEXT_FG, Color.BLACK,

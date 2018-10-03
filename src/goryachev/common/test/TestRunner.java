@@ -87,7 +87,7 @@ public class TestRunner
 		}
 		catch(Exception e)
 		{
-			throw new TestException("Test class must define a single no-arg constructor: " + CKit.simpleName(c), e);
+			throw new TestException("Test class must define a single no-arg constructor: " + CKit.getSimpleName(c), e);
 		}
 	}
 	
@@ -106,11 +106,11 @@ public class TestRunner
 					{
 						if(needsStatic)
 						{
-							throw new TestException("method " + CKit.simpleName(c) + "." + m.getName() + "() must be static");
+							throw new TestException("method " + CKit.getSimpleName(c) + "." + m.getName() + "() must be static");
 						}
 						else
 						{
-							throw new TestException("method " + CKit.simpleName(c) + "." + m.getName() + "() must not be static");
+							throw new TestException("method " + CKit.getSimpleName(c) + "." + m.getName() + "() must not be static");
 						}
 					}
 
@@ -137,7 +137,7 @@ public class TestRunner
 		
 		for(final Class c: classes)
 		{
-			CJob job = new CJob("test " + CKit.simpleName(c))
+			CJob job = new CJob("test " + CKit.getSimpleName(c))
 			{
 				protected void process() throws Exception
 				{
@@ -177,7 +177,7 @@ public class TestRunner
 
 		if(tests.size() == 0)
 		{
-			System.out.println("No tests in " + CKit.simpleName(c));
+			System.out.println("No tests in " + CKit.getSimpleName(c));
 			return;
 		}
 			
@@ -191,7 +191,7 @@ public class TestRunner
 		// individual tests
 		for(final RunEntry m: tests)
 		{
-			CJob job = new CJob(parent, "test " + CKit.simpleName(c) + "." + m)
+			CJob job = new CJob(parent, "test " + CKit.getSimpleName(c) + "." + m)
 			{
 				protected void process() throws Exception
 				{
@@ -213,7 +213,7 @@ public class TestRunner
 	
 	protected void executeInstance(Class c, RunEntry testMethod, CList<RunEntry> before, CList<RunEntry> after)
 	{
-		String name = CKit.simpleName(c) + "." + testMethod;
+		String name = CKit.getSimpleName(c) + "." + testMethod;
 		final TestCase tc = new TestCase(name);
 		cases.add(tc);
 		tc.started();
@@ -378,7 +378,7 @@ public class TestRunner
 			}
 			else if(expected != null)
 			{
-				throw new Exception("This test case is expected to throw an " + CKit.simpleName(expected));
+				throw new Exception("This test case is expected to throw an " + CKit.getSimpleName(expected));
 			}
 		}
 	

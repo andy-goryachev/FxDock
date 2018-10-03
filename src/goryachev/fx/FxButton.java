@@ -23,6 +23,13 @@ public class FxButton
 	}
 	
 	
+	public FxButton(String text, CssStyle style)
+	{
+		super(text);
+		FX.style(this, style);
+	}
+	
+	
 	public FxButton(String text, Runnable handler, CssStyle style)
 	{
 		this(text, new FxAction(handler), style);

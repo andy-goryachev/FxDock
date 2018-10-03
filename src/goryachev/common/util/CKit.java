@@ -1192,7 +1192,7 @@ public final class CKit
 	}
 
 
-	public static String simpleName(Object x)
+	public static String getSimpleName(Object x)
 	{
 		return Dump.simpleName(x);
 	}
@@ -1812,7 +1812,7 @@ public final class CKit
 		}
 		catch(Exception e)
 		{
-			throw new Exception("failed to copy " + simpleName(x), e);
+			throw new Exception("failed to copy " + getSimpleName(x), e);
 		}
 	}
 	
