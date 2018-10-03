@@ -5,6 +5,7 @@ import goryachev.fx.FX;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockStyles;
 import java.util.List;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -18,7 +19,7 @@ import javafx.scene.control.TabPane;
 public class FxDockTabPane
 	extends TabPane
 {
-	protected final ParentProperty parent = new ParentProperty();
+	protected final ReadOnlyObjectWrapper<Node> parent = new ReadOnlyObjectWrapper<Node>();
 
 	
 	public FxDockTabPane()

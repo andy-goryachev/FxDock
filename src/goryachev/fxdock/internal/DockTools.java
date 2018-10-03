@@ -8,6 +8,7 @@ import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import java.util.List;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -55,7 +56,7 @@ public class DockTools
 	
 	public static void setParent(Node p, Node child)
 	{
-		ParentProperty prop = getParentProperty(child);
+		ReadOnlyObjectWrapper<Node> prop = getParentProperty(child);
 		if(prop != null)
 		{
 			Node oldp = prop.get();
@@ -79,7 +80,7 @@ public class DockTools
 	}
 	
 	
-	private static ParentProperty getParentProperty(Node n)
+	private static ReadOnlyObjectWrapper<Node> getParentProperty(Node n)
 	{
 		if(n instanceof FxDockBorderPane)
 		{
