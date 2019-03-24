@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright © 2016-2017 Andy Goryachev <andy@goryachev.com> -->
+<!-- Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com> -->
 
 <project default="build-all" basedir=".">
 	
@@ -34,7 +34,6 @@
 			includeantruntime="false"
 		>
 			<compilerarg value="-Xlint:none"/>
-		
 			<classpath refid="libs" />
 		</javac>
 	</target>
@@ -54,8 +53,11 @@
 			jarfile="build/jars/FxDockDemo.jar"
 			basedir="build/classes"
 			filesonly="true"
-			manifest="config/FxDockDemo.manifest"
-			>
+		>
+			<manifest>
+				<attribute name="Main-Class" value="demo.dock.DockDemoApp" />
+				<attribute name="Created-By" value="andy@goryachev.com" />
+			</manifest>
 		</jar>
 	</target>
 	
@@ -67,9 +69,11 @@
 			jarfile="build/jars/FxDock.jar"
 			basedir="build/classes"
 			filesonly="true"
-			manifest="config/FxDock.manifest"
 			excludes="demo/**"
 		>
+			<manifest>
+				<attribute name="Created-By" value="andy@goryachev.com" />
+			</manifest>
 		</jar>
 	</target>
 	
