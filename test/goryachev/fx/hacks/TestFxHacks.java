@@ -1,4 +1,4 @@
-// Copyright © 2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2018-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.hacks;
 import goryachev.common.util.D;
 import goryachev.fx.FX;

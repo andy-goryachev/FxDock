@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
