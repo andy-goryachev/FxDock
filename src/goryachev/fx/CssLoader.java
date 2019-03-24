@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.Base64;
 import goryachev.common.util.CKit;
@@ -18,17 +18,9 @@ import javafx.application.Platform;
 /**
  * JavaFX CSS Loader uses a URL stream factory to register a special protocol
  * in order to be able to change fx style sheets dynamically. 
- * 
- * -Dcss.refresh=true
- * -Dcss.dump=true
  */
 public class CssLoader
 {
-	/** -Dcss.refresh=true forces periodic check for css changes */ 
-	public static final String CONTINUOUS_REFRESH_PROPERTY = "css.refresh";
-	/** -Dcss.dump=true results in CSS being dumped to stderr */
-	public static final String DUMP_CSS_PROPERTY = "css.dump";
-	
 	public static final String PREFIX = "javafxcss";
 	private static CssLoader instance;
 	private String url;
@@ -58,7 +50,7 @@ public class CssLoader
 				}
 			});
 			
-			if(Boolean.getBoolean(CONTINUOUS_REFRESH_PROPERTY))
+			if(FxConfig.continuousCssRefresh())
 			{
 				Thread t = new Thread("reloading css")
 				{
@@ -158,10 +150,10 @@ public class CssLoader
 					Platform.runLater(() -> update(old, url));
 				}
 				
-				if(Boolean.getBoolean(DUMP_CSS_PROPERTY))
+				if(FxConfig.dumpCSS())
 				{
-					// stderr is ok here
-					System.err.println(css);
+					// stdout is ok here
+					System.out.println(css);
 				}
 			}
 		}

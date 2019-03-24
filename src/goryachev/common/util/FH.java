@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.Arrays;
 
@@ -6,7 +6,7 @@ import java.util.Arrays;
 /**
  * Fast Hashing to be used in hashCode().
  * 
- * Based on standard java polynomial hash value computation algorithm using
+ * This code is based on standard java polynomial hash value computation algorithm.
  */
 public class FH
 {

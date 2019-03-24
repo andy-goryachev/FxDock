@@ -1,4 +1,4 @@
-// Copyright © 2012-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.util.platform.ApplicationSupport;
 import java.util.Collection;
@@ -252,8 +252,14 @@ public abstract class CJob
 	
 	public void submit()
 	{
+		submit(this);
+	}
+	
+	
+	public static void submit(Runnable r)
+	{
 		ApplicationSupport.shutdownCJobExecutor = true;
-		exec.submit(this);
+		exec.submit(r);
 	}
 	
 	

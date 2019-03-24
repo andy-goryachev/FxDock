@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.util.SB;
 import goryachev.fx.CssID;
@@ -17,8 +17,6 @@ public class CssTools
 {
 	/** bold type face */
 	public static final CssStyle BOLD = new CssStyle("CommonStyles_BOLD");
-	/** disables horizontal scroll bar */
-	public static final CssStyle NO_HORIZONTAL_SCROLL_BAR = new CssStyle("CommonStyles_NO_HORIZONTAL_SCROLL_BAR");
 
 	
 	public static String toColor(Object x)

@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
 import goryachev.common.util.HasText;
 import goryachev.common.util.SB;
@@ -8,6 +8,8 @@ import goryachev.fx.internal.CssTools;
 import goryachev.fx.util.FxPathBuilder;
 import javafx.geometry.Insets;
 import javafx.scene.control.Labeled;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
@@ -176,7 +178,7 @@ public class LineBox
 	
 	
 	/** returns the text flow node, creating it as necessary */
-	public CTextFlow text()
+	public CTextFlow flow()
 	{
 		if(center instanceof CTextFlow)
 		{
@@ -191,14 +193,14 @@ public class LineBox
 	
 	public LineBox addText(Text t)
 	{
-		text().getChildren().add(t);
+		flow().getChildren().add(t);
 		return this;
 	}
 	
 	
 	public LineBox addText(Text ... items)
 	{
-		text().getChildren().addAll(items);
+		flow().getChildren().addAll(items);
 		return this;
 	}
 	
@@ -231,39 +233,39 @@ public class LineBox
 	}
 
 
-	public void addBoxOutline(FxPathBuilder b, double w)
+	public void addBoxOutline(FxPathBuilder b, double x, double w)
 	{
 		double y0 = center.getLayoutY();
 		double y1 = y0 + center.getHeight();
 		
-		b.moveto(0, y0);
+		b.moveto(x, y0);
 		b.lineto(w, y0);
 		b.lineto(w, y1);
-		b.lineto(0, y1);
-		b.lineto(0, y0);
+		b.lineto(x, y1);
+		b.lineto(x, y0);
 	}
 	
 	
 	public void addText(TStyle s, String text)
 	{
 		Text t = constructText(s, text);
-		text().getChildren().add(t);
+		flow().getChildren().add(t);
 	}
 	
 
-	protected Text constructText(TStyle st, String text)
+	protected Text constructText(TStyle ts, String text)
 	{
 		Text t = new Text(text);
 		
-		if(st != null)
+		if(ts != null)
 		{
-			String css = createCss(st);
+			String css = createStyle(ts);
 			if(css != null)
 			{
 				t.setStyle(css);
 			}
 			
-			String style = st.getStyle(); 
+			String style = ts.getStyle(); 
 			if(style != null)
 			{
 				t.getStyleClass().add(style);
@@ -274,7 +276,7 @@ public class LineBox
 	}
 	
 	
-	protected String createCss(TStyle s)
+	protected String createStyle(TStyle s)
 	{
 		SB sb = new SB();
 		
@@ -322,5 +324,11 @@ public class LineBox
 //		}
 
 		return sb.toString();
+	}
+
+
+	public void setLineBackground(Color c)
+	{
+		flow().setBackground(new Background(new BackgroundFill(c, null, null)));
 	}
 }

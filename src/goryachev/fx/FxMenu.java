@@ -1,6 +1,6 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.Property;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -41,7 +41,7 @@ public class FxMenu
 	}
 	
 	
-	public FxCheckMenuItem item(String text, BooleanProperty prop)
+	public FxCheckMenuItem item(String text, Property<Boolean> prop)
 	{
 		FxCheckMenuItem m = new FxCheckMenuItem(text, prop);
 		getItems().add(m);

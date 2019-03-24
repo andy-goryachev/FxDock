@@ -1,13 +1,16 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.fx.CommonStyles;
 import goryachev.fx.FX;
-import goryachev.fx.internal.CssTools;
+import goryachev.fx.FxBoolean;
 import java.util.Collection;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -29,12 +32,78 @@ public class FxTable<T>
 	extends BorderPane
 {
 	public final TableView<T> table;
+	public final FxBoolean autoResizeMode = new FxBoolean();
 	
 	
 	public FxTable()
 	{
 		table = new TableView<T>();
 		setCenter(table);
+		init();
+	}
+	
+	
+	public FxTable(ObservableList<T> items)
+	{
+		table = new TableView<T>(items);
+		setCenter(table);
+		init();
+	}
+	
+	
+	private void init()
+	{
+		table.skinProperty().addListener((s,p,c) -> fixHorizontalScrollbar());
+	}
+	
+	
+	public boolean isAutoResizeMode()
+	{
+		return autoResizeMode.get();
+	}
+	
+	
+	public void setAutoResizeMode(boolean on)
+	{
+		autoResizeMode.set(on);
+
+		if(on)
+		{
+			// TODO implement a better resizing policy that uses preferred column width
+			table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		}
+		else
+		{
+			table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+		}
+		fixHorizontalScrollbar();
+	}
+	
+	
+	protected void fixHorizontalScrollbar()
+	{
+		for(Node n: lookupAll(".scroll-bar"))
+		{
+			if(n instanceof ScrollBar)
+			{
+				ScrollBar b = (ScrollBar)n;
+				if(b.getOrientation() == Orientation.HORIZONTAL)
+				{
+					if(isAutoResizeMode())
+					{
+						b.setManaged(false);
+						b.setPrefHeight(0);
+						b.setPrefWidth(0);
+					}
+					else
+					{
+						b.setManaged(true);
+						b.setPrefHeight(USE_COMPUTED_SIZE);
+						b.setPrefWidth(USE_COMPUTED_SIZE);
+					}
+				}
+			}
+		}
 	}
 	
 	
@@ -154,13 +223,6 @@ public class FxTable<T>
 	}
 	
 	
-	public void setResizePolicyConstrained()
-	{
-		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		FX.style(table, CssTools.NO_HORIZONTAL_SCROLL_BAR);
-	}
-	
-	
 	public void hideHeader()
 	{
 		FX.hideHeader(table);
@@ -206,6 +268,12 @@ public class FxTable<T>
 	}
 	
 	
+	public void selectRow(int ix)
+	{
+		table.getSelectionModel().select(ix);
+	}
+	
+	
 	public void clearSelection()
 	{
 		table.getSelectionModel().clearSelection();
@@ -228,6 +296,12 @@ public class FxTable<T>
 	{
 		return getSelectionModel().getSelectedItems();
 	}
+	
+	
+	public ReadOnlyIntegerProperty selectedIndexProperty()
+	{
+		return getSelectionModel().selectedIndexProperty();
+	}
 
 
 	public void setMultipleSelection(boolean on)
@@ -245,6 +319,6 @@ public class FxTable<T>
 	public void setAlternateRowsColoring(boolean on)
 	{
 		// https://stackoverflow.com/questions/38680711/javafx-tableview-remove-default-alternate-row-color
-		FX.setStyle(table, CommonStyles.ALTERNATE_ROWS_OFF, !on);
+		FX.setStyle(table, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR, !on);
 	}
 }

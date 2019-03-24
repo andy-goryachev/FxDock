@@ -1,4 +1,4 @@
-// Copyright © 2012-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.ref.WeakReference;
 
@@ -20,6 +20,21 @@ public class WeakList<T>
 	public WeakList(int size)
 	{
 		list = new CList<>(size);
+	}
+	
+	
+	public void gc()
+	{
+		int sz = list.size();
+		for(int i=sz-1; i>=0; i--)
+		{
+			WeakReference<T> ref = list.get(i);
+			T item = ref.get();
+			if(item == null)
+			{
+				list.remove(i);
+			}
+		}
 	}
 
 

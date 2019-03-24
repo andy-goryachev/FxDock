@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
@@ -24,6 +24,7 @@ public class FxEditorLayout
 	private final CList<LineBox> lines = new CList<>();
 	private CMap<Integer,LineBox> newLines;
 	private double lineNumbersColumnWidth;
+	private double unwrappedWidth;
 	
 
 	public FxEditorLayout(FxEditor ed, int topLine)
@@ -49,24 +50,21 @@ public class FxEditorLayout
 			Insets pad = box.getPadding();
 			double x = p.getX() - pad.getLeft();
 			double y = p.getY() - pad.getTop();
-			
-			if(y >= 0)
+		
+			if(y < 0)
 			{
-				if(y < box.getHeight())
+				return markers.newMarker(line.getLineNumber(), 0, true);
+			}
+			else if(y < box.getHeight())
+			{
+				if(box instanceof CTextFlow)
 				{
-					if(box instanceof CTextFlow)
+					CHitInfo hit = ((CTextFlow)box).getHit(x, y);
+					if(hit != null)
 					{
-						CHitInfo hit = ((CTextFlow)box).getHit(x, y);
-						if(hit != null)
-						{
-							return markers.newMarker(line.getLineNumber(), hit.getCharIndex(), hit.isLeading());
-						}
+						return markers.newMarker(line.getLineNumber(), hit.getCharIndex(), hit.isLeading());
 					}
 				}
-			}
-			else
-			{
-				break;
 			}
 		}
 		
@@ -205,5 +203,23 @@ public class FxEditorLayout
 	public double getLineNumbersColumnWidth()
 	{
 		return lineNumbersColumnWidth;
+	}
+	
+	
+	public void setUnwrappedWidth(double w)
+	{
+		unwrappedWidth = w;
+	}
+	
+	
+	public double getUnwrappedWidth()
+	{
+		return unwrappedWidth;
+	}
+	
+	
+	public double getTotalWidth()
+	{
+		return unwrappedWidth + lineNumbersColumnWidth;
 	}
 }

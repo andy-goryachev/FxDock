@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.fx.CssPseudo;
 import javafx.scene.control.OverrunStyle;
@@ -79,10 +79,14 @@ public class StandardFxProperties
 	public static FxCssProp maxHeight(double x) { return new FxCssProp("-fx-max-height", x); }
 	public static FxCssProp maxHeight(Object x) { return new FxCssProp("-fx-max-height", x); }
 	public static FxCssProp maxWidth(double x) { return new FxCssProp("-fx-max-width", x); }
+	public static FxCssProp maxWidth(Object x) { return new FxCssProp("-fx-max-width", x); }
 	public static FxCssProp minHeight(double x) { return new FxCssProp("-fx-min-height", x); }
+	public static FxCssProp minHeight(Object x) { return new FxCssProp("-fx-min-height", x); }
 	public static FxCssProp minWidth(double x) { return new FxCssProp("-fx-min-width", x); }
+	public static FxCssProp minWidth(Object x) { return new FxCssProp("-fx-min-width", x); }
 	// O
 	public static FxCssProp opacity(double x) { return new FxCssProp("-fx-opacity", x); }
+	public static FxCssProp overrunStyle(OverrunStyle x) { return new FxCssProp("-fx-text-overrun", CssTools.toValue(x)); }
 	// P
 	public static FxCssProp padding(Object x) { return new FxCssProp("-fx-padding", CssTools.toValue(x)); }
 	public static FxCssProp padding(int top, int right, int bottom, int left) { return new FxCssProp("-fx-padding", spaces(top, right, bottom, left)); }
@@ -114,6 +118,7 @@ public class StandardFxProperties
 	
 	public static String commas(Object ... xs) { return CssTools.list(",", xs); }
 	public static String spaces(Object ... xs) { return CssTools.list(" ", xs); }
+	public static String px(int px) { return px + "px"; }
 	
 	
 	public static Object shadow()

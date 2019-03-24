@@ -1,4 +1,4 @@
-// Copyright © 2017-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.util;
 import goryachev.common.util.CList;
 import java.util.List;
@@ -22,13 +22,13 @@ public class FxPathBuilder
 	
 	public void moveto(double x, double y)
 	{
-		path.add(new MoveTo(x, y));
+		add(new MoveTo(x, y));
 	}
 	
 	
 	public void lineto(double x, double y)
 	{
-		path.add(new LineTo(x, y));
+		add(new LineTo(x, y));
 	}
 	
 	

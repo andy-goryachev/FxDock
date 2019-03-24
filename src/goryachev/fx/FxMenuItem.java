@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
@@ -42,5 +42,6 @@ public class FxMenuItem
 	public FxMenuItem(String text)
 	{
 		super(text);
+		setDisable(true);
 	}
 }

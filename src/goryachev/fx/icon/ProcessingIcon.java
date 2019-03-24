@@ -1,9 +1,8 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.icon;
 import goryachev.fx.FxIconBuilder;
 import goryachev.fx.IconBase;
 import goryachev.fx.internal.WeakAnimation;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
@@ -11,10 +10,17 @@ import javafx.util.Duration;
 
 /**
  * Processing Icon.
+ * 
+ * TODO extends IconBase
  */
 public class ProcessingIcon
 {
-	public static Node create(double size)
+	private ProcessingIcon()
+	{
+	}
+	
+	
+	public static IconBase create(double size)
 	{
 		double sz2 = size / 2.0;
 		FxIconBuilder b = new FxIconBuilder(size, sz2, sz2);

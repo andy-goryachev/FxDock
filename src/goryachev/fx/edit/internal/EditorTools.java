@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit.internal;
 import goryachev.common.util.SB;
 import goryachev.fx.FxSize;
@@ -68,6 +68,10 @@ public class EditorTools
 	{
 		Insets pad = src.getPadding();
 		Point2D p = src.localToScreen(pad.getLeft(), pad.getTop());
+		if(p == null)
+		{
+			return null;
+		}
 		
 		p = target.screenToLocal(p);
 		double dx = p.getX();

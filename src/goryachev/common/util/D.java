@@ -1,4 +1,4 @@
-// Copyright © 2007-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -398,7 +398,7 @@ public class D
 	
 	
 	/** when running in eclipse, prints frmatted string to stderr */
-	public static void pf(String fmt, Object ... args)
+	public static void f(String fmt, Object ... args)
 	{
 		if(CKit.isEclipse())
 		{

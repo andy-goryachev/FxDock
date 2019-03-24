@@ -1,4 +1,4 @@
-// Copyright © 2017-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit.internal;
 import goryachev.common.util.WeakList;
 import goryachev.fx.edit.Marker;
@@ -24,9 +24,14 @@ public class Markers
 		Marker m = new Marker(this, lineNumber, charIndex, leading);
 		markers.add(m);
 		
-		if(markers.size() > 1000000)
+		if(markers.size() > 1_000_000)
 		{
-			throw new Error("too many markers");
+			markers.gc();
+			
+			if(markers.size() > 1_000_000)
+			{	
+				throw new Error("too many markers");
+			}
 		}
 		
 		return m;
@@ -36,5 +41,43 @@ public class Markers
 	public void clear()
 	{
 		markers.clear();
+	}
+	
+	
+	public void update(int startLine, int startPos, int startCharsInserted, int linesInserted, int endLine, int endPos, int endCharsInserted)
+	{
+		for(int i=markers.size()-1; i>=0; --i)
+		{
+			Marker m = markers.get(i);
+			if(m == null)
+			{
+				markers.remove(i);
+			}
+			else
+			{
+				if(m.isBefore(startLine, startPos))
+				{
+					// unchanged
+				}
+				else if(m.isAfter(endLine, endPos))
+				{
+					// shift
+					if(endLine == m.getLine())
+					{
+						// marker on the end line 
+						int charDelta = endCharsInserted - (endPos - startPos);
+						m.moveCharIndex(charDelta);
+					}
+
+					int lineDelta = linesInserted - (endLine - startLine);
+					m.moveLine(lineDelta);
+				}
+				else
+				{
+					// reset to start
+					m.reset(startLine, startPos, true);
+				}
+			}
+		}
 	}
 }

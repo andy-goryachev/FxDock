@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
 import goryachev.common.util.D;
 import goryachev.common.util.Log;
@@ -13,6 +13,7 @@ import goryachev.fx.FxObject;
 import goryachev.fx.edit.internal.CaretLocation;
 import goryachev.fx.edit.internal.Markers;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import javafx.beans.Observable;
@@ -21,12 +22,15 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.KeyCode;
@@ -56,7 +60,7 @@ public class FxEditor
 	/** selection highlight */
 	public static final CssStyle SELECTION_HIGHLIGHT = new CssStyle("FxEditor_SELECTION_HIGHLIGHT");
 	/** panel style */
-	public static final CssStyle PANEL = new CssStyle("FxEditor_PANEL");
+	public static final CssStyle PANE = new CssStyle("FxEditor_PANEL");
 	/** line number component */
 	public static final CssStyle LINE_NUMBER = new CssStyle("FxEditor_LINE_NUMBER");
 	/** vflow */
@@ -67,7 +71,7 @@ public class FxEditor
 	
 	protected final FxBoolean editableProperty = new FxBoolean(false);
 	protected final ReadOnlyObjectWrapper<FxEditorModel> modelProperty = new ReadOnlyObjectWrapper<>();
-	protected final FxBoolean wrapTextProperty = new FxBoolean(true);
+	protected final FxBoolean wordWrapProperty = new FxBoolean(true);
 	protected final ReadOnlyBooleanWrapper multipleSelectionProperty = new ReadOnlyBooleanWrapper(false);
 	protected final FxBoolean displayCaretProperty = new FxBoolean(true);
 	protected final FxBoolean showLineNumbersProperty = new FxBoolean(false);
@@ -78,8 +82,9 @@ public class FxEditor
 	protected final VFlow vflow;
 	protected final ScrollBar vscroll;
 	protected final ScrollBar hscroll;
+	protected final ChangeListener<LoadStatus> loadStatusListener;
 	protected final SelectionController selector;
-	protected final KeyMap keymap;
+	protected final FxEditorModelListener modelListener;
 	protected boolean handleScrollEvents = true;
 	protected BiConsumer<FxEditor,Marker> wordSelector = new SimpleWordSelector();
 
@@ -93,34 +98,86 @@ public class FxEditor
 	public FxEditor(FxEditorModel m)
 	{
 		setFocusTraversable(true);
-		FX.style(this, PANEL);
+		FX.style(this, PANE);
 		setBackground(FX.background(Color.WHITE));
+		
+		modelListener = new FxEditorModelListener()
+		{
+			public void eventAllLinesChanged()
+			{
+				handleAllLinesChanged();
+			}
+
+			public void eventTextUpdated(int startLine, int startPos, int startCharsInserted, int linesInserted, int endLine, int endPos, int endCharsInserted)
+			{
+				handleTextUpdated(startLine, startPos, startCharsInserted, linesInserted, endLine, endPos, endCharsInserted);
+			}
+		};
 		
 		selector = createSelectionController();
 
-		setTextModel(m);
+		loadStatusListener = new ChangeListener<LoadStatus>()
+		{
+			public void changed(ObservableValue<? extends LoadStatus> observable, LoadStatus prev, LoadStatus cur)
+			{
+				updateLoadStatus(cur);
+			}
+		};
+
+		setModel(m);
 		
 		vflow = new VFlow(this);
 		
 		vscroll = createVScrollBar();
+		vscroll.setOrientation(Orientation.VERTICAL);
+		vscroll.setManaged(true);
+		vscroll.setMin(0.0);
+		vscroll.setMax(1.0);
+		vscroll.valueProperty().addListener((src,old,val) -> setAbsolutePositionVertical(val.doubleValue()));
+		vscroll.addEventFilter(ScrollEvent.ANY, (ev) -> ev.consume());
 		
 		hscroll = createHScrollBar();
-		hscroll.visibleProperty().bind(wrapTextProperty.not());
+		hscroll.setOrientation(Orientation.HORIZONTAL);
+		hscroll.setManaged(true);
+		hscroll.setMin(0.0);
+		hscroll.setMax(1.0);
+		hscroll.valueProperty().addListener((src,old,val) -> setAbsolutePositionHorizontal(val.doubleValue()));
+		hscroll.addEventFilter(ScrollEvent.ANY, (ev) -> ev.consume());
+		hscroll.visibleProperty().bind(wordWrapProperty.not());
+		hscroll.valueProperty().addListener((s,p,c) -> handleHorizontalScroll(c.doubleValue()));
 		
 		getChildren().addAll(vflow, vscroll, hscroll);
 		
 		selector.segments.addListener((Observable src) -> vflow.updateCaretAndSelection());
-
+		
 		Binder.onChange(vflow::updateBlinkRate, true, blinkRateProperty());
 		Binder.onChange(this::updateLayout, widthProperty(), heightProperty(), showLineNumbersProperty);
-		wrapTextProperty.addListener((s,p,c) -> updateLayout());
+		wordWrapProperty.addListener((s,p,c) -> updateLayout());
 		
-		keymap = createKeyMap();
+		// key map
+		KeyMap.onKeyPressed(this, KeyCode.A, KeyMap.SHORTCUT, this::selectAll);
+		KeyMap.onKeyPressed(this, KeyCode.C, KeyMap.SHORTCUT, this::copy);
+		KeyMap.onKeyPressed(this, KeyCode.DOWN, this::moveDown);
+		KeyMap.onKeyPressed(this, KeyCode.PAGE_DOWN, this::pageDown);
+		KeyMap.onKeyPressed(this, KeyCode.PAGE_UP, this::pageUp);
+		KeyMap.onKeyPressed(this, KeyCode.UP, this::moveUp);
 		
 		initMouseController();
 		
 		// init key handler
 		addEventFilter(KeyEvent.ANY, (ev) -> handleKeyEvent(ev));
+	}
+	
+	
+	public ScrollBar getVerticalScrollBar()
+	{
+		return vscroll;
+	}
+	
+	
+	public ScrollBar getHorizontalScrollBar()
+	{
+		return hscroll;
 	}
 	
 	
@@ -168,18 +225,6 @@ public class FxEditor
 	}
 	
 	
-	/** override to provide your own controller */
-	protected KeyMap createKeyMap()
-	{
-		KeyMap m = new KeyMap();
-		m.shortcut(KeyCode.C, this::copy);
-		m.add(KeyCode.PAGE_DOWN, this::pageDown);
-		m.add(KeyCode.PAGE_UP, this::pageUp);
-		m.shortcut(KeyCode.A, this::selectAll);
-		return m;
-	}
-	
-	
 	public ReadOnlyObjectProperty<EditorSelection> selectionProperty()
 	{
 		return selector.selectionProperty();
@@ -211,21 +256,23 @@ public class FxEditor
 	}
 	
 	
-	public void setTextModel(FxEditorModel m)
+	public void setModel(FxEditorModel m)
 	{
 		markers.clear();
 		
 		FxEditorModel old = getModel();
 		if(old != null)
 		{
-			old.removeListener(this);
+			old.removeListener(modelListener);
+			old.loadStatus.removeListener(loadStatusListener);
 		}
 		
 		modelProperty.set(m);
 		
 		if(m != null)
 		{
-			m.addListener(this);
+			m.addListener(modelListener);
+			m.loadStatus.addListener(loadStatusListener);
 		}
 		
 		selector.clear();
@@ -234,8 +281,7 @@ public class FxEditor
 			vflow.invalidateLayout();
 		}
 		
-		eventAllChanged();
-//		updateLayout();
+		handleAllLinesChanged();
 	}
 	
 	
@@ -247,33 +293,45 @@ public class FxEditor
 	
 	public int getLineCount()
 	{
-		return getModel().getLineCount();
+		FxEditorModel m = getModel();
+		return m == null ? 0 : m.getLineCount();
 	}
 	
 	
 	protected ScrollBar createVScrollBar()
 	{
-		ScrollBar s = new ScrollBar();
-		s.setOrientation(Orientation.VERTICAL);
-		s.setManaged(true);
-		s.setMin(0.0);
-		s.setMax(1.0);
-		s.valueProperty().addListener((src,old,val) -> setAbsolutePositionVertical(val.doubleValue()));
-		s.addEventFilter(ScrollEvent.ANY, (ev) -> ev.consume());
-		return s;
+		return new XScrollBar();
 	}
 	
 	
 	protected ScrollBar createHScrollBar()
 	{
-		ScrollBar s = new ScrollBar();
-		s.setOrientation(Orientation.HORIZONTAL);
-		s.setManaged(true);
-		s.setMin(0.0);
-		s.setMax(1.0);
-		s.valueProperty().addListener((src,old,val) -> setAbsolutePositionHorizontal(val.doubleValue()));
-		s.addEventFilter(ScrollEvent.ANY, (ev) -> ev.consume());
-		return s;
+		return new XScrollBar();
+	}
+	
+	
+	protected void updateLoadStatus(LoadStatus s)
+	{
+		if(vscroll instanceof XScrollBar)
+		{
+			XScrollBar vs = (XScrollBar)vscroll;
+			if(s.isValid())
+			{
+				vs.setPainer((canvas) ->
+				{
+					double w = canvas.getWidth();
+					double h = canvas.getHeight();
+					double y = s.getProgress() * h;
+					GraphicsContext g = canvas.getGraphicsContext2D();
+					g.setFill(Color.LIGHTGRAY);
+					g.fillRect(0, y, w, h - y);
+				});
+			}
+			else
+			{
+				vs.setPainer(null);
+			}
+		}
 	}
 	
 	
@@ -282,7 +340,8 @@ public class FxEditor
 		if(handleScrollEvents)
 		{
 			// TODO account for visible line count
-			int start = FX.round(getModel().getLineCount() * pos);
+			int start = FX.round(pos); 
+				//FX.round(getModel().getLineCount() * pos);
 			setTopLineIndex(start);
 		}
 	}
@@ -300,21 +359,21 @@ public class FxEditor
 	}
 	
 	
-	public boolean isWrapText()
+	public boolean isWordWrap()
 	{
-		return wrapTextProperty.get();
+		return wordWrapProperty.get();
 	}
 	
 	
-	public void setWrapText(boolean on)
+	public void setWordWrap(boolean on)
 	{
-		wrapTextProperty.set(on);
+		wordWrapProperty.set(on);
 	}
 	
 	
-	public BooleanProperty wrapTextProperty()
+	public BooleanProperty wordWrapProperty()
 	{
-		return wrapTextProperty;
+		return wordWrapProperty;
 	}
 	
 	
@@ -353,6 +412,10 @@ public class FxEditor
 	{
 		if(vflow != null)
 		{
+			if(wordWrapProperty.get())
+			{
+				vflow.offsetx = 0;
+			}
 			vflow.requestLayout();
 		}
 		requestLayout();
@@ -379,12 +442,12 @@ public class FxEditor
 			hscrollHeight = hscroll.prefHeight(-1);
 		}
 		
-		double w = getWidth() - m.getLeft() - m.getRight() - vscrollWidth;
-		double h = getHeight() - m.getTop() - m.getBottom() - hscrollHeight;
+		double w = getWidth() - m.getLeft() - m.getRight() - vscrollWidth - 1;
+		double h = getHeight() - m.getTop() - m.getBottom() - hscrollHeight - 1;
 
 		// layout children
-		layoutInArea(vscroll, w, y0, vscrollWidth, h, 0, null, true, true, HPos.RIGHT, VPos.TOP);
-		layoutInArea(hscroll, x0, h, w, hscrollHeight, 0, null, true, true, HPos.LEFT, VPos.BOTTOM);
+		layoutInArea(vscroll, w, y0 + 1, vscrollWidth, h, 0, null, true, true, HPos.RIGHT, VPos.TOP);
+		layoutInArea(hscroll, x0 + 1, h, w, hscrollHeight, 0, null, true, true, HPos.LEFT, VPos.BOTTOM);
 		layoutInArea(vflow, x0, y0, w, h, 0, null, true, true, HPos.LEFT, VPos.TOP);
 	}
 	
@@ -445,7 +508,7 @@ public class FxEditor
 	}
 
 	
-	protected void eventAllChanged()
+	protected void handleAllLinesChanged()
 	{
 		clearSelection();
 		
@@ -469,26 +532,17 @@ public class FxEditor
 	}
 
 
-	protected void eventLinesDeleted(int start, int count)
+	protected void handleTextUpdated(int startLine, int startPos, int startCharsInserted, int linesInserted, int endLine, int endPos, int endCharsInserted)
 	{
-		// FIX
-		D.print(start, count);
+		// TODO
+		D.print(startLine, startPos, startCharsInserted, linesInserted, endLine, endPos, endCharsInserted);
+		
+		// update markers
+		markers.update(startLine, startPos, startCharsInserted, linesInserted, endLine, endPos, endCharsInserted);
+		// update vflow
+		vflow.update(startLine, linesInserted, endLine);
 	}
 
-
-	protected void eventLinesInserted(int start, int count)
-	{
-		// FIX
-		D.print(start, count);
-	}
-
-
-	protected void eventLinesModified(int start, int count)
-	{
-		// FIX
-		D.print(start, count);
-	}
-	
 	
 	public void setDisplayCaret(boolean on)
 	{
@@ -533,7 +587,7 @@ public class FxEditor
 	
 
 	/** returns plain text on the specified line */
-	public String getTextOnLine(int line)
+	public String getPlainText(int line)
 	{
 		return getModel().getPlainText(line);
 	}
@@ -545,6 +599,24 @@ public class FxEditor
 		StringWriter wr = new StringWriter();
 		getModel().getPlainText(getSelection(), wr);
 		return wr.toString();
+	}
+	
+	
+	/** 
+	 * outputs selected plain text, concatenating multiple selection segments if necessary.
+	 * this method should be used where allocating a single (potentially large) string is undesirable,
+	 * for example when saving to a file.
+	 * any exceptions thrown by the writer are silently ignored and the process is aborted.
+	 */
+	public void writeSelectedText(Writer wr)
+	{
+		try
+		{
+			getModel().getPlainText(getSelection(), wr);
+		}
+		catch(Exception ignored)
+		{
+		}
 	}
 	
 	
@@ -560,15 +632,30 @@ public class FxEditor
 	}
 	
 	
-	public void blockScroll(boolean up)
+	public void moveUp()
 	{
-		vflow.blockScroll(up);
+		// TODO
+		D.print("moveUp");
 	}
 	
 	
-	public void blockScroll(double delta, boolean up)
+	public void moveDown()
 	{
-		vflow.blockScroll(delta, up);
+		// TODO
+		D.print("moveDown");
+	}
+	
+	
+	public void scroll(double fractionOfHeight)
+	{
+		vflow.scroll(fractionOfHeight);
+	}
+	
+	
+	/** scrolls up (deltaInPixels < 0) or down (deltaInPixels > 0) */
+	public void blockScroll(double deltaInPixels)
+	{
+		vflow.blockScroll(deltaInPixels);
 	}
 	
 	
@@ -616,12 +703,21 @@ public class FxEditor
 	}
 
 
-	public void scrollToVisible(int ix)
+	public void scrollToVisible(int row)
 	{
-		if((ix >= 0) && (ix < getLineCount()))
+		if((row >= 0) && (row < getLineCount()))
 		{
 			// FIX smarter positioning so the target line is somewhere at 25% of the height
-			vflow.scrollToVisible(ix);
+			vflow.scrollToVisible(row);
+		}
+	}
+	
+	
+	public void setOrigin(int row)
+	{
+		if((row >= 0) && (row < getLineCount()))
+		{
+			vflow.setOrigin(row, 0);
 		}
 	}
 	
@@ -646,17 +742,19 @@ public class FxEditor
 	}
 	
 	
+	protected void handleHorizontalScroll(double val)
+	{
+		if(handleScrollEvents)
+		{
+			vflow.setHorizontalScroll(val);
+		}
+	}
+	
+	
 	protected void handleKeyEvent(KeyEvent ev)
 	{
 		if(!ev.isConsumed())
 		{
-			Runnable a = keymap.getActionForKeyEvent(ev);
-			if(a != null)
-			{
-				a.run();
-				return;
-			}
-			
 			EventType<KeyEvent> t = ev.getEventType();
 			if(t == KeyEvent.KEY_PRESSED)
 			{
@@ -740,6 +838,13 @@ public class FxEditor
 			return true;
 		}
 	}
+	
+	
+	public void setCaret(int row, int charIndex)
+	{
+		Marker m = newMarker(row, charIndex, true);
+		select(m, m);
+	}
 
 
 	public void selectLine(Marker m)
@@ -778,5 +883,12 @@ public class FxEditor
 	public int getTextLength(int line)
 	{
 		return getModel().getTextLength(line);
+	}
+
+
+	/** recreate visible area */
+	public void reloadVisibleArea()
+	{
+		vflow.invalidateLayout();
 	}
 }

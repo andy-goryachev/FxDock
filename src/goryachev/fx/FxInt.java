@@ -1,4 +1,4 @@
-// Copyright © 2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2018-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.SimpleIntegerProperty;
 
@@ -17,5 +17,15 @@ public class FxInt
 	
 	public FxInt()
 	{
+	}
+	
+	
+	/** WARNING: potential loss of data */
+	public void set(Number n)
+	{
+		if(n != null)
+		{
+			set(n.intValue());
+		}
 	}
 }

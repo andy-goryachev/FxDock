@@ -1,92 +1,35 @@
-// Copyright © 2017-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.common.util.CMap;
+import goryachev.common.util.Keep;
 import goryachev.common.util.SB;
 import goryachev.fx.internal.StandardThemes;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import javafx.scene.paint.Color;
 
 
 /**
  * Color Theme.
  */
+@Keep
 public class Theme
 {
-	public enum Key
-	{
-		/** affirm button type background */
-		AFFIRM("accept", Color.class),
-		/** base color for all objects */
-		BASE("base", Color.class),
-		/** checkbox, etc. color */
-		CONTROL("control", Color.class),
-		/** destructive button type background */
-		DESTRUCT("destruct", Color.class),
-		/** focus outline color */
-		FOCUS("focus", Color.class),
-		OUTLINE("outline", Color.class),
-		SELECTED_TEXT_BG("selectedTextBG", Color.class),
-		SELECTED_TEXT_FG("selectedTextFG", Color.class),
-		TEXT_BG("textBG", Color.class),
-		TEXT_FG("textFG", Color.class),
-		;
-		
-		public final String name;
-		public final Class type;
-		
-		Key(String name, Class type)
-		{
-			this.name = name;
-			this.type = type;
-		}
-	}
-	
-	//
-	
-	public final Color affirm;
-	public final Color base;
-	public final Color control;
-	public final Color destruct;
-	public final Color focus;
-	public final Color outline;
-	public final Color selectedTextBG;
-	public final Color selectedTextFG;
-	public final Color textBG;
-	public final Color textFG;
-	private final CMap<Key,Object> data;
+	public Color affirm;
+	public Color base;
+	public Color control;
+	public Color destruct;
+	public Color focus;
+	public Color outline;
+	public Color selectedTextBG;
+	public Color selectedTextFG;
+	public Color textBG;
+	public Color textFG;
 	
 	private static Theme current;
 	
 	
-	public Theme(CMap<Key,Object> data)
+	public Theme()
 	{	
-		this.data = data;
-		
-		affirm = c(Key.AFFIRM);
-		base = c(Key.BASE);
-		control = c(Key.CONTROL);
-		destruct = c(Key.DESTRUCT);
-		focus = c(Key.FOCUS);
-		outline = c(Key.OUTLINE);
-		selectedTextBG = c(Key.SELECTED_TEXT_BG);
-		selectedTextFG = c(Key.SELECTED_TEXT_FG);
-		textBG = c(Key.TEXT_BG);
-		textFG = c(Key.TEXT_FG);
-	}
-	
-	
-	protected Color c(Key k)
-	{
-		if(k.type != Color.class)
-		{
-			throw new Error("Key must have Color type: " + k);
-		}
-		
-		Object v = data.get(k);
-		if(v instanceof Color)
-		{
-			return (Color)v;
-		}
-		return Color.RED;
 	}
 	
 
@@ -94,19 +37,20 @@ public class Theme
 	{
 		if(current == null)
 		{
-			CMap<Key,Object> m = loadFromSettings();
-			if(m == null)
+			Theme t = loadFromSettings();
+			if(t == null)
 			{
-				m = StandardThemes.createDefaultLightTheme();
+				// TODO how to detect dark OS theme?
+				t = StandardThemes.createLightTheme();
 			}
-			check(m);
-			current = new Theme(m);
+			check(t);
+			current = t;
 		}
 		return current;
 	}
 	
 	
-	private static CMap<Key,Object> loadFromSettings()
+	private static Theme loadFromSettings()
 	{
 		// TODO first standard names
 		// TODO use keys to load values
@@ -114,24 +58,38 @@ public class Theme
 	}
 	
 
-	private static void check(CMap<Key,Object> m)
+	private static void check(Theme t)
 	{
 		SB sb = null;
-		for(Key k: Key.values())
+		Field[] fs = Theme.class.getDeclaredFields();
+		for(Field f: fs)
 		{
-			Object v = m.get(k);
-			String s = null;
-			if(v == null)
+			int m = f.getModifiers();
+			if(Modifier.isPublic(m) && !Modifier.isStatic(m))
 			{
-				if(sb == null)
+				Object v;
+				try
 				{
-					sb = new SB();
+					v = f.get(t);
 				}
-				else
+				catch(Exception e)
 				{
-					sb.nl();
+					v = null;
 				}
-				sb.a("undefined ").a(k);
+				
+				if(v == null)
+				{
+					if(sb == null)
+					{
+						sb = new SB();
+						sb.append("Missing theme values: ");
+					}
+					else
+					{
+						sb.a(",");
+					}
+					sb.append(f.getName());
+				}
 			}
 		}
 		
@@ -139,5 +97,32 @@ public class Theme
 		{
 			throw new Error(sb.toString());
 		}
+	}
+	
+	
+	/** creates a light/dark compatible gray color, based on the intensity of the textBG */
+	public Color gray(int gray)
+	{
+		if(isLight())
+		{
+			return Color.rgb(gray, gray, gray);
+		}
+		else
+		{
+			return Color.rgb(255 - gray, 255 - gray, 255 - gray);
+		}
 	}	
+	
+	
+	public boolean isLight()
+	{
+		// this is good enough for now
+		return (textBG.getBrightness() > 0.5);
+	}
+	
+	
+	public boolean isDark()
+	{
+		return !isLight();
+	}
 }

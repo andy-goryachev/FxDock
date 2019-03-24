@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
@@ -27,7 +27,7 @@ import javafx.scene.layout.Region;
 public class CPane
 	extends Pane
 {
-	public static final CssStyle CPANE = new CssStyle();
+	public static final CssStyle STYLE = new CssStyle("CPane_PANE");
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;
 	
@@ -59,7 +59,7 @@ public class CPane
 	/** sets standard padding and gaps */
 	public void setDefaultStyle()
 	{
-		FX.style(this, CPANE);
+		FX.style(this, STYLE);
 	}
 	
 	
@@ -353,14 +353,17 @@ public class CPane
 	protected Node set(Node c, CC cc)
 	{
 		Node old = getBorderComponent(cc);
-		if(old != null)
+		if(old != c)
 		{
-			removeLayoutComponent(old);
-		}
-		
-		if(c != null)
-		{
-			addPrivate(c, cc);
+			if(old != null)
+			{
+				removeLayoutComponent(old);
+			}
+			
+			if(c != null)
+			{
+				addPrivate(c, cc);
+			}
 		}
 		return old;
 	}
@@ -489,7 +492,7 @@ public class CPane
 	
 	public void remove(Node c)
 	{
-		getChildren().remove(c);
+		removeLayoutComponent(c);
 	}
 	
 	

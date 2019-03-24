@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.Log;
 import goryachev.common.util.Parsers;
@@ -7,6 +7,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 
@@ -47,6 +48,13 @@ public class HPane
 	public void setGap(int gap)
 	{
 		this.gap = gap;
+	}
+	
+	
+	public void space()
+	{
+		// TODO add a rectangle instead
+		add(new Label("  "));
 	}
 	
 	

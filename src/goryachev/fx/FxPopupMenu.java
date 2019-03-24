@@ -1,5 +1,6 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import javafx.beans.property.Property;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -30,6 +31,20 @@ public class FxPopupMenu
 		FxCheckMenuItem m = new FxCheckMenuItem(text, a);
 		add(m);
 		return m;
+	}
+	
+	
+	public FxCheckMenuItem checkItem(String text, Property<Boolean> p)
+	{
+		FxCheckMenuItem m = new FxCheckMenuItem(text, p);
+		add(m);
+		return m;
+	}
+	
+	
+	public FxCheckMenuItem checkItem(String text)
+	{
+		return checkItem(text, FxAction.DISABLED);
 	}
 	
 	

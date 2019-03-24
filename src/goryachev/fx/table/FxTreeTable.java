@@ -1,10 +1,12 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.fx.CPane;
-import goryachev.fx.FX;
-import goryachev.fx.internal.CssTools;
+import goryachev.fx.FxBoolean;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.Skin;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
@@ -20,12 +22,14 @@ import javafx.util.Callback;
 public class FxTreeTable<T>
 	extends CPane
 {
+	public final FxBoolean autoResizeMode = new FxBoolean();
 	public final TreeTableView<T> tree;
 	
 	
 	public FxTreeTable()
 	{
 		tree = new TreeTableView<T>();
+		tree.skinProperty().addListener((s,p,c) -> fixHorizontalScrollbar());
 		setCenter(tree);
 	}
 	
@@ -91,6 +95,12 @@ public class FxTreeTable<T>
 	}
 	
 	
+	public TreeItem<T> getRoot()
+	{
+		return tree.getRoot();
+	}
+	
+	
 	public void setShowRoot(boolean on)
 	{
 		tree.setShowRoot(on);
@@ -109,7 +119,8 @@ public class FxTreeTable<T>
 	}
 	
 	
-	protected TreeTableColumn<T,?> lastColumn()
+	// temporarily public until I figure out a better api
+	public TreeTableColumn<T,?> lastColumn()
 	{
 		ObservableList<TreeTableColumn<T,?>> cs = tree.getColumns();
 		return cs.get(cs.size() - 1);
@@ -130,10 +141,65 @@ public class FxTreeTable<T>
 	}
 	
 	
-	public void setResizePolicyConstrained()
+	private void init()
 	{
-		tree.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
-		FX.style(tree, CssTools.NO_HORIZONTAL_SCROLL_BAR);
+		tree.skinProperty().addListener((s,p,c) -> fixHorizontalScrollbar());
+	}
+	
+	
+	public boolean isAutoResizeMode()
+	{
+		return autoResizeMode.get();
+	}
+	
+	
+	public void setAutoResizeMode(boolean on)
+	{
+		autoResizeMode.set(on);
+
+		if(on)
+		{
+			// TODO implement a better resizing policy that uses preferred column width
+			tree.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
+		}
+		else
+		{
+			tree.setColumnResizePolicy(TreeTableView.UNCONSTRAINED_RESIZE_POLICY);
+		}
+		fixHorizontalScrollbar();
+	}
+	
+	
+	protected void fixHorizontalScrollbar()
+	{
+		Skin skin = tree.getSkin();
+		if(skin == null)
+		{
+			return;
+		}
+		
+		for(Node n: skin.getNode().lookupAll(".scroll-bar"))
+		{
+			if(n instanceof ScrollBar)
+			{
+				ScrollBar b = (ScrollBar)n;
+				if(b.getOrientation() == Orientation.HORIZONTAL)
+				{
+					if(isAutoResizeMode())
+					{
+						b.setManaged(false);
+						b.setPrefHeight(0);
+						b.setPrefWidth(0);
+					}
+					else
+					{
+						b.setManaged(true);
+						b.setPrefHeight(USE_COMPUTED_SIZE);
+						b.setPrefWidth(USE_COMPUTED_SIZE);
+					}
+				}
+			}
+		}
 	}
 	
 	

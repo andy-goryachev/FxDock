@@ -1,10 +1,12 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.CPlatform;
 import goryachev.common.util.GlobalSettings;
 import goryachev.fx.hacks.FxHacks;
 import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.FxSchema;
 import goryachev.fx.internal.WindowsFx;
+import goryachev.fx.table.FxTable;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -30,7 +32,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.ListView;
 import javafx.scene.control.OverrunStyle;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -38,7 +42,10 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -410,6 +417,12 @@ public final class FX
 	}
 	
 	
+	public static Color gray(int col)
+	{
+		return Color.rgb(col, col, col);
+	}
+	
+	
 	/** Creates Color from an RGB value. */
 	public static Color rgb(int rgb)
 	{
@@ -420,13 +433,27 @@ public final class FX
 	}
 	
 	
+	/** Creates Color from an RGB value. */
+	public static Color rgb(int red, int green, int blue)
+	{
+		return Color.rgb(red, green, blue);
+	}
+	
+	
 	/** Creates Color from an RGB value + alpha. */
-	public static Color rgba(int rgb, double alpha)
+	public static Color rgb(int rgb, double alpha)
 	{
 		int r = (rgb >> 16) & 0xff;
 		int g = (rgb >>  8) & 0xff;
 		int b = (rgb      ) & 0xff;
 		return Color.rgb(r, g, b, alpha);
+	}
+	
+	
+	/** Creates Color from an RGB value + alpha */
+	public static Color rgb(int red, int green, int blue, double alpha)
+	{
+		return Color.rgb(red, green, blue, alpha);
 	}
 
 
@@ -776,7 +803,7 @@ public final class FX
 	
 	
 	/** sets a tool tip on the control. */
-	public static void tooltip(Control n, Object tooltip)
+	public static void toolTip(Control n, Object tooltip)
 	{
 		if(tooltip == null)
 		{
@@ -1034,29 +1061,32 @@ public final class FX
 	{
 		owner.setOnContextMenuRequested((ev) ->
 		{
-			FX.later(() ->
+			if(generator != null)
 			{
-				FxPopupMenu m = generator.get();
-				if(m != null)
+				FX.later(() ->
 				{
-					if(m.getItems().size() > 0)
+					FxPopupMenu m = generator.get();
+					if(m != null)
 					{
-						// javafx does not dismiss the popup when the user
-						// clicks on the owner node
-						EventHandler<MouseEvent> li = new EventHandler<MouseEvent>()
+						if(m.getItems().size() > 0)
 						{
-							public void handle(MouseEvent event)
+							// javafx does not dismiss the popup when the user
+							// clicks on the owner node
+							EventHandler<MouseEvent> li = new EventHandler<MouseEvent>()
 							{
-								m.hide();
-								owner.removeEventFilter(MouseEvent.MOUSE_PRESSED, this);
-							}
-						};
-						
-						owner.addEventFilter(MouseEvent.MOUSE_PRESSED, li);
-						m.show(owner, ev.getScreenX(), ev.getScreenY());
+								public void handle(MouseEvent event)
+								{
+									m.hide();
+									owner.removeEventFilter(MouseEvent.MOUSE_PRESSED, this);
+								}
+							};
+							
+							owner.addEventFilter(MouseEvent.MOUSE_PRESSED, li);
+							m.show(owner, ev.getScreenX(), ev.getScreenY());
+						}
 					}
-				}
-			});
+				});
+			}
 			ev.consume();
 		});
 	}
@@ -1091,7 +1121,7 @@ public final class FX
 	}
 	
 	
-	public static  <T> void addOneShotListener(Property<T> p, Consumer<T> c)
+	public static <T> void addOneShotListener(Property<T> p, Consumer<T> c)
 	{
 		p.addListener(new ChangeListener<T>()
 		{
@@ -1101,5 +1131,105 @@ public final class FX
 				p.removeListener(this);
 			}
 		});
+	}
+	
+	
+	/** Prevents the node from being resized when the SplitPane is resized. */
+	public static void preventSplitPaneResizing(Node nd)
+	{
+		SplitPane.setResizableWithParent(nd, Boolean.FALSE);
+	}
+	
+	
+	public static boolean isLeftButton(MouseEvent ev)
+	{
+		return (ev.getButton() == MouseButton.PRIMARY);
+	}
+	
+	
+	/** sometimes MouseEvent.isPopupTrigger() is not enough */
+	public static boolean isPopupTrigger(MouseEvent ev)
+	{
+		if(ev.getButton() == MouseButton.SECONDARY)
+		{
+			if(CPlatform.isMac())
+			{
+				if
+				(
+					!ev.isAltDown() &&
+					!ev.isMetaDown() &&
+					!ev.isShiftDown()
+				)
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if
+				(
+					!ev.isAltDown() &&
+					!ev.isControlDown() &&
+					!ev.isMetaDown() &&
+					!ev.isShiftDown()
+				)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+
+	public static void disableAlternativeRowColor(FxTable<?> table)
+	{
+		FX.style(table.table, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR);
+	}
+	
+	
+	public static void disableAlternativeRowColor(TableView<?> table)
+	{
+		FX.style(table, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR);
+	}
+	
+	
+	public static void disableAlternativeRowColor(ListView<?> v)
+	{
+		FX.style(v, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR);
+	}
+
+
+	/** 
+	 * returns a key code that represents a shortcut on this platform.
+	 * why this functionality is not public in javafx is unclear to me.
+	 */
+	public static KeyCode getShortcutKeyCode()
+	{
+		KeyEvent ev = new KeyEvent(null, null, KeyEvent.KEY_PRESSED, "", "", KeyCode.CONTROL, false, true, false, false);
+		if(ev.isShortcutDown())
+		{
+			return KeyCode.CONTROL;
+		}
+		
+		ev = new KeyEvent(null, null, KeyEvent.KEY_PRESSED, "", "", KeyCode.META, false, false, false, true);
+		if(ev.isShortcutDown())
+		{
+			return KeyCode.META;
+		}
+		
+		ev = new KeyEvent(null, null, KeyEvent.KEY_PRESSED, "", "", KeyCode.ALT, false, false, true, false);
+		if(ev.isShortcutDown())
+		{
+			return KeyCode.ALT;
+		}
+		
+		ev = new KeyEvent(null, null, KeyEvent.KEY_PRESSED, "", "", KeyCode.SHIFT, true, false, false, false);
+		if(ev.isShortcutDown())
+		{
+			return KeyCode.SHIFT;
+		}
+		
+		return null;
 	}
 }

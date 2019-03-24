@@ -1,4 +1,4 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CList;
 import java.io.ByteArrayInputStream;
@@ -7,7 +7,6 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.GaussianBlur;
@@ -19,6 +18,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcTo;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.LineTo;
@@ -134,6 +134,14 @@ public class FxIconBuilder
 	}
 	
 	
+	public void circle(double x, double y, double radius)
+	{
+		Circle c = new Circle(x, y, radius);
+		applyShapeProperties(c);
+		elements.add(c);
+	}
+	
+	
 	protected Path createPath()
 	{
 		Path p = new Path();
@@ -246,9 +254,15 @@ public class FxIconBuilder
 	}
 	
 	
-	public void setRotate(double angle)
+	public void setRotate(double angleInRadians)
 	{
-		rotate = FX.toDegrees(angle);
+		rotate = FX.toDegrees(angleInRadians);
+	}
+	
+	
+	public void setRotateDegrees(double angleInDegrees)
+	{
+		rotate = angleInDegrees;
 	}
 	
 	

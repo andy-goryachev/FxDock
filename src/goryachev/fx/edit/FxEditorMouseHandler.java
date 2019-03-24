@@ -1,6 +1,7 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
 import goryachev.common.util.D;
+import goryachev.fx.FX;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Point2D;
@@ -24,6 +25,7 @@ public class FxEditorMouseHandler
 	private double autoScrollStepFast = 200; // arbitrary
 	private double autoScrollStepSlow = 20; // arbitrary
 	private boolean autoScrollUp;
+	private double scrollWheelStepSize = 0.1;
 
 
 	public FxEditorMouseHandler(FxEditor ed, SelectionController sel)
@@ -58,7 +60,8 @@ public class FxEditorMouseHandler
 		else
 		{
 			// vertical block scroll
-			editor.blockScroll(ev.getDeltaY() >= 0);
+			double frac = scrollWheelStepSize * (ev.getDeltaY() >= 0 ? -1 : 1); 
+			editor.scroll(frac); 
 		}
 	}
 	
@@ -94,9 +97,16 @@ public class FxEditorMouseHandler
 	
 	public void handleMousePressed(MouseEvent ev)
 	{
+		// not sure - perhaps only ignore if the mouse press is within a selection
+		// and reset selection if outside?
+		if(FX.isPopupTrigger(ev))
+		{
+			return;
+		}
+
 		Marker pos = getTextPos(ev);
 		editor.setSuppressBlink(true);
-				
+		
 		if(ev.isShiftDown())
 		{
 			// expand selection from the anchor point to the current position
@@ -127,9 +137,14 @@ public class FxEditorMouseHandler
 		editor.requestFocus();
 	}
 	
-	
+
 	public void handleMouseDragged(MouseEvent ev)
 	{
+		if(!FX.isLeftButton(ev))
+		{
+			return;
+		}
+		
 		double y = ev.getY();
 		if(y < 0)
 		{
@@ -178,7 +193,11 @@ public class FxEditorMouseHandler
 	protected void autoScroll()
 	{
 		double delta = fastAutoScroll ? autoScrollStepFast : autoScrollStepSlow;
-		editor.blockScroll(delta, autoScrollUp);
+		if(autoScrollUp)
+		{
+			delta = -delta;
+		}
+		editor.blockScroll(delta);
 		
 		Point2D p;
 		if(autoScrollUp)

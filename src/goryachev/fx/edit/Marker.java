@@ -1,4 +1,4 @@
-// Copyright © 2017-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
 import goryachev.common.util.Assert;
 import goryachev.common.util.FH;
@@ -9,6 +9,8 @@ import goryachev.fx.edit.internal.Markers;
 /**
  * Marker represents a position in the text model maintained 
  * in the presence of insertion and removals.
+ * 
+ * TODO perhaps it should refer to insert position instead of (char index / leading)
  */
 public class Marker
 	implements Comparable<Marker>
@@ -34,6 +36,14 @@ public class Marker
 		this.line = 0;
 		this.charIndex = 0;
 		this.leading = true;	
+	}
+	
+	
+	public void reset(int line, int charIndex, boolean leading)
+	{
+		this.line = line;
+		this.charIndex = charIndex;
+		this.leading = leading;
 	}
 	
 
@@ -149,6 +159,68 @@ public class Marker
 		else
 		{
 			return false;
+		}
+	}
+	
+	
+	public boolean isBefore(int line, int pos)
+	{
+		if(this.line < line)
+		{
+			return true;
+		}
+		else if(this.line == line)
+		{
+			if(getPosition() < pos)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	public boolean isAfter(int line, int pos)
+	{
+		if(this.line > line)
+		{
+			return true;
+		}
+		else if(this.line == line)
+		{
+			if(getPosition() > pos)
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+	public void moveLine(int delta)
+	{
+		line += delta;
+	}
+	
+	
+	public void moveCharIndex(int delta)
+	{
+		// TODO validate
+		charIndex += delta;
+	}
+	
+	
+	public int getPosition()
+	{
+		// TODO perhaps I should use position only in the marker
+		if(leading)
+		{
+			return charIndex;
+		}
+		else
+		{
+			return charIndex + 1;
 		}
 	}
 }

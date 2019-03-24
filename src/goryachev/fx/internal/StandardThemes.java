@@ -1,8 +1,8 @@
-// Copyright © 2017-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.util.CMap;
 import goryachev.fx.FX;
-import goryachev.fx.Theme.Key;
+import goryachev.fx.Theme;
 import javafx.scene.paint.Color;
 
 
@@ -12,39 +12,21 @@ import javafx.scene.paint.Color;
 public class StandardThemes
 {
 	/** standard light theme */
-	public static CMap<Key,Object> createDefaultLightTheme()
+	public static Theme createLightTheme()
 	{
 		Color base = FX.rgb(0xececec);
 		
-		return createFromArray
-		(
-			Key.AFFIRM, FX.mix(base, Color.LIGHTGREEN, 0.8),
-			Key.BASE, base,
-			Key.CONTROL, FX.rgb(0x666666),
-			Key.DESTRUCT, FX.mix(base, Color.MAGENTA, 0.7),
-			Key.FOCUS, FX.rgb(0x48dd48), //FX.rgb(0xff6d00),
-			Key.OUTLINE, FX.rgb(0xdddddd),
-			Key.SELECTED_TEXT_BG, FX.rgb(0xffff00),
-			Key.SELECTED_TEXT_FG, Color.BLACK,
-			Key.TEXT_BG, Color.WHITE,
-			Key.TEXT_FG, Color.BLACK
-		);
-	}
-	
-	
-	private static CMap<Key,Object> createFromArray(Object ... items)
-	{
-		CMap<Key,Object> d = new CMap();
-		for(int i=0; i<items.length; )
-		{
-			Key k = (Key)items[i++];
-			Object v = items[i++];
-			if(!k.type.isAssignableFrom(v.getClass()))
-			{
-				throw new Error(k + " requires type " + k.type);
-			}
-			d.put(k, v);
-		}
-		return d;
+		Theme t = new Theme();
+		t.affirm = FX.mix(base, Color.LIGHTGREEN, 0.8);
+		t.base = base;
+		t.control = FX.rgb(0x666666);
+		t.destruct = FX.mix(base, Color.MAGENTA, 0.7);
+		t.focus = FX.rgb(0x48dd48); //FX.rgb(0xff6d00),
+		t.outline = FX.rgb(0xdddddd);
+		t.selectedTextBG = FX.rgb(255, 255, 148, 0.7); //Color.rgb(193, 245, 176), //FX.rgb(0xffff00),
+		t.selectedTextFG = Color.BLACK;
+		t.textBG = Color.WHITE;
+		t.textFG = Color.BLACK;
+		return t;
 	}
 }

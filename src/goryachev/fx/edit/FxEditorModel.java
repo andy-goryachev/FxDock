@@ -1,10 +1,11 @@
-// Copyright © 2016-2018 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.edit;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.common.util.Log;
 import goryachev.fx.FxBoolean;
+import goryachev.fx.FxObject;
 import java.io.Writer;
 import java.util.function.Consumer;
 import javafx.beans.property.BooleanProperty;
@@ -44,6 +45,9 @@ public abstract class FxEditorModel
 	/** returns a known line count.  if the model is still loading, returns the best estimate of the number of lines. */
 	public abstract int getLineCount();
 	
+	/** returns plain text at the specified line, or null if unknown */
+	public abstract String getPlainText(int line);
+	
 	/** 
 	 * returns a non-null LineBox containing components that represent a logical line.
 	 */
@@ -58,8 +62,9 @@ public abstract class FxEditorModel
 	
 	//
 
-	protected FxBoolean editableProperty = new FxBoolean(false);
-	protected CList<FxEditor> listeners = new CList<>();
+	protected final FxBoolean editableProperty = new FxBoolean(false);
+	protected final CList<FxEditorModelListener> listeners = new CList<>();
+	protected final FxObject<LoadStatus> loadStatus = new FxObject(LoadStatus.UNKNOWN);
 	protected final CMap<DataFormat,ClipboardHandlerBase> clipboardHandlers = new CMap(); 
 	private static FxEditorModel empty;
 	
@@ -70,13 +75,13 @@ public abstract class FxEditorModel
 	}
 
 
-	public void addListener(FxEditor li)
+	public void addListener(FxEditorModelListener li)
 	{
 		listeners.add(li);
 	}
 	
 	
-	public void removeListener(FxEditor li)
+	public void removeListener(FxEditorModelListener li)
 	{
 		listeners.remove(li);
 	}
@@ -116,6 +121,7 @@ public abstract class FxEditorModel
 				public int getLineCount() { return 0; }
 				public LineBox getLineBox(int line) { return box; }
 				public Edit edit(Edit ed) throws Exception { throw new Exception(); }
+				public String getPlainText(int line) { return null; }
 			};
 		}
 		return empty;
@@ -124,13 +130,19 @@ public abstract class FxEditorModel
 	
 	public void fireAllChanged()
 	{
-		fireEvent((li) -> li.eventAllChanged());
+		fireEvent((li) -> li.eventAllLinesChanged());
 	}
 	
 	
-	protected void fireEvent(Consumer<FxEditor> f)
+	public void fireTextUpdated(int startLine, int startPos, int startCharsInserted, int linesInserted, int endLine, int endPos, int endCharsInserted)
 	{
-		for(FxEditor li: listeners)
+		fireEvent((li) -> li.eventTextUpdated(startLine, startPos, startCharsInserted, linesInserted, endLine, endPos, endCharsInserted));
+	}
+	
+	
+	protected void fireEvent(Consumer<FxEditorModelListener> f)
+	{
+		for(FxEditorModelListener li: listeners)
 		{
 			f.accept(li);
 		}
@@ -244,7 +256,10 @@ public abstract class FxEditorModel
 				
 				if(i == last)
 				{
-					s = s.substring(0, m1.getLineOffset());
+					if(s.length() > 0)
+					{
+						s = s.substring(0, m1.getLineOffset());
+					}
 				}
 			}
 			
@@ -260,10 +275,12 @@ public abstract class FxEditorModel
 	}
 	
 	
-	/** returns plain text at the specified line, or null if unknown */
-	public String getPlainText(int line)
+	public void setLoadStatus(LoadStatus s)
 	{
-		LineBox b = getLineBox(line);
-		return b.getText();
+		if(s == null)
+		{
+			throw new NullPointerException("load status");
+		}
+		loadStatus.set(s);
 	}
 }
