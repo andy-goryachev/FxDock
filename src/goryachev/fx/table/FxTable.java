@@ -268,6 +268,12 @@ public class FxTable<T>
 	}
 	
 	
+	public void scrollTo(int row)
+	{
+		table.scrollTo(row);
+	}
+	
+	
 	public void selectRow(int ix)
 	{
 		table.getSelectionModel().select(ix);

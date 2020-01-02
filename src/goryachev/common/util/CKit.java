@@ -2428,4 +2428,21 @@ public final class CKit
 		
 		return a;
 	}
+	
+	
+	/** returns the next power of 2 or, if overflow, the argument.  useful for allocating growing arrays */
+	public static int toNeatSize(int x)
+	{
+		int v = Integer.highestOneBit(x);
+		if(x == v)
+		{
+			return v;
+		}
+		v = (v << 1);
+		if(v < 0)
+		{
+			return x;
+		}
+		return v;
+	}
 }

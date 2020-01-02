@@ -1,9 +1,7 @@
 // Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
-import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
-import goryachev.common.util.D;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Log;
 import goryachev.common.util.WeakList;
@@ -172,8 +170,6 @@ public class WindowsFx
 		FxWindow w = getFxWindow(n);
 		if(w == null)
 		{
-			D.print("delayed restore", CKit.getSimpleName(n)); // FIX
-			
 			// the node is not yet connected to the scene graph
 			// let's attach a listener to the bounds in parent property which gets set
 			// when the hierarchy of this node is completely connected
@@ -183,7 +179,6 @@ public class WindowsFx
 				public void changed(ObservableValue<? extends Bounds> src, Bounds prev, Bounds cur)
 				{
 					src.removeListener(this);
-					D.print("delayed restore performed", CKit.getSimpleName(n)); // FIX
 					restoreNode(n);
 				}
 			});

@@ -1,6 +1,7 @@
 // Copyright © 2010-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.Collection;
+import java.util.Formatter;
 import java.util.Map;
 
 
@@ -775,6 +776,22 @@ public class SB
 				sb.append('=');
 				sb.append(v);
 			}
+		}
+		return this;
+	}
+	
+	
+	/** appends formatted string, see String.format() */
+	public SB format(String fmt, Object ... args)
+	{
+		Formatter f = new Formatter(sb);
+		try
+		{
+			f.format(fmt, args);
+		}
+		finally
+		{
+			CKit.close(f);
 		}
 		return this;
 	}

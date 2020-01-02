@@ -7,5 +7,5 @@ package goryachev.common.util;
  */
 public class Copyright
 {
-	public static final String COPYRIGHT = "copyright © 2017 andy goryachev";
+	public static final String COPYRIGHT = "copyright © 2019 andy goryachev";
 }

@@ -43,8 +43,15 @@ public class CssLoader
 						
 						public InputStream getInputStream() throws IOException
 						{
-							byte[] b = decode(url.toString());
-							return new ByteArrayInputStream(b);
+							try
+							{
+								byte[] b = decode(url.toString());
+								return new ByteArrayInputStream(b);
+							}
+							catch(Throwable e)
+							{
+								throw new IOException(e);
+							}
 						}
 					};
 				}
@@ -114,7 +121,7 @@ public class CssLoader
 	}
 	
 	
-	public static byte[] decode(String css) throws IOException
+	public static byte[] decode(String css) throws Exception
 	{
 		css = css.substring(PREFIX.length() + 1);
 		return Base64.decode(CKit.getBytes(css));

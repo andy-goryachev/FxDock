@@ -1,5 +1,5 @@
 // Copyright © 2019 Andy Goryachev <andy@goryachev.com>
-package goryachev.fx.edit;
+package goryachev.fx;
 import java.util.function.Consumer;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;

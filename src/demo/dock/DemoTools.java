@@ -1,6 +1,6 @@
 // Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
-import goryachev.fx.FX;
+import goryachev.common.util.CKit;
 import goryachev.fx.HPane;
 import java.text.DecimalFormat;
 
@@ -16,7 +16,7 @@ public class DemoTools
 	/** formats double value */
 	public static String f(double x)
 	{
-		int n = FX.round(x);
+		int n = CKit.round(x);
 		if(x == n)
 		{
 			return String.valueOf(n);

@@ -1,7 +1,7 @@
 // Copyright © 2005-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
-
 import java.nio.charset.Charset;
+
 
 /** elastic byte array buffer */ 
 public class ElasticByteArray
@@ -171,5 +171,11 @@ public class ElasticByteArray
 	public String toString(Charset cs)
 	{
 		return new String(array, 0, size, cs);
+	}
+	
+	
+	public String toString(int start, int len, Charset cs)
+	{
+		return new String(array, start, len, cs);
 	}
 }

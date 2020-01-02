@@ -809,7 +809,7 @@ public class CPane
 							if(!skip)
 							{
 								double other = otherDimension(en, doingLayout);
-								int d = FX.ceil(sizingMethod(pref, en.node, other));
+								int d = CKit.ceil(sizingMethod(pref, en.node, other));
 								
 								// amount of space component occupies in this column
 								int cw = d - aggregateSize(start, i, gap);
@@ -900,7 +900,7 @@ public class CPane
 						w = 0;
 					}
 					
-					int d = FX.round(w);
+					int d = CKit.round(w);
 					size[i] = d;
 					remaining -= d;
 				}
@@ -926,7 +926,7 @@ public class CPane
 							w = 0;
 						}
 						
-						int d = FX.ceil(w);
+						int d = CKit.ceil(w);
 						size[i] = d;
 						remaining -= d;
 					}
@@ -963,10 +963,10 @@ public class CPane
 			ltr = true; // FIX (getNodeOrientation() == NodeOrientation.LEFT_TO_RIGHT);
 				
 			Insets m = getInsets();
-			mtop = FX.round(m.getTop());
-			mbottom = FX.round(m.getBottom());
-			mleft = FX.round(m.getLeft());
-			mright = FX.round(m.getRight());
+			mtop = CKit.round(m.getTop());
+			mbottom = CKit.round(m.getBottom());
+			mleft = CKit.round(m.getLeft());
+			mright = CKit.round(m.getRight());
 		}
 		
 
@@ -1033,13 +1033,13 @@ public class CPane
 			
 			if((c = ltr ? leftComp : rightComp) != null)
 			{
-				int d = FX.ceil(sizeHeight(pref, c));
+				int d = CKit.ceil(sizeHeight(pref, c));
 				h = Math.max(d, h);
 			}
 			
 			if((c = ltr ? rightComp : leftComp) != null)
 			{
-				int d = FX.ceil(sizeHeight(pref, c));
+				int d = CKit.ceil(sizeHeight(pref, c));
 				h = Math.max(d, h);
 			}
 			
@@ -1047,19 +1047,19 @@ public class CPane
 			
 			if(centerComp != null)
 			{
-				int d = FX.ceil(sizeHeight(pref, centerComp));
+				int d = CKit.ceil(sizeHeight(pref, centerComp));
 				h = Math.max(d, h);
 			}
 			
 			if(topComp != null)
 			{
-				int d = FX.ceil(sizeHeight(pref, topComp));
+				int d = CKit.ceil(sizeHeight(pref, topComp));
 				h += (d + getVGap());
 			}
 			
 			if(bottomComp != null)
 			{
-				int d = FX.ceil(sizeHeight(pref, bottomComp));
+				int d = CKit.ceil(sizeHeight(pref, bottomComp));
 				h += (d + getVGap());
 			}
 
@@ -1075,31 +1075,31 @@ public class CPane
 			
 			if((c = ltr ? leftComp : rightComp) != null)
 			{
-				int d = FX.ceil(sizeWidth(pref, c));
+				int d = CKit.ceil(sizeWidth(pref, c));
 				w += (d + getHGap());
 			}
 			
 			if((c = ltr ? rightComp : leftComp) != null)
 			{
-				int d = FX.ceil(sizeWidth(pref, c));
+				int d = CKit.ceil(sizeWidth(pref, c));
 				w += (d + getHGap());
 			}
 			
 			if(centerComp != null)
 			{
-				int d = FX.ceil(sizeWidth(pref, centerComp));
+				int d = CKit.ceil(sizeWidth(pref, centerComp));
 				w += d;
 			}
 			
 			if(topComp != null)
 			{
-				int d = FX.ceil(sizeWidth(pref, topComp));
+				int d = CKit.ceil(sizeWidth(pref, topComp));
 				w = Math.max(d, w);
 			}
 			
 			if(bottomComp != null)
 			{
-				int d = FX.ceil(sizeWidth(pref, bottomComp));
+				int d = CKit.ceil(sizeWidth(pref, bottomComp));
 				w = Math.max(d, w);
 			}
 
@@ -1181,15 +1181,15 @@ public class CPane
 		protected void layoutBorderComponents()
 		{	
 			int top = mtop;
-			int bottom = FX.round(getHeight()) - mbottom;
+			int bottom = CKit.round(getHeight()) - mbottom;
 			int left = mleft;
-			int right = FX.round(getWidth()) - mright;
+			int right = CKit.round(getWidth()) - mright;
 
 			Node c;
 			if(topComp != null)
 			{
 				c = topComp;
-				int h = FX.ceil(c.prefHeight(right - left));
+				int h = CKit.ceil(c.prefHeight(right - left));
 				setBounds(c, left, top, right - left, h);
 				top += (h + getVGap());
 			}
@@ -1197,21 +1197,21 @@ public class CPane
 			if(bottomComp != null)
 			{
 				c = bottomComp;
-				int h = FX.ceil(c.prefHeight(right - left));
+				int h = CKit.ceil(c.prefHeight(right - left));
 				setBounds(c, left, bottom - h, right - left, h);
 				bottom -= (h + getVGap());
 			}
 			
 			if((c = (ltr ? rightComp : leftComp)) != null)
 			{
-				int w = FX.ceil(c.prefWidth(bottom - top));
+				int w = CKit.ceil(c.prefWidth(bottom - top));
 				setBounds(c, right - w, top, w, bottom - top);
 				right -= (w + getHGap());
 			}
 			
 			if((c = (ltr ? leftComp : rightComp)) != null)
 			{
-				int w = FX.ceil(c.prefWidth(bottom - top));
+				int w = CKit.ceil(c.prefWidth(bottom - top));
 				setBounds(c, left, top, w, bottom - top);
 				left += (w + getHGap());
 			}

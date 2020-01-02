@@ -34,6 +34,12 @@ public class FxTreeTable<T>
 	}
 	
 	
+	public void setEditable(boolean on)
+	{
+		tree.setEditable(on);
+	}
+	
+	
 	public void selectFirst()
 	{
 		tree.getSelectionModel().selectFirst();
@@ -113,9 +119,21 @@ public class FxTreeTable<T>
 	}
 	
 	
+	public void addColumn(FxTreeTableColumn<T> c)
+	{
+		tree.getColumns().add(c);
+	}
+	
+	
 	public void addColumn()
 	{
 		tree.getColumns().add(new TreeTableColumn<T,T>());
+	}
+	
+	
+	public TreeTableColumn<T,?> getColumn(int ix)
+	{
+		return tree.getColumns().get(ix);
 	}
 	
 	
@@ -216,5 +234,23 @@ public class FxTreeTable<T>
 				header.setVisible(false);
 			}
 		});
+	}
+
+
+	public int getExpandedItemCount()
+	{
+		return tree.getExpandedItemCount();
+	}
+
+
+	public TreeItem<T> getTreeItem(int row)
+	{
+		return tree.getTreeItem(row);
+	}
+	
+	
+	public void edit(int row, TreeTableColumn<T,?> c)
+	{
+		tree.edit(row, c);
 	}
 }

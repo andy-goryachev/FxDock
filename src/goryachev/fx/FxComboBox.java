@@ -35,7 +35,7 @@ public class FxComboBox<T>
 	}
 	
 	
-	public void setValues(T[] items)
+	public void setValues(T ... items)
 	{
 		if(items == null)
 		{

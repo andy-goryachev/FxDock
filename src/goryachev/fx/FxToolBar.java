@@ -1,7 +1,11 @@
 // Copyright © 2018-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import javafx.beans.property.Property;
+import javafx.scene.Node;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 
 
 /**
@@ -12,6 +16,12 @@ public class FxToolBar
 {
 	public FxToolBar()
 	{
+	}
+	
+	
+	public void add(Node n)
+	{
+		getItems().add(n);
 	}
 	
 	
@@ -31,17 +41,33 @@ public class FxToolBar
 	
 	public void fill()
 	{
-		// TODO
+		Pane p = new Pane();
+		HBox.setHgrow(p, Priority.SOMETIMES);
+		add(p);
 	}
 	
 	
 	public void space()
 	{
-		// TODO does not seem to work.  need my own layout.
-		Region r = new Region();
-		r.setMinWidth(10);
-		r.setPrefWidth(10);
-		r.setMaxWidth(10);
-		getItems().add(r);
+		space(10);
+	}
+	
+	
+	public void space(int space)
+	{
+		Pane p = new Pane();
+		p.setMinWidth(space);
+		p.setPrefWidth(space);
+		p.setMaxWidth(space);
+		
+		add(p);
+	}
+
+
+	public FxToggleButton toggleButton(String text, Property<Boolean> prop)
+	{
+		FxToggleButton b = new FxToggleButton(text, prop);
+		add(b);
+		return b;
 	}
 }

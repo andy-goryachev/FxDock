@@ -1,5 +1,5 @@
 // Copyright © 2017-2019 Andy Goryachev <andy@goryachev.com>
-package goryachev.fx.edit;
+package goryachev.fx.hacks;
 
 
 /**

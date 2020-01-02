@@ -6,7 +6,7 @@ import goryachev.common.util.SB;
 public class FindOperationResult
 {
 	private final String original;
-	private final String pattern;;
+	private final String pattern;
 	private final int[] indexes;
 	
 	

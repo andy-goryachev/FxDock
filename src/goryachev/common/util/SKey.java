@@ -4,7 +4,7 @@ package goryachev.common.util;
 
 /** String-based database identifier (key) */
 public class SKey
-	implements Cloneable
+	implements Cloneable, Comparable<SKey>
 {
 	public static interface Getter
 	{
@@ -89,5 +89,11 @@ public class SKey
 	public boolean endsWith(String suffix)
 	{
 		return key.endsWith(suffix);
+	}
+
+
+	public int compareTo(SKey x)
+	{
+		return key.compareTo(x.key);
 	}
 }

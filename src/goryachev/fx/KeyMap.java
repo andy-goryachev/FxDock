@@ -1,11 +1,10 @@
 // Copyright © 2017-2019 Andy Goryachev <andy@goryachev.com>
-package goryachev.fx.edit;
+package goryachev.fx;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
 import goryachev.common.util.FH;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SB;
-import goryachev.fx.FX;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;

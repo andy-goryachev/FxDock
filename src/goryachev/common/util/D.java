@@ -397,7 +397,7 @@ public class D
 	}
 	
 	
-	/** when running in eclipse, prints frmatted string to stderr */
+	/** when running in eclipse, prints formatted string to stderr */
 	public static void f(String fmt, Object ... args)
 	{
 		if(CKit.isEclipse())

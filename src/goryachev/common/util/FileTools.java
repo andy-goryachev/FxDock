@@ -542,10 +542,18 @@ public class FileTools
 	}
 	
 	
+	/** copies file, preserving the file stamp.  throws an exception if both arguments point to the same absolute file */
 	public static void copy(File src, File dst) throws Exception
 	{
+		if(src.getAbsoluteFile().equals(dst.getAbsoluteFile()))
+		{
+			throw new Exception("same file");
+		}
+		
+		long t = src.lastModified();
 		FileInputStream in = new FileInputStream(src);
 		copy(in, dst);
+		dst.setLastModified(t);
 	}
 
 
@@ -915,14 +923,14 @@ public class FileTools
 	
 	
 	/** creates a file in the same directory */
-	public static File createSiblingFile(File file, String name)
+	public static File inSameDir(File file, String name)
 	{
 		File parent = file.getParentFile();
 		return new File(parent, name);
 	}
 	
 	
-	/** returns file extension (after last period) or null */ 
+	/** returns file extension (after the last period) or null */ 
 	public static String getExtension(String name)
 	{
 		if(name == null)
@@ -938,6 +946,26 @@ public class FileTools
 		else
 		{
 			return null;
+		}
+	}
+	
+	
+	/** returns base file name (before the last period) */ 
+	public static String getBaseName(String name)
+	{
+		if(name == null)
+		{
+			return null;
+		}
+		
+		int ix = name.lastIndexOf('.');
+		if(ix >= 0)
+		{
+			return name.substring(0, ix);
+		}
+		else
+		{
+			return name;
 		}
 	}
 }

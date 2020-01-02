@@ -1,5 +1,6 @@
 // Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.CKit;
 import goryachev.common.util.Log;
 import goryachev.common.util.Parsers;
 import java.util.List;
@@ -202,10 +203,10 @@ public class VPane
 		{
 			this.nodes = nodes;
 			this.sz = nodes.size();
-			top = FX.round(m.getTop());
-			bottom = FX.round(m.getBottom());
-			left = FX.round(m.getLeft());
-			right = FX.round(m.getRight());
+			top = CKit.round(m.getTop());
+			bottom = CKit.round(m.getBottom());
+			left = CKit.round(m.getLeft());
+			right = CKit.round(m.getRight());
 			gaps = (sz < 2) ? 0 : (gap * (sz - 1));
 		}
 		
@@ -246,17 +247,17 @@ public class VPane
 				int d;
 				if(isFixed(cc))
 				{
-					d = FX.ceil(cc);
+					d = CKit.ceil(cc);
 				}
 				else
 				{
 					if(preferred)
 					{
-						d = FX.ceil(Math.max(n.prefHeight(-1), n.minHeight(-1)));
+						d = CKit.ceil(Math.max(n.prefHeight(-1), n.minHeight(-1)));
 					}
 					else
 					{
-						d = FX.ceil(n.minHeight(-1));
+						d = CKit.ceil(n.minHeight(-1));
 					}
 				}
 				
@@ -281,11 +282,11 @@ public class VPane
 				int d;
 				if(preferred)
 				{
-					d = FX.ceil(n.prefWidth(height));
+					d = CKit.ceil(n.prefWidth(height));
 				}
 				else
 				{
-					d = FX.ceil(n.minWidth(height));				
+					d = CKit.ceil(n.minWidth(height));				
 				}
 				if(d > max)
 				{
@@ -362,7 +363,7 @@ public class VPane
 						w = 0;
 					}
 					
-					int d = FX.round(w);
+					int d = CKit.round(w);
 					size[i] = d;
 					remaining -= d;
 				}
@@ -389,7 +390,7 @@ public class VPane
 							w = 0;
 						}
 						
-						int d = FX.ceil(w);
+						int d = CKit.ceil(w);
 						size[i] = d;
 						remaining -= d;
 					}
@@ -402,7 +403,7 @@ public class VPane
 		{
 			computePositions();
 			
-			int w = FX.floor(getWidth() - left - right);
+			int w = CKit.floor(getWidth() - left - right);
 			for(int i=0; i<sz; i++)
 			{
 				Node n = nodes.get(i);
@@ -420,7 +421,7 @@ public class VPane
 			
 			// populate size[] with preferred sizes
 			int ph = computeSizes(true);
-			int dh = FX.floor(getHeight()) - ph;
+			int dh = CKit.floor(getHeight()) - ph;
 			if(dh != 0)
 			{
 				adjust(dh);

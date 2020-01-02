@@ -2,7 +2,6 @@
 package goryachev.fx.hacks;
 import goryachev.common.util.ByteArrayClassLoader;
 import goryachev.common.util.CKit;
-import goryachev.fx.edit.CHitInfo;
 import java.util.List;
 import javafx.scene.shape.PathElement;
 import javafx.scene.text.TextFlow;
@@ -17,7 +16,25 @@ import javafx.stage.Window;
  * supposedly all the necessary internal machinery will have been made public.
  * 
  * Development of java 8 and java 9 hacks is being done as part of FxEditor project
- * https://github.com/andy-goryachev/FxEditor/ 
+ * https://github.com/andy-goryachev/FxEditor/
+ * 
+ * How to update:
+ * 
+ * 1. set jdk to 8
+ * 2. checkout java8-hacks branch
+ * 3. compile
+ * 4. copy out/goryachev/fx/hacks/FxHacksJava8.class to ~/FxHacksJava8.bin
+ * 5. commit
+ * 
+ * 6. set jdk to 9 (or 10)
+ * 7. checkout java9-hacks branch
+ * 8. compile
+ * 9. copy out/goryachev/fx/hacks/FxHacksJava9.class to ~/FxHacksJava9.bin
+ * 10. commit
+ * 
+ * 11. checkout master branch
+ * 12. copy ~/FxHackJava?.bin to src/goryachev/fx/hacks
+ * 13. commit
  */
 public abstract class FxHacks
 {
@@ -73,7 +90,7 @@ public abstract class FxHacks
 			Class<?> c = new ByteArrayClassLoader().load(packageName + "." + name, b);
 			return (FxHacks)c.getDeclaredConstructor().newInstance();
 		}
-		catch(Exception e)
+		catch(Throwable e)
 		{
 			throw new Error("failed to load FxHacks", e);
 		}

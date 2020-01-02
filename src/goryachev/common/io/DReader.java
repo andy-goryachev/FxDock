@@ -39,6 +39,14 @@ public class DReader
 	{
 		CIOTools.readFully(in, b);
 	}
+	
+	
+	public byte[] readFully(int byteCount) throws IOException
+	{
+		byte[] b = new byte[byteCount];
+		CIOTools.readFully(in, b);
+		return b;
+	}
 
 
 	public void readFully(byte[] b, int off, int len) throws IOException
@@ -75,14 +83,27 @@ public class DReader
 	}
 	
 	
-	public int readInt8() throws IOException
+	/** reads one byte as an unsigned int (range 0..255) */
+	public int readUInt8() throws IOException
 	{
 		int ch = in.read();
 		if(ch < 0)
 		{
 			throw new EOFException();
 		}
-		return (ch & 0xff);
+		return ch;
+	}
+	
+	
+	/** reads one byte as an signed int (range -128 to 127) */
+	public int readXInt8() throws IOException
+	{
+		int ch = in.read();
+		if(ch < 0)
+		{
+			throw new EOFException();
+		}
+		return (byte)ch;
 	}
 	
 	
@@ -223,8 +244,16 @@ public class DReader
 	}
 	
 	
-	public long skip(long nbytes) throws IOException
+	public void skip(long nbytes) throws IOException
 	{
-		return in.skip(nbytes);
+		while(nbytes > 0)
+		{
+			long skipped = in.skip(nbytes);
+			if(skipped == 0)
+			{
+				throw new EOFException();
+			}
+			nbytes -= skipped;
+		}
 	}
 }
