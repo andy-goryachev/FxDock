@@ -1,4 +1,4 @@
-// Copyright © 2019 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.D;
 import java.util.List;

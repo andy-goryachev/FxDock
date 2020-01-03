@@ -1,4 +1,4 @@
-// Copyright © 2016-2019 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package research.fx;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMethod;

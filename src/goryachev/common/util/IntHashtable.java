@@ -1,4 +1,4 @@
-// Copyright © 2006-2019 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2006-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.Serializable;
 import java.util.Enumeration;

@@ -1,4 +1,4 @@
-// Copyright © 2008-2019 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2008-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.util.platform.CPlatformLinux;
 import goryachev.common.util.platform.CPlatformMac;

@@ -1,4 +1,4 @@
-// Copyright © 2014-2019 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2014-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.DReader;
 import goryachev.common.io.DWriterBytes;

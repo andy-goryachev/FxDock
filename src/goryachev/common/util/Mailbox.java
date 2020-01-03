@@ -1,4 +1,4 @@
-// Copyright © 2018-2019 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2018-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.concurrent.ArrayBlockingQueue;
 
