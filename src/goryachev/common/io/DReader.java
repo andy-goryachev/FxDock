@@ -12,6 +12,7 @@ import java.io.InputStream;
 
 /** Conventient binary data reader */
 public class DReader
+	extends InputStream
 	implements Closeable
 {
 	protected InputStream in;
@@ -96,7 +97,7 @@ public class DReader
 	
 	
 	/** reads one byte as an signed int (range -128 to 127) */
-	public int readXInt8() throws IOException
+	public int readInt8() throws IOException
 	{
 		int ch = in.read();
 		if(ch < 0)
@@ -244,16 +245,49 @@ public class DReader
 	}
 	
 	
-	public void skip(long nbytes) throws IOException
+	public long skip(long nbytes) throws IOException
 	{
-		while(nbytes > 0)
-		{
-			long skipped = in.skip(nbytes);
-			if(skipped == 0)
-			{
-				throw new EOFException();
-			}
-			nbytes -= skipped;
-		}
+		return in.skip(nbytes);
+	}
+	
+
+	public int read() throws IOException
+	{
+		return in.read();
+	}
+
+
+	public int read(byte[] buf) throws IOException
+	{
+		return in.read(buf);
+	}
+
+
+	public int read(byte[] buf, int off, int len) throws IOException
+	{
+		return in.read(buf, off, len);
+	}
+
+
+	public int available() throws IOException
+	{
+		return in.available();
+	}
+
+
+	public synchronized void mark(int readlimit)
+	{
+	}
+
+
+	public synchronized void reset() throws IOException
+	{
+		throw new IOException("reset not supported");
+	}
+
+
+	public boolean markSupported()
+	{
+		return false;
 	}
 }

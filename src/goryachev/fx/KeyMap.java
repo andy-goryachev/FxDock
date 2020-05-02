@@ -44,9 +44,21 @@ public class KeyMap
 	}
 	
 	
+	public static void onKeyPressed(Node n, KeyCode code, int modifiers, FxAction a)
+	{
+		get(n).add(KEY_PRESSED | (modifiers & MASK_MODIFIERS), code, null, a::fire);
+	}
+	
+	
 	public static void onKeyPressed(Node n, KeyCode code, Runnable r)
 	{
 		get(n).add(KEY_PRESSED, code, null, r);
+	}
+	
+	
+	public static void onKeyPressed(Node n, KeyCode code, FxAction a)
+	{
+		get(n).add(KEY_PRESSED, code, null, a::fire);
 	}
 	
 	

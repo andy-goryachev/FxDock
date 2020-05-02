@@ -72,7 +72,7 @@ public class CIOTools
 		}
 		else
 		{
-			if(count >= max)
+			if(count > max)
 			{
 				throw new IOException("expecting no more than " + max + " bytes, received " + count);
 			}

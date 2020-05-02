@@ -230,7 +230,8 @@ public final class Xoroshiro128Plus
 
 	public void nextBytes(byte[] bytes)
 	{
-		int i = bytes.length, n = 0;
+		int i = bytes.length;
+		int n = 0;
 		while(i != 0)
 		{
 			n = Math.min(i, 8);

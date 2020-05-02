@@ -1,7 +1,7 @@
 // Copyright © 2018-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
-
 import java.util.Collection;
+
 
 /**
  * Simple Circular Buffer.

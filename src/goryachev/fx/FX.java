@@ -1,5 +1,6 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.CKit;
 import goryachev.common.util.CPlatform;
 import goryachev.common.util.GlobalSettings;
 import goryachev.fx.hacks.FxHacks;
@@ -791,7 +792,7 @@ public final class FX
 	
 	
 	/** sets a tool tip on the control. */
-	public static void toolTip(Control n, Object tooltip)
+	public static void setTooltip(Control n, Object tooltip)
 	{
 		if(tooltip == null)
 		{
@@ -1057,7 +1058,7 @@ public final class FX
 				}
 				else
 				{
-					a.action();
+					a.invokeAction();
 					ev.consume();
 				}
 			}
@@ -1242,5 +1243,16 @@ public final class FX
 		{
 			handler.run();
 		}
+	}
+
+
+	/** converts non-null Color to #RRGGBBAA */
+	public static String toFormattedColor(Color c)
+	{
+        int r = CKit.round(c.getRed() * 255.0);
+        int g = CKit.round(c.getGreen() * 255.0);
+        int b = CKit.round(c.getBlue() * 255.0);
+        int a = CKit.round(c.getOpacity() * 255.0);
+		return String.format("#%02X%02X%02X%02X", r, g, b, a);
 	}
 }

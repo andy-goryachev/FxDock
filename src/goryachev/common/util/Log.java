@@ -27,6 +27,7 @@ import java.io.File;
  * log.debug(...);
  * 
  */
+@Deprecated // replaced by goryachev.common.log.Log
 public class Log
 {
 	private String name;

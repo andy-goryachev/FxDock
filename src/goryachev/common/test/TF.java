@@ -106,6 +106,12 @@ public class TF
 	{
 		throw new TestException(message);
 	}
+	
+	
+	public static void fail(Throwable err)
+	{
+		throw new TestException(err);
+	}
 
 	
 	/** print an item toString() representation */

@@ -32,6 +32,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -51,19 +53,20 @@ public final class CKit
 	public static final Charset CHARSET_8859_1 = Charset.forName("8859_1");
 	public static final Charset CHARSET_ASCII = Charset.forName("US-ASCII");
 	public static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
+	@Deprecated
 	public static final long MS_IN_A_SECOND = 1000;
+	@Deprecated
 	public static final long MS_IN_A_MINUTE = 60000;
+	@Deprecated
 	public static final long MS_IN_AN_HOUR = 3600000;
+	@Deprecated
 	public static final long MS_IN_A_DAY = 86400000;
+	@Deprecated
 	public static final long MS_IN_A_WEEK = 604800000;
 	private static AtomicInteger id = new AtomicInteger(); 
 	private static Boolean eclipseDetected;
 	private static final JavaVersion JAVA8 = JavaVersion.parse("1.8.0");
 	private static final JavaVersion JAVA9 = JavaVersion.parse("9");
-	public static final long KB = 1024;
-	public static final long MB = 1024 * KB;
-	public static final long GB = 1024 * MB;
-	public static final long TB = 1024 * GB;
 	private static final double LOW_MEMORY_CHECK_THRESHOLD = 0.9;
 	private static final double LOW_MEMORY_FAIL_AFTER_GC_THRESHOLD = 0.87;
 	
@@ -1216,7 +1219,7 @@ public final class CKit
 			int count = in.read(b, offset, b.length - offset);
 			if(count < 0)
 			{
-				throw new EOFException("read only " + offset + " bytes");
+				throw new EOFException("read only " + offset + " bytes instead of " + b.length);
 			}
 			offset += count;
 		}
@@ -1295,12 +1298,24 @@ public final class CKit
 	/** copies input stream into the output stream using 64K buffer.  returns the number of bytes copied.  supports cancellation */
 	public static long copy(InputStream in, OutputStream out) throws Exception
 	{
+		return copy(in, out, 65536);
+	}
+	
+	
+	/** copies input stream into the output stream.  returns the number of bytes copied.  supports cancellation */
+	public static long copy(InputStream in, OutputStream out, int bufferSize) throws Exception
+	{
+		if(bufferSize < 1)
+		{
+			throw new IllegalArgumentException("invalid bufferSize=" + bufferSize);
+		}
+		
 		if(in == null)
 		{
 			return 0;
 		}
 		
-		byte[] buf = new byte[65536];
+		byte[] buf = new byte[bufferSize];
 		long count = 0;
 		for(;;)
 		{
@@ -2310,27 +2325,31 @@ public final class CKit
 	}
 
 
-	public static long kebi(int x)
+	/** IEC kibi = 2^10, or 2014 */
+	public static long kibi(int x)
 	{
-		return KB * x;
+		return 1024L * x;
 	}
+
 	
-	
+	/** IEC mebi = 2^20, or 1024 * 1024 */ 
 	public static long mebi(int x)
 	{
-		return MB * x;
+		return 1048576L * x;
 	}
 	
 	
+	/** IEC gibi = 2^30, or 1024 * 1024 * 1024 */ 
 	public static long gibi(int x)
 	{
-		return GB * x;
+		return 1073741824L * x;
 	}
 	
 	
+	/** IEC tebi = 2^40, or 1024 * 1024 * 1024 * 1024 */ 
 	public static long tebi(int x)
 	{
-		return TB * x;
+		return 1099511627776L * x;
 	}
 	
 	
@@ -2444,5 +2463,50 @@ public final class CKit
 			return x;
 		}
 		return v;
+	}
+	
+	
+	public static <T> Iterator<T> iterator(T[] items)
+	{
+		if(items == null)
+		{
+			return Collections.emptyIterator();
+		}
+		else
+		{
+			return new Iterator<T>()
+			{
+				private int ix;
+				
+				
+				public boolean hasNext()
+				{
+					return ix < items.length;
+				}
+
+				
+				public T next()
+				{
+					return items[ix++];
+				}
+			};
+		}
+	}
+	
+	
+	/** trims a toString() representation of an object, limiting the text to maxLength */
+	public static String trim(Object x, int maxLength)
+	{
+		if(x == null)
+		{
+			return null;
+		}
+		
+		String s = x.toString();
+		if(s.length() > maxLength)
+		{
+			return s.substring(0, maxLength);
+		}
+		return s;
 	}
 }

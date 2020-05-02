@@ -1,6 +1,5 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.common.util.D;
 import goryachev.fx.internal.FxSchema;
 import goryachev.fx.internal.FxWindowBoundsMonitor;
 import goryachev.fx.internal.LocalBindings;
@@ -15,7 +14,7 @@ import javafx.util.StringConverter;
 
 
 /**
- * FxWindow.
+ * Fx Window.
  */
 public class FxWindow
 	extends Stage
@@ -30,7 +29,7 @@ public class FxWindow
 	
 	//
 	
-	public final FxAction closeWindowAction = new FxAction() { public void action() { closeWithConfirmation(); }};
+	public final FxAction closeWindowAction = new FxAction(this::closeWithConfirmation);
 	private final String name;
 	private final BorderPane pane;
 	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);

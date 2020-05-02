@@ -65,7 +65,13 @@ public class FxAction
 	}
 	
 	
-	protected void action()
+	public void setOnAction(Runnable r)
+	{
+		onAction = r;
+	}
+	
+	
+	protected final void invokeAction()
 	{
 		if(onAction != null)
 		{
@@ -218,7 +224,7 @@ public class FxAction
 			
 			try
 			{
-				action();
+				invokeAction();
 			}
 			catch(Throwable e)
 			{
