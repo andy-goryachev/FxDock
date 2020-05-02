@@ -13,6 +13,7 @@ import goryachev.fx.GlobalBooleanProperty;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockWindow;
+import goryachev.fxdock.Version;
 import goryachev.fxdock.WindowListMenuItem;
 import goryachev.fxdock.internal.DockTools;
 import java.util.Random;
@@ -48,7 +49,7 @@ public class DemoWindow
 	{
 		setTop(createMenu());
 		setBottom(createStatusBar());
-		setTitle(DockDemoApp.TITLE);
+		setTitle(DockDemoApp.TITLE + " " + Version.VERSION);
 		
 		bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
 	}

@@ -1,5 +1,9 @@
 # FxDock Release Notes
 
+**0.00.05**
+- updated common FX code
+- added gson as a dependency (Log)
+
 **0.00.04**
 - relicensed under Apache license 2.0
 
