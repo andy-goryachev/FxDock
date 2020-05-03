@@ -1,6 +1,7 @@
 // Copyright © 2018-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 
+import goryachev.common.log.Log;
 
 /**
  * Java Version.
@@ -159,7 +160,7 @@ public class JavaVersion
 		}
 		catch(Exception e)
 		{
-			Log.ex(e);
+			Log.err(e);
 			ver = new int[0];
 		}
 		

@@ -1,5 +1,6 @@
 // Copyright © 2012-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.log.Log;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -58,7 +59,7 @@ public class ParallelExecutor
 			}
 			catch(Exception e)
 			{
-				Log.ex(e);
+				Log.err(e);
 			}
 			closed = true;
 		}

@@ -1,8 +1,8 @@
 // Copyright © 2007-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util.platform;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CPlatform;
-import goryachev.common.util.Log;
 import java.io.File;
 import java.nio.charset.Charset;
 
@@ -35,7 +35,7 @@ public class CPlatformWindows
 		}
 		catch(Exception e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 		
 		return null;

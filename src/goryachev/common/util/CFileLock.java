@@ -1,5 +1,6 @@
 // Copyright © 2010-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.log.Log;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -39,7 +40,7 @@ public class CFileLock
 		}
 		catch(Exception e)
 		{ 
-			Log.ex(e);
+			Log.err(e);
 		}
 		
 		unlock();
@@ -58,7 +59,7 @@ public class CFileLock
 			}
 			catch(Exception e)
 			{
-				Log.ex(e);
+				Log.err(e);
 			}
 			
 			lock = null;
@@ -74,7 +75,7 @@ public class CFileLock
 			}
 			catch(Exception e)
 			{
-				Log.ex(e);
+				Log.err(e);
 			}
 		}
 	}

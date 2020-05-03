@@ -1,5 +1,6 @@
 // Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.log.Log;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
@@ -106,7 +107,7 @@ public class DelayedAction
 				Consumer<Throwable> eh = errorHandler;
 				if(eh == null)
 				{
-					Log.ex(e);
+					Log.err(e);
 				}
 				else
 				{
@@ -115,7 +116,7 @@ public class DelayedAction
 			}
 			catch(Throwable err)
 			{
-				Log.ex(err);
+				Log.err(err);
 			}
 		}
 		finally
@@ -123,7 +124,7 @@ public class DelayedAction
 			long elapsed = System.currentTimeMillis() - start;
 			if(elapsed > WARN_THRESHOLD)
 			{
-				Log.ex("taking too long to run: " + name);
+				Log.err("taking too long to run: " + name);
 			}
 		}
 	}

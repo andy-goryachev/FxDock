@@ -1,6 +1,7 @@
 // Copyright © 2007-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CWriter;
+import goryachev.common.log.Log;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -423,7 +424,7 @@ public final class CKit
 		}
 		catch(Exception e)
 		{
-			Log.ex(e);
+			Log.err(e);
 			return null;
 		}
 	}
@@ -2139,7 +2140,7 @@ public final class CKit
 				}
 				catch(Exception e)
 				{
-					Log.ex(e);
+					Log.err(e);
 				}
 			}
 		}

@@ -1,12 +1,12 @@
 // Copyright © 2008-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util.html;
+import goryachev.common.log.Log;
 import goryachev.common.util.Base64;
 import goryachev.common.util.CComparator;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CSet;
 import goryachev.common.util.Hex;
-import goryachev.common.util.Log;
 import goryachev.common.util.SB;
 import java.awt.Color;
 import java.net.URI;
@@ -367,7 +367,7 @@ public class HtmlTools
 			}
 			catch(Exception e)
 			{
-				Log.ex(e);
+				Log.err(e);
 			}
 		}
 		return u;

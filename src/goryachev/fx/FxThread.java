@@ -1,8 +1,8 @@
 // Copyright © 2006-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CancellableThread;
-import goryachev.common.util.Log;
 import goryachev.common.util.Progress;
 import javafx.application.Platform;
 
@@ -27,7 +27,7 @@ public abstract class FxThread
 	 * executed in an FX thread when process() throws an Throwable.
 	 * The default implementation simply logs the exception. 
 	 */ 
-	protected void processError(Throwable e) { Log.ex(e); }
+	protected void processError(Throwable e) { Log.err(e); }
 	
 	/** overwrite to enable time estimate and progress report */
 	public Progress getProgress() { return null; }
@@ -77,7 +77,7 @@ public abstract class FxThread
 				}
 				catch(Throwable e)
 				{
-					Log.ex(e);
+					Log.err(e);
 				}
 				
 				processSuccess();	
@@ -93,7 +93,7 @@ public abstract class FxThread
 				}
 				catch(Throwable e)
 				{
-					Log.ex(e);
+					Log.err(e);
 				}
 				
 				processError(err);

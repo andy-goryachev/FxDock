@@ -1,7 +1,7 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
-import goryachev.common.util.Log;
 import goryachev.common.util.Parsers;
 import java.util.List;
 import javafx.geometry.HPos;
@@ -156,7 +156,7 @@ public class HPane
 		}
 		catch(Exception e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 	

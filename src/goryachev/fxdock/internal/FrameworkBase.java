@@ -1,8 +1,8 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
+import goryachev.common.log.Log;
 import goryachev.common.util.CList;
 import goryachev.common.util.GlobalSettings;
-import goryachev.common.util.Log;
 import goryachev.common.util.WeakList;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fxdock.FxDockFramework;
@@ -78,7 +78,7 @@ public class FrameworkBase
 			}
 			catch(Exception e)
 			{
-				log.err(e);
+				log.error(e);
 			}
 		}
 		return ct;

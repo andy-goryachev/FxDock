@@ -1,7 +1,8 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
+import goryachev.common.log.Log;
+import goryachev.common.log.SimpleLogConfig;
 import goryachev.common.util.GlobalSettings;
-import goryachev.common.util.Log;
 import goryachev.fxdock.FxDockFramework;
 import java.io.File;
 import javafx.application.Application;
@@ -18,15 +19,19 @@ import javafx.stage.Stage;
 public class DockDemoApp
 	extends Application
 {
-	public static final String COPYRIGHT = "copyright © 2018 andy goryachev";
+	public static final String COPYRIGHT = "copyright © 2020 andy goryachev";
 	public static final String TITLE = "FxDock Docking Framework Demo";
 
 
 	public static void main(String[] args)
 	{
 		// init logger
-		Log.initConsole();
-		Log.conf("DebugSettingsProvider", true);
+		SimpleLogConfig cf = new SimpleLogConfig();
+		cf.addConsole();
+		cf.all("DebugSettingsProvider"); 
+		cf.all("DemoBrowser"); 
+		
+		Log.setConfig(cf);
 		
 		// init non-ui subsystems
 		GlobalSettings.setFileProvider(new File("settings.conf"));

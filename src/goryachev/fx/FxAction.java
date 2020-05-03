@@ -1,6 +1,6 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.common.util.Log;
+import goryachev.common.log.Log;
 import java.util.function.Consumer;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
@@ -81,7 +81,7 @@ public class FxAction
 			}
 			catch(Exception e)
 			{
-				Log.ex(e);
+				Log.err(e);
 			}
 		}
 	}
@@ -197,7 +197,7 @@ public class FxAction
 		}
 		catch(Throwable e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 
@@ -228,7 +228,7 @@ public class FxAction
 			}
 			catch(Throwable e)
 			{
-				Log.ex(e);
+				Log.err(e);
 			}
 		}
 	}

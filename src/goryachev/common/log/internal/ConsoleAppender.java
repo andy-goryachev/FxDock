@@ -13,10 +13,8 @@ public class ConsoleAppender
 	private final PrintStream out;
 	
 	
-	public ConsoleAppender(PrintStream out, String[] channels)
+	public ConsoleAppender(PrintStream out)
 	{
-		super(channels);
-		
 		this.out = out;
 	}
 	

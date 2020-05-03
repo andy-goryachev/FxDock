@@ -1,5 +1,6 @@
 // Copyright © 2015-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.log.Log;
 import java.lang.ref.WeakReference;
 
 
@@ -81,7 +82,7 @@ public class CProperty<T>
 					}
 					catch(Exception e)
 					{
-						Log.ex(e);
+						Log.err(e);
 					}
 				}
 			}

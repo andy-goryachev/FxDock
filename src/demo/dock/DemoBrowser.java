@@ -1,8 +1,8 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CSystem;
-import goryachev.common.util.D;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
 import goryachev.fx.FxAction;
@@ -27,11 +27,12 @@ import javafx.scene.web.WebView;
 
 
 /**
- * DemoBrowser.
+ * Demo Browser.
  */
 public class DemoBrowser
 	extends FxDockPane
 {
+	protected static final Log log = Log.get("DemoBrowser");
 	public final FxAction reloadAction = new FxAction(this::reload);
 	public final TextField addressField;
 	public final WebView view;
@@ -55,10 +56,11 @@ public class DemoBrowser
 		{
 			public void changed(ObservableValue v, Worker.State old, Worker.State cur)
 			{
-				D.print(cur);
+				log.debug(cur);
+				
 				if(w.getException() != null && cur == State.FAILED)
 				{
-					D.print(w.getException());
+					log.error(w.getException());
 				}
 			}
 		});
@@ -120,13 +122,13 @@ public class DemoBrowser
 
 	protected void handleError(WebErrorEvent ev)
 	{
-		D.print(ev);
+		log.error(ev);
 	}
 
 
 	public void openPage(String url)
 	{
-		D.print(url);
+		log.info(url);
 		
 		addressField.setText(url);
 		view.getEngine().load(url);

@@ -374,6 +374,13 @@ public class Log
 	
 	// logging methods
 	
+	
+	/** a special convenience method which uses root logger at ERROR level */
+	public static void err(Object message)
+	{
+		getRoot().error(message);
+	}
+	
 
 	/** a special convenience method which uses root logger at ERROR level */
 	public static void err(Object message, Throwable err)

@@ -1,5 +1,6 @@
 // Copyright © 2006-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.log.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -132,7 +133,7 @@ public class NetTools
 		}
 		catch(Exception e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 		
 		return CKit.CHARSET_UTF8;

@@ -1,5 +1,6 @@
 // Copyright © 2008-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.log.Log;
 import goryachev.common.util.platform.CPlatformLinux;
 import goryachev.common.util.platform.CPlatformMac;
 import goryachev.common.util.platform.CPlatformUnix;
@@ -213,7 +214,7 @@ public abstract class CPlatform
 		}
 		catch(Exception e)
 		{ 
-			Log.ex(e);
+			Log.err(e);
 		}
 		
 		// for all practical purposes

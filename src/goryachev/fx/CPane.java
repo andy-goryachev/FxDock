@@ -1,8 +1,8 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
-import goryachev.common.util.Log;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.css.CssMetaData;
@@ -534,7 +534,7 @@ public class CPane
 		}
 		catch(Exception e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 

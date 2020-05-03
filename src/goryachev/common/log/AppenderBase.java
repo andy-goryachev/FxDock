@@ -18,15 +18,8 @@ public abstract class AppenderBase
 	private final CList<String> channels = new CList();
 	
 	
-	public AppenderBase(String[] channels)
+	public AppenderBase()
 	{
-		if(channels != null)
-		{
-			for(String ch: channels)
-			{
-				this.channels.add(ch);
-			}
-		}
 	}
 	
 	

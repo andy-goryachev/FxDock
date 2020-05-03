@@ -1,5 +1,6 @@
 // Copyright © 2015-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.log.Log;
 import java.lang.reflect.Method;
 
 
@@ -58,12 +59,12 @@ public class Reflector
 			}
 			catch(Exception e)
 			{
-				Log.ex(e);
+				Log.err(e);
 			}
 		}
 		catch(Exception e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 		
 		return null;

@@ -1,5 +1,6 @@
 // Copyright © 2009-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.log.Log;
 import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.SortedMap;
@@ -83,7 +84,7 @@ public class CEncoding
 			}
 			catch(Exception e)
 			{
-				Log.ex(e);
+				Log.err(e);
 			}
 		}
 		

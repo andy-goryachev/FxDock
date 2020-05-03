@@ -4,9 +4,6 @@ import goryachev.common.util.CJob;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CSorter;
-import goryachev.common.util.Log;
-import goryachev.common.util.log.ConsoleLogWriter;
-import goryachev.common.util.log.LogWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -57,10 +54,7 @@ public class TestRunner
 	
 	public static void initLog()
 	{
-		LogWriter wr = new ConsoleLogWriter("console");
-		wr.setAsync(false);
-//		Log.addWriter(wr);
-		Log.addErrorWriter(wr);
+		// TODO
 	}
 
 

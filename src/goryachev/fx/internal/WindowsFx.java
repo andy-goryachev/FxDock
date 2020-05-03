@@ -1,9 +1,9 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
+import goryachev.common.log.Log;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
-import goryachev.common.util.Log;
 import goryachev.common.util.WeakList;
 import goryachev.fx.CssLoader;
 import goryachev.fx.FxAction;
@@ -241,7 +241,7 @@ public class WindowsFx
 		}
 		catch(Exception e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 		
 		w.show();
@@ -402,7 +402,7 @@ public class WindowsFx
 		}
 		catch(Throwable e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 }

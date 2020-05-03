@@ -1,7 +1,7 @@
 // Copyright © 2017-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.log.Log;
 import goryachev.common.util.CTask;
-import goryachev.common.util.Log;
 import javafx.application.Platform;
 
 
@@ -29,7 +29,7 @@ public class FxTask<T>
 	{
 		if(onError == null)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 		else
 		{

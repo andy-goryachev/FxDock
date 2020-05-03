@@ -1,8 +1,8 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.log.Log;
 import goryachev.common.util.Base64;
 import goryachev.common.util.CKit;
-import goryachev.common.util.Log;
 import goryachev.common.util.UrlStreamFactory;
 import goryachev.fx.hacks.FxHacks;
 import java.io.ByteArrayInputStream;
@@ -77,7 +77,7 @@ public class CssLoader
 		catch(Throwable e)
 		{
 			// css will be disabled
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 	
@@ -166,12 +166,12 @@ public class CssLoader
 		}
 		catch(Error e)
 		{
-			Log.ex(e);
+			Log.err(e);
 			throw e;
 		}
 		catch(Throwable e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 	}
 		

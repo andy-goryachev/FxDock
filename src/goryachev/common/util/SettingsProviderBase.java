@@ -1,6 +1,7 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CReader;
+import goryachev.common.log.Log;
 import java.util.List;
 
 
@@ -251,7 +252,7 @@ public abstract class SettingsProviderBase
 		}
 		catch(Exception e)
 		{
-			Log.ex(e);
+			Log.err(e);
 		}
 		return null;
 	}

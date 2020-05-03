@@ -1,5 +1,6 @@
 // Copyright © 2010-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.common.log.Log;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -19,7 +20,7 @@ public final class CRandom
 		catch(NoSuchAlgorithmException e)
 		{
 			// should not happen
-			Log.ex(e);
+			Log.err(e);
 			throw new Error(e);
 		}
 	}
