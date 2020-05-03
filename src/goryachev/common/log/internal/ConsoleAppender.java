@@ -25,11 +25,4 @@ public class ConsoleAppender
 	{
 		out.println(s);
 	}
-
-
-	public static AppenderBase create(LogConfig.AppenderInfo inf, PrintStream out)
-	{
-		ConsoleAppender a = new ConsoleAppender(out, inf.channels);
-		return a;
-	}
 }

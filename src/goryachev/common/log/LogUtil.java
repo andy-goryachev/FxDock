@@ -1,17 +1,12 @@
 // Copyright © 2020 Andy Goryachev <andy@goryachev.com>
-package goryachev.common.log.internal;
-import goryachev.common.log.AbstractLogConfig;
-import goryachev.common.log.AppenderBase;
-import goryachev.common.log.Log;
-import goryachev.common.log.LogLevel;
+package goryachev.common.log;
+import goryachev.common.log.internal.FormatField;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
 import goryachev.common.util.CSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 
 /**
@@ -19,28 +14,8 @@ import com.google.gson.GsonBuilder;
  */
 public class LogUtil
 {
-	private static Gson gson;
 	private static Pattern LEVELS = Pattern.compile("(OFF)|(FATAL)|(ERROR)|(WARN)|(INFO)|(DEBUG)|(TRACE)|(ALL)", Pattern.CASE_INSENSITIVE);
 	
-	
-	public static LogConfig parseLogConfig(String spec) throws Exception
-	{
-		return gson().fromJson(spec, LogConfig.class);
-	}
-	
-	
-	private static Gson gson()
-	{
-		if(gson == null)
-		{
-			gson = new GsonBuilder().
-				setLenient().
-				setPrettyPrinting().
-				create();
-		}
-		return gson;
-	}
-
 
 	public static AbstractLogConfig createDisabledLogConfig()
 	{
@@ -156,5 +131,14 @@ public class LogUtil
 		CSet<String> s = new CSet();
 		s.add(Log.class.getName());
 		return s;
+	}
+	
+	
+	public static void internalError(Throwable e)
+	{
+		if(Log.config.isVerbose())
+		{
+			e.printStackTrace();
+		}
 	}
 }

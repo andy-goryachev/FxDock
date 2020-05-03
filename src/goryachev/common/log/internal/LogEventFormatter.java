@@ -2,6 +2,7 @@
 package goryachev.common.log.internal;
 import goryachev.common.log.ILogEventFormatter;
 import goryachev.common.log.LogLevel;
+import goryachev.common.log.LogUtil;
 import goryachev.common.util.SB;
 
 

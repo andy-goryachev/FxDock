@@ -1,15 +1,10 @@
 // Copyright © 2017-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
-import goryachev.common.log.format.LogFormat;
-import goryachev.common.log.internal.FileMonitor;
-import goryachev.common.log.internal.LogConfig;
-import goryachev.common.log.internal.LogUtil;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.common.util.CSet;
 import goryachev.common.util.SB;
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
@@ -26,11 +21,10 @@ public class Log
 	private boolean needsCaller;
 	private CopyOnWriteArrayList<AppenderBase> appenders = new CopyOnWriteArrayList();
 	private final CMap<String,Log> children = new CMap(0);
-	private static FileMonitor monitor;
-	private static AbstractLogConfig config = LogUtil.createDisabledLogConfig();
-	private static final CSet<String> ignore = LogUtil.initIgnoreClassNames();
-	private static final CList<AppenderBase> allAppenders = new CList();
-	private static final Log root = new Log(null, null);
+	protected static AbstractLogConfig config = LogUtil.createDisabledLogConfig();
+	protected static final CSet<String> ignore = LogUtil.initIgnoreClassNames();
+	protected static final CList<AppenderBase> allAppenders = new CList();
+	protected static final Log root = new Log(null, null);
 
 
 	protected Log(Log parent, String name)
@@ -61,6 +55,77 @@ public class Log
 		}
 		
 		return log;
+	}
+	
+	
+	public static void setConfig(AbstractLogConfig cf)
+	{
+		if(cf == null)
+		{
+			cf = LogUtil.createDisabledLogConfig();
+		}
+		
+		List<AppenderBase> as;
+		try
+		{
+			as = cf.getAppenders();
+		}
+		catch(Throwable e)
+		{
+			LogUtil.internalError(e);
+			return;
+		}
+	
+		removeAppenders();
+		
+		config = cf;
+		
+		try
+		{
+			LogLevel lv = cf.getDefaultLogLevel();
+			root.setLevel(lv);
+			root.applyConfig(cf);
+		}
+		catch(Throwable e)
+		{
+			LogUtil.internalError(e);
+			return;
+		}
+		
+		try
+		{
+			addAppenders(as);
+		}
+		catch(Throwable e)
+		{
+			LogUtil.internalError(e);
+			return;
+		}
+	}
+	
+	
+	protected static void addAppenders(List<AppenderBase> as)
+	{
+		if(as != null)
+		{
+			for(AppenderBase a: as)
+			{
+				Log.allAppenders.add(a);
+				
+				if(a.getChannels().size() == 0)
+				{
+					Log.root.addAppender(a);
+				}
+				else
+				{
+					for(String name: a.getChannels())
+					{
+						Log ch = Log.get(name);
+						ch.addAppender(a);
+					}
+				}
+			}
+		}
 	}
 	
 	
@@ -97,108 +162,6 @@ public class Log
 		}
 	}
 	
-
-	public static void configure(String spec)
-	{
-		AbstractLogConfig cf;
-		try
-		{
-			cf = LogUtil.parseLogConfig(spec);
-		}
-		catch(Throwable e)
-		{
-			internalError(e);
-			return;
-		}
-				
-		if(cf == null)
-		{
-			cf = LogUtil.createDisabledLogConfig();
-		}
-		
-		List<AppenderBase> as;
-		try
-		{
-			as = cf.getAppenders();
-		}
-		catch(Throwable e)
-		{
-			internalError(e);
-			return;
-		}
-
-		removeAppenders();
-		
-		config = cf;
-		
-		try
-		{
-			LogLevel lv = cf.getDefaultLogLevel();
-			root.setLevel(lv);
-			root.applyConfig(cf);
-		}
-		catch(Throwable e)
-		{
-			internalError(e);
-			return;
-		}
-		
-		try
-		{
-			addAppenders(as);
-		}
-		catch(Throwable e)
-		{
-			internalError(e);
-			return;
-		}
-	}
-	
-
-	/** 
-	 * configures logger from a file.  
-	 * when pollingPeriod > 0, starts watching the specified file for changes.
-	 */
-	public static synchronized void configure(File file, long pollingPeriod)
-	{
-		if(monitor != null)
-		{
-			monitor.cancel();
-			monitor = null;
-		}
-		
-		configure(file);
-		
-		if(pollingPeriod > 0)
-		{
-			monitor = new FileMonitor(file, pollingPeriod, Log::configure);
-			monitor.start();
-		}
-	}
-	
-	
-	protected static void configure(File file)
-	{
-		try
-		{
-			String spec = CKit.readString(file);
-			configure(spec);
-		}
-		catch(Throwable e)
-		{
-			internalError(e);
-		}
-	}
-	
-	
-	protected static void internalError(Throwable e)
-	{
-		if(config.isVerbose())
-		{
-			e.printStackTrace();
-		}
-	}
-	
 	
 	protected static void removeAppenders()
 	{
@@ -214,31 +177,6 @@ public class Log
 		allAppenders.clear();
 	}
 	
-	
-	protected static void addAppenders(List<AppenderBase> as)
-	{
-		if(as != null)
-		{
-			for(AppenderBase a: as)
-			{
-				allAppenders.add(a);
-				
-				if(a.getChannels().size() == 0)
-				{
-					root.addAppender(a);
-				}
-				else
-				{
-					for(String name: a.getChannels())
-					{
-						Log ch = get(name);
-						ch.addAppender(a);
-					}
-				}
-			}
-		}
-	}
-
 
 	/** add a secret to be masked with *** in the output */
 	public static void addSecret(String secret)
@@ -300,7 +238,6 @@ public class Log
 	}
 	
 	
-	// must be externally synchronized
 	protected void addAppender(AppenderBase a)
 	{
 		appenders.add(a);
@@ -308,7 +245,6 @@ public class Log
 	}
 	
 	
-	// must be externally synchronized
 	protected void removeAppender(AppenderBase a)
 	{
 		appenders.remove(a);
@@ -487,7 +423,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.ERROR))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.ERROR, null, msg);
 		}
 	}
@@ -537,7 +473,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.WARN))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.WARN, null, msg);
 		}
 	}
@@ -587,7 +523,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.INFO))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.INFO, null, msg);
 		}
 	}
@@ -637,7 +573,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.DEBUG))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.DEBUG, null, msg);
 		}
 	}
@@ -696,7 +632,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.TRACE))
 		{
-			String msg = LogFormat.format(format, args);
+			String msg = String.format(format, args);
 			logEvent(LogLevel.TRACE, null, msg);
 		}
 	}

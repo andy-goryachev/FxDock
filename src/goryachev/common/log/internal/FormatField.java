@@ -16,7 +16,7 @@ public abstract class FormatField
 {
 	public abstract void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg);
 	
-	protected boolean needsCaller() { return false; }
+	public boolean needsCaller() { return false; }
 	
 	
 	// TODO
@@ -49,7 +49,7 @@ public abstract class FormatField
 			}
 
 
-			protected boolean needsCaller()
+			public boolean needsCaller()
 			{
 				return true;
 			}
@@ -124,7 +124,7 @@ public abstract class FormatField
 			}
 			
 			
-			protected boolean needsCaller()
+			public boolean needsCaller()
 			{
 				return true;
 			}
@@ -151,7 +151,7 @@ public abstract class FormatField
 			}
 
 
-			protected boolean needsCaller()
+			public boolean needsCaller()
 			{
 				return true;
 			}
