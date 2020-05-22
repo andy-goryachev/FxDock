@@ -57,7 +57,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.util.StringConverter;
 
 
 /**
@@ -618,34 +617,6 @@ public final class FX
 	public static void setOnSettingsLoaded(Node n, Runnable r)
 	{
 		FxSchema.setOnSettingsLoaded(n, r);
-	}
-	
-	
-	/** bind a property to be saved as part of FxWindow settings using the specified subkey */
-	public static <T> void bind(Node n, String subKey, Property<T> p)
-	{
-		FxSchema.bindings(n, true).add(subKey, p, null);
-	}
-	
-	
-	/** bind an object with settings to be saved as part of FxWindow settings using the specified subkey */
-	public static <T> void bind(Node n, String subKey, HasSettings x)
-	{
-		FxSchema.bindings(n, true).add(subKey, x);
-	}
-	
-	
-	/** bind a property to be saved as part of FxWindow settings using the specified subkey */
-	public static <T> void bind(Node n, String subKey, Property<T> p, StringConverter<T> c)
-	{
-		FxSchema.bindings(n, true).add(subKey, p, c);
-	}
-	
-	
-	/** bind a property to be saved as part of FxWindow settings using the specified subkey */
-	public static <T> void bind(Node n, String subKey, Property<T> p, SSConverter<T> c)
-	{
-		FxSchema.bindings(n, true).add(subKey, c, p);
 	}
 	
 	

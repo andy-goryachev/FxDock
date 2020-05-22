@@ -4,6 +4,7 @@ import goryachev.common.util.Hex;
 import goryachev.fx.FX;
 import goryachev.fx.FxPopupMenu;
 import goryachev.fx.HPane;
+import goryachev.fx.internal.LocalSettings;
 import goryachev.fxdock.FxDockPane;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -31,10 +32,10 @@ public class DemoPane
 		super(type);
 		
 		CheckBox cb = new CheckBox("boolean property");
-		bind("CHECKBOX", cb.selectedProperty());
+		LocalSettings.get(this).add("CHECKBOX", cb);
 		
 		TextField textField = new TextField();
-		bind("TEXTFIELD", textField.textProperty()); 
+		LocalSettings.get(this).add("TEXTFIELD", textField); 
 		
 //		VPane vb = new VPane();
 //		a(vb, 2, 0.25, 0.25, HPane.FILL);

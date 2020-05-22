@@ -2,15 +2,13 @@
 package goryachev.fx;
 import goryachev.fx.internal.FxSchema;
 import goryachev.fx.internal.FxWindowBoundsMonitor;
-import goryachev.fx.internal.LocalBindings;
-import javafx.beans.property.Property;
+import goryachev.fx.internal.LocalSettings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 
 /**
@@ -33,10 +31,8 @@ public class FxWindow
 	private final String name;
 	private final BorderPane pane;
 	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
-	@Deprecated // not sure why this isn't static
-	private final ReadOnlyObjectWrapper<Node> lastFocusOwner = new ReadOnlyObjectWrapper();
-	private final static ReadOnlyObjectWrapper<Node> lastFocusOwnerStatic = new ReadOnlyObjectWrapper();
-	private LocalBindings bindings;
+	private final static ReadOnlyObjectWrapper<Node> lastFocusOwner = new ReadOnlyObjectWrapper();
+	private LocalSettings settings;
 	
 	
 	public FxWindow(String name)
@@ -56,34 +52,19 @@ public class FxWindow
 		if(n != null)
 		{
 			lastFocusOwner.set(n);
-			lastFocusOwnerStatic.set(n);
 		}
 	}
 	
 	
-	@Deprecated
 	public Node getLastFocusOwner()
 	{
 		return lastFocusOwner.get();
 	}
 	
 	
-	public static Node getLastFocusOwnerStatic()
-	{
-		return lastFocusOwnerStatic.get();
-	}
-	
-	
-	@Deprecated
-	public ReadOnlyObjectProperty<Node> lastFocusOwnerProperty()
+	public static ReadOnlyObjectProperty<Node> lastFocusOwnerProperty()
 	{
 		return lastFocusOwner.getReadOnlyProperty();
-	}
-	
-	
-	public static ReadOnlyObjectProperty<Node> lastFocusOwnerPropertyStatic()
-	{
-		return lastFocusOwnerStatic.getReadOnlyProperty();
 	}
 	
 	
@@ -190,52 +171,25 @@ public class FxWindow
 		}
 	}
 	
-	
-	/** bind a property to be saved in window-specific settings using the specified subkey */
-	public <T> void bind(String subKey, Property<T> p)
+
+	/** returns a window-specific local settings instance */
+	public LocalSettings localSettings()
 	{
-		bindings().add(subKey, p, null);
-	}
-	
-	
-	/** bind an object with settings to be saved in window-specific settings using the specified subkey */
-	public <T> void bind(String subKey, HasSettings x)
-	{
-		bindings().add(subKey, x);
-	}
-	
-	
-	/** bind a property to be saved in window-specific settings using the specified subkey */
-	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
-	{
-		bindings().add(subKey, p, c);
-	}
-	
-	
-	/** bind a property to be saved in window-specific settings using the specified subkey */
-	public <T> void bind(String subKey, Property<T> p, SSConverter<T> c)
-	{
-		bindings().add(subKey, c, p);
-	}
-	
-	
-	protected LocalBindings bindings()
-	{
-		if(bindings == null)
+		if(settings == null)
 		{
-			bindings = new LocalBindings();
+			settings = new LocalSettings();
 		}
-		return bindings;
+		return settings;
 	}
 	
 
 	/** invoked by the framework after the window and its content is created. */
 	public void loadSettings(String prefix)
 	{
-		if(bindings != null)
+		if(settings != null)
 		{
 			String k = prefix + FxSchema.SFX_BINDINGS;
-			bindings.loadValues(k);
+			settings.loadValues(k);
 		}
 	}
 
@@ -243,10 +197,10 @@ public class FxWindow
 	/** invoked by the framework as necessary to store the window-specific settings */
 	public void storeSettings(String prefix)
 	{
-		if(bindings != null)
+		if(settings != null)
 		{
 			String k = prefix + FxSchema.SFX_BINDINGS;
-			bindings.saveValues(k);
+			settings.saveValues(k);
 		}
 	}
 }

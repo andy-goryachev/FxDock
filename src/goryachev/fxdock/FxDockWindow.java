@@ -5,7 +5,7 @@ import goryachev.fx.FxDump;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fx.SSConverter;
 import goryachev.fx.internal.FxWindowBoundsMonitor;
-import goryachev.fx.internal.LocalBindings;
+import goryachev.fx.internal.LocalSettings;
 import goryachev.fxdock.internal.FxDockRootPane;
 import goryachev.fxdock.internal.FxDockSchema;
 import goryachev.fxdock.internal.FxWindowBase;
@@ -35,7 +35,7 @@ public abstract class FxDockWindow
 	public final FxAction closeWindowAction = new FxAction(this::actionClose);
 	private final BorderPane frame;
 	private final FxDockRootPane root;
-	private LocalBindings bindings;
+	private LocalSettings settings;
 	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
 	
 	
@@ -163,10 +163,10 @@ public abstract class FxDockWindow
 	/** invoked by the framework after the window and its content is created. */
 	public void loadSettings(String prefix)
 	{
-		if(bindings != null)
+		if(settings != null)
 		{
 			String k = prefix + FxDockSchema.SUFFIX_BINDINGS;
-			bindings.loadValues(k);
+			settings.loadValues(k);
 		}
 		
 		FxDockSchema.loadContentSettings(prefix, getContent());
@@ -176,44 +176,23 @@ public abstract class FxDockWindow
 	/** invoked by the framework as necessary to store the window-specific settings */
 	public void storeSettings(String prefix)
 	{
-		if(bindings != null)
+		if(settings != null)
 		{
 			String k = prefix + FxDockSchema.SUFFIX_BINDINGS;
-			bindings.saveValues(k);
+			settings.saveValues(k);
 		}
 		
 		FxDockSchema.saveContentSettings(prefix, getContent());
 	}
 	
 	
-	/** bind a property to be saved in tile-specific settings using the specified subkey */
-	public <T> void bind(String subKey, Property<T> p)
+	public LocalSettings localSettings()
 	{
-		bindings().add(subKey, p, null);
-	}
-	
-	
-	/** bind a property to be saved in tile-specific settings using the specified subkey */
-	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
-	{
-		bindings().add(subKey, p, c);
-	}
-	
-	
-	/** bind a property to be saved in tile-specific settings using the specified subkey */
-	public <T> void bind(String subKey, Property<T> p, SSConverter<T> c)
-	{
-		bindings().add(subKey, c, p);
-	}
-	
-	
-	protected LocalBindings bindings()
-	{
-		if(bindings == null)
+		if(settings == null)
 		{
-			bindings = new LocalBindings();
+			settings = new LocalSettings();
 		}
-		return bindings;
+		return settings;
 	}
 	
 	

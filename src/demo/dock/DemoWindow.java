@@ -11,6 +11,7 @@ import goryachev.fx.FxMenu;
 import goryachev.fx.FxMenuBar;
 import goryachev.fx.GlobalBooleanProperty;
 import goryachev.fx.OnWindowClosing;
+import goryachev.fx.internal.LocalSettings;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.Version;
@@ -51,7 +52,7 @@ public class DemoWindow
 		setBottom(createStatusBar());
 		setTitle(DockDemoApp.TITLE + " " + Version.VERSION);
 		
-		bind("CHECKBOX_MENU", windowCheckAction.selectedProperty());
+		localSettings().add("CHECKBOX_MENU", windowCheckAction);
 	}
 	
 	

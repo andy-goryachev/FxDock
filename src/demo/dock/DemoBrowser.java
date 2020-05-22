@@ -8,6 +8,7 @@ import goryachev.fx.FX;
 import goryachev.fx.FxAction;
 import goryachev.fx.FxButton;
 import goryachev.fx.HPane;
+import goryachev.fx.internal.LocalSettings;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockStyles;
 import javafx.beans.value.ChangeListener;
@@ -46,7 +47,7 @@ public class DemoBrowser
 		
 		addressField = new TextField();
 		addressField.addEventHandler(KeyEvent.KEY_PRESSED, (ev) -> handleKeyTyped(ev));
-		bind("URL", addressField.textProperty());
+		LocalSettings.get(this).add("URL", addressField);
 		
 		view = new WebView();
 		view.getEngine().setOnError((ev) -> handleError(ev));

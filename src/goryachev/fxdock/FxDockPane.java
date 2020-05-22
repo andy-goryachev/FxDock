@@ -2,14 +2,12 @@
 package goryachev.fxdock;
 import goryachev.fx.FX;
 import goryachev.fx.FxAction;
-import goryachev.fx.SSConverter;
-import goryachev.fx.internal.LocalBindings;
+import goryachev.fx.internal.LocalSettings;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.DragAndDropHandler;
 import goryachev.fxdock.internal.FxDockBorderPane;
 import goryachev.fxdock.internal.FxDockSchema;
 import goryachev.fxdock.internal.FxDockTabPane;
-import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,7 +15,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
-import javafx.util.StringConverter;
 
 
 /**
@@ -35,7 +32,6 @@ public abstract class FxDockPane
 	private final ReadOnlyBooleanWrapper tabMode = new ReadOnlyBooleanWrapper();
 	private final SimpleStringProperty title = new SimpleStringProperty();
 	private final String type;
-	private LocalBindings bindings;
 	
 	
 	public FxDockPane(String type)
@@ -125,44 +121,14 @@ public abstract class FxDockPane
 	}
 	
 	
-	/** bind a property to be saved in tile-specific settings using the specified subkey */
-	public <T> void bind(String subKey, Property<T> p)
-	{
-		bindings().add(subKey, p, null);
-	}
-	
-	
-	/** bind a property to be saved in tile-specific settings using the specified subkey */
-	public <T> void bind(String subKey, Property<T> p, StringConverter<T> c)
-	{
-		bindings().add(subKey, p, c);
-	}
-	
-	
-	/** bind a property to be saved in tile-specific settings using the specified subkey */
-	public <T> void bind(String subKey, Property<T> p, SSConverter<T> c)
-	{
-		bindings().add(subKey, c, p);
-	}
-	
-	
-	protected LocalBindings bindings()
-	{
-		if(bindings == null)
-		{
-			bindings = new LocalBindings();
-		}
-		return bindings;
-	}
-	
-	
 	/** called by the framework to load values */
 	public void loadPaneSettings(String prefix)
 	{
-		if(bindings != null)
+		LocalSettings s = LocalSettings.find(this);
+		if(s != null)
 		{
 			String k = FxDockSchema.getPath(prefix, this, FxDockSchema.SUFFIX_BINDINGS);
-			bindings.loadValues(k);
+			s.loadValues(k);
 		}
 	}
 	
@@ -170,10 +136,11 @@ public abstract class FxDockPane
 	/** called by the framework to save values */
 	public void savePaneSettings(String prefix)
 	{
-		if(bindings != null)
+		LocalSettings s = LocalSettings.find(this);
+		if(s != null)
 		{
 			String k = FxDockSchema.getPath(prefix, this, FxDockSchema.SUFFIX_BINDINGS);
-			bindings.saveValues(k);
+			s.saveValues(k);
 		}
 	}
 	

@@ -37,7 +37,6 @@ public class FxSchema
 	public static final String WINDOW_ICONIFIED = "I";
 	public static final String WINDOW_NORMAL = "N";
 	
-	private static final Object PROP_BINDINGS = new Object();
 	private static final Object PROP_LOAD_HANDLER = new Object();
 	private static final Object PROP_NAME = new Object();
 	
@@ -120,23 +119,17 @@ public class FxSchema
 	}
 	
 
-	private static void storeBindings(String prefix, LocalBindings bindings)
+	private static void storeLocalSettings(String prefix, LocalSettings s)
 	{
-		if(bindings != null)
-		{
-			String k = prefix + SFX_BINDINGS;
-			bindings.saveValues(k);
-		}
+		String k = prefix + SFX_BINDINGS;
+		s.saveValues(k);
 	}
 	
 	
-	private static void restoreBindings(String prefix, LocalBindings bindings)
+	private static void restoreLocalSettings(String prefix, LocalSettings s)
 	{
-		if(bindings != null)
-		{
-			String k = prefix + SFX_BINDINGS;
-			bindings.loadValues(k);
-		}
+		String k = prefix + SFX_BINDINGS;
+		s.loadValues(k);
 	}
 
 	
@@ -316,7 +309,11 @@ public class FxSchema
 			return;
 		}
 		
-		storeBindings(name, bindings(n, false));
+		LocalSettings s = LocalSettings.find(n);
+		if(s != null)
+		{
+			storeLocalSettings(name, s);
+		}
 		
 		if(n instanceof SplitPane)
 		{
@@ -366,7 +363,11 @@ public class FxSchema
 			}
 		}
 		
-		restoreBindings(name, bindings(n, false));
+		LocalSettings s = LocalSettings.find(n);
+		if(s != null)
+		{
+			restoreLocalSettings(name, s);
+		}
 		
 		Runnable r = getOnSettingsLoaded(n);
 		if(r != null)
@@ -379,21 +380,6 @@ public class FxSchema
 	public static void setName(Node n, String name)
 	{
 		n.getProperties().put(PROP_NAME, name);
-	}
-	
-	
-	public static LocalBindings bindings(Node n, boolean create)
-	{
-		LocalBindings b = (LocalBindings)n.getProperties().get(PROP_BINDINGS);
-		if(b == null)
-		{
-			if(create)
-			{
-				b = new LocalBindings();
-				n.getProperties().put(PROP_BINDINGS, b);
-			}
-		}
-		return b;
 	}
 	
 	
