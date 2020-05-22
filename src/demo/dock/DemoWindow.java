@@ -16,7 +16,6 @@ import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.Version;
 import goryachev.fxdock.WindowListMenuItem;
-import goryachev.fxdock.internal.DockTools;
 import java.util.Random;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -52,7 +51,7 @@ public class DemoWindow
 		setBottom(createStatusBar());
 		setTitle(DockDemoApp.TITLE + " " + Version.VERSION);
 		
-		localSettings().add("CHECKBOX_MENU", windowCheckAction);
+		LocalSettings.get(this).add("CHECKBOX_MENU", windowCheckAction);
 	}
 	
 	
@@ -195,15 +194,6 @@ public class DemoWindow
 		GlobalSettings.save();
 	}
 
-
-	public void storeSettings(String prefix)
-	{
-		super.storeSettings(prefix);
-		
-		String s = DockTools.saveLayout(getContent()).toString();
-		statusField.setText(s);
-	}
-	
 	
 	public void save()
 	{

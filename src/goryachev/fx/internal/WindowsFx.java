@@ -132,7 +132,14 @@ public class WindowsFx
 	public void storeWindow(FxWindow w)
 	{
 		String windowPrefix = lookupWindowPrefix(w);
-		w.storeSettings(windowPrefix);
+		
+		LocalSettings settings = LocalSettings.find(w);
+		if(settings != null)
+		{
+			String k = windowPrefix + FxSchema.SFX_SETTINGS;
+			settings.saveValues(k);
+		}
+		
 		FxSchema.storeWindow(windowPrefix, w);
 		
 		Parent p = w.getScene().getRoot();
@@ -143,7 +150,13 @@ public class WindowsFx
 	public void restoreWindow(FxWindow w)
 	{
 		String windowPrefix = lookupWindowPrefix(w);
-		w.loadSettings(windowPrefix);
+		
+		LocalSettings settings = LocalSettings.find(w);
+		if(settings != null)
+		{
+			String k = windowPrefix + FxSchema.SFX_SETTINGS;
+			settings.loadValues(k);
+		}
 		FxSchema.restoreWindow(windowPrefix, w);
 		
 		Parent p = w.getScene().getRoot();

@@ -216,7 +216,8 @@ public class DockTools
 		{
 			if(FxDockFramework.getWindowCount() > 1)
 			{
-				w.discardSettings = true;
+				// TODO this is not used
+				// w.discardSettings = true;
 				w.close();
 				return true;
 			}

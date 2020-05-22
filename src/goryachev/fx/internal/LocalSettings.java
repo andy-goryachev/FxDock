@@ -5,7 +5,6 @@ import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
 import goryachev.fx.Converters;
 import goryachev.fx.FxAction;
-import goryachev.fx.FxWindow;
 import goryachev.fx.HasSettings;
 import goryachev.fx.SSConverter;
 import javafx.beans.property.BooleanProperty;
@@ -15,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
+import javafx.stage.Window;
 import javafx.util.StringConverter;
 
 
@@ -61,10 +61,16 @@ public class LocalSettings
 	}
 	
 	
-	/** returns a Node-specific instance, creating it within the Node's properties when necessary */
-	public static LocalSettings get(FxWindow w)
+	/** returns a Window-specific instance, creating it within the Window's properties when necessary */
+	public static LocalSettings get(Window w)
 	{
-		return w.localSettings();
+		LocalSettings s = find(w);
+		if(s == null)
+		{
+			s = new LocalSettings();
+			w.getProperties().put(PROP_BINDINGS, s);
+		}
+		return s;
 	}
 	
 	
@@ -72,6 +78,13 @@ public class LocalSettings
 	public static LocalSettings find(Node n)
 	{
 		return (LocalSettings)n.getProperties().get(PROP_BINDINGS);
+	}
+	
+	
+	/** returns a Window-specific instance, or null if not found.  This method should not be called from the client code normally. */
+	public static LocalSettings find(Window w)
+	{
+		return (LocalSettings)w.getProperties().get(PROP_BINDINGS);
 	}
 	
 

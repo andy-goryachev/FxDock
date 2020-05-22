@@ -23,10 +23,10 @@ public class FxSchema
 {
 	public static final String FX_PREFIX = "FX.";
 	
-	public static final String SFX_BINDINGS = ".BINDINGS";
 	public static final String SFX_COLUMNS = ".COLS";
 	public static final String SFX_DIVIDERS = ".DIVS";
 	public static final String SFX_SELECTION = ".SEL";
+	public static final String SFX_SETTINGS = ".SETTINGS";
 	
 	public static final String SORT_ASCENDING = "A";
 	public static final String SORT_DESCENDING = "D";
@@ -121,14 +121,14 @@ public class FxSchema
 
 	private static void storeLocalSettings(String prefix, LocalSettings s)
 	{
-		String k = prefix + SFX_BINDINGS;
+		String k = prefix + SFX_SETTINGS;
 		s.saveValues(k);
 	}
 	
 	
 	private static void restoreLocalSettings(String prefix, LocalSettings s)
 	{
-		String k = prefix + SFX_BINDINGS;
+		String k = prefix + SFX_SETTINGS;
 		s.loadValues(k);
 	}
 

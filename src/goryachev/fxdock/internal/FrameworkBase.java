@@ -5,6 +5,7 @@ import goryachev.common.util.CList;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.WeakList;
 import goryachev.fx.OnWindowClosing;
+import goryachev.fx.internal.LocalSettings;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -72,7 +73,14 @@ public class FrameworkBase
 				Node n = FxDockSchema.loadLayout(prefix);
 				w.setContent(n);
 				
-				w.loadSettings(prefix);
+				LocalSettings settings = LocalSettings.find(w);
+				if(settings != null)
+				{
+					String k = prefix + FxDockSchema.SUFFIX_BINDINGS;
+					settings.loadValues(k);
+				}
+				
+				FxDockSchema.loadContentSettings(prefix, w.getContent());
 				
 				w.show();
 			}
@@ -107,8 +115,18 @@ public class FrameworkBase
 	protected void storeWindow(int ix, FxDockWindow w)
 	{
 		String prefix = FxDockSchema.windowID(ix);
+		
 		FxDockSchema.saveLayout(prefix, w.getContent());
-		w.storeSettings(prefix);
+		
+		LocalSettings settings = LocalSettings.get(w);
+		if(settings != null)
+		{
+			String k = prefix + FxDockSchema.SUFFIX_BINDINGS;
+			settings.saveValues(k);
+		}
+		
+		FxDockSchema.saveContentSettings(prefix, w.getContent());
+		
 		FxDockSchema.storeWindow(prefix, w);
 	}
 	

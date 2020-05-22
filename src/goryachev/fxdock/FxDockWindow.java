@@ -3,24 +3,18 @@ package goryachev.fxdock;
 import goryachev.fx.FxAction;
 import goryachev.fx.FxDump;
 import goryachev.fx.OnWindowClosing;
-import goryachev.fx.SSConverter;
-import goryachev.fx.internal.FxWindowBoundsMonitor;
-import goryachev.fx.internal.LocalSettings;
+import goryachev.fx.internal.BaseFxWindow;
 import goryachev.fxdock.internal.FxDockRootPane;
-import goryachev.fxdock.internal.FxDockSchema;
-import goryachev.fxdock.internal.FxWindowBase;
-import javafx.beans.property.Property;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.util.StringConverter;
 
 
 /**
  * Base class for docking framework Stage.
  */
 public abstract class FxDockWindow
-	extends FxWindowBase
+	extends BaseFxWindow
 {
 	/** 
 	 * Override to ask the user to confirm closing of window.
@@ -35,14 +29,13 @@ public abstract class FxDockWindow
 	public final FxAction closeWindowAction = new FxAction(this::actionClose);
 	private final BorderPane frame;
 	private final FxDockRootPane root;
-	private LocalSettings settings;
-	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
 	
 	
 	public FxDockWindow()
 	{
 		root = new FxDockRootPane(this);
 		frame = new BorderPane(root);
+		
 		Scene s = new Scene(frame);
 		setScene(s);
 		
@@ -50,40 +43,9 @@ public abstract class FxDockWindow
 	}
 	
 	
-	public double getNormalX()
-	{
-		return normalBoundsMonitor.getX();
-	}
-	
-	
-	public double getNormalY()
-	{
-		return normalBoundsMonitor.getY();
-	}
-	
-	
-	public double getNormalWidth()
-	{
-		return normalBoundsMonitor.getWidth();
-	}
-	
-	
-	public double getNormalHeight()
-	{
-		return normalBoundsMonitor.getHeight();
-	}
-	
-	
 	public void open()
 	{
 		FxDockFramework.open(this);
-	}
-	
-	
-	public void setMinSize(double w, double h)
-	{
-		setMinWidth(w);
-		setMinHeight(h);
 	}
 	
 	
@@ -153,48 +115,12 @@ public abstract class FxDockWindow
 	}
 	
 	
-	/** save all windows */
+	/** saves all windows */
 	public void saveLayout()
 	{
 		FxDockFramework.saveLayout();
 	}
 
-
-	/** invoked by the framework after the window and its content is created. */
-	public void loadSettings(String prefix)
-	{
-		if(settings != null)
-		{
-			String k = prefix + FxDockSchema.SUFFIX_BINDINGS;
-			settings.loadValues(k);
-		}
-		
-		FxDockSchema.loadContentSettings(prefix, getContent());
-	}
-
-
-	/** invoked by the framework as necessary to store the window-specific settings */
-	public void storeSettings(String prefix)
-	{
-		if(settings != null)
-		{
-			String k = prefix + FxDockSchema.SUFFIX_BINDINGS;
-			settings.saveValues(k);
-		}
-		
-		FxDockSchema.saveContentSettings(prefix, getContent());
-	}
-	
-	
-	public LocalSettings localSettings()
-	{
-		if(settings == null)
-		{
-			settings = new LocalSettings();
-		}
-		return settings;
-	}
-	
 	
 	protected void actionClose()
 	{

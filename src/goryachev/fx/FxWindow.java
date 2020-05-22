@@ -1,21 +1,16 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.fx.internal.FxSchema;
-import goryachev.fx.internal.FxWindowBoundsMonitor;
-import goryachev.fx.internal.LocalSettings;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import goryachev.fx.internal.BaseFxWindow;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 
 /**
  * Fx Window.
  */
 public class FxWindow
-	extends Stage
+	extends BaseFxWindow
 {
 	/** 
 	 * Override to ask the user to confirm closing of window.
@@ -30,9 +25,6 @@ public class FxWindow
 	public final FxAction closeWindowAction = new FxAction(this::closeWithConfirmation);
 	private final String name;
 	private final BorderPane pane;
-	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
-	private final static ReadOnlyObjectWrapper<Node> lastFocusOwner = new ReadOnlyObjectWrapper();
-	private LocalSettings settings;
 	
 	
 	public FxWindow(String name)
@@ -42,59 +34,12 @@ public class FxWindow
 		
 		Scene sc = new Scene(pane);
 		setScene(sc);
-		
-		sc.focusOwnerProperty().addListener((s,p,val) -> updateFocusOwner(val));
-	}
-	
-	
-	protected void updateFocusOwner(Node n)
-	{
-		if(n != null)
-		{
-			lastFocusOwner.set(n);
-		}
-	}
-	
-	
-	public Node getLastFocusOwner()
-	{
-		return lastFocusOwner.get();
-	}
-	
-	
-	public static ReadOnlyObjectProperty<Node> lastFocusOwnerProperty()
-	{
-		return lastFocusOwner.getReadOnlyProperty();
 	}
 	
 	
 	public String getName()
 	{
 		return name;
-	}
-	
-	
-	public double getNormalX()
-	{
-		return normalBoundsMonitor.getX();
-	}
-	
-	
-	public double getNormalY()
-	{
-		return normalBoundsMonitor.getY();
-	}
-	
-	
-	public double getNormalWidth()
-	{
-		return normalBoundsMonitor.getWidth();
-	}
-	
-	
-	public double getNormalHeight()
-	{
-		return normalBoundsMonitor.getHeight();
 	}
 	
 	
@@ -140,27 +85,6 @@ public class FxWindow
 	}
 	
 	
-	public void setSize(int width, int height)
-	{
-		setWidth(width);
-		setHeight(height);
-	}
-	
-	
-	public void setMinSize(int width, int height)
-	{
-		setMinWidth(width);
-		setMinHeight(height);
-	}
-	
-	
-	public void setMaxSize(int width, int height)
-	{
-		setMaxWidth(width);
-		setMaxHeight(height);
-	}
-	
-	
 	public void closeWithConfirmation()
 	{
 		OnWindowClosing ch = new OnWindowClosing(false);
@@ -168,39 +92,6 @@ public class FxWindow
 		if(!ch.isCancelled())
 		{
 			close();
-		}
-	}
-	
-
-	/** returns a window-specific local settings instance */
-	public LocalSettings localSettings()
-	{
-		if(settings == null)
-		{
-			settings = new LocalSettings();
-		}
-		return settings;
-	}
-	
-
-	/** invoked by the framework after the window and its content is created. */
-	public void loadSettings(String prefix)
-	{
-		if(settings != null)
-		{
-			String k = prefix + FxSchema.SFX_BINDINGS;
-			settings.loadValues(k);
-		}
-	}
-
-
-	/** invoked by the framework as necessary to store the window-specific settings */
-	public void storeSettings(String prefix)
-	{
-		if(settings != null)
-		{
-			String k = prefix + FxSchema.SFX_BINDINGS;
-			settings.saveValues(k);
 		}
 	}
 }
