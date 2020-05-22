@@ -194,7 +194,7 @@ public final class CKit
 				}
 				else
 				{
-					return Arrays.equals((Object[])a, (Object[])b);
+					return Arrays.deepEquals((Object[])a, (Object[])b);
 				}
 			}
 			else
