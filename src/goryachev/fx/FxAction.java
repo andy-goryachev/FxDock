@@ -22,6 +22,7 @@ import javafx.scene.control.ToggleButton;
 public class FxAction
     implements EventHandler<ActionEvent>
 {
+	protected final Log log = Log.get("FxAction");
 	public static final FxAction DISABLED = new FxAction(null, false);
 	private final FxBoolean selectedProperty = new FxBoolean();
 	private final FxBoolean disabledProperty = new FxBoolean();
@@ -79,9 +80,9 @@ public class FxAction
 			{
 				onAction.run();
 			}
-			catch(Exception e)
+			catch(Throwable e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 	}
@@ -180,11 +181,26 @@ public class FxAction
 	}
 	
 	
+	/** fire onAction handler only if this action is enabled */
 	public void fire()
 	{
 		if(isEnabled())
 		{
 			handle(null);
+		}
+	}
+	
+	
+	/** execute an action regardless of whether its enabled or not */
+	public void execute()
+	{
+		try
+		{
+			invokeAction();
+		}
+		catch(Throwable e)
+		{
+			log.error(e);
 		}
 	}
 	
@@ -197,7 +213,7 @@ public class FxAction
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 
@@ -222,14 +238,7 @@ public class FxAction
 				ev.consume();
 			}
 			
-			try
-			{
-				invokeAction();
-			}
-			catch(Throwable e)
-			{
-				Log.err(e);
-			}
+			execute();
 		}
 	}
 }
