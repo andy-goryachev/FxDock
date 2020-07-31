@@ -29,7 +29,7 @@ public class FxTask<T>
 	{
 		if(onError == null)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 		else
 		{

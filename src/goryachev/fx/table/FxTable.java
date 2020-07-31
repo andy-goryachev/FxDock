@@ -4,35 +4,37 @@ import goryachev.fx.CommonStyles;
 import goryachev.fx.FX;
 import goryachev.fx.FxBoolean;
 import java.util.Collection;
+import java.util.function.Supplier;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 
 
 /**
- * FxTable.
- * 
- * empty rows: http://stackoverflow.com/questions/26298337/tableview-adjust-number-of-visible-rows
-	.table-row-cell:empty 
-	{
-		-fx-background-color: white;
-		-fx-border-color: white;
-	} 
+ * Convenient FxTable.
  */
 public class FxTable<T>
 	extends BorderPane
 {
 	public final TableView<T> table;
 	public final FxBoolean autoResizeMode = new FxBoolean();
+	private BooleanBinding singleSelectionProperty;
 	
 	
 	public FxTable()
@@ -51,6 +53,15 @@ public class FxTable<T>
 	}
 	
 	
+	/** allow for sorting of items separately from the source list */
+	public void wrapSortedList(ObservableList<T> src)
+	{
+		SortedList<T> s = new SortedList<>(src);
+		s.comparatorProperty().bind(table.comparatorProperty());
+		setItems(s);
+	}
+	
+	
 	private void init()
 	{
 		table.skinProperty().addListener((s,p,c) -> fixHorizontalScrollbar());
@@ -63,13 +74,13 @@ public class FxTable<T>
 	}
 	
 	
+	/** use FxTableColumn.setRealPrefWidth() to set the preferred width with CONSTRAINED_RESIZE_POLICY */  
 	public void setAutoResizeMode(boolean on)
 	{
 		autoResizeMode.set(on);
 
 		if(on)
 		{
-			// TODO implement a better resizing policy that uses preferred column width
 			table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 		}
 		else
@@ -104,6 +115,12 @@ public class FxTable<T>
 				}
 			}
 		}
+	}
+	
+	
+	public ObservableList<TableColumn<T,?>> columns()
+	{
+		return table.getColumns();
 	}
 	
 	
@@ -167,6 +184,22 @@ public class FxTable<T>
 	}
 	
 	
+	public T getItem(int row)
+	{
+		if(row < 0)
+		{
+			return null;
+		}
+		
+		ObservableList<T> items = table.getItems();
+		if(row >= items.size())
+		{
+			return null;
+		}
+		return items.get(row);
+	}
+	
+	
 	public void setItems(Collection<T> items)
 	{
 		clearSelection();
@@ -223,12 +256,6 @@ public class FxTable<T>
 	}
 	
 	
-	public void hideHeader()
-	{
-		FX.hideHeader(table);
-	}
-	
-	
 	public T getSelectedItem()
 	{
 		return table.getSelectionModel().getSelectedItem();
@@ -244,6 +271,22 @@ public class FxTable<T>
 	public void setPlaceholder(String s)
 	{
 		table.setPlaceholder(new Label(s));
+	}
+	
+	
+	public final StringProperty placeholderLabelTextProperty()
+	{
+		Node n = table.getPlaceholder();
+		if(n instanceof Label)
+		{
+			return ((Label)n).textProperty();
+		}
+		else
+		{
+			Label t = new Label();
+			table.setPlaceholder(t);
+			return t.textProperty();
+		}
 	}
 	
 	
@@ -326,5 +369,92 @@ public class FxTable<T>
 	{
 		// https://stackoverflow.com/questions/38680711/javafx-tableview-remove-default-alternate-row-color
 		FX.setStyle(table, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR, !on);
+	}
+	
+	
+	public void setPopupMenu(Supplier<ContextMenu> generator)
+	{
+		FX.setPopupMenu(this, generator);
+	}
+	
+
+	/** permanently hides the table header */
+	public void hideHeader()
+	{
+		table.skinProperty().addListener((s, p, v) ->
+		{
+			Pane h = (Pane)table.lookup("TableHeaderRow");
+			if(h != null)
+			{
+				if(h.isVisible())
+				{
+					h.setMaxHeight(0);
+					h.setMinHeight(0);
+					h.setPrefHeight(0);
+					h.setVisible(false);
+				}
+			}
+		});
+	}
+	
+	
+	/** this may not work if skin is not yet initialized */
+	public Pane getHeader()
+	{
+		return (Pane)table.lookup("TableHeaderRow");
+	}
+	
+	
+	public void setHeaderPopupMenu(Supplier<ContextMenu> generator)
+	{
+		Pane h = getHeader();
+		if(h != null)
+		{
+			FX.setPopupMenu(h, generator);
+		}
+		else
+		{
+			// this is idiocy
+			table.skinProperty().addListener((s, p, v) ->
+			{
+				Pane hd = getHeader();
+				if(hd != null)
+				{
+					FX.setPopupMenu(hd, generator);
+				}
+			});
+		}
+	}
+	
+	
+	public BooleanBinding singleSelectionProperty()
+	{
+		if(singleSelectionProperty == null)
+		{
+			singleSelectionProperty = Bindings.createBooleanBinding
+			(
+				() -> (table.getSelectionModel().getSelectedIndices().size() == 1),
+				table.getSelectionModel().getSelectedIndices()
+			);
+		}
+		return singleSelectionProperty;
+	}
+	
+	
+	public void setEditable(boolean on)
+	{
+		table.setEditable(on);
+	}
+	
+	
+	public boolean isEditable()
+	{
+		return table.isEditable();
+	}
+
+
+	public ObservableList<TablePosition> getSelectedCells()
+	{
+		return getSelectionModel().getSelectedCells();
 	}
 }

@@ -3,6 +3,7 @@ package goryachev.fx.hacks;
 import goryachev.common.util.ByteArrayClassLoader;
 import goryachev.common.util.CKit;
 import java.util.List;
+import javafx.scene.Scene;
 import javafx.scene.shape.PathElement;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Window;
@@ -49,12 +50,6 @@ public abstract class FxHacks
 	
 	/** returns the text position at the specified local coordinates */
 	public abstract int getTextPos(TextFlow t, double x, double y);
-	
-	/** applies global stylesheet on top of the javafx one */
-	public abstract void applyStyleSheet(String old, String cur);
-	
-	/** applies global stylesheet to a specific window on top of the javafx one */
-	public abstract void applyStyleSheet(Window w, String old, String cur);
 	
 	/** returns the list of Windows */
 	public abstract List<Window> getWindows();
@@ -108,6 +103,35 @@ public abstract class FxHacks
 		{
 			// this class lives on FxEditor java8-hacks branch
 			return "FxHacksJava8";
+		}
+	}
+	
+
+	/** applies global stylesheet on top of the javafx one */
+	public final void applyStyleSheet(String old, String cur)
+	{
+		for(Window w: getWindows())
+		{
+			applyStyleSheet(w, old, cur);
+		}
+	}
+	
+	
+	/** applies global stylesheet to a specific window on top of the javafx one */
+	public final void applyStyleSheet(Window w, String old, String cur)
+	{
+		if(cur != null)
+		{
+			Scene scene = w.getScene();
+			if(scene != null)
+			{
+				if(old != null)
+				{
+					scene.getStylesheets().remove(old);
+				}
+				
+				scene.getStylesheets().add(cur);
+			}			
 		}
 	}
 }

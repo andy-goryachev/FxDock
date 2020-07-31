@@ -124,35 +124,36 @@ public class KeyMap
 	protected void handleEvent(KeyEvent ev)
 	{
 		// FIX
-		SB sb = new SB();
-		if(ev.isAltDown())
-		{
-			sb.a(" alt");
-		}
-		
-		if(ev.isControlDown())
-		{
-			sb.a(" ctrl");
-		}
-
-		if(ev.isMetaDown())
-		{
-			sb.a(" meta");
-		}
-
-		if(ev.isShiftDown())
-		{
-			sb.a(" shift");
-		}
-		
-		if(ev.isShortcutDown())
-		{
-			sb.a(" shortcut");
-		}
+//		SB sb = new SB();
+//		if(ev.isAltDown())
+//		{
+//			sb.a(" alt");
+//		}
+//		
+//		if(ev.isControlDown())
+//		{
+//			sb.a(" ctrl");
+//		}
+//
+//		if(ev.isMetaDown())
+//		{
+//			sb.a(" meta");
+//		}
+//
+//		if(ev.isShiftDown())
+//		{
+//			sb.a(" shift");
+//		}
+//		
+//		if(ev.isShortcutDown())
+//		{
+//			sb.a(" shortcut");
+//		}
 		
 //		D.print(ev.getEventType(), Hex.toHexString(ev.getCharacter().getBytes()), ev.getCode(), sb); // FIX
 		
-		Runnable a = actions.get(key(ev));
+		KKey k = key(ev);
+		Runnable a = actions.get(k);
 		if(a != null)
 		{
 			a.run();

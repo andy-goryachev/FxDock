@@ -30,8 +30,12 @@ public class StandardFxProperties
 	public static final CssPseudo PRESSED = new CssPseudo(":pressed");
 	public static final CssPseudo SELECTED = new CssPseudo(":selected");
 	
+	public static final String BOLD = "bold";
 	public static final String TRANSPARENT = "transparent";
 	public static final String TABLE = ".table";
+	
+	// alignment
+	public static final String CENTER_LEFT = "CENTER_LEFT";
 	
 	// these colors are for debugging
 	protected static final Color R = Color.RED;
@@ -39,6 +43,9 @@ public class StandardFxProperties
 	protected static final Color B = Color.BLUE;
 	protected static final Color M = Color.MAGENTA;
 
+	// A
+	/** top-left | top-center | top-right | center-left | center | center-right bottom-left | bottom-center | bottom-right | baseline-left | baseline-center | baseline-right */
+	public static FxCssProp alignment(Object x) { return new FxCssProp("-fx-alignment", x); }
 	// B
 	public static FxCssProp backgroundColor(Object x) { return new FxCssProp("-fx-background-color", CssTools.toColor(x)); }
 	public static FxCssProp backgroundImage(Object x) { return new FxCssProp("-fx-background-image", CssTools.toValue(x)); }
@@ -68,6 +75,7 @@ public class StandardFxProperties
 	public static FxCssProp fixedCellSize(Object x) { return new FxCssProp("-fx-fixed-cell-size", x); }
 	public static FxCssProp fontFamily(Object x) { return new FxCssProp("-fx-font-family", x); }
 	public static FxCssProp fontSize(Object x) { return new FxCssProp("-fx-font-size", x); }
+	/** normal | italic | oblique */
 	public static FxCssProp fontStyle(Object x) { return new FxCssProp("-fx-font-style", x); }
 	/** [ normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ] */
 	public static FxCssProp fontWeight(Object x) { return new FxCssProp("-fx-font-weight", x); }
@@ -102,6 +110,8 @@ public class StandardFxProperties
 	public static FxCssProp strokeLineCap(StrokeLineCap x) { return new FxCssProp("-fx-stroke-width", CssTools.toValue(x)); }
 	public static FxCssProp strokeWidth(double x) { return new FxCssProp("-fx-stroke-width", x); }
 	// T
+	/** left | center | right | justify */
+	public static FxCssProp textAlignment(Object x) { return new FxCssProp("-fx-text-alignment", x); } 
 	public static FxCssProp textFill(Object x) { return new FxCssProp("-fx-text-fill", CssTools.toColor(x)); }
 	public static FxCssProp textOverrun(OverrunStyle x) { return new FxCssProp("-fx-text-overrun", CssTools.toColor(x)); }
 	public static FxCssProp translateX(double x) { return new FxCssProp("-fx-translate-x", x); }

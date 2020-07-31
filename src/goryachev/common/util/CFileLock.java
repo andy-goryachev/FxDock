@@ -9,6 +9,7 @@ import java.nio.channels.FileLock;
 
 public class CFileLock
 {
+	protected static final Log log = Log.get("CFileLock");
 	private File file;
 	private FileChannel channel;
 	private FileLock lock;
@@ -40,7 +41,7 @@ public class CFileLock
 		}
 		catch(Exception e)
 		{ 
-			Log.err(e);
+			log.error(e);
 		}
 		
 		unlock();
@@ -59,7 +60,7 @@ public class CFileLock
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 			
 			lock = null;
@@ -75,7 +76,7 @@ public class CFileLock
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 	}

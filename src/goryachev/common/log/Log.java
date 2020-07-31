@@ -1,5 +1,6 @@
 // Copyright © 2017-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
+import goryachev.common.log.internal.ConsoleAppender;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
@@ -58,6 +59,15 @@ public class Log
 	}
 	
 	
+	public static void initForDebug()
+	{
+		SimpleLogConfig c = new SimpleLogConfig();
+		c.setDefaultLogLevel(LogLevel.INFO);
+		c.addAppender(new ConsoleAppender(System.out));
+		setConfig(c);
+	}
+	
+	
 	public static void setConfig(AbstractLogConfig cf)
 	{
 		if(cf == null)
@@ -94,7 +104,7 @@ public class Log
 		
 		try
 		{
-			addAppenders(as);
+			setAppenders(as);
 		}
 		catch(Throwable e)
 		{
@@ -104,16 +114,18 @@ public class Log
 	}
 	
 	
-	protected static void addAppenders(List<AppenderBase> as)
+	protected static void setAppenders(List<AppenderBase> as)
 	{
 		if(as != null)
 		{
 			for(AppenderBase a: as)
 			{
+				Log.allAppenders.clear();
 				Log.allAppenders.add(a);
 				
 				if(a.getChannels().size() == 0)
 				{
+					Log.root.clearAppenders();
 					Log.root.addAppender(a);
 				}
 				else
@@ -121,6 +133,7 @@ public class Log
 					for(String name: a.getChannels())
 					{
 						Log ch = Log.get(name);
+						ch.clearAppenders();
 						ch.addAppender(a);
 					}
 				}
@@ -252,6 +265,12 @@ public class Log
 	}
 	
 	
+	protected void clearAppenders()
+	{
+		appenders.clear();
+	}
+	
+	
 	protected void setNeedsCallerRecursively(boolean on)
 	{
 		if(on != needsCaller)
@@ -369,30 +388,6 @@ public class Log
 		}
 		
 		System.err.println(sb);
-	}
-	
-	
-	// logging methods
-	
-	
-	/** a special convenience method which uses root logger at ERROR level */
-	public static void err(Object message)
-	{
-		getRoot().error(message);
-	}
-	
-
-	/** a special convenience method which uses root logger at ERROR level */
-	public static void err(Object message, Throwable err)
-	{
-		getRoot().error(message, err);
-	}
-	
-	
-	/** a special convenience method which uses root logger at ERROR level */
-	public static void err(Throwable err)
-	{
-		getRoot().error(err);
 	}
 	
 	

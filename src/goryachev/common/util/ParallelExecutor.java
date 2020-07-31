@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ParallelExecutor
 	implements ThreadFactory
 {
+	protected static final Log log = Log.get("ParallelExecutor");
 	private String name;
 	private AtomicInteger number = new AtomicInteger();
 	private ThreadPoolExecutor exec;
@@ -59,7 +60,7 @@ public class ParallelExecutor
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 			closed = true;
 		}

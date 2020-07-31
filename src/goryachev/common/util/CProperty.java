@@ -15,6 +15,7 @@ public class CProperty<T>
 	
 	//
 	
+	protected static final Log log = Log.get("CProperty");
 	private T value;
 	private CList<Object> listeners;
 	
@@ -80,9 +81,9 @@ public class CProperty<T>
 					{
 						((Listener)x).onCPropertyChange(old, cur);
 					}
-					catch(Exception e)
+					catch(Throwable e)
 					{
-						Log.err(e);
+						log.error(e);
 					}
 				}
 			}

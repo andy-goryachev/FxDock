@@ -20,6 +20,7 @@ import javafx.scene.layout.Region;
 public class HPane
 	extends Pane
 {
+	protected static final Log log = Log.get("HPane");
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;
 	protected int gap;
@@ -156,7 +157,7 @@ public class HPane
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	
@@ -197,6 +198,12 @@ public class HPane
 	public void remove(Node n)
 	{
 		getChildren().remove(n);
+	}
+	
+	
+	public void clear()
+	{
+		getChildren().clear();
 	}
 	
 	

@@ -6,22 +6,28 @@ import goryachev.common.util.GlobalSettings;
 import goryachev.fx.hacks.FxHacks;
 import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.FxSchema;
+import goryachev.fx.internal.ParentWindow;
 import goryachev.fx.internal.WindowsFx;
 import goryachev.fx.table.FxTable;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
+import javafx.css.Styleable;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -30,6 +36,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
@@ -42,13 +49,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -60,7 +68,7 @@ import javafx.stage.Window;
 
 
 /**
- * Making FX-ing easier.
+ * Making JavaFX "easier".
  */
 public final class FX
 {
@@ -118,6 +126,12 @@ public final class FX
 	{
 		windowsFx.restoreWindow(w);
 		GlobalSettings.save();
+	}
+	
+	
+	public static void openWindows(Function<String,FxWindow> generator)
+	{
+		windowsFx.openWindows(generator);
 	}
 	
 	
@@ -293,6 +307,13 @@ public final class FX
 	}
 	
 	
+	/** apply styles to a Styleable */
+	public static void style(Styleable n, CssStyle style)
+	{
+		n.getStyleClass().add(style.getName());
+	}
+	
+	
 	/** apply styles to a Node */
 	public static void style(Node n, Object ... attrs)
 	{
@@ -413,6 +434,10 @@ public final class FX
 	/** Creates a simple color background. */
 	public static Background background(Paint c)
 	{
+		if(c == null)
+		{
+			return null;
+		}
 		return new Background(new BackgroundFill(c, null, null));
 	}
 	
@@ -558,6 +583,20 @@ public final class FX
 	}
 	
 	
+	/** execute in FX application thread directly if called from it, or in runLater() */
+	public static void inFX(Runnable r)
+	{
+		if(Platform.isFxApplicationThread())
+		{
+			r.run();
+		}
+		else
+		{
+			FX.later(r);
+		}
+	}
+	
+	
 	/** swing invokeAndWait() analog.  if called from an FX application thread, simply invokes the producer. */
 	public static <T> T invokeAndWait(Callable<T> producer) throws Exception
 	{
@@ -666,6 +705,18 @@ public final class FX
 		{
 			return base;
 		}
+		
+		if(base == null)
+		{
+			if(over == null)
+			{
+				return null;
+			}
+			else
+			{
+				return new Color(over.getRed(), over.getGreen(), over.getBlue(), over.getOpacity() * fraction);
+			}
+		}
 
 		if(base.isOpaque())
 		{
@@ -744,23 +795,6 @@ public final class FX
 		return new Image(c.getResourceAsStream(resource));
 	}
 
-
-	/** permanently hides the table header */
-	public static void hideHeader(TableView<?> t)
-	{
-		t.skinProperty().addListener((s, p, v) ->
-		{
-			Pane h = (Pane)t.lookup("TableHeaderRow");
-			if(h.isVisible())
-			{
-				h.setMaxHeight(0);
-				h.setMinHeight(0);
-				h.setPrefHeight(0);
-				h.setVisible(false);
-			}
-		});
-	}
-	
 	
 	/** sets a tool tip on the control. */
 	public static void setTooltip(Control n, Object tooltip)
@@ -944,23 +978,38 @@ public final class FX
 	/** returns a parent of the specified type, or null.  if comp is an instance of the specified class, returns comp */
 	public static <T> T getAncestorOfClass(Class<T> c, Node comp)
 	{
-		while(comp != null)
+		if(Window.class.isAssignableFrom(c))
 		{
-			if(c.isInstance(comp))
+			Scene sc = comp.getScene();
+			if(sc != null)
 			{
-				return (T)comp;
+				Window w = sc.getWindow();
+				if(w.getClass().isAssignableFrom(c))
+				{
+					return (T)w;
+				}
 			}
-			
-//			if(comp instanceof JPopupMenu)
-//			{
-//				if(comp.getParent() == null)
-//				{
-//					comp = ((JPopupMenu)comp).getInvoker();
-//					continue;
-//				}
-//			}
-			
-			comp = comp.getParent();
+		}
+		else
+		{
+			while(comp != null)
+			{
+				if(c.isInstance(comp))
+				{
+					return (T)comp;
+				}
+				
+	//			if(comp instanceof JPopupMenu)
+	//			{
+	//				if(comp.getParent() == null)
+	//				{
+	//					comp = ((JPopupMenu)comp).getInvoker();
+	//					continue;
+	//				}
+	//			}
+				
+				comp = comp.getParent();
+			}
 		}
 		return null;
 	}
@@ -972,19 +1021,30 @@ public final class FX
 	}
 	
 	
-	/** attach a popup menu to the node */
-	public static void setPopupMenu(Node owner, Supplier<FxPopupMenu> generator)
+	/** 
+	 * attach a popup menu to a node.
+	 * WARNING: sometimes, as the case is with TableView/FxTable header, 
+	 * the requested node gets created by the skin at some later time.
+	 * In this case, additional dance must be performed, see for example
+	 * FxTable.setHeaderPopupMenu()   
+	 */
+	public static void setPopupMenu(Node owner, Supplier<ContextMenu> generator)
 	{
+		if(owner == null)
+		{
+			throw new NullPointerException("cannot attach popup menu to null");
+		}
+		
 		owner.setOnContextMenuRequested((ev) ->
 		{
 			if(generator != null)
 			{
-				FX.later(() ->
+				ContextMenu m = generator.get();
+				if(m != null)
 				{
-					FxPopupMenu m = generator.get();
-					if(m != null)
+					if(m.getItems().size() > 0)
 					{
-						if(m.getItems().size() > 0)
+						FX.later(() ->
 						{
 							// javafx does not dismiss the popup when the user
 							// clicks on the owner node
@@ -994,14 +1054,16 @@ public final class FX
 								{
 									m.hide();
 									owner.removeEventFilter(MouseEvent.MOUSE_PRESSED, this);
+									event.consume();
 								}
 							};
 							
 							owner.addEventFilter(MouseEvent.MOUSE_PRESSED, li);
 							m.show(owner, ev.getScreenX(), ev.getScreenY());
-						}
+						});
+						ev.consume();
 					}
-				});
+				}
 			}
 			ev.consume();
 		});
@@ -1173,6 +1235,25 @@ public final class FX
 	}
 	
 	
+	/** adds a ListChangeListener to the specified ObservableValue(s) */
+	public static void onChange(Runnable handler,ObservableList<?> list)
+	{
+		onChange(handler, false, list);
+	}
+	
+	
+	/** adds a ListChangeListener to the specified ObservableValue(s) */
+	public static void onChange(Runnable handler, boolean fireImmediately, ObservableList list)
+	{
+		list.addListener((Change ch) -> handler.run());
+		
+		if(fireImmediately)
+		{
+			handler.run();
+		}
+	}
+	
+	
 	/** adds an invalidation listener to an observable */
 	public static void onInvalidation(Runnable handler, Observable prop)
 	{
@@ -1225,5 +1306,100 @@ public final class FX
         int b = CKit.round(c.getBlue() * 255.0);
         int a = CKit.round(c.getOpacity() * 255.0);
 		return String.format("#%02X%02X%02X%02X", r, g, b, a);
+	}
+	
+	
+	/** converts non-null Color to #RRGGBB */
+	public static String toFormattedColorRGB(Color c)
+	{
+        int r = CKit.round(c.getRed() * 255.0);
+        int g = CKit.round(c.getGreen() * 255.0);
+        int b = CKit.round(c.getBlue() * 255.0);
+		return String.format("#%02X%02X%02X", r, g, b);
+	}
+
+
+	public static boolean isParentWindowVisible(Node n)
+	{
+		if(n == null)
+		{
+			return false;
+		}
+		
+		Scene s = n.getScene();
+		if(s == null)
+		{
+			return false;
+		}
+		
+		Window w = s.windowProperty().get();
+		if(w == null)
+		{
+			return false;
+		}
+		
+		return w.isShowing();
+	}
+	
+	
+	/** returns a read-only property that tracks parent window of a Node */
+	public static  ReadOnlyObjectProperty<Window> parentWindowProperty(Node n)
+	{
+		return new ParentWindow(n).windowProperty();
+	}
+	
+	
+	/** avoid ambiguous signature warning when using addListener */
+	public static <T> void addChangeListener(ObservableList<T> list, ListChangeListener<? super T> li)
+	{
+		list.addListener(li);
+	}
+	
+
+	public static <T> void addChangeListener(ObservableValue<T> prop, ChangeListener<? super T> li)
+	{
+		prop.addListener(li);
+	}
+	
+	
+	/** simplified version of addChangeListener that only accepts the current value */
+	public static <T> void addChangeListener(ObservableValue<T> prop, Consumer<? super T> li)
+	{
+		prop.addListener((s,p,current) -> li.accept(current));
+	}
+	
+	
+	/** simplified version of addChangeListener that only accepts the current value */
+	public static <T> void addChangeListener(ObservableValue<T> prop, boolean fireImmediately, Consumer<? super T> li)
+	{
+		prop.addListener((s,p,current) -> li.accept(current));
+		
+		if(fireImmediately)
+		{
+			li.accept(prop.getValue());
+		}
+	}
+
+
+	/** converts java fx Color to a 32 bit RGBA integer */
+	public static Integer toRGBA(Color c)
+	{
+        int r = (int)Math.round(c.getRed() * 255.0);
+        int g = (int)Math.round(c.getGreen() * 255.0);
+        int b = (int)Math.round(c.getBlue() * 255.0);
+        int a = (int)Math.round(c.getOpacity() * 255.0);
+		return r | (g << 8) | (b << 16) | (a << 24);
+	}
+	
+	
+	/** copies text to clipboard.  does nothing if text is null */
+	public static void copy(String text)
+	{
+		if(text != null)
+		{
+			ClipboardContent cc = new ClipboardContent();
+            cc.putString(text);
+            Clipboard.getSystemClipboard().setContent(cc);
+		}
 	}
 }

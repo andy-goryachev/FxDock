@@ -23,7 +23,7 @@ public class XScrollBar
 	}
 	
 	
-	public void setPainer(Consumer<Canvas> p)
+	public void setPainter(Consumer<Canvas> p)
 	{
 		if(canvas != null)
 		{

@@ -44,9 +44,15 @@ public class FxButton
 	}
 	
 	
-	public FxButton(String text, Runnable handler)
+	public FxButton(String text, Runnable action)
 	{
-		this(text, new FxAction(handler));
+		this(text, new FxAction(action));
+	}
+	
+	
+	public FxButton(Node icon, Runnable action)
+	{
+		this(icon, new FxAction(action));
 	}
 	
 	

@@ -96,6 +96,24 @@ public class TF
 	}
 	
 	
+	public static void isTrue(String message, boolean x)
+	{
+		if(!x)
+		{
+			throw new TestException("expression is not true: " + message);
+		}
+	}
+	
+	
+	public static void isFalse(String message, boolean x)
+	{
+		if(x)
+		{
+			throw new TestException("expression is not false: " + message);
+		}
+	}
+	
+	
 	public static void fail()
 	{
 		throw new TestException("test failed");

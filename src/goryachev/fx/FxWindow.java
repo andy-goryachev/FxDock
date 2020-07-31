@@ -8,6 +8,8 @@ import javafx.scene.layout.BorderPane;
 
 /**
  * Fx Window.
+ * 
+ * It is highly recommended not to show a Window again after it has been closed.
  */
 public class FxWindow
 	extends BaseFxWindow
@@ -24,7 +26,7 @@ public class FxWindow
 	
 	public final FxAction closeWindowAction = new FxAction(this::closeWithConfirmation);
 	private final String name;
-	private final BorderPane pane;
+	protected final BorderPane pane;
 	
 	
 	public FxWindow(String name)
@@ -55,9 +57,21 @@ public class FxWindow
 	}
 	
 	
+	public Node getTop()
+	{
+		return pane.getTop();
+	}
+	
+	
 	public void setBottom(Node n)
 	{
 		pane.setBottom(n);
+	}
+	
+	
+	public Node getBottom()
+	{
+		return pane.getBottom();
 	}
 	
 	
@@ -67,9 +81,21 @@ public class FxWindow
 	}
 	
 	
+	public Node getLeft()
+	{
+		return pane.getLeft();
+	}
+	
+	
 	public void setRight(Node n)
 	{
 		pane.setRight(n);
+	}
+	
+	
+	public Node getRight()
+	{
+		return pane.getRight();
 	}
 	
 	

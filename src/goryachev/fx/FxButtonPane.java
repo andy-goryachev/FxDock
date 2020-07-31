@@ -14,6 +14,7 @@ public class FxButtonPane
 	extends HPane
 {
 	public static final CssStyle PANE = new CssStyle("FxButtonPane_PANE");
+	private static final int MIN_WIDTH = 70;
 
 	
 	public FxButtonPane()
@@ -23,38 +24,52 @@ public class FxButtonPane
 	}
 	
 	
+	public FxButton addButton(String text, FxAction a, CssStyle style)
+	{
+		FxButton b = new FxButton(text, a, style);
+		return addButton(b);
+	}
+	
+	
 	public FxButton addButton(String text, FxAction a)
 	{
 		FxButton b = new FxButton(text, a);
-		b.setMinWidth(70);
-		
-		if(getChildren().size() == 0)
-		{
-			fill();
-		}
-		
-		add(b);
-		return b;
+		return addButton(b);
+	}
+	
+	
+	public FxButton addButton(String text, Runnable r, CssStyle style)
+	{
+		FxButton b = new FxButton(text, new FxAction(r), style);  
+		return addButton(b);
+	}
+	
+	
+	public FxButton addButton(String text, CssStyle style)
+	{
+		FxButton b = new FxButton(text, FxAction.DISABLED, style);  
+		return addButton(b);
 	}
 	
 	
 	public FxButton addButton(String text, Runnable r)
 	{
-		return addButton(text, new FxAction(r));
+		FxButton b = new FxButton(text, new FxAction(r));  
+		return addButton(b);
 	}
 	
 	
 	public FxButton addButton(String text)
 	{
 		FxButton b = new FxButton(text);
-		b.setMinWidth(70);
 		b.setDisable(true);
-		
-		if(getChildren().size() == 0)
-		{
-			fill();
-		}
-		
+		return addButton(b);
+	}
+	
+	
+	public FxButton addButton(FxButton b)
+	{
+		b.setMinWidth(MIN_WIDTH);
 		add(b);
 		return b;
 	}

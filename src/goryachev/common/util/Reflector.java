@@ -7,6 +7,9 @@ import java.lang.reflect.Method;
 /** Reflection helper */
 public class Reflector
 {
+	protected static final Log log = Log.get("Reflector");
+	
+	
 	/** returns an accessible method, wrapped in an exception-eating wrapper */
 	public static CMethod method(Class c, String name, Class<?> ... args)
 	{
@@ -59,12 +62,12 @@ public class Reflector
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 		
 		return null;

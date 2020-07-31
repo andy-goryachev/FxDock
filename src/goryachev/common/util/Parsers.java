@@ -15,6 +15,9 @@ import java.util.HashSet;
  */
 public class Parsers
 {
+	protected static final Log log = Log.get("Parsers");
+	
+	
 	public static Double parseDouble(Object x)
 	{
 		if(x instanceof Number)
@@ -321,7 +324,7 @@ public class Parsers
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 		
 		return null;
@@ -358,7 +361,7 @@ public class Parsers
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 		return null;
@@ -389,13 +392,13 @@ public class Parsers
 					}
 					catch(Exception e)
 					{
-						Log.err(e);
+						log.error(e);
 					}
 				}
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 		return null;

@@ -1,7 +1,7 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-
 import javafx.scene.Node;
+
 
 /**
  * Flat Button.
@@ -19,9 +19,9 @@ public class FlatButton
 	}
 	
 	
-	public FlatButton(String text, Runnable handler)
+	public FlatButton(String text, Runnable action)
 	{
-		super(text, handler);
+		super(text, action);
 		FX.style(this, STYLE);
 	}
 	
@@ -43,6 +43,13 @@ public class FlatButton
 	public FlatButton(Node icon, FxAction a)
 	{
 		super(icon, a);
+		FX.style(this, STYLE);
+	}
+	
+	
+	public FlatButton(Node icon, Runnable action)
+	{
+		super(icon, action);
 		FX.style(this, STYLE);
 	}
 }

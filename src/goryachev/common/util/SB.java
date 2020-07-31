@@ -134,6 +134,16 @@ public class SB
 	}
 	
 	
+	public SB append(char c, int count)
+	{
+		for(int i=0; i<count; i++)
+		{
+			sb.append(c);
+		}
+		return this;
+	}
+	
+	
 	public void safeHtml(Object x)
 	{
 		if(x != null)

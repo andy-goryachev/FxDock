@@ -11,6 +11,7 @@ import javafx.util.StringConverter;
  */
 public class GlobalProperties
 {
+	protected static final Log log = Log.get("GlobalProperties");
 	private static final WeakList<GlobalProperty<?>> properties = new WeakList();
 	
 	
@@ -46,7 +47,7 @@ public class GlobalProperties
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	
@@ -65,7 +66,7 @@ public class GlobalProperties
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 }

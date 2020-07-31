@@ -62,11 +62,13 @@ public class CommonStyles
 //			checkbox(theme),						
 			comboBox(theme),
 			menuBar(theme),
+			popupMenu(theme),
 			scrollBar(theme),
 			scrollPane(theme),
 			table(theme),
-			treeTable(theme),
 			text(theme),
+			treeTable(theme),
+			toolbar(theme),
 			// FIX
 			//radioButton(theme),
 			buttonPane(theme),
@@ -407,6 +409,18 @@ public class CommonStyles
 	}
 	
 	
+	protected Object popupMenu(Theme theme)
+	{
+		return new Object[]
+		{
+			selector(FxPopupMenu.MENU).defines
+			(
+				fontWeight("normal")
+			)
+		};
+	}
+	
+	
 	protected Object radioButton(Theme theme)
 	{
 		// FIX
@@ -625,7 +639,12 @@ public class CommonStyles
 			selector(".table-row-cell:empty").defines
 			(
 				backgroundColor(TRANSPARENT),
-				borderColor(TRANSPARENT)
+				borderWidth(0)
+			),
+			selector(".table-row-cell:empty:odd, .table-row-cell:empty:even, .indexed-cell:odd:empty, .indexed-cell:even:empty").defines
+			(
+				backgroundColor(TRANSPARENT),
+				borderWidth(0)
 			),
 			
 			selector(".table-view > .virtual-flow > .clipped-container > .sheet > .table-row-cell .table-cell:selected").defines
@@ -692,14 +711,30 @@ public class CommonStyles
 	}
 	
 	
+	protected Object toolbar(Theme theme)
+	{
+		return new Object[]
+		{
+			// text smoothing
+			selector(FxToolBar.STYLE).defines
+			(
+				padding(2, 2, 2, 2)
+			)
+		};
+	}
+	
+	
 	protected Object buttonPane(Theme theme)
 	{
 		return new Object[]
 		{
 			selector(FxButtonPane.PANE).defines
 			(
-				borderColor(TRANSPARENT),
-				borderWidth(10)
+				borderWidth(0)
+			),
+			selector(FxDialog.PANE, FxButtonPane.PANE).defines
+			(
+				padding(10)
 			)
 		};
 	}

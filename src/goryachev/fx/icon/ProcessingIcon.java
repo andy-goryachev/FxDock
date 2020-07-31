@@ -2,7 +2,9 @@
 package goryachev.fx.icon;
 import goryachev.fx.FxIconBuilder;
 import goryachev.fx.IconBase;
-import goryachev.fx.internal.WeakAnimation;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
@@ -10,8 +12,6 @@ import javafx.util.Duration;
 
 /**
  * Processing Icon.
- * 
- * TODO extends IconBase
  */
 public class ProcessingIcon
 {
@@ -46,22 +46,13 @@ public class ProcessingIcon
 		
 		IconBase ic = b.getIcon();
 		
-		new WeakAnimation<IconBase>(ic, Duration.millis(25))
-		{
-			protected void handleFrame(IconBase ic)
-			{
-				rotate(ic);
-			}
-		};
+		RotateTransition t = new RotateTransition(Duration.millis(3000), ic);
+		t.setByAngle(360);
+		t.setCycleCount(36);
+		t.setInterpolator(Interpolator.LINEAR);
+		t.setDuration(Duration.millis(750));
+		t.play();
 		
 		return ic;
-	}
-	
-	
-	protected static void rotate(IconBase ic)
-	{
-		double a = ic.getRotate();
-		a += 10;
-		ic.setRotate(a);
 	}
 }

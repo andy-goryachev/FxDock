@@ -2,7 +2,6 @@
 package goryachev.fx;
 import javafx.beans.property.Property;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
 
 
 /**
@@ -35,6 +34,13 @@ public class FxToggleButton
 	{
 		super(text);
 		selectedProperty().bindBidirectional(prop);
+		FX.setTooltip(this, tooltip);
+	}
+	
+	
+	public FxToggleButton(String text, String tooltip)
+	{
+		super(text);
 		FX.setTooltip(this, tooltip);
 	}
 	

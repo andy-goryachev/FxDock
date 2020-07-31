@@ -19,6 +19,7 @@ public class PRecord
 	
 	//
 	
+	protected static final Log log = Log.get("PRecord");
 	private CMap<String,Object> data;
 	private CMap<String,Object> original;
 
@@ -74,7 +75,7 @@ public class PRecord
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	

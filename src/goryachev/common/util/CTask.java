@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 public class CTask<T>
 	implements Runnable
 {
+	protected static final Log log = Log.get("CTask");
 	protected ValueGenerator<? extends T> generator;
 	protected Consumer<T> onSuccess;
 	protected Consumer<Throwable> onError;
@@ -85,7 +86,7 @@ public class CTask<T>
 			}
 			catch(Throwable e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 		catch(Throwable e)
@@ -96,7 +97,7 @@ public class CTask<T>
 			}
 			catch(Throwable err)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 		
@@ -106,7 +107,7 @@ public class CTask<T>
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	

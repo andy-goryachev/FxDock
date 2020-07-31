@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
  */
 public final class CField<T>
 {
+	protected static final Log log = Log.get("CField");
 	private final Field field;
 	
 	
@@ -28,7 +29,7 @@ public final class CField<T>
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 			return null;
 		}
 	}
@@ -44,7 +45,7 @@ public final class CField<T>
 			}
 			catch(Throwable e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 		return null;
@@ -61,7 +62,7 @@ public final class CField<T>
 			}
 			catch(Throwable e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 	}

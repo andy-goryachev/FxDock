@@ -12,6 +12,9 @@ import java.util.zip.GZIPInputStream;
 
 public class NetTools
 {
+	protected static final Log log = Log.get("NetTools");
+	
+	
 	/** read string content from an http link */
 	public static String readString(String url) throws Exception
 	{
@@ -133,7 +136,7 @@ public class NetTools
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 		
 		return CKit.CHARSET_UTF8;

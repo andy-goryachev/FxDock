@@ -13,6 +13,9 @@ import javax.sound.sampled.LineListener;
 
 public class ClipPlayer
 {
+	protected static final Log log = Log.get("ClipPlayer");
+	
+	
 	public static void play(InputStream in)
 	{
 		try
@@ -38,7 +41,7 @@ public class ClipPlayer
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	

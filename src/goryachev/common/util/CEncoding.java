@@ -9,6 +9,7 @@ import java.util.SortedMap;
 public class CEncoding
 	implements HasDisplayName, HasProperty
 {
+	protected static final Log log = Log.get("CEncoding");
 	public static final CEncoding UTF8 = new CEncoding(Charset.forName("UTF-8"));
 	public static final CEncoding UTF16 = new CEncoding(Charset.forName("UTF-16"));
 	
@@ -84,7 +85,7 @@ public class CEncoding
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 		

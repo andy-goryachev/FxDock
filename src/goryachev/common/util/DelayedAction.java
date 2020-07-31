@@ -18,6 +18,7 @@ import java.util.function.Consumer;
  */
 public class DelayedAction
 {
+	protected static final Log log = Log.get("DelayedAction");
 	private static final int WARN_THRESHOLD = 500;
 	private final String name;
 	private final Runnable action;
@@ -107,7 +108,7 @@ public class DelayedAction
 				Consumer<Throwable> eh = errorHandler;
 				if(eh == null)
 				{
-					Log.err(e);
+					log.error(e);
 				}
 				else
 				{
@@ -116,7 +117,7 @@ public class DelayedAction
 			}
 			catch(Throwable err)
 			{
-				Log.err(err);
+				log.error(err);
 			}
 		}
 		finally
@@ -124,7 +125,7 @@ public class DelayedAction
 			long elapsed = System.currentTimeMillis() - start;
 			if(elapsed > WARN_THRESHOLD)
 			{
-				Log.err("taking too long to run: " + name);
+				log.error("taking too long to run: " + name);
 			}
 		}
 	}

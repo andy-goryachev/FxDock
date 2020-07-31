@@ -1,5 +1,7 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 
@@ -17,7 +19,7 @@ public class FxDialog
 	extends FxWindow
 {
 	public final FxAction closeDialogAction = new FxAction(this::close);
-	protected FxButtonPane buttonPane;
+	public static final CssStyle PANE = new CssStyle("FxDialog_PANE");
 	
 	
 	public FxDialog(Object owner, String name)
@@ -25,6 +27,7 @@ public class FxDialog
 		super(name);
 		
 		initModality(Modality.APPLICATION_MODAL);
+		FX.style(pane, PANE);
 
 		Window win = FX.getParentWindow(owner);
 		initOwner(win);
@@ -39,18 +42,29 @@ public class FxDialog
 	
 	protected FxButtonPane buttonPane()
 	{
-		if(buttonPane == null)
+		Node n = getBottom();
+		if(n instanceof FxButtonPane)
 		{
-			buttonPane = new FxButtonPane();
-			setBottom(buttonPane);
+			return (FxButtonPane)n;
 		}
-		return buttonPane;
+		
+		FxButtonPane p = new FxButtonPane();
+		setBottom(p);
+		return p;
 	}
 	
 	
 	public FxButton addButton(String text, FxAction a, CssStyle style)
 	{
 		FxButton b = new FxButton(text, a, style);
+		buttonPane().add(b);
+		return b;
+	}
+	
+	
+	public FxButton addButton(String text, Runnable r, CssStyle style)
+	{
+		FxButton b = new FxButton(text, r, style);
 		buttonPane().add(b);
 		return b;
 	}
@@ -82,8 +96,42 @@ public class FxDialog
 	{
 		double w = getWidth();
 		double h = getHeight();
+		
+		// FIX what's goin on here?
+		if(isInvalid(w))
+		{
+			w = 400;
+			setWidth(w);
+		}
+		
+		if(isInvalid(h))
+		{
+			h = 300;
+			setHeight(h);
+		}
+		
 		// TODO center over parent, but not to go outside of the screen
 		
 		super.open();
+	}
+	
+	
+	protected static boolean isInvalid(double x)
+	{
+		if(Double.isNaN(x))
+		{
+			return true;
+		}
+		else if(x <= 1)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	
+	public void closeOnEscape()
+	{
+		KeyMap.onKeyPressed(pane, KeyCode.ESCAPE, closeDialogAction);
 	}
 }

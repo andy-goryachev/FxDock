@@ -23,6 +23,8 @@ public class FxSchema
 {
 	public static final String FX_PREFIX = "FX.";
 	
+	public static final String WINDOWS = FX_PREFIX + ".WINDOWS";
+	
 	public static final String SFX_COLUMNS = ".COLS";
 	public static final String SFX_DIVIDERS = ".DIVS";
 	public static final String SFX_SELECTION = ".SEL";

@@ -31,6 +31,11 @@ public class FxDateFormatter
 		}
 		else if(x instanceof Long)
 		{
+			Long v = (Long)x;
+			if(v.longValue() <= 0)
+			{
+				return null;
+			}
 			return format.format(x);
 		}
 		else

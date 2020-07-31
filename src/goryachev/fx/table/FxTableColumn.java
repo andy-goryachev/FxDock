@@ -6,18 +6,28 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 
 
 /**
  * FxTable Column.
+ * 
+ * TODO
+ * <T> -> ObjectProperty or value (to be wrapped into ObjectProperty)
+ * either:
+ *  Object (from property) -> Node
+ * or
+ *  Object (from property) -> formatter -> String
+ *  String -> setText()
  */
 public class FxTableColumn<T>
 	extends TableColumn<T,Object>
 {
 	protected Function<T,Node> renderer;
-	protected Function<T,Object> formatter;
+	protected Function<T,Object> converter;
+	protected OverrunStyle overrunStyle;
 	protected Pos alignment = Pos.CENTER_LEFT;
 	
 	
@@ -47,18 +57,30 @@ public class FxTableColumn<T>
 	{
 		this(null, null, sortable);
 	}
+	
+
+	/** javafx does not honor pref width */
+	public FxTableColumn<T> setRealPrefWidth(double width)
+	{
+		setMaxWidth(width * 100);
+		return this;
+	}
 
 
 	protected ObservableValue getCellValueProperty(T item)
 	{
-		if(formatter == null)
+		if(converter == null)
 		{
 			return new ReadOnlyObjectWrapper(item);
 		}
 		else
 		{
-			Object val = formatter.apply(item);
-			return new ReadOnlyObjectWrapper(val);
+			Object x = converter.apply(item);
+			if(x instanceof ObservableValue)
+			{
+				return (ObservableValue)x;
+			}
+			return new ReadOnlyObjectWrapper(x);
 		}
 	}
 	
@@ -77,15 +99,30 @@ public class FxTableColumn<T>
 	}
 	
 
-	/** value converter generates cell values for sorting and display
-	 * (the latter only if renderer is not set */
+	/** 
+	 * a value converter generates cell values for sorting and display
+	 * (the latter only if renderer is not set 
+	 */
 	public FxTableColumn<T> setConverter(Function<T,Object> f)
 	{
-		formatter = f;
+		converter = f;
 		return this;
 	}
 	
 	
+	public FxTableColumn<T> setTextOverrun(OverrunStyle x)
+	{
+		overrunStyle = x;
+		return this;
+	}
+	
+	
+	// TODO renderer(item), value->renderer(value), value->formatter
+	// get value (object or property)
+	// sorting value
+	// display text
+	// display icon
+	// full cell
 	private TableCell<T,Object> getCellFactory(TableColumn<T,Object> f)
 	{
 		return new TableCell<T,Object>()
@@ -108,6 +145,11 @@ public class FxTableColumn<T>
 						setText(s);
 						setGraphic(null);
 						setAlignment(alignment);
+						
+						if(overrunStyle != null)
+						{
+							setTextOverrun(overrunStyle);
+						}
 					}
 					else
 					{

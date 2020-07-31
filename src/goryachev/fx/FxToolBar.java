@@ -14,8 +14,12 @@ import javafx.scene.layout.Priority;
 public class FxToolBar
 	extends ToolBar
 {
+	public static final CssStyle STYLE = new CssStyle("FxToolBar_STYLE");
+	
+	
 	public FxToolBar()
 	{
+		FX.style(this, STYLE);
 	}
 	
 	
@@ -44,6 +48,13 @@ public class FxToolBar
 		Pane p = new Pane();
 		HBox.setHgrow(p, Priority.SOMETIMES);
 		add(p);
+	}
+	
+	
+	public void fill(Node n)
+	{
+		HBox.setHgrow(n, Priority.SOMETIMES);
+		add(n);
 	}
 	
 	

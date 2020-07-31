@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -22,7 +23,7 @@ import javafx.scene.control.ToggleButton;
 public class FxAction
     implements EventHandler<ActionEvent>
 {
-	protected final Log log = Log.get("FxAction");
+	protected static final Log log = Log.get("FxAction");
 	public static final FxAction DISABLED = new FxAction(null, false);
 	private final FxBoolean selectedProperty = new FxBoolean();
 	private final FxBoolean disabledProperty = new FxBoolean();
@@ -130,10 +131,9 @@ public class FxAction
 
 	public final void setSelected(boolean on)
 	{
-		boolean fire = (selectedProperty.get() != on);
-		selectedProperty.set(on);
-		if(fire)
+		if(selectedProperty.get() != on)
 		{
+			selectedProperty.set(on);
 			fire();
 		}
 	}
@@ -239,6 +239,20 @@ public class FxAction
 			}
 			
 			execute();
+			
+			// close popup menu, if applicable
+			if(ev != null)
+			{
+				Object src = ev.getSource();
+				if(src instanceof Menu)
+				{
+					ContextMenu p = ((Menu)src).getParentPopup();
+					if(p != null)
+					{
+						p.hide();
+					}
+				}
+			}
 		}
 	}
 }

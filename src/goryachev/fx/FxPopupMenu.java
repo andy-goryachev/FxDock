@@ -12,11 +12,16 @@ import javafx.scene.control.SeparatorMenuItem;
 public class FxPopupMenu
 	extends ContextMenu
 {
+	public static final CssStyle MENU = new CssStyle("FxPopupMenu");
+	
+	
 	public FxPopupMenu()
 	{
 		setHideOnEscape(true);
 		setAutoHide(true);
 		setAutoFix(true);
+		
+		FX.style(this, MENU);
 	}
 	
 	
@@ -82,5 +87,13 @@ public class FxPopupMenu
 	public void clear()
 	{
 		getItems().clear();
+	}
+	
+	
+	public FxMenu menu(String text, FxAction a)
+	{
+		FxMenu m = new FxMenu(text, a);
+		add(m);
+		return m;
 	}
 }

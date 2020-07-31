@@ -7,6 +7,7 @@ import java.io.FileFilter;
 
 public class RFileFilter
 {
+	protected static final Log log = Log.get("RFileFilter");
 	public static final String HIDDEN = "Hidden Files";
 	public static final String SYSTEM = "System Files";
 	
@@ -124,7 +125,7 @@ public class RFileFilter
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 		
@@ -226,7 +227,7 @@ public class RFileFilter
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 		
 		RFileFilter f = new RFileFilter();

@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 public class FileSettingsProvider
     extends SettingsProviderBase
 {
+	protected static final Log log = Log.get("FileSettingsProvider");
 	private File file;
 	
 	
@@ -35,7 +36,7 @@ public class FileSettingsProvider
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	
@@ -61,7 +62,7 @@ public class FileSettingsProvider
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 	
@@ -81,7 +82,7 @@ public class FileSettingsProvider
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 }

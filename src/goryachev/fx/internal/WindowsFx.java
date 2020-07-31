@@ -4,6 +4,7 @@ import goryachev.common.log.Log;
 import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
+import goryachev.common.util.SStream;
 import goryachev.common.util.WeakList;
 import goryachev.fx.CssLoader;
 import goryachev.fx.FxAction;
@@ -12,6 +13,7 @@ import goryachev.fx.OnWindowClosing;
 import goryachev.fx.hacks.FxHacks;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,6 +30,7 @@ import javafx.stage.WindowEvent;
  */
 public class WindowsFx
 {
+	protected static final Log log = Log.get("WindowsFx");
 	/** in the focus order */
 	protected final WeakList<FxWindow> windowStack = new WeakList<>();
 	/** prefix->window and window->prefix */
@@ -107,11 +110,17 @@ public class WindowsFx
 	
 	public void storeSettings()
 	{
+		SStream ss = new SStream();
+		
 		for(FxWindow w: getWindows())
 		{
 			storeWindow(w);
+			
+			String id = w.getName();
+			ss.add(id);
 		}
 		
+		GlobalSettings.setStream(FxSchema.WINDOWS, ss);
 		GlobalSettings.save();		
 	}
 	
@@ -218,6 +227,28 @@ public class WindowsFx
 		return null;
 	}
 	
+	
+	public int openWindows(Function<String,FxWindow> generator)
+	{
+		SStream st = GlobalSettings.getStream(FxSchema.WINDOWS);
+
+		// in proper z-order
+		for(int i=st.size()-1; i>=0; i--)
+		{
+			String id = st.getValue(i);
+			FxWindow w = generator.apply(id);
+			w.open();
+		}
+		
+		if(st.size() == 0)
+		{
+			FxWindow w = generator.apply(null);
+			w.open();
+		}
+		
+		return st.size();
+	}
+	
 
 	public void open(FxWindow w)
 	{
@@ -254,7 +285,7 @@ public class WindowsFx
 		}
 		catch(Exception e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 		
 		w.show();
@@ -411,11 +442,12 @@ public class WindowsFx
 	{
 		try
 		{
-			FxHacks.get().applyStyleSheet(w, null, CssLoader.getCurrentStyleSheet());
+			String style = CssLoader.getCurrentStyleSheet();
+			FxHacks.get().applyStyleSheet(w, null, style);
 		}
 		catch(Throwable e)
 		{
-			Log.err(e);
+			log.error(e);
 		}
 	}
 }

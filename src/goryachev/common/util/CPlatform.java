@@ -13,7 +13,8 @@ public abstract class CPlatform
 	protected abstract File getSettingsFolderPrivate();
 	
 	//
-	
+
+	protected static final Log log = Log.get("CPlatform");
 	protected static final String SETTINGS_FOLDER = "goryachev.com";
 	private static CPlatform instance;
 	
@@ -214,7 +215,7 @@ public abstract class CPlatform
 		}
 		catch(Exception e)
 		{ 
-			Log.err(e);
+			log.error(e);
 		}
 		
 		// for all practical purposes

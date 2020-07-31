@@ -14,6 +14,7 @@ import java.net.URI;
 
 public class HtmlTools
 {
+	protected static final Log log = Log.get("HtmlTools");
 	private static Html4SymbolEntities html4SymbolEntities;
 	private static CSet<String> htmlTags;
 	
@@ -367,7 +368,7 @@ public class HtmlTools
 			}
 			catch(Exception e)
 			{
-				Log.err(e);
+				log.error(e);
 			}
 		}
 		return u;

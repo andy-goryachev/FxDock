@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 
 public final class CRandom
 {
+	protected static final Log log = Log.get("CRandom");
 	public static final String RAND_ALGORITHM = "SHA1PRNG";
 	private static SecureRandom random = init();
     
@@ -20,7 +21,7 @@ public final class CRandom
 		catch(NoSuchAlgorithmException e)
 		{
 			// should not happen
-			Log.err(e);
+			log.error(e);
 			throw new Error(e);
 		}
 	}

@@ -84,4 +84,10 @@ public class FxComboBox<T>
 	{
 		return getSelectionModel().selectedItemProperty();
 	}
+	
+	
+	public T getSelectedItem()
+	{
+		return getSelectionModel().getSelectedItem();
+	}
 }

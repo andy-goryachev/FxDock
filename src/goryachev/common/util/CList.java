@@ -237,4 +237,26 @@ public class CList<T>
 			super.add(null);
 		}
 	}
+	
+	
+	/** 
+	 * safely inserts an item into the list, adding an item to the end of the list when index is >= size, 
+	 * or inserting at the position 0 when index is <= 0
+	 */
+	public void insert(int index, T item)
+	{
+		if(index < 0)
+		{
+			index = 0;
+		}
+		
+		if(index >= size())
+		{
+			add(item);
+		}
+		else
+		{
+			add(index, item);
+		}
+	}
 }

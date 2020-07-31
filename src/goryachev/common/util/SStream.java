@@ -31,6 +31,12 @@ public class SStream
 	}
 	
 	
+	public String getValue(int ix)
+	{
+		return list.get(ix);
+	}
+	
+	
 	public void add(Object x)
 	{
 		list.add(x == null ? null : x.toString());
