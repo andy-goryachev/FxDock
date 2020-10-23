@@ -915,7 +915,7 @@ public final class CKit
 			int start = 0;
 			for(;;)
 			{
-				int ix = s.indexOf(delim,start);
+				int ix = s.indexOf(delim, start);
 				if(ix >= 0)
 				{
 					list.add(s.substring(start,ix));
@@ -937,13 +937,13 @@ public final class CKit
 	// 1. does not use regex pattern and therefore faster
 	// 2. splits ("a,", ",") -> String[] { "a", "" }
 	//    while the regular split omits the empty string
-	public static String[] split(String s, char delim)
+	public static String[] split(CharSequence s, char delim)
 	{
 		return split(s, delim, false);
 	}
 
 
-	public static String[] split(String s, char delim, boolean includeDelimiter)
+	public static String[] split(CharSequence s, char delim, boolean includeDelimiter)
 	{
 		CList<String> a = new CList<>();
 
@@ -952,25 +952,40 @@ public final class CKit
 			int start = 0;
 			for(;;)
 			{
-				int ix = s.indexOf(delim, start);
+				int ix = indexOf(s, delim, start);
 				if(ix >= 0)
 				{
-					a.add(s.substring(start, ix));
+					a.add(s.subSequence(start, ix).toString());
 					if(includeDelimiter)
 					{
-						a.add(s.substring(ix, ix+1));
+						a.add(s.subSequence(ix, ix+1).toString());
 					}
 					start = ix + 1;
 				}
 				else
 				{
-					a.add(s.substring(start, s.length()));
+					a.add(s.subSequence(start, s.length()).toString());
 					break;
 				}
 			}
 		}
 
 		return a.toArray(new String[a.size()]);
+	}
+	
+	
+	public static int indexOf(CharSequence s, char ch, int start)
+	{
+		int len = s.length();
+		for(int i=start; i<len; i++)
+		{
+			char c = s.charAt(i);
+			if(c == ch)
+			{
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	
@@ -2510,5 +2525,16 @@ public final class CKit
 			return s.substring(0, maxLength);
 		}
 		return s;
+	}
+	
+	
+	/** creates a new array instance, copying the contents */
+	public static <T> T[] shallowCopy(T[] src)
+	{
+		if(src == null)
+		{
+			return null;
+		}
+		return Arrays.copyOf(src, src.length);
 	}
 }

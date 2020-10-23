@@ -26,6 +26,18 @@ public abstract class SystemTask
 	}
 	
 	
+	public static SystemTask create(Runnable r)
+	{
+		return new SystemTask()
+		{
+			protected void systemTaskBody() throws Exception
+			{
+				r.run();
+			}
+		};
+	}
+	
+	
 	public static void schedule(long delay, long period, Runnable r)
 	{
 		new SystemTask()

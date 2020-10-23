@@ -20,13 +20,13 @@ public class FxComboBox<T>
 	
 	public FxComboBox(T ... items)
 	{
-		setValues(items);
+		setItems(items);
 	}
 	
 	
 	public FxComboBox(Collection<T> items)
 	{
-		setValues(items);
+		setItems(items);
 	}
 	
 	
@@ -35,7 +35,7 @@ public class FxComboBox<T>
 	}
 	
 	
-	public void setValues(T ... items)
+	public void setItems(T ... items)
 	{
 		if(items == null)
 		{
@@ -48,7 +48,7 @@ public class FxComboBox<T>
 	}
 	
 	
-	public void setValues(Collection<T> items)
+	public void setItems(Collection<T> items)
 	{
 		if(items == null)
 		{
@@ -58,6 +58,12 @@ public class FxComboBox<T>
 		{
 			getItems().setAll(items);
 		}
+	}
+	
+	
+	public void addItem(T item)
+	{
+		getItems().add(item);
 	}
 	
 	
@@ -89,5 +95,18 @@ public class FxComboBox<T>
 	public T getSelectedItem()
 	{
 		return getSelectionModel().getSelectedItem();
+	}
+	
+	
+	public int indexOf(T item)
+	{
+		return getItems().indexOf(item);
+	}
+
+
+	public String getSelectedItemAsString()
+	{
+		T x = getSelectedItem();
+		return x == null ? null : x.toString();
 	}
 }

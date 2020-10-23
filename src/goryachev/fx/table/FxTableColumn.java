@@ -101,7 +101,7 @@ public class FxTableColumn<T>
 
 	/** 
 	 * a value converter generates cell values for sorting and display
-	 * (the latter only if renderer is not set 
+	 * (the latter only if renderer is not set)
 	 */
 	public FxTableColumn<T> setConverter(Function<T,Object> f)
 	{

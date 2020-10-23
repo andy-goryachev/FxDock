@@ -16,6 +16,7 @@ import java.util.function.Supplier;
  */
 public class Log
 {
+	private final String fullName;
 	private final String name;
 	private Log parent;
 	private LogLevel level;
@@ -25,20 +26,21 @@ public class Log
 	protected static AbstractLogConfig config = LogUtil.createDisabledLogConfig();
 	protected static final CSet<String> ignore = LogUtil.initIgnoreClassNames();
 	protected static final CList<AppenderBase> allAppenders = new CList();
-	protected static final Log root = new Log(null, null);
+	protected static final Log root = new Log(null, null, null);
 
 
-	protected Log(Log parent, String name)
+	protected Log(Log parent, String name, String fullName)
 	{
 		this.parent = parent;
+		this.fullName = fullName;
 		this.name = name;
 	}
 	
 	
 	/** returns a channel instance for the specified name */
-	public static synchronized Log get(String name)
+	public static synchronized Log get(String fullName)
 	{
-		String[] ss = CKit.split(name, '.');
+		String[] ss = CKit.split(fullName, '.');
 		Log log = root;
 		
 		for(String s: ss)
@@ -46,7 +48,7 @@ public class Log
 			Log ch = log.children.get(s);
 			if(ch == null)
 			{
-				ch = new Log(log, s);
+				ch = new Log(log, s, fullName);
 				ch.needsCaller = log.needsCaller;
 				log.children.put(s, ch);				
 
@@ -150,10 +152,9 @@ public class Log
 		}
 		else
 		{
-			LogLevel lv = cf.getLogLevel(name);
+			LogLevel lv = cf.getLogLevel(fullName);
 			if(lv == null)
 			{
-				cf.getLogLevel(name); // FIX
 				if(parent == null)
 				{
 					level = cf.getDefaultLogLevel();
@@ -391,6 +392,19 @@ public class Log
 	}
 	
 	
+	protected static String format(String fmt, Object[] args)
+	{
+		try
+		{
+			return String.format(fmt, args);
+		}
+		catch(Throwable e)
+		{
+			return "Error in logging statement [" + fmt + "]: " + CKit.stackTrace(e) + "]";
+		}
+	}
+	
+	
 	// LogLevel.ERROR level
 	
 	
@@ -412,6 +426,15 @@ public class Log
 	}
 	
 	
+	public void error()
+	{
+		if(isEnabled(LogLevel.ERROR))
+		{
+			logEvent(LogLevel.ERROR, null, "");
+		}
+	}
+	
+	
 	public void error(Object message)
 	{
 		if(isEnabled(LogLevel.ERROR))
@@ -425,7 +448,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.ERROR))
 		{
-			String msg = String.format(format, args);
+			String msg = format(format, args);
 			logEvent(LogLevel.ERROR, null, msg);
 		}
 	}
@@ -462,6 +485,15 @@ public class Log
 	}
 	
 	
+	public void warn()
+	{
+		if(isEnabled(LogLevel.WARN))
+		{
+			logEvent(LogLevel.WARN, null, "");
+		}
+	}
+	
+	
 	public void warn(Object message)
 	{
 		if(isEnabled(LogLevel.WARN))
@@ -475,7 +507,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.WARN))
 		{
-			String msg = String.format(format, args);
+			String msg = format(format, args);
 			logEvent(LogLevel.WARN, null, msg);
 		}
 	}
@@ -512,6 +544,15 @@ public class Log
 	}
 	
 	
+	public void info()
+	{
+		if(isEnabled(LogLevel.INFO))
+		{
+			logEvent(LogLevel.INFO, null, "");
+		}
+	}
+	
+	
 	public void info(Object message)
 	{
 		if(isEnabled(LogLevel.INFO))
@@ -525,7 +566,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.INFO))
 		{
-			String msg = String.format(format, args);
+			String msg = format(format, args);
 			logEvent(LogLevel.INFO, null, msg);
 		}
 	}
@@ -562,6 +603,15 @@ public class Log
 	}
 	
 	
+	public void debug()
+	{
+		if(isEnabled(LogLevel.DEBUG))
+		{
+			logEvent(LogLevel.DEBUG, null, "");
+		}
+	}
+	
+	
 	public void debug(Object message)
 	{
 		if(isEnabled(LogLevel.DEBUG))
@@ -575,7 +625,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.DEBUG))
 		{
-			String msg = String.format(format, args);
+			String msg = format(format, args);
 			logEvent(LogLevel.DEBUG, null, msg);
 		}
 	}
@@ -634,7 +684,7 @@ public class Log
 	{
 		if(isEnabled(LogLevel.TRACE))
 		{
-			String msg = String.format(format, args);
+			String msg = format(format, args);
 			logEvent(LogLevel.TRACE, null, msg);
 		}
 	}

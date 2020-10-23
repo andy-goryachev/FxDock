@@ -3,12 +3,14 @@ package goryachev.fx;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CPlatform;
 import goryachev.common.util.GlobalSettings;
+import goryachev.common.util.SystemTask;
 import goryachev.fx.hacks.FxHacks;
 import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.FxSchema;
 import goryachev.fx.internal.ParentWindow;
 import goryachev.fx.internal.WindowsFx;
 import goryachev.fx.table.FxTable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -27,6 +29,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.TransformationList;
 import javafx.css.Styleable;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -129,9 +132,14 @@ public final class FX
 	}
 	
 	
-	public static void openWindows(Function<String,FxWindow> generator)
+	/** 
+	 * loads application windows stored in the global settings.  
+	 * A window of specified defaultWindowType is created when the layout does not contain any windows saved,
+	 * or when no window of the defaultWindowType was created
+	 */ 
+	public static void openWindows(Function<String,FxWindow> generator, Class<? extends FxWindow> defaultWindowType)
 	{
-		windowsFx.openWindows(generator);
+		windowsFx.openWindows(generator, defaultWindowType);
 	}
 	
 	
@@ -448,6 +456,12 @@ public final class FX
 	}
 	
 	
+	public static Color gray(int col, double alpha)
+	{
+		return Color.rgb(col, col, col, alpha);
+	}
+	
+	
 	/** Creates Color from an RGB value. */
 	public static Color rgb(int rgb)
 	{
@@ -583,6 +597,16 @@ public final class FX
 	}
 	
 	
+	/** invokes Platform.runLater() after the specified delay */
+	public static void later(int delay, Runnable r)
+	{
+		SystemTask.schedule(delay, () ->
+		{
+			Platform.runLater(r);
+		});
+	}
+	
+	
 	/** execute in FX application thread directly if called from it, or in runLater() */
 	public static void inFX(Runnable r)
 	{
@@ -594,6 +618,13 @@ public final class FX
 		{
 			FX.later(r);
 		}
+	}
+	
+	
+	/** alias for Platform.isFxApplicationThread() */
+	public static boolean isFX()
+	{
+		return Platform.isFxApplicationThread();
 	}
 	
 	
@@ -909,13 +940,6 @@ public final class FX
 	public static void removeWindowMonitor(Consumer<FxWindow> monitor)
 	{
 		windowsFx.removeWindowMonitor(monitor);
-	}
-	
-	
-	/** creates an instance of Insets(horizontal,vertical).  why there is not such a constructor you might ask? */
-	public static Insets insets(double vertical, double horizontal)
-	{
-		return new Insets(vertical, horizontal, vertical, horizontal);
 	}
 	
 
@@ -1369,6 +1393,13 @@ public final class FX
 	}
 	
 	
+	/** simplified version of addChangeListener that only invokes the callback on change */
+	public static <T> void addChangeListener(ObservableValue<T> prop, Runnable callback)
+	{
+		prop.addListener((s,p,current) -> callback.run());
+	}
+	
+	
 	/** simplified version of addChangeListener that only accepts the current value */
 	public static <T> void addChangeListener(ObservableValue<T> prop, boolean fireImmediately, Consumer<? super T> li)
 	{
@@ -1401,5 +1432,138 @@ public final class FX
             cc.putString(text);
             Clipboard.getSystemClipboard().setContent(cc);
 		}
+	}
+	
+	
+	public static Insets insets(double top, double right, double bottom, double left)
+	{
+		return new Insets(top, right, bottom, left);
+	}
+	
+	
+	public static Insets insets(double vert, double hor)
+	{
+		return new Insets(vert, hor, vert, hor);
+	}
+	
+	
+	public static Insets insets(double gap)
+	{
+		return new Insets(gap);
+	}
+	
+	
+	/** returns an instance of TransformationList wrapped around the source ObservableList */
+	public static <S,T> ObservableList<T> transform(ObservableList<S> source, Function<S,T> converter)
+	{
+		return new TransformationList<T,S>(source)
+		{
+			public int getSourceIndex(int index)
+			{
+				return index;
+			}
+			
+			
+			public int getViewIndex(int index)
+			{
+				return index;
+			}
+
+
+			public T get(int index)
+			{
+				S src = getSource().get(index);
+				return converter.apply(src);
+			}
+
+
+			public int size()
+			{
+				return getSource().size();
+			}
+			
+			
+			protected void sourceChanged(Change<? extends S> c)
+			{
+				fireChange(new Change<T>(this)
+				{
+					public List<T> getRemoved()
+					{
+						ArrayList<T> rv = new ArrayList<>(c.getRemovedSize());
+						for(S item: c.getRemoved())
+						{
+							rv.add(converter.apply(item));
+						}
+						return rv;
+					}
+					
+
+					public boolean wasAdded()
+					{
+						return c.wasAdded();
+					}
+
+
+					public boolean wasRemoved()
+					{
+						return c.wasRemoved();
+					}
+
+
+					public boolean wasReplaced()
+					{
+						return c.wasReplaced();
+					}
+
+
+					public boolean wasUpdated()
+					{
+						return c.wasUpdated();
+					}
+
+
+					public boolean wasPermutated()
+					{
+						return c.wasPermutated();
+					}
+
+
+					public int getPermutation(int ix)
+					{
+						return c.getPermutation(ix);
+					}
+
+
+					protected int[] getPermutation()
+					{
+						return new int[0];
+					}
+
+
+					public int getFrom()
+					{
+						return c.getFrom();
+					}
+
+
+					public int getTo()
+					{
+						return c.getTo();
+					}
+
+
+					public boolean next()
+					{
+						return c.next();
+					}
+
+
+					public void reset()
+					{
+						c.reset();
+					}
+				});
+			}
+		};
 	}
 }

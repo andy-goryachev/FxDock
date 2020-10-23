@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
@@ -99,8 +100,12 @@ public class FxSchema
 					win.setX(x);
 					win.setY(y);
 				}
-				win.setWidth(w);
-				win.setHeight(h);
+				
+				if(win.isResizable())
+				{
+					win.setWidth(w);
+					win.setHeight(h);
+				}
 				
 				switch(state)
 				{
@@ -247,6 +252,31 @@ public class FxSchema
 	}
 	
 	
+	private static void storeTabPane(String prefix, TabPane p)
+	{
+		// selection
+		int ix = p.getSelectionModel().getSelectedIndex();
+		GlobalSettings.setInt(prefix + SFX_SELECTION, ix);
+	}
+	
+	
+	private static void restoreTabPane(String prefix, TabPane p)
+	{
+		// selection
+		int ix = GlobalSettings.getInt(prefix + SFX_SELECTION, -1);
+		if(ix >= 0)
+		{
+			FX.later(() ->
+			{
+				if(ix < p.getTabs().size())
+				{
+					p.getSelectionModel().select(ix);
+				}
+			});
+		}
+	}
+	
+	
 	/** returns full path for the Node, starting with the window id, or null if saving is not permitted */
 	private static String getFullName(String windowPrefix, Node root, Node n)
 	{
@@ -325,6 +355,10 @@ public class FxSchema
 		{
 			storeTableView(name, (TableView)n);
 		}
+		else if(n instanceof TabPane)
+		{
+			storeTabPane(name, (TabPane)n);
+		}
 		
 		if(n instanceof Parent)
 		{
@@ -355,6 +389,10 @@ public class FxSchema
 		else if(n instanceof TableView)
 		{
 			restoreTableView(name, (TableView)n);
+		}
+		else if(n instanceof TabPane)
+		{
+			restoreTabPane(name, (TabPane)n);
 		}
 		
 		if(n instanceof Parent)

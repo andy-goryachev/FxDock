@@ -5,7 +5,7 @@ import javafx.scene.control.MenuItem;
 
 
 /**
- * CMenuItem.
+ * A more convenient MenuItem.
  */
 public class FxMenuItem
 	extends MenuItem
@@ -13,22 +13,34 @@ public class FxMenuItem
 	public FxMenuItem(String text, Node icon, FxAction a)
 	{
 		super(text);
-		a.attach(this);
 		setGraphic(icon);
+		
+		if(a != null)
+		{
+			a.attach(this);
+		}
 	}
 	
 	
 	public FxMenuItem(Node icon, FxAction a)
 	{
-		a.attach(this);
 		setGraphic(icon);
+
+		if(a != null)
+		{
+			a.attach(this);
+		}
 	}
 	
 	
 	public FxMenuItem(String text, FxAction a)
 	{
 		super(text);
-		a.attach(this);
+		
+		if(a != null)
+		{
+			a.attach(this);
+		}
 	}
 	
 	

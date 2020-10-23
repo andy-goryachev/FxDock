@@ -33,10 +33,13 @@ public class FxDialog
 		initOwner(win);
 		
 		// TODO center around parent window, but not outside of the current device
-		double x = win.getX();
-		double y = win.getY();
-		double w = win.getWidth();
-		double h = win.getHeight();
+		if(win != null)
+		{
+			double x = win.getX();
+			double y = win.getY();
+			double w = win.getWidth();
+			double h = win.getHeight();
+		}
 	}
 	
 	

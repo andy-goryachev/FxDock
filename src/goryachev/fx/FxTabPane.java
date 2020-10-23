@@ -19,6 +19,16 @@ public class FxTabPane
 	public Tab addTab(String name, Node n)
 	{
 		Tab t = new Tab(name, n);
+		t.setClosable(false);
+		getTabs().add(t);
+		return t;
+	}
+	
+	
+	public Tab addTab(String name)
+	{
+		Tab t = new Tab(name);
+		t.setClosable(false);
 		getTabs().add(t);
 		return t;
 	}

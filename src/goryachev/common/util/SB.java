@@ -1,5 +1,6 @@
 // Copyright © 2010-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.Map;
@@ -804,5 +805,11 @@ public class SB
 			CKit.close(f);
 		}
 		return this;
+	}
+	
+	
+	public byte[] getBytes(Charset cs)
+	{
+		return toString().getBytes(cs);
 	}
 }

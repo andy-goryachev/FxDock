@@ -84,6 +84,8 @@ public class BaseFxWindow
 	{
 		setMinWidth(width);
 		setMinHeight(height);
+		
+		setSize(width, height);
 	}
 	
 	

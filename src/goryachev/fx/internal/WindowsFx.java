@@ -8,6 +8,7 @@ import goryachev.common.util.SStream;
 import goryachev.common.util.WeakList;
 import goryachev.fx.CssLoader;
 import goryachev.fx.FxAction;
+import goryachev.fx.FxDialog;
 import goryachev.fx.FxWindow;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fx.hacks.FxHacks;
@@ -37,9 +38,10 @@ public class WindowsFx
 	protected final CMap<Object,Object> windows = new CMap<>();
 	/** window open callbacks */
 	protected final CList<Consumer<FxWindow>> monitors = new CList<>();
+	private static boolean exiting;
 	
 	
-	/** returns a list of vidible windows, topmost window first */
+	/** returns a list of visible windows, topmost window first */
 	public List<FxWindow> getWindows()
 	{
 		int sz = windowStack.size();
@@ -81,6 +83,23 @@ public class WindowsFx
 	}
 	
 	
+	protected int getFxWindowCount()
+	{
+		int ct = 0;
+		for(Window w: FxHacks.get().getWindows())
+		{
+			if(w instanceof FxWindow)
+			{
+				if(w.isShowing())
+				{
+					ct++;
+				}
+			}
+		}
+		return ct;
+	}
+	
+	
 	protected boolean confirmExit()
 	{
 		OnWindowClosing choice = new OnWindowClosing(true);
@@ -99,6 +118,7 @@ public class WindowsFx
 	
 	public void exit()
 	{
+		storeWindows();
 		storeSettings();
 		
 		if(confirmExit())
@@ -108,19 +128,27 @@ public class WindowsFx
 	}
 	
 	
-	public void storeSettings()
+	protected void storeWindows()
 	{
 		SStream ss = new SStream();
 		
 		for(FxWindow w: getWindows())
 		{
-			storeWindow(w);
-			
 			String id = w.getName();
 			ss.add(id);
 		}
 		
 		GlobalSettings.setStream(FxSchema.WINDOWS, ss);
+	}
+	
+	
+	public void storeSettings()
+	{
+		for(FxWindow w: getWindows())
+		{
+			storeWindow(w);
+		}
+		
 		GlobalSettings.save();		
 	}
 	
@@ -133,6 +161,7 @@ public class WindowsFx
 	
 	protected void exitPrivate()
 	{
+		exiting = true;
 		// calls Application.close()
 		Platform.exit();
 	}
@@ -228,19 +257,29 @@ public class WindowsFx
 	}
 	
 	
-	public int openWindows(Function<String,FxWindow> generator)
+	public int openWindows(Function<String,FxWindow> generator, Class<? extends FxWindow> defaultWindowType)
 	{
 		SStream st = GlobalSettings.getStream(FxSchema.WINDOWS);
 
+		boolean createDefault = true;
+		
 		// in proper z-order
 		for(int i=st.size()-1; i>=0; i--)
 		{
 			String id = st.getValue(i);
 			FxWindow w = generator.apply(id);
 			w.open();
+			
+			if(defaultWindowType != null)
+			{
+				if(w.getClass() == defaultWindowType)
+				{
+					createDefault = false;
+				}
+			}
 		}
 		
-		if(st.size() == 0)
+		if(createDefault)
 		{
 			FxWindow w = generator.apply(null);
 			w.open();
@@ -255,7 +294,7 @@ public class WindowsFx
 		if(w.isShowing())
 		{
 			// design error: you should use open() instead of show()
-			throw new Error();
+			log.warn("use open() instead of show(): " + w.getClass());
 		}
 		
 		w.setOnCloseRequest((ev) -> handleClose(w, ev));
@@ -294,6 +333,17 @@ public class WindowsFx
 	
 	protected void unlinkWindow(FxWindow w)
 	{
+		if(!exiting)
+		{
+			if(!(w instanceof FxDialog))
+			{
+				if(getFxWindowCount() == 1)
+				{
+					storeWindows();
+				}
+			}
+		}
+		
 		storeWindow(w);
 		GlobalSettings.save();
 

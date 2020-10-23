@@ -118,7 +118,7 @@ public class FxTable<T>
 	}
 	
 	
-	public ObservableList<TableColumn<T,?>> columns()
+	public ObservableList<TableColumn<T,?>> getColumns()
 	{
 		return table.getColumns();
 	}

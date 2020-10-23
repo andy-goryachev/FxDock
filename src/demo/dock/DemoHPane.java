@@ -1,7 +1,6 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.SB;
-import goryachev.fx.CInsets;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
 import goryachev.fx.HPane;
@@ -81,7 +80,7 @@ public class DemoHPane
 			t.addEventFilter(MouseEvent.ANY, (ev) -> updateToolTip(t));
 			
 			t.setBackground(FX.background(Color.WHITE));
-			t.setPadding(new CInsets(1, 3));
+			t.setPadding(FX.insets(1, 3));
 			t.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
 			
 			p.add(t, w);
@@ -97,7 +96,7 @@ public class DemoHPane
 		t.addEventFilter(MouseEvent.ANY, (ev) -> updateToolTip(t));
 		
 		t.setBackground(FX.background(Color.WHITE));
-		t.setPadding(new CInsets(1, 3));
+		t.setPadding(FX.insets(1, 3));
 		t.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
 		
 		t.textProperty().bind(Bindings.createStringBinding(() -> DemoTools.f(t.getWidth()) + "x" + DemoTools.f(t.getHeight()), t.widthProperty(), t.heightProperty()));
