@@ -1,6 +1,7 @@
 // Copyright © 2018-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 
 
 /**

@@ -1,6 +1,8 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.common.util.CKit;
+import goryachev.common.util.D;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -9,157 +11,190 @@ import javafx.scene.Node;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.util.Callback;
 
 
 /**
- * FxTable Column.
+ * A slightly more convenient TableColumn for FxTable.
  * 
- * TODO
- * <T> -> ObjectProperty or value (to be wrapped into ObjectProperty)
- * either:
- *  Object (from property) -> Node
- * or
- *  Object (from property) -> formatter -> String
- *  String -> setText()
+ * <ITEM> - row type for FxTable.getItems()
+ * <CELL> - cell type for the given column
+ * 
+ * Adds convenience methods:
+ * 
+ * - setAccessor(): accesses an ObservableValue
+ * - setSimpleAccessor(): creates a ReadOnlyObjectWrapper for a constant value
+ * - setFormatter(): formats TYPE to a string representation
+ * - setRenderer(): renders the TYPE value in a custom Node
  */
-public class FxTableColumn<T>
-	extends TableColumn<T,Object>
+public class FxTableColumn<ITEM,CELL>
+	extends TableColumn<ITEM,CELL>
 {
-	protected Function<T,Node> renderer;
-	protected Function<T,Object> converter;
-	protected OverrunStyle overrunStyle;
+	protected Function<CELL,String> formatter;
+	protected Function<CELL,Node> renderer;
+	protected BiConsumer<TableCell,CELL> decorator;
+	protected OverrunStyle overrunStyle = OverrunStyle.ELLIPSIS;
 	protected Pos alignment = Pos.CENTER_LEFT;
 	
 	
-	public FxTableColumn(String id, String text, boolean sortable)
+	public FxTableColumn(String name)
 	{
-		super(text);
-		setId(id);
-		setSortable(sortable);
-		setCellValueFactory((f) -> getCellValueProperty(f.getValue()));
-		setCellFactory((f) -> getCellFactory(f));
-	}
-
-
-	public FxTableColumn(String id, String text)
-	{
-		this(id, text, true);
+		super(name);
+		init();
 	}
 	
 	
 	public FxTableColumn()
 	{
-		this(null, null, true);
+		init();
 	}
 	
 	
-	public FxTableColumn(boolean sortable)
+	private void init()
 	{
-		this(null, null, sortable);
-	}
-	
-
-	/** javafx does not honor pref width */
-	public FxTableColumn<T> setRealPrefWidth(double width)
-	{
-		setMaxWidth(width * 100);
-		return this;
-	}
-
-
-	protected ObservableValue getCellValueProperty(T item)
-	{
-		if(converter == null)
-		{
-			return new ReadOnlyObjectWrapper(item);
-		}
-		else
-		{
-			Object x = converter.apply(item);
-			if(x instanceof ObservableValue)
-			{
-				return (ObservableValue)x;
-			}
-			return new ReadOnlyObjectWrapper(x);
-		}
+		setCellFactory(cellFactory());
+		setCellValueFactory((cdf) -> new ReadOnlyObjectWrapper(CKit.toString(cdf.getValue())));
 	}
 	
 	
-	public FxTableColumn<T> setAlignment(Pos a)
+	public FxTableColumn<ITEM,CELL> setAlignment(Pos a)
 	{
 		alignment = a;
 		return this;
 	}
 	
 	
-	public FxTableColumn<T> setRenderer(Function<T,Node> r)
+	public FxTableColumn<ITEM,CELL> setFormatter(Function<CELL,String> formatter)
 	{
-		renderer = r;
-		return this;
-	}
-	
-
-	/** 
-	 * a value converter generates cell values for sorting and display
-	 * (the latter only if renderer is not set)
-	 */
-	public FxTableColumn<T> setConverter(Function<T,Object> f)
-	{
-		converter = f;
+		this.formatter = formatter;
 		return this;
 	}
 	
 	
-	public FxTableColumn<T> setTextOverrun(OverrunStyle x)
+	public FxTableColumn<ITEM,CELL> setTextOverrun(OverrunStyle x)
 	{
 		overrunStyle = x;
 		return this;
 	}
 	
 	
-	// TODO renderer(item), value->renderer(value), value->formatter
-	// get value (object or property)
-	// sorting value
-	// display text
-	// display icon
-	// full cell
-	private TableCell<T,Object> getCellFactory(TableColumn<T,Object> f)
+	/** WARNING: might cause infinite layout() loop if table is inside a split pane? */ 
+	public FxTableColumn<ITEM,CELL> setRenderer(Function<CELL,Node> r)
 	{
-		return new TableCell<T,Object>()
+		renderer = r;
+		return this;
+	}
+	
+	
+	public FxTableColumn<ITEM,CELL> setDecorator(BiConsumer<TableCell,CELL> d)
+	{
+		decorator = d;
+		return this;
+	}
+
+
+	/** 
+	 * A simplified alternative to setCellValueFactory().  
+	 * Registers a function that returns an ObservableValue from the data item.
+	 */
+	public FxTableColumn<ITEM,CELL> setAccessor(Function<ITEM,ObservableValue<CELL>> func)
+	{
+		setCellValueFactory((cdf) -> 
+		{
+			ITEM item = cdf.getValue();
+			return func.apply(item);
+		});
+		return this;
+	}
+	
+	
+	/**
+	 * A simplified alternative to setCellValueFactory(), suitable for when the cell value 
+	 * has no corresponding ObservableValue, but simply returns a constant value.
+	 * Registers a function that returns a constant cell value, to be wrapped into a ReadOnlyObjectWrapper.
+	 */
+	public FxTableColumn<ITEM,CELL> setSimpleAccessor(Function<ITEM,CELL> func)
+	{
+		setCellValueFactory((cdf) ->
+		{
+			ITEM item = cdf.getValue();
+			CELL v = func.apply(item);
+			return new ReadOnlyObjectWrapper<CELL>(v);
+		});
+		return this;
+	}
+	
+	
+	/** javafx does not honor pref width */
+	public FxTableColumn<ITEM,CELL> setRealPrefWidth(double width)
+	{
+		setMaxWidth(width * 100);
+		return this;
+	}
+	
+	
+	/** sets checkbox renderer */
+	public void setCheckboxCell()
+	{
+		setCellFactory((cb) -> new CheckBoxTableCell<>());
+	}
+
+
+	protected Callback cellFactory()
+	{
+		return new Callback<TableColumn<?,?>,TableCell<?,?>>()
 		{
 			@Override
-			protected void updateItem(Object item, boolean empty)
+			public TableCell<?,?> call(TableColumn<?,?> param)
 			{
-				super.updateItem(item, empty);
-				
-				if(empty)
+				return new TableCell<Object,Object>()
 				{
-					setText(null);
-					setGraphic(null);
-				}
-				else
-				{
-					if(renderer == null)
+					@Override
+					protected void updateItem(Object item, boolean empty)
 					{
-						String s = CKit.toString(item);
-						setText(s);
-						setGraphic(null);
-						setAlignment(alignment);
-						
-						if(overrunStyle != null)
+						super.updateItem(item, empty);
+
+						if(empty || (item == null))
 						{
-							setTextOverrun(overrunStyle);
+							if(decorator != null)
+							{
+								decorator.accept(this, null);
+							}
+							else
+							{
+								setText(null);
+								setGraphic(null);
+							}
+						}
+						else
+						{
+							if(item instanceof Node)
+							{
+								super.setText(null);
+								super.setGraphic((Node)item);
+							}
+							else if(decorator != null)
+							{
+								decorator.accept(this, (CELL)item);
+							}
+							else if(renderer != null)
+							{
+								Node n = renderer.apply((CELL)item);
+								super.setText(null);
+								super.setGraphic(n);
+							}
+							else
+							{
+								String text = (formatter == null ? item.toString() : formatter.apply((CELL)item));
+								super.setText(text);
+								super.setGraphic(null);
+								super.setAlignment(alignment);
+								super.setTextOverrun(overrunStyle);
+							}
 						}
 					}
-					else
-					{
-						// damn, typecast
-						Node n = renderer.apply((T)item);
-						
-						setText(null);
-						setGraphic(n);
-					}
-				}
+				};
 			}
 		};
 	}

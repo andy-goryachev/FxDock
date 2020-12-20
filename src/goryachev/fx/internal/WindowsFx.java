@@ -195,6 +195,7 @@ public class WindowsFx
 			String k = windowPrefix + FxSchema.SFX_SETTINGS;
 			settings.loadValues(k);
 		}
+		
 		FxSchema.restoreWindow(windowPrefix, w);
 		
 		Parent p = w.getScene().getRoot();
@@ -268,13 +269,16 @@ public class WindowsFx
 		{
 			String id = st.getValue(i);
 			FxWindow w = generator.apply(id);
-			w.open();
-			
-			if(defaultWindowType != null)
+			if(w != null)
 			{
-				if(w.getClass() == defaultWindowType)
+				w.open();
+				
+				if(defaultWindowType != null)
 				{
-					createDefault = false;
+					if(w.getClass() == defaultWindowType)
+					{
+						createDefault = false;
+					}
 				}
 			}
 		}
@@ -327,7 +331,15 @@ public class WindowsFx
 			log.error(e);
 		}
 		
-		w.show();
+		switch(w.getModality())
+		{
+		case APPLICATION_MODAL:
+		case WINDOW_MODAL:
+			w.showAndWait();
+			break;
+		default:
+			w.show();	
+		}
 	}
 	
 	

@@ -730,11 +730,9 @@ public class CommonStyles
 		{
 			selector(FxButtonPane.PANE).defines
 			(
-				borderWidth(0)
-			),
-			selector(FxDialog.PANE, FxButtonPane.PANE).defines
-			(
-				padding(10)
+				borderWidth(0),
+				padding(10),
+				backgroundColor(FX.alpha(Color.GRAY, 0.1))
 			)
 		};
 	}

@@ -17,7 +17,7 @@ import javafx.util.Callback;
 
 
 /**
- * FxTable.
+ * Convenient TreeTable.
  */
 public class FxTreeTable<T>
 	extends CPane
@@ -113,49 +113,32 @@ public class FxTreeTable<T>
 	}
 	
 	
-	public void addColumn(String name)
+	public ObservableList<TreeTableColumn<T,?>> getColumns()
 	{
-		tree.getColumns().add(new TreeTableColumn<T,T>(name));
+		return tree.getColumns();
 	}
 	
 	
-	public void addColumn(FxTreeTableColumn<T> c)
+	public <C> FxTreeTableColumn<T,C> addColumn(FxTreeTableColumn<T,C> c)
 	{
 		tree.getColumns().add(c);
+		return c;
 	}
 	
 	
-	public void addColumn()
+	public <C> FxTreeTableColumn<T,C> addColumn()
 	{
-		tree.getColumns().add(new TreeTableColumn<T,T>());
+		FxTreeTableColumn<T,C> c = new FxTreeTableColumn<>();
+		tree.getColumns().add(c);
+		return c;
 	}
 	
 	
-	public TreeTableColumn<T,?> getColumn(int ix)
+	public <C> FxTreeTableColumn<T,C> addColumn(String name)
 	{
-		return tree.getColumns().get(ix);
-	}
-	
-	
-	// temporarily public until I figure out a better api
-	public TreeTableColumn<T,?> lastColumn()
-	{
-		ObservableList<TreeTableColumn<T,?>> cs = tree.getColumns();
-		return cs.get(cs.size() - 1);
-	}
-	
-	
-	public void setCellFactory(FxTreeTableCellFactory<T> f)
-	{
-		 TreeTableColumn c = lastColumn();
-		 c.setCellFactory(f);
-	}
-	
-	
-	public void setCellValueFactory(FxTreeTableCellValueFactory<T> f)
-	{
-		 TreeTableColumn c = lastColumn();
-		 c.setCellValueFactory(f);
+		FxTreeTableColumn<T,C> c = new FxTreeTableColumn<>(name);
+		tree.getColumns().add(c);
+		return c;
 	}
 	
 	

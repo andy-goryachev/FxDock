@@ -67,8 +67,6 @@ public final class CKit
 	public static final long MS_IN_A_WEEK = 604800000;
 	private static AtomicInteger id = new AtomicInteger(); 
 	private static Boolean eclipseDetected;
-	private static final JavaVersion JAVA8 = JavaVersion.parse("1.8.0");
-	private static final JavaVersion JAVA9 = JavaVersion.parse("9");
 	private static final double LOW_MEMORY_CHECK_THRESHOLD = 0.9;
 	private static final double LOW_MEMORY_FAIL_AFTER_GC_THRESHOLD = 0.87;
 	
@@ -2335,12 +2333,6 @@ public final class CKit
 		return (value >= min) && (value <= max);
 	}
 	
-	
-	public static boolean isJava9OrLater()
-	{
-		return JavaVersion.getJavaVersion().isSameOrLaterThan(JAVA9);
-	}
-
 
 	/** IEC kibi = 2^10, or 2014 */
 	public static long kibi(int x)

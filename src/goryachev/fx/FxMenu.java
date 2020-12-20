@@ -25,6 +25,13 @@ public class FxMenu
 	}
 	
 	
+	public FxMenu(String text, Runnable r)
+	{
+		super(text);
+		new FxAction(r).attach(this);
+	}
+	
+	
 	public SeparatorMenuItem separator()
 	{
 		SeparatorMenuItem m = new SeparatorMenuItem();

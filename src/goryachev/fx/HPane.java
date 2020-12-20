@@ -46,6 +46,17 @@ public class HPane
 	}
 	
 	
+	public HPane(int gap, Node ... nodes)
+	{
+		this.gap = gap;
+		
+		for(Node n: nodes)
+		{
+			add(n);
+		}
+	}
+	
+	
 	public void setGap(int gap)
 	{
 		this.gap = gap;
@@ -71,6 +82,15 @@ public class HPane
 	{
 		massage(n);
 		getChildren().add(n);
+	}
+	
+	
+	public void addAll(Node ... nodes)
+	{
+		for(Node n: nodes)
+		{
+			add(n);
+		}
 	}
 	
 	

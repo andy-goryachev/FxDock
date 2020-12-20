@@ -1,5 +1,6 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CPlatform;
 import goryachev.common.util.GlobalSettings;
@@ -29,6 +30,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.collections.transformation.TransformationList;
 import javafx.css.Styleable;
 import javafx.event.EventHandler;
@@ -75,6 +77,7 @@ import javafx.stage.Window;
  */
 public final class FX
 {
+	protected static final Log log = Log.get("FX");
 	public static final double TWO_PI = Math.PI + Math.PI;
 	public static final double PI_2 = Math.PI / 2.0;
 	public static final double DEGREES_PER_RADIAN = 180.0 / Math.PI;
@@ -135,7 +138,10 @@ public final class FX
 	/** 
 	 * loads application windows stored in the global settings.  
 	 * A window of specified defaultWindowType is created when the layout does not contain any windows saved,
-	 * or when no window of the defaultWindowType was created
+	 * or when no window of the defaultWindowType was created.
+	 * Generator:
+	 * - for null argument (default window id) must return a non-null instance 
+	 * - may return null window for a non-null window id
 	 */ 
 	public static void openWindows(Function<String,FxWindow> generator, Class<? extends FxWindow> defaultWindowType)
 	{
@@ -319,6 +325,16 @@ public final class FX
 	public static void style(Styleable n, CssStyle style)
 	{
 		n.getStyleClass().add(style.getName());
+	}
+	
+	
+	/** removes styles from a Styleable */
+	public static void removeStyles(Styleable n, CssStyle ... styles)
+	{
+		for(CssStyle st: styles)
+		{
+			n.getStyleClass().remove(st.getName());
+		}
 	}
 	
 	
@@ -947,6 +963,12 @@ public final class FX
 	{
 		return FXCollections.observableArrayList();
 	}
+	
+	
+	public static <K,V> ObservableMap<K,V> observableHashMap()
+	{
+		return FXCollections.observableHashMap();
+	}
 
 
 	/** creates a fixed spacer */
@@ -1260,7 +1282,7 @@ public final class FX
 	
 	
 	/** adds a ListChangeListener to the specified ObservableValue(s) */
-	public static void onChange(Runnable handler,ObservableList<?> list)
+	public static void onChange(Runnable handler, ObservableList<?> list)
 	{
 		onChange(handler, false, list);
 	}
@@ -1379,6 +1401,25 @@ public final class FX
 		list.addListener(li);
 	}
 	
+	
+	/** avoid ambiguous signature warning when using addListener */
+	public static <T> void addChangeListener(ObservableList<T> list, Runnable callback)
+	{
+		list.addListener((ListChangeListener.Change<? extends T> ch) -> callback.run());
+	}
+	
+	
+	/** avoid ambiguous signature warning when using addListener */
+	public static <T> void addChangeListener(ObservableList<T> list, boolean fireImmediately, Runnable callback)
+	{
+		list.addListener((ListChangeListener.Change<? extends T> ch) -> callback.run());
+		
+		if(fireImmediately)
+		{
+			callback.run();
+		}
+	}
+	
 
 	public static <T> void addChangeListener(ObservableValue<T> prop, ChangeListener<? super T> li)
 	{
@@ -1397,6 +1438,18 @@ public final class FX
 	public static <T> void addChangeListener(ObservableValue<T> prop, Runnable callback)
 	{
 		prop.addListener((s,p,current) -> callback.run());
+	}
+	
+	
+	/** simplified version of addChangeListener that only invokes the callback on change */
+	public static <T> void addChangeListener(ObservableValue<T> prop, boolean fireImmediately, Runnable callback)
+	{
+		prop.addListener((s,p,current) -> callback.run());
+		
+		if(fireImmediately)
+		{
+			callback.run();
+		}
 	}
 	
 	
@@ -1565,5 +1618,79 @@ public final class FX
 				});
 			}
 		};
+	}
+	
+	
+	/** returns the first window of the specified type, or null */ 
+	public static <T extends FxWindow> T findFirstWindowOfType(Class<T> type, boolean exact)
+	{
+		for(Window w: getWindows())
+		{
+			if(exact)
+			{
+				if(w.getClass() == type)
+				{
+					return (T)w;
+				}
+			}
+			else
+			{
+				if(type.isAssignableFrom(w.getClass()))
+				{
+					return (T)w;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+	/** 
+	 * guarantees to open a single instance of the specified type:
+	 * - creates a new instance (using the specified generator) if no instance is currently opened
+	 * - restores and brings to focus an existing instance
+	 */
+	public static <T extends FxWindow> T openSingleWindow(Class<T> type, Supplier<T> gen)
+	{
+		FX.checkThread();
+		
+		T w = findFirstWindowOfType(type, true);
+		if(w == null)
+		{
+			w = gen.get();
+			w.open();
+		}
+		else
+		{
+			if(w.isIconified())
+			{
+				w.setIconified(false);
+			}
+		}
+		
+		w.requestFocus();
+		return w;
+	}
+	
+	
+	/** 
+	 * guarantees to open a single instance of the specified type:
+	 * - creates a new instance (using a no-arg constructor) if no instance is currently opened
+	 * - restores and brings to focus an existing instance
+	 */
+	public static <T extends FxWindow> T openSingleWindow(Class<T> type)
+	{
+		return openSingleWindow(type, () -> 
+		{
+			try
+			{
+				return type.newInstance();
+			}
+			catch(Throwable e)
+			{
+				log.error(e);
+				throw new Error(type + " must declare a no-arg constructor", e);
+			}
+		});
 	}
 }

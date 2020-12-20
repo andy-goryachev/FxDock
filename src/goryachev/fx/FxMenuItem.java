@@ -15,7 +15,11 @@ public class FxMenuItem
 		super(text);
 		setGraphic(icon);
 		
-		if(a != null)
+		if(a == null)
+		{
+			setDisable(true);
+		}
+		else
 		{
 			a.attach(this);
 		}
@@ -26,7 +30,11 @@ public class FxMenuItem
 	{
 		setGraphic(icon);
 
-		if(a != null)
+		if(a == null)
+		{
+			setDisable(true);
+		}
+		else
 		{
 			a.attach(this);
 		}
@@ -37,7 +45,11 @@ public class FxMenuItem
 	{
 		super(text);
 		
-		if(a != null)
+		if(a == null)
+		{
+			setDisable(true);
+		}
+		else
 		{
 			a.attach(this);
 		}

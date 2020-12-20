@@ -164,6 +164,14 @@ public class TF
 	}
 	
 	
+	/** prints a formatted string */
+	public static void printf(String fmt, Object ... args)
+	{
+		String s = String.format(fmt, args);
+		TestCase.print(s);
+	}
+	
+	
 	/** list elements of an array, map, collection, iterator, iterable. */
 	public static void list(Object x)
 	{

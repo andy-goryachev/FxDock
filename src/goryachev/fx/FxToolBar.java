@@ -29,7 +29,7 @@ public class FxToolBar
 	}
 	
 	
-	public FxButton button(String text, FxAction a)
+	public FxButton addButton(String text, FxAction a)
 	{
 		FxButton b = new FxButton(text, a);
 		getItems().add(b);
@@ -37,9 +37,25 @@ public class FxToolBar
 	}
 	
 	
-	public FxButton button(String text)
+	public FxButton addButton(String text, FxAction a, CssStyle st)
 	{
-		return button(text, FxAction.DISABLED);
+		FxButton b = new FxButton(text, a, st);
+		getItems().add(b);
+		return b;
+	}
+	
+	
+	public FxButton addButton(String text, Runnable r)
+	{
+		FxButton b = new FxButton(text,  r);
+		getItems().add(b);
+		return b;
+	}
+	
+	
+	public FxButton addButton(String text)
+	{
+		return addButton(text, FxAction.DISABLED);
 	}
 	
 	
@@ -75,7 +91,7 @@ public class FxToolBar
 	}
 
 
-	public FxToggleButton toggleButton(String text, Property<Boolean> prop)
+	public FxToggleButton addToggleButton(String text, Property<Boolean> prop)
 	{
 		FxToggleButton b = new FxToggleButton(text, prop);
 		add(b);

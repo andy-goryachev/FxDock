@@ -47,6 +47,12 @@ public class FxTabPane
 	}
 	
 	
+	public void selectTab(int index)
+	{
+		getSelectionModel().select(index);
+	}
+	
+	
 	/** selects a tab with the specified content Node */
 	public boolean selectNode(Node n)
 	{

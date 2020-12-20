@@ -35,6 +35,7 @@ public class FxTable<T>
 	public final TableView<T> table;
 	public final FxBoolean autoResizeMode = new FxBoolean();
 	private BooleanBinding singleSelectionProperty;
+	private BooleanBinding nonEmptySelectionProperty;
 	
 	
 	public FxTable()
@@ -53,18 +54,18 @@ public class FxTable<T>
 	}
 	
 	
+	private void init()
+	{
+		table.skinProperty().addListener((s,p,c) -> fixHorizontalScrollbar());
+	}
+	
+	
 	/** allow for sorting of items separately from the source list */
 	public void wrapSortedList(ObservableList<T> src)
 	{
 		SortedList<T> s = new SortedList<>(src);
 		s.comparatorProperty().bind(table.comparatorProperty());
 		setItems(s);
-	}
-	
-	
-	private void init()
-	{
-		table.skinProperty().addListener((s,p,c) -> fixHorizontalScrollbar());
 	}
 	
 	
@@ -124,36 +125,36 @@ public class FxTable<T>
 	}
 	
 	
-	public FxTableColumn<T> addColumn(FxTableColumn<T> tc)
+	public <C> FxTableColumn<T,C> addColumn(FxTableColumn<T,C> c)
 	{
-		table.getColumns().add(tc);
-		return tc;
+		table.getColumns().add(c);
+		return c;
 	}
 	
 	
-	public FxTableColumn<T> addColumn()
+	public <C> FxTableColumn<T,C> addColumn()
 	{
-		FxTableColumn<T> tc = new FxTableColumn<T>();
-		table.getColumns().add(tc);
-		return tc;
+		FxTableColumn<T,C> c = new FxTableColumn<>();
+		table.getColumns().add(c);
+		return c;
 	}
 	
 	
-	public FxTableColumn<T> addColumn(String name)
+	public <C> FxTableColumn<T,C> addColumn(String name)
 	{
-		FxTableColumn<T> tc = new FxTableColumn<T>(name, name);
-		table.getColumns().add(tc);
-		return tc;
+		FxTableColumn<T,C> c = new FxTableColumn<>(name);
+		table.getColumns().add(c);
+		return c;
 	}
 	
 	
-	public void setColumns(Collection<FxTableColumn<T>> cs)
+	public void setColumns(Collection<FxTableColumn<T,?>> cs)
 	{
 		table.getColumns().setAll(cs);
 	}
 	
 	
-	public void setColumns(FxTableColumn<T> ... cs)
+	public void setColumns(FxTableColumn<T,?> ... cs)
 	{
 		table.getColumns().setAll(cs);
 	}
@@ -165,10 +166,10 @@ public class FxTable<T>
 	}
 	
 
-	public FxTableColumn<T> lastColumn()
+	public FxTableColumn<T,?> lastColumn()
 	{
 		ObservableList<TableColumn<T,?>> cs = table.getColumns();
-		return (FxTableColumn<T>)cs.get(cs.size() - 1);
+		return (FxTableColumn<T,?>)cs.get(cs.size() - 1);
 	}
 	
 	
@@ -293,6 +294,12 @@ public class FxTable<T>
 	public void setPlaceholder(Node n)
 	{
 		table.setPlaceholder(n);
+	}
+	
+	
+	public void selectAll()
+	{
+		table.getSelectionModel().selectAll();
 	}
 	
 	
@@ -438,6 +445,20 @@ public class FxTable<T>
 			);
 		}
 		return singleSelectionProperty;
+	}
+	
+	
+	public BooleanBinding nonEmptySelectionProperty()
+	{
+		if(nonEmptySelectionProperty == null)
+		{
+			nonEmptySelectionProperty = Bindings.createBooleanBinding
+			(
+				() -> (table.getSelectionModel().getSelectedIndices().size() > 0),
+				table.getSelectionModel().getSelectedIndices()
+			);
+		}
+		return nonEmptySelectionProperty;
 	}
 	
 	

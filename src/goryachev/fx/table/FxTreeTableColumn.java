@@ -1,118 +1,168 @@
 // Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
-import goryachev.fx.Converters;
-import goryachev.fx.FxFormatter;
+import goryachev.common.util.CKit;
 import java.util.function.Function;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
-import javafx.util.StringConverter;
+import javafx.scene.control.cell.CheckBoxTreeTableCell;
+import javafx.util.Callback;
 
 
 /**
- * Fx Tree Table Column.
+ * FxTreeTable Column.
  */
-public abstract class FxTreeTableColumn<T>
-	extends TreeTableColumn<T,Object>
+public class FxTreeTableColumn<ITEM,CELL>
+	extends TreeTableColumn<ITEM,CELL>
 {
-	/** 
-	 * Override to provide Observable value for the cell.  Example:
-	 * return new ReadOnlyObjectWrapper(item); 
-	 */
-	protected abstract ObservableValue getCellValueProperty(T item);
-	
-	//
-	
-	protected Function<Object,Node> renderer;
-	protected StringConverter<Object> formatter = Converters.OBJECT();
+	protected Function<CELL,String> formatter;
+	protected Function<CELL,Node> renderer;
+	protected OverrunStyle overrunStyle = OverrunStyle.ELLIPSIS;
 	protected Pos alignment = Pos.CENTER_LEFT;
 
 	
-	public FxTreeTableColumn(String text, boolean sortable)
+	public FxTreeTableColumn(String name)
 	{
-		super(text);
-		
-		setSortable(sortable);
-		setCellValueFactory((f) -> getCellValueProperty(f.getValue().getValue()));
-		setCellFactory((f) -> getCellFactory(f));
+		super(name);
+		init();
 	}
 
 
-	public FxTreeTableColumn(String text)
-	{
-		this(text, true);
-	}
-	
-	
 	public FxTreeTableColumn()
 	{
-		this(null, true);
+		init();
 	}
 	
 	
-	public FxTreeTableColumn(boolean sortable)
+	private void init()
 	{
-		this(null, sortable);
+		setCellFactory(cellFactory());
+		setCellValueFactory((cdf) -> new ReadOnlyObjectWrapper(CKit.toString(cdf.getValue())));
 	}
 	
 	
-	/** sets renderer node generator which creates a Node to represent a value */
-	public void setRenderer(Function<Object,Node> r)
-	{
-		renderer = r;
-	}
-	
-	
-	public void setAlignment(Pos a)
+	public FxTreeTableColumn<ITEM,CELL> setAlignment(Pos a)
 	{
 		alignment = a;
+		return this;
 	}
 	
 	
-	public void setConverter(FxFormatter c)
+	public FxTreeTableColumn<ITEM,CELL> setFormatter(Function<CELL,String> formatter)
 	{
-		formatter = (c == null ? Converters.OBJECT() : c);
+		this.formatter = formatter;
+		return this;
 	}
 	
 	
-	public StringConverter<Object> getConverter()
+	public FxTreeTableColumn<ITEM,CELL> setTextOverrun(OverrunStyle x)
 	{
-		return formatter;
+		overrunStyle = x;
+		return this;
 	}
 	
 	
-	private TreeTableCell<T,Object> getCellFactory(TreeTableColumn<T,Object> tc)
+	public FxTreeTableColumn<ITEM,CELL> setRenderer(Function<CELL,Node> r)
 	{
-		return new TreeTableCell<T,Object>()
+		renderer = r;
+		return this;
+	}
+	
+	
+	/** 
+	 * A simplified alternative to setCellValueFactory().  
+	 * Registers a function that returns an ObservableValue from the data item.
+	 */
+	public FxTreeTableColumn<ITEM,CELL> setAccessor(Function<ITEM,ObservableValue<CELL>> func)
+	{
+		setCellValueFactory((cdf) -> 
+		{
+			ITEM item = cdf.getValue().getValue();
+			return func.apply(item);
+		});
+		return this;
+	}
+	
+	
+	/**
+	 * A simplified alternative to setCellValueFactory(), suitable for when the cell value 
+	 * has no corresponding ObservableValue, but simply returns a constant value.
+	 * Registers a function that returns a constant cell value, to be wrapped into a ReadOnlyObjectWrapper.
+	 */
+	public FxTreeTableColumn<ITEM,CELL> setSimpleAccessor(Function<ITEM,CELL> func)
+	{
+		setCellValueFactory((cdf) ->
+		{
+			ITEM item = cdf.getValue().getValue();
+			CELL v = func.apply(item);
+			return new ReadOnlyObjectWrapper<CELL>(v);
+		});
+		return this;
+	}
+	
+	
+	/** javafx does not honor pref width */
+	public FxTreeTableColumn<ITEM,CELL> setRealPrefWidth(double width)
+	{
+		setMaxWidth(width * 100);
+		return this;
+	}
+	
+	
+	/** sets checkbox renderer */
+	public void setCheckboxCell()
+	{
+		setCellFactory((cb) -> new CheckBoxTreeTableCell<>());
+	}
+	
+	
+	private Callback cellFactory()
+	{
+		return new Callback<TreeTableColumn<?,?>,TreeTableCell<?,?>>()
 		{
 			@Override
-			protected void updateItem(Object item, boolean empty)
+			public TreeTableCell<?,?> call(TreeTableColumn<?,?> param)
 			{
-				super.updateItem(item, empty);
-				
-				if(empty)
+				return new TreeTableCell<Object,Object>()
 				{
-					setText(null);
-					setGraphic(null);
-				}
-				else
-				{
-					if(renderer == null)
+					@Override
+					protected void updateItem(Object item, boolean empty)
 					{
-						String text = formatter.toString(item);
-						setText(text);
-						setGraphic(null);
-						setAlignment(alignment);
+						if(item != getItem())
+						{
+							super.updateItem(item, empty);
+		
+							if(item == null)
+							{
+								super.setText(null);
+								super.setGraphic(null);
+							}
+							else if(item instanceof Node)
+							{
+								super.setText(null);
+								super.setGraphic((Node)item);
+							}
+							else if(renderer == null)
+							{
+								String text = (formatter == null ? item.toString() : formatter.apply((CELL)item));
+								super.setText(text);
+								super.setGraphic(null);
+								super.setAlignment(alignment);
+								super.setTextOverrun(overrunStyle);
+							}
+							else
+							{
+								Node n = renderer.apply((CELL)item);
+								super.setText(null);
+								super.setGraphic(n);
+							}
+						}
 					}
-					else
-					{
-						Node n = renderer.apply(item);
-						setText(null);
-						setGraphic(n);
-					}
-				}
+				};
 			}
 		};
 	}

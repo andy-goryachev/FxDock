@@ -28,13 +28,17 @@ public class SysInfo
 	public static String getSystemInfo()
 	{
 		StringOut out = new StringOut();
-		SysInfo s = new SysInfo(out);
-		
-		s.extractApp();
-		s.extractEnvironment();
-		s.extractSystemProperties();
-		
+		getSystemInfo(out);
 		return out.getReport();
+	}
+	
+	
+	public static void getSystemInfo(Out out)
+	{
+		SysInfo s = new SysInfo(out);
+		s.extractApp();
+		s.extractSystemProperties();
+		s.extractEnvironment();
 	}
 	
 	
@@ -199,45 +203,7 @@ public class SysInfo
 		
 		public abstract void nl();
 		
-		public abstract void print(int count, String x);
-		
-		public abstract void describe(Object key, Object v);
-		
-		public abstract Out a(Object x);
-		
-		//
-		
-
-		protected void describe(Object x)
-		{
-			if(x == null)
-			{
-			}
-			else if(x instanceof String)
-			{
-				a('"');
-				a(x);
-				a('"');
-			}
-			else if(x instanceof Object[])
-			{
-				Object[] a = (Object[])x;
-				a("Object[");
-				a(a.length);
-				a("]");
-			}
-			else if(x instanceof int[])
-			{
-				int[] a = (int[])x;
-				a("int[");
-				a(a.length);
-				a("]");
-			}
-			else
-			{
-				a(x);
-			}
-		}
+		public abstract void print(int indent, String x);
 	}
 	
 	
@@ -256,13 +222,6 @@ public class SysInfo
 			sb = new SB();
 		}
 
-		
-		public Out a(Object x)
-		{
-			sb.a(x);
-			return this;
-		}
-		
 	
 		public void header(String title)
 		{
@@ -283,16 +242,6 @@ public class SysInfo
 				sb.a(indent);
 			}
 			sb.append(x);		
-			sb.nl();
-		}
-		
-		
-		public void describe(Object key, Object v)
-		{
-			sb.a(indent);
-			sb.a(key);
-			sb.a(" = ");
-			describe(sb, v);
 			sb.nl();
 		}
 		

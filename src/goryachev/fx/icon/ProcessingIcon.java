@@ -46,11 +46,11 @@ public class ProcessingIcon
 		
 		IconBase ic = b.getIcon();
 		
-		RotateTransition t = new RotateTransition(Duration.millis(3000), ic);
+		// FIX BUG click on a title bar and rotation pauses (and might stop completely)
+		RotateTransition t = new RotateTransition(Duration.millis(750), ic);
 		t.setByAngle(360);
-		t.setCycleCount(36);
+		t.setCycleCount(RotateTransition.INDEFINITE);
 		t.setInterpolator(Interpolator.LINEAR);
-		t.setDuration(Duration.millis(750));
 		t.play();
 		
 		return ic;

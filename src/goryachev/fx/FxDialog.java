@@ -43,7 +43,7 @@ public class FxDialog
 	}
 	
 	
-	protected FxButtonPane buttonPane()
+	public FxButtonPane buttonPane()
 	{
 		Node n = getBottom();
 		if(n instanceof FxButtonPane)
@@ -57,42 +57,42 @@ public class FxDialog
 	}
 	
 	
-	public FxButton addButton(String text, FxAction a, CssStyle style)
-	{
-		FxButton b = new FxButton(text, a, style);
-		buttonPane().add(b);
-		return b;
-	}
-	
-	
-	public FxButton addButton(String text, Runnable r, CssStyle style)
-	{
-		FxButton b = new FxButton(text, r, style);
-		buttonPane().add(b);
-		return b;
-	}
-	
-	
-	public FxButton addButton(String text, FxAction a)
-	{
-		FxButton b = new FxButton(text, a);
-		buttonPane().add(b);
-		return b;
-	}
-	
-	
-	public FxButton addButton(String text)
-	{
-		FxButton b = new FxButton(text, FxAction.DISABLED);
-		buttonPane().add(b);
-		return b;
-	}
-	
-	
-	public void fill()
-	{
-		buttonPane().fill();
-	}
+//	public FxButton addButton(String text, FxAction a, CssStyle style)
+//	{
+//		FxButton b = new FxButton(text, a, style);
+//		buttonPane().add(b);
+//		return b;
+//	}
+//	
+//	
+//	public FxButton addButton(String text, Runnable r, CssStyle style)
+//	{
+//		FxButton b = new FxButton(text, r, style);
+//		buttonPane().add(b);
+//		return b;
+//	}
+//	
+//	
+//	public FxButton addButton(String text, FxAction a)
+//	{
+//		FxButton b = new FxButton(text, a);
+//		buttonPane().add(b);
+//		return b;
+//	}
+//	
+//	
+//	public FxButton addButton(String text)
+//	{
+//		FxButton b = new FxButton(text, FxAction.DISABLED);
+//		buttonPane().add(b);
+//		return b;
+//	}
+//	
+//	
+//	public void fill()
+//	{
+//		buttonPane().fill();
+//	}
 	
 	
 	public void open()

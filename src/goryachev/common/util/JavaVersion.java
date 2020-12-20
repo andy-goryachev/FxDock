@@ -145,7 +145,7 @@ public class JavaVersion
 	}
 	
 	
-	protected static JavaVersion parse(String s)
+	public static JavaVersion parse(String s)
 	{
 		int[] ver;
 		

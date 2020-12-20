@@ -85,6 +85,20 @@ public class FxComboBox<T>
 	}
 	
 	
+	public void selectOrFirst(T item)
+	{
+		int ix = indexOf(item);
+		if(ix < 0)
+		{
+			selectFirst();
+		}
+		else
+		{
+			select(ix);
+		}
+	}
+	
+	
 	/** notice: utility method, the property will change if the underlying model has been changed */
 	public final ReadOnlyObjectProperty<T> selectedItemProperty()
 	{
@@ -95,6 +109,12 @@ public class FxComboBox<T>
 	public T getSelectedItem()
 	{
 		return getSelectionModel().getSelectedItem();
+	}
+	
+	
+	public int getSelectedIndex()
+	{
+		return getSelectionModel().getSelectedIndex();
 	}
 	
 	

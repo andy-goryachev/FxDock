@@ -96,4 +96,12 @@ public class FxPopupMenu
 		add(m);
 		return m;
 	}
+	
+	
+	public FxMenu menu(String text, Runnable r)
+	{
+		FxMenu m = new FxMenu(text, r);
+		add(m);
+		return m;
+	}
 }

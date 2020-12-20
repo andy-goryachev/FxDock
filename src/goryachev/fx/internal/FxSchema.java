@@ -4,6 +4,7 @@ import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import goryachev.fx.FX;
+import goryachev.fx.FxDialog;
 import goryachev.fx.FxWindow;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -15,6 +16,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Shape;
+import javafx.stage.Window;
 
 
 /**
@@ -92,8 +94,11 @@ public class FxSchema
 			
 			if((w > 0) && (h > 0))
 			{
-				// unnecessary anymore
-				if(FX.isValidCoordinates(x, y))
+				if
+				(
+					FX.isValidCoordinates(x, y) &&
+					(!(win instanceof FxDialog))
+				)
 				{
 					// iconified windows have (x,y) of -32000 for some reason
 					// their coordinates are essentially lost (unless there is a way to get them in FX)
@@ -105,6 +110,11 @@ public class FxSchema
 				{
 					win.setWidth(w);
 					win.setHeight(h);
+				}
+				else
+				{
+					w = win.getWidth();
+					h = win.getHeight();
 				}
 				
 				switch(state)
@@ -118,6 +128,20 @@ public class FxSchema
 				case WINDOW_MAXIMIZED:
 					win.setMaximized(true);
 					break;
+				}
+				
+				if(win instanceof FxDialog)
+				{
+					FxDialog d = (FxDialog)win;
+					Window parent = d.getOwner();
+					if(parent != null)
+					{
+						double cx = parent.getX() + (parent.getWidth() / 2);
+						double cy = parent.getY() + (parent.getHeight() / 2);
+						// TODO check 
+						d.setX(cx - w/2);
+						d.setY(cy - h/2);
+					}
 				}
 			}
 		}

@@ -429,7 +429,7 @@ public class D
 	{
 		StackTraceElement t = new Throwable().getStackTrace()[depth];
 		String className = getClassName(t);
-		String s = className + "." + t.getMethodName() + " " + msg;
+		String s = className + "." + t.getMethodName() + ":" + t.getLineNumber() + " " + msg;
 		System.err.println(s);
 	}
 	

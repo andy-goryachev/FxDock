@@ -3,6 +3,7 @@ package goryachev.common.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class CList<T>
@@ -258,5 +259,11 @@ public class CList<T>
 		{
 			add(index, item);
 		}
+	}
+
+
+	public static <V> List<V> of(V[] a)
+	{
+		return new CList(a);
 	}
 }
