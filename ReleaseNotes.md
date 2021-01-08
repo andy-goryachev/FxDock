@@ -1,5 +1,11 @@
 # FxDock Release Notes
 
+- fx framework updates
+
+**0.00.06**
+- removed legacy logger
+- removed gson dependency
+
 **0.00.05**
 - updated common FX code
 - added gson as a dependency (Log)

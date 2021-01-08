@@ -1,4 +1,4 @@
-// Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.log.Log;
 import goryachev.common.log.SimpleLogConfig;
@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 public class DockDemoApp
 	extends Application
 {
-	public static final String COPYRIGHT = "copyright © 2020 andy goryachev";
+	public static final String COPYRIGHT = "copyright © 2016-2021 andy goryachev";
 	public static final String TITLE = "FxDock Docking Framework Demo";
 
 
