@@ -1,4 +1,4 @@
-// Copyright © 2014-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2014-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.security.SecureRandom;
 import java.util.concurrent.atomic.AtomicLong;

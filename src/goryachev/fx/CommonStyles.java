@@ -1,4 +1,4 @@
-// Copyright © 2016-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CPlatform;
 import goryachev.fx.internal.CssTools;
@@ -718,6 +718,7 @@ public class CommonStyles
 			// text smoothing
 			selector(FxToolBar.STYLE).defines
 			(
+				prop("-fx-spacing", 1),
 				padding(2, 2, 2, 2)
 			)
 		};

@@ -1,4 +1,4 @@
-// Copyright © 2006-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2006-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
 import java.io.ByteArrayOutputStream;

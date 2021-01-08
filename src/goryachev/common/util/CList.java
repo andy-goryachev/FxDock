@@ -1,4 +1,4 @@
-// Copyright © 2007-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -262,7 +262,7 @@ public class CList<T>
 	}
 
 
-	public static <V> List<V> of(V[] a)
+	public static <V> List<V> of(V ... a)
 	{
 		return new CList(a);
 	}

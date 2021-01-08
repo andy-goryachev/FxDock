@@ -1,11 +1,11 @@
-// Copyright © 2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 
 
 /**
- * FxToggleGroup.
+ * Slightly more convenient ToggleGroup.
  */
 public class FxToggleGroup
 	extends ToggleGroup

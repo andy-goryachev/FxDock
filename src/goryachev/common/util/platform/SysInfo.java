@@ -1,4 +1,4 @@
-// Copyright © 2009-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2009-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util.platform;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
@@ -54,15 +54,15 @@ public class SysInfo
 	}
 	
 	
-	protected void print(String x)
+	protected void print(String name, String value)
 	{
-		print(1, x);
+		print(1, name, value);
 	}
 	
 	
-	protected void print(int indents, String x)
+	protected void print(int indents, String name, String value)
 	{
-		out.print(indents, x);
+		out.print(indents, name, value);
 	}
 	
 	
@@ -118,13 +118,13 @@ public class SysInfo
 	
 	public void extractApp()
 	{
-		print("Time: " + new SimpleDateFormat("yyyy-MMdd HH:mm:ss").format(System.currentTimeMillis()));
-		
 		long max = Runtime.getRuntime().maxMemory();
 		long free = max - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory();
-		
-		print("Available Memory: " + number(max));
-		print("Free Memory:" + number(free));
+
+		header("Application");
+		print("Time/Date", new SimpleDateFormat("yyyy-MMdd HH:mm:ss").format(System.currentTimeMillis()));
+		print("Available Memory", number(max));
+		print("Free Memory:", number(free));
 		nl();
 	}
 
@@ -138,7 +138,7 @@ public class SysInfo
 		CSorter.sort(keys);
 		for(String key: keys)
 		{
-			print(key + " = " + safe(env.get(key)));
+			print(key, safe(env.get(key)));
 		}
 		nl();
 	}
@@ -153,7 +153,7 @@ public class SysInfo
 		CSorter.sort(keys);
 		for(String key: keys)
 		{
-			print(key + " = " + safe(p.getProperty(key)));
+			print(key, safe(p.getProperty(key)));
 		}
 		nl();
 	}
@@ -175,7 +175,7 @@ public class SysInfo
 	
 	protected void listSecurityAlgorithms(String name)
 	{
-		print(name);
+		print(name, "");
 
 		try
 		{
@@ -184,12 +184,12 @@ public class SysInfo
 			
 			for(String s: names)
 			{
-				print(2, s);
+				print(2, s, "");
 			}
 		}
 		catch(Exception e)
 		{
-			print(CKit.stackTrace(e));
+			print(e.getMessage(), "");
 		}
 	}
 	
@@ -203,7 +203,8 @@ public class SysInfo
 		
 		public abstract void nl();
 		
-		public abstract void print(int indent, String x);
+		/** output name and value, the client must also append new line */
+		public abstract void print(int indent, String name, String value);
 	}
 	
 	
@@ -235,13 +236,15 @@ public class SysInfo
 		}
 		
 		
-		public void print(int count, String x)
+		public void print(int count, String name, String value)
 		{
 			for(int i=0; i<count; i++)
 			{
 				sb.a(indent);
 			}
-			sb.append(x);		
+			sb.append(name);
+			sb.append("=");
+			sb.append(value);
 			sb.nl();
 		}
 		

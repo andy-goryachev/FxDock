@@ -1,18 +1,41 @@
-// Copyright © 2011-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2011-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 
 
 public class UserException
 	extends RuntimeException
 {
-	public UserException(String message)
+	private String title;
+	
+	
+	public UserException(String title, String message, Throwable cause)
+	{
+		super(message, cause);
+		this.title = title;
+	}
+	
+	
+	public UserException(String title, String message)
 	{
 		super(message);
+		this.title = title;
 	}
 	
 	
 	public UserException(String message, Throwable cause)
 	{
 		super(message, cause);
+	}
+	
+	
+	public UserException(String message)
+	{
+		super(message);
+	}
+
+	
+	public String getTitle()
+	{
+		return title;
 	}
 }

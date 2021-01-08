@@ -1,4 +1,4 @@
-// Copyright © 2005-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2005-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.Externalizable;
 import java.io.IOException;

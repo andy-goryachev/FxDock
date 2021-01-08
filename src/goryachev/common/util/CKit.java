@@ -1,4 +1,4 @@
-// Copyright © 2007-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CWriter;
 import goryachev.common.log.Log;
@@ -47,7 +47,7 @@ import java.util.zip.ZipFile;
 
 public final class CKit
 {
-	public static final String COPYRIGHT = "Copyright © 1996-2020 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
+	public static final String COPYRIGHT = "Copyright © 1996-2021 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
 	protected static final Log log = Log.get("CKit");
 	public static final char APPLE = '\u2318';
 	public static final char BOM = '\ufeff';

@@ -1,4 +1,4 @@
-// Copyright © 2017-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
 import goryachev.common.log.internal.LogEventFormatter;
 import goryachev.common.util.CList;

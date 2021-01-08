@@ -1,11 +1,14 @@
-// Copyright © 2019-2020 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.Property;
 import javafx.scene.control.ToggleButton;
 
 
 /**
- * Fx ToggleButton.
+ * Slightly more convenient ToggleButton.
+ * 
+ * When you need a toggle button that behave like RadioButtons in a group
+ * (i.e. to keep one always selected), use FxRadioToggleButton. 
  */
 public class FxToggleButton
 	extends ToggleButton
