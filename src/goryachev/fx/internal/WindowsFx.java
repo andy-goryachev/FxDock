@@ -165,7 +165,7 @@ public class WindowsFx
 		// calls Application.close()
 		Platform.exit();
 	}
-
+	
 	
 	public void storeWindow(FxWindow w)
 	{

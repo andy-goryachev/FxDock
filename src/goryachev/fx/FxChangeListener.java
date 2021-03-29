@@ -1,56 +1,92 @@
 // Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import java.util.function.Consumer;
+import goryachev.common.util.Disconnectable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 
 /**
- * Special Change Listener that keeps track of the sole property it attaches to,
- * making it easier to for the client code to disconnect.
+ * A Change Listener that calls a callback when any of the registered properties change.
+ * This class allows for disconnecting the listeners from all the registered properties.
  */
-public class FxChangeListener<T>
-	implements ChangeListener<T>
+public class FxChangeListener
+	implements ChangeListener, Disconnectable
 {
-	private final Consumer<T> callback;
-	private ObservableValue<T> property;
+	private final Runnable callback;
+	private final CopyOnWriteArrayList<ObservableValue> properties = new CopyOnWriteArrayList<>();
+	private boolean enabled = true;
 	
 	
-	public FxChangeListener(Consumer<T> callback)
+	public FxChangeListener(Runnable callback)
 	{
 		this.callback = callback;
 	}
 	
 
-	public void attach(ObservableValue<T> prop)
+	public void listen(ObservableValue<?> p)
 	{
-		if(prop == property)
+		if(p != null)
 		{
-			// already attached
-			return;
+			properties.add(p);
+			p.addListener(this);
 		}
-		else if(property != null)
+	}
+	
+	
+	public void listen(ObservableValue<?> ... props)
+	{
+		for(ObservableValue<?> p: props)
 		{
-			throw new Error("attached twice: " + property);
+			listen(p);
 		}
-		
-		property = prop;
-		
-		prop.addListener(this);
 	}
 	
 	
 	public void disconnect()
 	{
-		if(property != null)
+		for(ObservableValue p: properties)
 		{
-			property.removeListener(this);
+			p.removeListener(this);
 		}
+	}
+	
+	
+	public void enable()
+	{
+		setEnabled(true);
+	}
+	
+	
+	public void disable()
+	{
+		setEnabled(true);
+	}
+	
+	
+	public void setEnabled(boolean on)
+	{
+		enabled = on;
+	}
+	
+	
+	public boolean isEnabled()
+	{
+		return enabled;
 	}
 
 
-	public void changed(ObservableValue<? extends T> src, T old, T value)
+	public void changed(ObservableValue src, Object prev, Object curr)
 	{
-		callback.accept(value);
+		fire();
+	}
+	
+	
+	public void fire()
+	{
+		if(enabled)
+		{
+			callback.run();
+		}
 	}
 }

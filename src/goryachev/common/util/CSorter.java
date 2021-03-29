@@ -5,9 +5,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 
-/** class that sorts anything */
+/** Simple class for universal sorting/collating */
 public class CSorter
 {
 	/** universal sort by toString() value */
@@ -26,6 +27,38 @@ public class CSorter
 		if(a != null)
 		{
 			Collections.sort(a, comparator(false));
+		}
+	}
+	
+	
+	/** universal sort using specified string converter */
+	public static <T> void sort(T[] a, Function<T,String> conv)
+	{
+		if(a != null)
+		{
+			Arrays.sort(a, new Comparator<T>()
+			{
+				public int compare(T a, T b)
+				{
+					return compareItems(a, b, conv);
+				}
+			});
+		}
+	}
+	
+	
+	/** universal sort using specified string converter */
+	public static <T> void sort(List<T> a, Function<T,String> conv)
+	{
+		if(a != null)
+		{
+			Collections.sort(a, new Comparator<T>()
+			{
+				public int compare(T a, T b)
+				{
+					return compareItems(a, b, conv);
+				}
+			});
 		}
 	}
 	
@@ -66,6 +99,44 @@ public class CSorter
 		if(a != null)
 		{
 			Collections.sort(a, collator());
+		}
+	}
+	
+	
+	/** universal text collation using supplied string converter */
+	public static <T> void collate(T[] a, Function<T,String> conv)
+	{
+		if(a != null)
+		{
+			Arrays.sort(a, new Comparator<T>()
+			{
+				private final Collator collator = Collator.getInstance();
+				
+				
+				public int compare(T a, T b)
+				{
+					return collateItems(a, b, collator, conv);
+				}
+			});
+		}
+	}
+	
+	
+	/** universal text collation using supplied string converter */
+	public static <T> void collate(List<T> a, Function<T,String> conv)
+	{
+		if(a != null)
+		{
+			Collections.sort(a, new Comparator<T>()
+			{
+				private final Collator collator = Collator.getInstance();
+				
+				
+				public int compare(T a, T b)
+				{
+					return collateItems(a, b, collator, conv);
+				}
+			});
 		}
 	}
 	
@@ -248,5 +319,95 @@ public class CSorter
 				}
 			}
 		};
+	}
+	
+	
+	public static <T> int compareItems(T a, T b, Function<T,String> conv)
+	{
+		if(a == null)
+		{
+			if(b == null)
+			{
+				return 0;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else if(b == null)
+		{
+			return 1;
+		}
+		else
+		{
+			String sa = conv.apply(a);
+			String sb = conv.apply(b);
+			
+			if(sa == null)
+			{
+				if(sb == null)
+				{
+					return 0;
+				}
+				else
+				{
+					return -1;
+				}
+			}
+			else if(sb == null)
+			{
+				return 1;
+			}
+			else
+			{
+				return sa.compareTo(sb);
+			}
+		}
+	}
+	
+	
+	public static <T> int collateItems(T a, T b, Collator collator, Function<T,String> conv)
+	{
+		if(a == null)
+		{
+			if(b == null)
+			{
+				return 0;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else if(b == null)
+		{
+			return 1;
+		}
+		else
+		{
+			String sa = conv.apply(a);
+			String sb = conv.apply(b);
+			
+			if(sa == null)
+			{
+				if(sb == null)
+				{
+					return 0;
+				}
+				else
+				{
+					return -1;
+				}
+			}
+			else if(sb == null)
+			{
+				return 1;
+			}
+			else
+			{
+				return collator.compare(sa, sb);
+			}
+		}
 	}
 }

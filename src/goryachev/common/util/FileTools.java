@@ -466,6 +466,28 @@ public class FileTools
 			close(in);
 		}
 	}
+	
+	
+	/** @return canonical name of the parent folder */
+	public static String getFilePath(File f)
+	{
+		if(f != null)
+		{
+			File p = f.getParentFile();
+			if(p != null)
+			{
+				try
+				{
+					return p.getCanonicalPath();
+				}
+				catch(Exception e)
+				{
+					return p.getAbsolutePath();
+				}
+			}
+		}
+		return null;
+	}
 
 
 	public static String getPathToParent(File parent, File f)

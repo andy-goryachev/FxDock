@@ -111,6 +111,6 @@ public class DemoHPane
 		sb.a("width: ").a(t.getWidth()).nl();
 		sb.a("preferred: ").a(t.prefWidth(-1)).nl();
 		sb.a("minimum: ").a(t.minWidth(-1));
-		FX.setTooltip(t, sb);
+		FX.setTooltip(t, sb.toString());
 	}
 }

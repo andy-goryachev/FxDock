@@ -6,39 +6,33 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 
-/** Convenience wrapper for java Calendar class */
+/** Convenience wrapper for java GregorianCalendar class */
 public class CCalendar
 {
-	protected final Calendar cal;
+	protected final GregorianCalendar cal;
 	
 	
-	protected CCalendar(Calendar c)
+	protected CCalendar()
 	{
-		this.cal = c;
+		this.cal = new GregorianCalendar();
 	}
 	
 	
-	public static CCalendar getInstance()
+	public CCalendar(Locale loc)
 	{
-		return new CCalendar(Calendar.getInstance());
+		this.cal = new GregorianCalendar(loc);
 	}
 	
 	
-	public static CCalendar getInstance(Locale loc)
+	public CCalendar(TimeZone tz)
 	{
-		return new CCalendar(Calendar.getInstance(loc));
+		this.cal = new GregorianCalendar(tz);
 	}
 	
 	
-	public static CCalendar getInstance(TimeZone tz)
+	public CCalendar(TimeZone tz, Locale loc)
 	{
-		return new CCalendar(Calendar.getInstance(tz));
-	}
-	
-	
-	public static CCalendar getInstance(TimeZone tz, Locale loc)
-	{
-		return new CCalendar(Calendar.getInstance(tz, loc));
+		this.cal = new GregorianCalendar(tz, loc);
 	}
 	
 	
@@ -188,7 +182,15 @@ public class CCalendar
 	}
 	
 	
+	/** @return time in milliseconds */
 	public long getTime()
+	{
+		return cal.getTimeInMillis();
+	}
+	
+	
+	/** @return time in milliseconds */
+	public long getTimeInMillis()
 	{
 		return cal.getTimeInMillis();
 	}
@@ -200,6 +202,7 @@ public class CCalendar
 	}
 	
 	
+	@Deprecated // TODO rename setStartOfDay
 	public void set0000()
 	{
 		CalendarTools.set0000(cal);
@@ -222,12 +225,6 @@ public class CCalendar
 	{
 		// WARNING: we don't control translation for the current locale
 		return cal.getDisplayName(field, style, Locale.getDefault());
-	}
-	
-	
-	public static CCalendar gregorianCalendar()
-	{
-		return new CCalendar(new GregorianCalendar());
 	}
 	
 	

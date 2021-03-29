@@ -104,12 +104,6 @@ public class CPane
 	}
 
 
-	public static List<CssMetaData<? extends Styleable,?>> getClassCssMetaData()
-	{
-		return SPF.getCssMetaData();
-	}
-
-
 	public List<CssMetaData<? extends Styleable,?>> getCssMetaData()
 	{
 		return SPF.getCssMetaData();

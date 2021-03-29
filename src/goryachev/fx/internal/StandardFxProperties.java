@@ -83,6 +83,7 @@ public class StandardFxProperties
 	public static FxCssProp hBarPolicy(ScrollPane.ScrollBarPolicy x) { return new FxCssProp("-fx-hbar-policy", CssTools.toValue(x)); }
 	// L
 	public static FxCssProp labelPadding(Object x) { return new FxCssProp("-fx-label-padding", x); }
+	public static FxCssProp labelPadding(double top, double right, double bottom, double left) { return new FxCssProp("-fx-label-padding", spaces(top, right, bottom, left)); }
 	// M
 	public static FxCssProp maxHeight(double x) { return new FxCssProp("-fx-max-height", x); }
 	public static FxCssProp maxHeight(Object x) { return new FxCssProp("-fx-max-height", x); }

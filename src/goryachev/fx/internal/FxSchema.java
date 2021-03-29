@@ -44,6 +44,7 @@ public class FxSchema
 	
 	private static final Object PROP_LOAD_HANDLER = new Object();
 	private static final Object PROP_NAME = new Object();
+	private static final Object PROP_SKIP_SETTINGS = new Object();
 	
 	
 	public static void storeWindow(String prefix, FxWindow win)
@@ -357,8 +358,6 @@ public class FxSchema
 
 	public static void storeNode(String windowPrefix, Node root, Node n)
 	{
-		// TODO skip property
-		
 		String name = getFullName(windowPrefix, root, n);
 		if(name == null)
 		{
@@ -371,17 +370,20 @@ public class FxSchema
 			storeLocalSettings(name, s);
 		}
 		
-		if(n instanceof SplitPane)
+		if(!isSkipSettings(n))
 		{
-			storeSplitPane(name, (SplitPane)n);
-		}
-		else if(n instanceof TableView)
-		{
-			storeTableView(name, (TableView)n);
-		}
-		else if(n instanceof TabPane)
-		{
-			storeTabPane(name, (TabPane)n);
+			if(n instanceof SplitPane)
+			{
+				storeSplitPane(name, (SplitPane)n);
+			}
+			else if(n instanceof TableView)
+			{
+				storeTableView(name, (TableView)n);
+			}
+			else if(n instanceof TabPane)
+			{
+				storeTabPane(name, (TabPane)n);
+			}
 		}
 		
 		if(n instanceof Parent)
@@ -406,17 +408,20 @@ public class FxSchema
 			return;
 		}
 		
-		if(n instanceof SplitPane)
+		if(!isSkipSettings(n))
 		{
-			restoreSplitPane(name, (SplitPane)n);
-		}
-		else if(n instanceof TableView)
-		{
-			restoreTableView(name, (TableView)n);
-		}
-		else if(n instanceof TabPane)
-		{
-			restoreTabPane(name, (TabPane)n);
+			if(n instanceof SplitPane)
+			{
+				restoreSplitPane(name, (SplitPane)n);
+			}
+			else if(n instanceof TableView)
+			{
+				restoreTableView(name, (TableView)n);
+			}
+			else if(n instanceof TabPane)
+			{
+				restoreTabPane(name, (TabPane)n);
+			}
 		}
 		
 		if(n instanceof Parent)
@@ -492,5 +497,18 @@ public class FxSchema
 			return (Runnable)x;
 		}
 		return null;
+	}
+	
+	
+	public static void setSkipSettings(Node n)
+	{
+		n.getProperties().put(PROP_SKIP_SETTINGS, Boolean.TRUE);
+	}
+	
+	
+	public static boolean isSkipSettings(Node n)
+	{
+		Object x = n.getProperties().get(PROP_SKIP_SETTINGS);
+		return Boolean.TRUE.equals(x);
 	}
 }

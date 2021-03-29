@@ -157,6 +157,22 @@ public class SB
 	}
 	
 	
+	/** appends json-escaped value */
+	public SB safeJson(Object x)
+	{
+		if(x == null)
+		{
+			sb.append("null");
+		}
+		else
+		{
+			String s = JsonDump.toJsonString(x);
+			sb.append(s);
+		}
+		return this;
+	}
+	
+	
 	// StringBuilder methods
 
 

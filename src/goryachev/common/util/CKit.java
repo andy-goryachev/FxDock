@@ -1,4 +1,4 @@
-// Copyright © 2007-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 1996-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CWriter;
 import goryachev.common.log.Log;
@@ -55,20 +55,14 @@ public final class CKit
 	public static final Charset CHARSET_8859_1 = Charset.forName("8859_1");
 	public static final Charset CHARSET_ASCII = Charset.forName("US-ASCII");
 	public static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
-	@Deprecated
-	public static final long MS_IN_A_SECOND = 1000;
-	@Deprecated
-	public static final long MS_IN_A_MINUTE = 60000;
-	@Deprecated
-	public static final long MS_IN_AN_HOUR = 3600000;
-	@Deprecated
-	public static final long MS_IN_A_DAY = 86400000;
-	@Deprecated
-	public static final long MS_IN_A_WEEK = 604800000;
 	private static AtomicInteger id = new AtomicInteger(); 
 	private static Boolean eclipseDetected;
 	private static final double LOW_MEMORY_CHECK_THRESHOLD = 0.9;
 	private static final double LOW_MEMORY_FAIL_AFTER_GC_THRESHOLD = 0.87;
+	private static final long MS_IN_A_SECOND = 1000L;
+	private static final long MS_IN_A_MINUTE = 60000L;
+	private static final long MS_IN_AN_HOUR = 3600000L;
+	private static final long MS_IN_A_DAY = 86400000L;
 	
 	
 	public static void close(Closeable x)
@@ -1527,18 +1521,6 @@ public final class CKit
 	}
 
 
-	public static long milliseconds(int hours, int minutes, int seconds)
-	{
-		return (hours * MS_IN_AN_HOUR) + (minutes * MS_IN_A_MINUTE) + (seconds * MS_IN_A_SECOND);
-	}
-	
-	
-	public static int ms(int hours, int minutes, int seconds)
-	{
-		return (int)milliseconds(hours, minutes, seconds);
-	}
-
-
 	public static void checkCancelled() throws CancelledException
 	{
 		if(isCancelled())
@@ -2361,11 +2343,38 @@ public final class CKit
 		return 1099511627776L * x;
 	}
 	
-	
-	/** converts seconds to milliseconds */
-	public static int seconds(int seconds)
+
+	public static long milliseconds(int hours, int minutes, int seconds)
 	{
-		return seconds * 1000;
+		return (hours * MS_IN_AN_HOUR) + (minutes * MS_IN_A_MINUTE) + (seconds * MS_IN_A_SECOND);
+	}
+	
+	
+	/** @return milliseconds for the given number of seconds */
+	public static long secondsToMilliseconds(int seconds)
+	{
+		return seconds * MS_IN_A_SECOND;
+	}
+	
+	
+	/** @return milliseconds for the given number of minutes */
+	public static long minutesToMilliseconds(int minutes)
+	{
+		return minutes * MS_IN_A_MINUTE;
+	}
+	
+	
+	/** @return milliseconds for the given number of hours */
+	public static long hoursToMilliseconds(int hours)
+	{
+		return hours * MS_IN_AN_HOUR;
+	}
+	
+	
+	/** @return milliseconds for the given number of days */
+	public static long daysToMilliseconds(int days)
+	{
+		return days * MS_IN_A_DAY;
 	}
 	
 	

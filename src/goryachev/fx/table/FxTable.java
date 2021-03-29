@@ -1,9 +1,11 @@
 // Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
+import goryachev.common.util.CList;
 import goryachev.fx.CommonStyles;
 import goryachev.fx.FX;
 import goryachev.fx.FxBoolean;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Supplier;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -24,6 +26,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.util.Callback;
 
 
 /**
@@ -269,6 +272,12 @@ public class FxTable<T>
 	}
 	
 	
+	public List<T> getSelectedItemsCopy()
+	{
+		return new CList<>(table.getSelectionModel().getSelectedItems());
+	}
+	
+	
 	public void setPlaceholder(String s)
 	{
 		table.setPlaceholder(new Label(s));
@@ -305,6 +314,7 @@ public class FxTable<T>
 	
 	public void selectFirst()
 	{
+		table.getSelectionModel().clearSelection();
 		table.getSelectionModel().selectFirst();
 		table.scrollTo(0);
 	}
@@ -313,8 +323,25 @@ public class FxTable<T>
 	public void select(T item)
 	{
 		table.getSelectionModel().select(item);
-		// TODO
-//		table.scrollTo(0);
+	}
+	
+	
+	public void select(Collection<T> items)
+	{
+		table.getSelectionModel().clearSelection();
+		if(items != null)
+		{
+			for(T item: items)
+			{
+				table.getSelectionModel().select(item);
+			}
+		}
+	}
+	
+	
+	public int getSelectedItemCount()
+	{
+		return table.getSelectionModel().getSelectedItems().size();
 	}
 	
 	
@@ -375,7 +402,7 @@ public class FxTable<T>
 	public void setAlternateRowsColoring(boolean on)
 	{
 		// https://stackoverflow.com/questions/38680711/javafx-tableview-remove-default-alternate-row-color
-		FX.setStyle(table, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR, !on);
+		FX.style(table, !on, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR);
 	}
 	
 	
@@ -477,5 +504,25 @@ public class FxTable<T>
 	public ObservableList<TablePosition> getSelectedCells()
 	{
 		return getSelectionModel().getSelectedCells();
+	}
+	
+	
+	/** turns sorting off or sets default sort policy.  for any other case, use setSortPolicy() */
+	public void setSortable(boolean on)
+	{
+		if(on)
+		{
+			table.setSortPolicy(null);
+		}
+		else
+		{
+			table.setSortPolicy((t) -> false);
+		}
+	}
+	
+	
+	public void setSortPolicy(Callback<TableView<T>,Boolean> policy)
+	{
+		table.setSortPolicy(policy);
 	}
 }

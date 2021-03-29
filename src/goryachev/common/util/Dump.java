@@ -637,7 +637,7 @@ public class Dump
 	
 	public static void toShortString(String s, SB sb)
 	{
-		toShortString(s, sb, 26);
+		toShortString(s, sb, 80);
 	}
 	
 	
