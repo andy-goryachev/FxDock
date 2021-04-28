@@ -146,6 +146,10 @@ public final class CKit
 						{
 							return Arrays.equals((byte[])a, (byte[])b);
 						}
+						else if(ta == boolean.class)
+						{
+							return Arrays.equals((boolean[])a, (boolean[])b);
+						}
 						else if(ta == char.class)
 						{
 							return Arrays.equals((char[])a, (char[])b);

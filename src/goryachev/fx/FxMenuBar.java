@@ -49,6 +49,22 @@ public class FxMenuBar
 	}
 	
 	
+	public FxCheckMenuItem checkItem(String text, GlobalBooleanProperty p)
+	{
+		FxCheckMenuItem m = new FxCheckMenuItem(text, p);
+		add(m);
+		return m;
+	}
+	
+	
+	public FxCheckMenuItem checkItem(String text, Property<Boolean> p)
+	{
+		FxCheckMenuItem m = new FxCheckMenuItem(text, p);
+		add(m);
+		return m;
+	}
+	
+	
 	public void addFill()
 	{
 		// TODO

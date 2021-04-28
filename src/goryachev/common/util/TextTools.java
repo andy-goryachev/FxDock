@@ -931,6 +931,7 @@ public class TextTools
 		int start = 0;
 		for(;;)
 		{
+			// FIX suboptimal
 			int ix = sb.indexOfIgnoreCase(pattern, start);
 			if(ix < 0)
 			{
