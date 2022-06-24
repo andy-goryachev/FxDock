@@ -1,4 +1,4 @@
-// Copyright © 2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
 
 

@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.CKit;
 import goryachev.fx.HPane;

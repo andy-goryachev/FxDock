@@ -1,6 +1,7 @@
 # FxDock Release Notes
 
 - fx framework updates
+- common updates
 
 **0.00.06**
 - removed legacy logger
