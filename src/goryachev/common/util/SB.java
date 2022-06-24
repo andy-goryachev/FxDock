@@ -1,6 +1,7 @@
-// Copyright © 2010-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2010-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.Map;
@@ -342,6 +343,19 @@ public class SB
 		sb.insert(offset, c);
 		return this;
 	}
+	
+	
+	public SB insert(int offset, char c, int count)
+	{
+		if(count > 0)
+		{
+			char[] cs = new char[count];
+			Arrays.fill(cs, c);
+			
+			sb.insert(offset, cs);
+		}
+		return this;
+	}
 
 
 	public SB insert(int offset, int x)
@@ -542,6 +556,23 @@ public class SB
 	{
 		sb.getChars(srcBegin, srcEnd, dst, dstBegin);
 	}
+	
+	
+	public char[] getChars()
+	{
+		int sz = sb.length();
+		char[] rv = new char[sz];
+		sb.getChars(0, sz, rv, 0);
+		return rv;
+	}
+	
+	
+	public char[] getCharsAndClear()
+	{
+		char[] rv = getChars();
+		sb.setLength(0);
+		return rv;
+	}
 
 
 	public String getAndClear()
@@ -632,6 +663,19 @@ public class SB
 			sb.replace(ix, ix + 1, newText);
 			
 			start = ix + newText.length();
+		}
+	}
+	
+	
+	public void replace(char old, char newChar)
+	{
+		for(int i=sb.length()-1; i>=0; i--)
+		{
+			char c = sb.charAt(i);
+			if(c == old)
+			{
+				sb.setCharAt(i, newChar);
+			}
 		}
 	}
 	

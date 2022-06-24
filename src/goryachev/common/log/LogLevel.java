@@ -1,26 +1,22 @@
-// Copyright © 2017-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
 import goryachev.common.util.Keep;
 
 
 /**
  * Log Level.
+ * 
+ * Do not re-arrange, order is important.
  */
 @Keep
 public enum LogLevel
 {
-	OFF,
-	FATAL,
-	ERROR,
-	WARN,
-	INFO,
-	DEBUG,
+	ALL,
 	TRACE,
-	ALL;
-	
-
-	public boolean isGreaterThanOrEqual(LogLevel level)
-	{
-		return ordinal() >= level.ordinal();
-	}
+	DEBUG,
+	INFO,
+	WARN,
+	ERROR,
+	FATAL,
+	OFF
 }

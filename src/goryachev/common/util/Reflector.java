@@ -1,6 +1,7 @@
-// Copyright © 2015-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2015-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 
@@ -18,6 +19,22 @@ public class Reflector
 			Method m = c.getDeclaredMethod(name, args);
 			m.setAccessible(true);
 			return new CMethod(m);
+		}
+		catch(Exception e)
+		{
+			throw new Error(e);
+		}
+	}
+	
+	
+	/** returns the speicifed field, made accessible */
+	public static CField field(Class c, String name)
+	{
+		try
+		{
+			Field f = c.getDeclaredField(name);
+			f.setAccessible(true);
+			return new CField(f);
 		}
 		catch(Exception e)
 		{

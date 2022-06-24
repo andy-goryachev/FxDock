@@ -1,4 +1,4 @@
-// Copyright © 2007-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -262,8 +262,22 @@ public class CList<T>
 	}
 
 
-	public static <V> List<V> of(V ... a)
+	public static <V> CList<V> of(V ... a)
 	{
 		return new CList(a);
+	}
+	
+	
+	public static <V> CList<V> copy(Collection<V> items)
+	{
+		if(items == null)
+		{
+			return null;
+		}
+		
+		int sz = items.size();
+		CList<V> rv = new CList(sz);
+		rv.addAll(items);
+		return rv;
 	}
 }

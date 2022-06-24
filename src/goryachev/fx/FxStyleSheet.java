@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CList;
 import goryachev.common.util.SB;
@@ -79,7 +79,7 @@ public class FxStyleSheet
 			}
 			else if(x != null)
 			{
-				throw new Error("?" + x);
+				sb.append(x);
 			}
 		}
 	}
@@ -192,6 +192,7 @@ public class FxStyleSheet
 					
 					sb.a("\t");
 					((FxCssProp)x).write(sb);
+					sb.nl();
 				}
 				else if(x != null)
 				{

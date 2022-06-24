@@ -1,8 +1,7 @@
-// Copyright © 2017-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
 import goryachev.common.log.internal.ConsoleAppender;
 import goryachev.common.util.CKit;
-import goryachev.common.util.CList;
 import goryachev.common.util.CMap;
 import goryachev.common.util.CSet;
 import goryachev.common.util.SB;
@@ -16,17 +15,27 @@ import java.util.function.Supplier;
  */
 public class Log
 {
+	private static final int ALL = LogLevel.ALL.ordinal();
+	private static final int TRACE = LogLevel.TRACE.ordinal();
+	private static final int DEBUG = LogLevel.DEBUG.ordinal();
+	private static final int INFO = LogLevel.INFO.ordinal();
+	private static final int WARN = LogLevel.WARN.ordinal();
+	private static final int ERROR = LogLevel.ERROR.ordinal();
+	private static final int FATAL = LogLevel.FATAL.ordinal();
+	private static final int OFF = LogLevel.OFF.ordinal();
+	private static final CopyOnWriteArrayList<IAppender> appenders = new CopyOnWriteArrayList<>();
+	private static int appendersThreshold = OFF;
+	private static boolean needCaller;
+	protected static boolean showInternalErrors;
+	protected static final CSet<String> ignore = LogUtil.initIgnoreClassNames();
+	protected static final Log root = new Log(null, null, null);
+	
 	private final String fullName;
 	private final String name;
 	private Log parent;
 	private LogLevel level;
-	private boolean needsCaller;
-	private CopyOnWriteArrayList<AppenderBase> appenders = new CopyOnWriteArrayList();
-	private final CMap<String,Log> children = new CMap(0);
-	protected static AbstractLogConfig config = LogUtil.createDisabledLogConfig();
-	protected static final CSet<String> ignore = LogUtil.initIgnoreClassNames();
-	protected static final CList<AppenderBase> allAppenders = new CList();
-	protected static final Log root = new Log(null, null, null);
+	private int effectiveLevel;
+	private final CMap<String,Log> children = new CMap(0); // TODO null by default
 
 
 	protected Log(Log parent, String name, String fullName)
@@ -38,46 +47,73 @@ public class Log
 	
 	
 	/** returns a channel instance for the specified name */
-	public static synchronized Log get(String fullName)
+	public static Log get(String fullName)
 	{
 		String[] ss = CKit.split(fullName, '.');
 		Log log = root;
 		
-		for(String s: ss)
+		synchronized(Log.class)
 		{
-			Log ch = log.children.get(s);
-			if(ch == null)
+			for(String s: ss)
 			{
-				ch = new Log(log, s, fullName);
-				ch.needsCaller = log.needsCaller;
-				log.children.put(s, ch);				
-
-				ch.applyConfig(config);
+				Log ch = log.children.get(s);
+				if(ch == null)
+				{
+					ch = new Log(log, s, fullName);
+					log.children.put(s, ch);				
+	
+					ch.updateEffectiveLevelsRecursively(null);
+				}
+				log = ch;
 			}
-			log = ch;
 		}
 		
 		return log;
 	}
 	
 	
-	public static void initForDebug()
+	/** disables all the logging and removes all the appenders. */
+	public static void reset()
+	{
+		setConfig(LogUtil.createDisabledLogConfig());
+	}
+	
+	
+	/** resets the logging to have one console appender at the DEBUG level */
+	public static void initConsoleForDebug()
+	{
+		initConsole(LogLevel.DEBUG);
+	}
+	
+	
+	/** resets the logging to have one console appender at the specified level */
+	public static void initConsole(LogLevel level)
 	{
 		SimpleLogConfig c = new SimpleLogConfig();
-		c.setDefaultLogLevel(LogLevel.INFO);
-		c.addAppender(new ConsoleAppender(System.out));
+		c.setDefaultLogLevel(level);
+		c.addAppender(new ConsoleAppender(level, System.out));
 		setConfig(c);
 	}
 	
 	
-	public static void setConfig(AbstractLogConfig cf)
+	/** sets whether to show internal errors */
+	public static void setShowInternalErrors(boolean on)
+	{
+		showInternalErrors = on;
+	}
+	
+	
+	/** resets the logging to the specified configuration */
+	public static void setConfig(ILogConfig cf)
 	{
 		if(cf == null)
 		{
 			cf = LogUtil.createDisabledLogConfig();
 		}
 		
-		List<AppenderBase> as;
+		showInternalErrors = cf.isVerbose();
+		
+		List<IAppender> as;
 		try
 		{
 			as = cf.getAppenders();
@@ -88,107 +124,68 @@ public class Log
 			return;
 		}
 	
-		removeAppenders();
-		
-		config = cf;
-		
-		try
+		synchronized(Log.class)
 		{
-			LogLevel lv = cf.getDefaultLogLevel();
-			root.setLevel(lv);
-			root.applyConfig(cf);
-		}
-		catch(Throwable e)
-		{
-			LogUtil.internalError(e);
-			return;
-		}
-		
-		try
-		{
-			setAppenders(as);
-		}
-		catch(Throwable e)
-		{
-			LogUtil.internalError(e);
-			return;
+			updateAll(cf);
 		}
 	}
 	
 	
-	protected static void setAppenders(List<AppenderBase> as)
+	protected static void updateAll(ILogConfig cf)
 	{
-		if(as != null)
+		if(cf != null)
 		{
-			for(AppenderBase a: as)
+			appenders.clear();
+			
+			try
 			{
-				Log.allAppenders.clear();
-				Log.allAppenders.add(a);
-				
-				if(a.getChannels().size() == 0)
+				List<IAppender> as = cf.getAppenders();
+				if(as != null)
 				{
-					Log.root.clearAppenders();
-					Log.root.addAppender(a);
-				}
-				else
-				{
-					for(String name: a.getChannels())
+					for(IAppender a: as)
 					{
-						Log ch = Log.get(name);
-						ch.clearAppenders();
-						ch.addAppender(a);
+						appenders.add(a);
 					}
 				}
 			}
-		}
-	}
-	
-	
-	protected void applyConfig(AbstractLogConfig cf)
-	{
-		if(cf == null)
-		{
-			level = LogLevel.OFF;
-		}
-		else
-		{
-			LogLevel lv = cf.getLogLevel(fullName);
-			if(lv == null)
+			catch(Exception e)
 			{
-				if(parent == null)
-				{
-					level = cf.getDefaultLogLevel();
-				}
-				else
-				{
-					level = parent.getLevel();
-				}
-			}
-			else
-			{
-				level = lv;
+				LogUtil.internalError(e);
 			}
 		}
 		
-		for(Log ch: children.values())
+		int th = OFF;
+		boolean caller = false;
+		for(IAppender a: appenders)
 		{
-			ch.applyConfig(cf);
+			if(a.getThreshold() < th)
+			{
+				th = a.getThreshold();
+			}
+			
+			caller |= a.needsCaller();
 		}
+		
+		appendersThreshold = th; // TODO use this for updateEffectiveLevelsRecursively()
+		needCaller = caller;
+		
+		root.updateEffectiveLevelsRecursively(cf);
 	}
 	
 	
-	protected static void removeAppenders()
+	public static synchronized void addAppender(IAppender a)
 	{
-		for(AppenderBase a: allAppenders)
+		appenders.add(a);
+		updateAll(null);
+	}
+	
+	
+	public static synchronized void removeAppender(IAppender a)
+	{
+		if(appenders.remove(a))
 		{
-			for(String name: a.getChannels())
-			{
-				Log ch = get(name);
-				ch.removeAppender(a);
-			}
+			updateAll(null);
 		}
-		
-		allAppenders.clear();
 	}
 	
 
@@ -206,15 +203,80 @@ public class Log
 	}
 	
 	
-	public static void setLevel(String channel, LogLevel level)
+	/** sets log level for a specific log, does not update children */
+	public static synchronized void setLevel(String channel, LogLevel level)
 	{
-		// TODO
+		Log log = get(channel);
+		log.setLevel(level);
 	}
 	
 	
+	/** @return root logger */
 	public static Log getRoot()
 	{
 		return root;
+	}
+	
+
+	/** @return logger channel name */
+	public String getName()
+	{
+		return name;
+	}
+	
+	
+	protected void updateEffectiveLevelsRecursively(ILogConfig cf)
+	{
+		if(cf == null)
+		{
+			if(level == null)
+			{
+				if(parent == null)
+				{
+					effectiveLevel = OFF;
+				}
+				else
+				{
+					effectiveLevel = parent.effectiveLevel;
+				}
+			}
+			else
+			{
+				int eff = level.ordinal();
+				if(eff == effectiveLevel)
+				{
+					return;
+				}
+				else
+				{
+					effectiveLevel = eff;
+				}
+			}
+		}
+		else
+		{
+			level = cf.getLogLevel(fullName);
+			if(level == null)
+			{
+				if(parent == null)
+				{
+					effectiveLevel = cf.getDefaultLogLevel().ordinal();
+				}
+				else
+				{
+					effectiveLevel = parent.effectiveLevel;
+				}
+			}
+			else
+			{
+				effectiveLevel = level.ordinal();
+			}
+		}
+		
+		for(Log ch: children.values())
+		{
+			ch.updateEffectiveLevelsRecursively(cf);
+		}
 	}
 	
 	
@@ -224,74 +286,10 @@ public class Log
 	}
 	
 	
-	public String getName()
-	{
-		return name;
-	}
-	
-	
 	protected void setLevel(LogLevel level)
 	{
 		this.level = level;
-	}
-	
-	
-	public LogLevel getLevel()
-	{
-		return level;
-	}
-	
-	
-	protected boolean isEnabled(LogLevel lv)
-	{
-		if(level == null)
-		{
-			return false;
-		}
-		return level.isGreaterThanOrEqual(lv);
-	}
-	
-	
-	protected void addAppender(AppenderBase a)
-	{
-		appenders.add(a);
-		setNeedsCallerRecursively(true);
-	}
-	
-	
-	protected void removeAppender(AppenderBase a)
-	{
-		appenders.remove(a);
-		setNeedsCallerRecursively(false);
-	}
-	
-	
-	protected void clearAppenders()
-	{
-		appenders.clear();
-	}
-	
-	
-	protected void setNeedsCallerRecursively(boolean on)
-	{
-		if(on != needsCaller)
-		{	
-			if(!on)
-			{
-				boolean v = LogUtil.checkNeedsCaller(appenders);
-				if(v)
-				{
-					return;
-				}
-			}
-			
-			needsCaller = on;
-			
-			for(Log ch: children.values())
-			{
-				ch.setNeedsCallerRecursively(on);
-			}
-		}
+		updateEffectiveLevelsRecursively(null);
 	}
 	
 	
@@ -320,7 +318,7 @@ public class Log
 		long time = System.currentTimeMillis();
 		
 		StackTraceElement caller;
-		if(needsCaller)
+		if(needCaller)
 		{
 			caller = extractCaller(err == null ? new Throwable() : err);
 		}
@@ -342,14 +340,9 @@ public class Log
 	
 	protected void processEvent(LogLevel lv, long time, StackTraceElement caller, Throwable err, String msg)
 	{
-		for(AppenderBase a: appenders)
+		for(IAppender a: appenders)
 		{
 			a.append(lv, time, caller, err, msg);
-		}
-		
-		if(parent != null)
-		{
-			parent.processEvent(lv, time, caller, err, msg);
 		}
 	}
 	
@@ -410,7 +403,7 @@ public class Log
 	
 	public void error(Throwable err)
 	{
-		if(isEnabled(LogLevel.ERROR))
+		if(ERROR >= effectiveLevel)
 		{
 			logEvent(LogLevel.ERROR, err, null);
 		}
@@ -419,7 +412,7 @@ public class Log
 	
 	public void error(Object message, Throwable err)
 	{
-		if(isEnabled(LogLevel.ERROR))
+		if(ERROR >= effectiveLevel)
 		{
 			logEvent(LogLevel.ERROR, err, message);
 		}
@@ -428,7 +421,7 @@ public class Log
 	
 	public void error()
 	{
-		if(isEnabled(LogLevel.ERROR))
+		if(ERROR >= effectiveLevel)
 		{
 			logEvent(LogLevel.ERROR, null, "");
 		}
@@ -437,7 +430,7 @@ public class Log
 	
 	public void error(Object message)
 	{
-		if(isEnabled(LogLevel.ERROR))
+		if(ERROR >= effectiveLevel)
 		{
 			logEvent(LogLevel.ERROR, null, message);
 		}
@@ -446,7 +439,7 @@ public class Log
 	
 	public void error(String format, Object ... args)
 	{
-		if(isEnabled(LogLevel.ERROR))
+		if(ERROR >= effectiveLevel)
 		{
 			String msg = format(format, args);
 			logEvent(LogLevel.ERROR, null, msg);
@@ -456,7 +449,7 @@ public class Log
 	
 	public void error(Supplier<Object> lambda)
 	{
-		if(isEnabled(LogLevel.ERROR))
+		if(ERROR >= effectiveLevel)
 		{
 			Object msg = lambda.get();
 			logEvent(LogLevel.ERROR, null, msg);
@@ -469,7 +462,7 @@ public class Log
 	
 	public void warn(Throwable err)
 	{
-		if(isEnabled(LogLevel.WARN))
+		if(WARN >= effectiveLevel)
 		{
 			logEvent(LogLevel.WARN, err, null);
 		}
@@ -478,7 +471,7 @@ public class Log
 	
 	public void warn(Object message, Throwable err)
 	{
-		if(isEnabled(LogLevel.WARN))
+		if(WARN >= effectiveLevel)
 		{
 			logEvent(LogLevel.WARN, err, message);
 		}
@@ -487,7 +480,7 @@ public class Log
 	
 	public void warn()
 	{
-		if(isEnabled(LogLevel.WARN))
+		if(WARN >= effectiveLevel)
 		{
 			logEvent(LogLevel.WARN, null, "");
 		}
@@ -496,7 +489,7 @@ public class Log
 	
 	public void warn(Object message)
 	{
-		if(isEnabled(LogLevel.WARN))
+		if(WARN >= effectiveLevel)
 		{
 			logEvent(LogLevel.WARN, null, message);
 		}
@@ -505,7 +498,7 @@ public class Log
 	
 	public void warn(String format, Object ... args)
 	{
-		if(isEnabled(LogLevel.WARN))
+		if(WARN >= effectiveLevel)
 		{
 			String msg = format(format, args);
 			logEvent(LogLevel.WARN, null, msg);
@@ -515,7 +508,7 @@ public class Log
 	
 	public void warn(Supplier<Object> lambda)
 	{
-		if(isEnabled(LogLevel.WARN))
+		if(WARN >= effectiveLevel)
 		{
 			Object msg = lambda.get();
 			logEvent(LogLevel.WARN, null, msg);
@@ -528,7 +521,7 @@ public class Log
 	
 	public void info(Throwable err)
 	{
-		if(isEnabled(LogLevel.INFO))
+		if(INFO >= effectiveLevel)
 		{
 			logEvent(LogLevel.INFO, err, null);
 		}
@@ -537,7 +530,7 @@ public class Log
 	
 	public void info(Object message, Throwable err)
 	{
-		if(isEnabled(LogLevel.INFO))
+		if(INFO >= effectiveLevel)
 		{
 			logEvent(LogLevel.INFO, err, message);
 		}
@@ -546,7 +539,7 @@ public class Log
 	
 	public void info()
 	{
-		if(isEnabled(LogLevel.INFO))
+		if(INFO >= effectiveLevel)
 		{
 			logEvent(LogLevel.INFO, null, "");
 		}
@@ -555,7 +548,7 @@ public class Log
 	
 	public void info(Object message)
 	{
-		if(isEnabled(LogLevel.INFO))
+		if(INFO >= effectiveLevel)
 		{
 			logEvent(LogLevel.INFO, null, message);
 		}
@@ -564,7 +557,7 @@ public class Log
 	
 	public void info(String format, Object ... args)
 	{
-		if(isEnabled(LogLevel.INFO))
+		if(INFO >= effectiveLevel)
 		{
 			String msg = format(format, args);
 			logEvent(LogLevel.INFO, null, msg);
@@ -574,7 +567,7 @@ public class Log
 	
 	public void info(Supplier<Object> lambda)
 	{
-		if(isEnabled(LogLevel.INFO))
+		if(INFO >= effectiveLevel)
 		{
 			Object msg = lambda.get();
 			logEvent(LogLevel.INFO, null, msg);
@@ -587,7 +580,7 @@ public class Log
 	
 	public void debug(Throwable err)
 	{
-		if(isEnabled(LogLevel.DEBUG))
+		if(DEBUG >= effectiveLevel)
 		{
 			logEvent(LogLevel.DEBUG, err, null);
 		}
@@ -596,7 +589,7 @@ public class Log
 	
 	public void debug(Object message, Throwable err)
 	{
-		if(isEnabled(LogLevel.DEBUG))
+		if(DEBUG >= effectiveLevel)
 		{
 			logEvent(LogLevel.DEBUG, err, message);
 		}
@@ -605,7 +598,7 @@ public class Log
 	
 	public void debug()
 	{
-		if(isEnabled(LogLevel.DEBUG))
+		if(DEBUG >= effectiveLevel)
 		{
 			logEvent(LogLevel.DEBUG, null, "");
 		}
@@ -614,7 +607,7 @@ public class Log
 	
 	public void debug(Object message)
 	{
-		if(isEnabled(LogLevel.DEBUG))
+		if(DEBUG >= effectiveLevel)
 		{
 			logEvent(LogLevel.DEBUG, null, message);
 		}
@@ -623,7 +616,7 @@ public class Log
 	
 	public void debug(String format, Object ... args)
 	{
-		if(isEnabled(LogLevel.DEBUG))
+		if(DEBUG >= effectiveLevel)
 		{
 			String msg = format(format, args);
 			logEvent(LogLevel.DEBUG, null, msg);
@@ -633,7 +626,7 @@ public class Log
 	
 	public void debug(Supplier<Object> lambda)
 	{
-		if(isEnabled(LogLevel.DEBUG))
+		if(DEBUG >= effectiveLevel)
 		{
 			Object msg = lambda.get();
 			logEvent(LogLevel.DEBUG, null, msg);
@@ -646,7 +639,7 @@ public class Log
 	
 	public void trace()
 	{
-		if(isEnabled(LogLevel.TRACE))
+		if(TRACE >= effectiveLevel)
 		{
 			logEvent(LogLevel.TRACE, null, "");
 		}
@@ -655,7 +648,7 @@ public class Log
 	
 	public void trace(Throwable err)
 	{
-		if(isEnabled(LogLevel.TRACE))
+		if(TRACE >= effectiveLevel)
 		{
 			logEvent(LogLevel.TRACE, err, null);
 		}
@@ -664,7 +657,7 @@ public class Log
 	
 	public void trace(Object message, Throwable err)
 	{
-		if(isEnabled(LogLevel.TRACE))
+		if(TRACE >= effectiveLevel)
 		{
 			logEvent(LogLevel.TRACE, err, message);
 		}
@@ -673,7 +666,7 @@ public class Log
 	
 	public void trace(Object message)
 	{
-		if(isEnabled(LogLevel.TRACE))
+		if(TRACE >= effectiveLevel)
 		{
 			logEvent(LogLevel.TRACE, null, message);
 		}
@@ -682,7 +675,7 @@ public class Log
 	
 	public void trace(String format, Object ... args)
 	{
-		if(isEnabled(LogLevel.TRACE))
+		if(TRACE >= effectiveLevel)
 		{
 			String msg = format(format, args);
 			logEvent(LogLevel.TRACE, null, msg);
@@ -692,7 +685,7 @@ public class Log
 	
 	public void trace(Supplier<Object> lambda)
 	{
-		if(isEnabled(LogLevel.TRACE))
+		if(TRACE >= effectiveLevel)
 		{
 			Object msg = lambda.get();
 			logEvent(LogLevel.TRACE, null, msg);

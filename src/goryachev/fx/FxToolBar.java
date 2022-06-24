@@ -1,4 +1,4 @@
-// Copyright © 2018-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2018-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
@@ -96,5 +96,19 @@ public class FxToolBar
 		FxToggleButton b = new FxToggleButton(text, prop);
 		add(b);
 		return b;
+	}
+	
+	
+	public FxToggleButton addToggleButton(String text, String tooltip, Property<Boolean> prop)
+	{
+		FxToggleButton b =new FxToggleButton(text, tooltip, prop);
+		add(b);
+		return b;
+	}
+	
+	
+	public void clear()
+	{
+		getItems().clear();
 	}
 }

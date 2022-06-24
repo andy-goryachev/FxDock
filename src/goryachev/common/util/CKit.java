@@ -1,4 +1,4 @@
-// Copyright © 1996-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 1996-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CWriter;
 import goryachev.common.log.Log;
@@ -47,7 +47,7 @@ import java.util.zip.ZipFile;
 
 public final class CKit
 {
-	public static final String COPYRIGHT = "Copyright © 1996-2021 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
+	public static final String COPYRIGHT = "Copyright © 1996-2022 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
 	protected static final Log log = Log.get("CKit");
 	public static final char APPLE = '\u2318';
 	public static final char BOM = '\ufeff';
@@ -63,6 +63,7 @@ public final class CKit
 	private static final long MS_IN_A_MINUTE = 60000L;
 	private static final long MS_IN_AN_HOUR = 3600000L;
 	private static final long MS_IN_A_DAY = 86400000L;
+	private static final double NANOSECONDS_IN_A_SECOND = 1_000_000_000.0;
 	
 	
 	public static void close(Closeable x)
@@ -1109,7 +1110,7 @@ public final class CKit
 	
 	
 	/** converts argument to its toString() representation or null */
-	public static String toString(Object x)
+	public static String toStringOrNull(Object x)
 	{
 		return (x == null) ? null : x.toString(); 
 	}
@@ -1525,9 +1526,14 @@ public final class CKit
 	}
 
 
-	public static void checkCancelled() throws CancelledException
+	/** 
+	 * checks whether the current thread has been interrupted or low memory condition exists.
+	 * if interrupted - throws CancelledException
+	 * if low memory condition - throws LowMemoryException
+	 */
+	public static void checkCancelled() throws CancelledException,LowMemoryException
 	{
-		if(isCancelled())
+		if(Thread.interrupted())
 		{
 			throw new CancelledException();
 		}
@@ -1535,25 +1541,6 @@ public final class CKit
 		if(isLowMemory())
 		{
 			throw new LowMemoryException();
-		}
-	}
-	
-	
-	public static boolean isCancelled()
-	{
-		return isCancelled(Thread.currentThread());
-	}
-	
-	
-	public static boolean isCancelled(Thread t)
-	{
-		if(t instanceof CancellableThread)
-		{
-			return ((CancellableThread)t).isCancelled();
-		}
-		else
-		{
-			return t.isInterrupted();
 		}
 	}
 	
@@ -2541,5 +2528,13 @@ public final class CKit
 			return null;
 		}
 		return Arrays.copyOf(src, src.length);
+	}
+	
+	
+	/** returns elapsed time in seconds, since the last time in nanoseconds, as returned by System.nanoTime() */
+	public static double elapsedSeconds(long startNanoseconds)
+	{
+		long t = System.nanoTime() - startNanoseconds;
+		return (t / NANOSECONDS_IN_A_SECOND);
 	}
 }

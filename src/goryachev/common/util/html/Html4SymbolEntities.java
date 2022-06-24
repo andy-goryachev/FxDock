@@ -1,4 +1,4 @@
-// Copyright © 2008-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2008-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util.html;
 import goryachev.common.util.CMap;
 

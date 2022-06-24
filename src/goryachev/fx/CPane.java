@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
@@ -27,7 +27,7 @@ import javafx.scene.layout.Region;
 public class CPane
 	extends Pane
 {
-	protected static final Log log = Log.get("CPane");
+	private static final Log log = Log.get("CPane");
 	public static final CssStyle STYLE = new CssStyle("CPane_PANE");
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;

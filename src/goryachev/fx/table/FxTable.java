@@ -1,10 +1,11 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.common.util.CList;
 import goryachev.fx.CommonStyles;
 import goryachev.fx.FX;
 import goryachev.fx.FxBoolean;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 import javafx.beans.binding.Bindings;
@@ -30,7 +31,7 @@ import javafx.util.Callback;
 
 
 /**
- * Convenient FxTable.
+ * Convenient TableView.
  */
 public class FxTable<T>
 	extends BorderPane
@@ -67,6 +68,15 @@ public class FxTable<T>
 	public void wrapSortedList(ObservableList<T> src)
 	{
 		SortedList<T> s = new SortedList<>(src);
+		s.comparatorProperty().bind(table.comparatorProperty());
+		setItems(s);
+	}
+	
+	
+	/** allow for sorting of items separately from the source list */
+	public void wrapSortedList(ObservableList<T> src, Comparator<T> comparator)
+	{
+		SortedList<T> s = new SortedList<>(src, comparator);
 		s.comparatorProperty().bind(table.comparatorProperty());
 		setItems(s);
 	}
@@ -219,6 +229,20 @@ public class FxTable<T>
 	}
 	
 	
+	public void bindItems(ObservableList<T> items)
+	{
+		if(items == null)
+		{
+			// TODO probably need to unbind (remove listeners if any)
+			table.getItems().clear();
+		}
+		else
+		{
+			Bindings.bindContent(table.getItems(), items);
+		}
+	}
+	
+	
 	public void setItems(T ... items)
 	{
 		clearSelection();
@@ -237,7 +261,6 @@ public class FxTable<T>
 	public void setItems(ObservableList<T> source)
 	{
 		table.setItems(source);
-		table.sort();
 	}
 	
 	
@@ -320,8 +343,10 @@ public class FxTable<T>
 	}
 	
 	
+	
 	public void select(T item)
 	{
+		table.getSelectionModel().clearSelection();
 		table.getSelectionModel().select(item);
 	}
 	
@@ -521,6 +546,15 @@ public class FxTable<T>
 	}
 	
 	
+    /**
+     * Equivalent of table.setSortPolicy().
+     * 
+     * A sort policy attempts to sort the items in the table
+     * (for example, {@code FXCollections.sort(tableView.getItems())})
+     * and return true if sorting was successful and false (or null) otherwise.
+     * 
+     * @see TableView#DEFAULT_SORT_POLICY
+     */
 	public void setSortPolicy(Callback<TableView<T>,Boolean> policy)
 	{
 		table.setSortPolicy(policy);

@@ -1,29 +1,37 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
+import goryachev.common.util.CList;
 import goryachev.common.util.CPlatform;
 import goryachev.common.util.Disconnectable;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SystemTask;
 import goryachev.fx.hacks.FxHacks;
 import goryachev.fx.internal.CssTools;
+import goryachev.fx.internal.DisconnectableIntegerListener;
 import goryachev.fx.internal.FxSchema;
+import goryachev.fx.internal.FxStyleHandler;
 import goryachev.fx.internal.ParentWindow;
 import goryachev.fx.internal.WindowsFx;
 import goryachev.fx.table.FxTable;
+import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.beans.WeakListener;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -704,6 +712,26 @@ public final class FX
 			return t.get();
 		}
 	}
+	
+	
+	/** swing invokeAndWait() analog.  if called from an FX application thread, simply invokes the producer. */
+	public static void invokeAndWait(Runnable action) throws Exception
+	{
+		if(Platform.isFxApplicationThread())
+		{
+			action.run();
+		}
+		else
+		{
+			FutureTask<Boolean> t = new FutureTask<>(() ->
+			{
+				action.run();
+				return Boolean.TRUE;
+			});
+			FX.later(t);
+			t.get();
+		}
+	}
 
 
 	/** returns window decoration insets */
@@ -739,6 +767,12 @@ public final class FX
 	public static void setName(Node n, String name)
 	{
 		FxSchema.setName(n, name);
+	}
+	
+	
+	public static String getName(Node n)
+	{
+		return FxSchema.getName(n);
 	}
 	
 	
@@ -861,9 +895,9 @@ public final class FX
 	}
 	
 	
-	public static Color averageColors(List<Color> colors, double gamma)
+	public static Color mix(Color[] colors, double gamma)
 	{
-		int sz = colors.size();
+		int sz = colors.length;
 		
 		double red = 0.0;
 		double green = 0.0;
@@ -871,7 +905,7 @@ public final class FX
 		
 		for(int i=0; i<sz; i++)
 		{
-			Color c = colors.get(i);
+			Color c = colors[i];
 			double op = c.getOpacity();
 			
 			double r = c.getRed();
@@ -893,9 +927,9 @@ public final class FX
 	}
 
 	
-	public static Color averageColors(List<Color> colors)
+	public static Color mix(Color[] colors)
 	{
-		return averageColors(colors, GAMMA);
+		return mix(colors, GAMMA);
 	}
 	
 
@@ -1131,27 +1165,38 @@ public final class FX
 	
 	
 	/** returns a parent of the specified type, or null.  if comp is an instance of the specified class, returns comp */
-	public static <T> T getAncestorOfClass(Class<T> c, Node comp)
+	public static <T> T getAncestorOfClass(Class<T> c, Node node)
 	{
 		if(Window.class.isAssignableFrom(c))
 		{
-			Scene sc = comp.getScene();
+			Scene sc = node.getScene();
 			if(sc != null)
 			{
 				Window w = sc.getWindow();
-				if(w.getClass().isAssignableFrom(c))
+				while(w != null)
 				{
-					return (T)w;
+					if(w.getClass().isAssignableFrom(c))
+					{
+						return (T)w;
+					}
+					
+					// the window can be a dialog, check the owner
+					if(w instanceof Stage)
+					{
+						Stage stage = (Stage)w;
+						w = stage.getOwner();
+					}
 				}
 			}
+			return null;
 		}
 		else
 		{
-			while(comp != null)
+			while(node != null)
 			{
-				if(c.isInstance(comp))
+				if(c.isInstance(node))
 				{
-					return (T)comp;
+					return (T)node;
 				}
 				
 	//			if(comp instanceof JPopupMenu)
@@ -1163,7 +1208,7 @@ public final class FX
 	//				}
 	//			}
 				
-				comp = comp.getParent();
+				node = node.getParent();
 			}
 		}
 		return null;
@@ -1173,6 +1218,29 @@ public final class FX
 	public static List<Window> getWindows()
 	{
 		return FxHacks.get().getWindows();
+	}
+	
+	
+	/** 
+	 * attaches a double click handler to a node.
+	 */
+	public static void onDoubleClick(Node owner, Runnable handler)
+	{
+		if(owner == null)
+		{
+			throw new NullPointerException("cannot attach a double click handler to null");
+		}
+		
+		owner.addEventHandler(MouseEvent.MOUSE_CLICKED, (ev) ->
+		{
+			if(ev.getClickCount() == 2)
+			{
+				if(ev.getButton() == MouseButton.PRIMARY)
+				{
+					handler.run();
+				}
+			}
+		});
 	}
 	
 	
@@ -1368,25 +1436,45 @@ public final class FX
 	
 	
 	/** adds a ChangeListener to the specified ObservableValue(s) */
-	public static void onChange(Runnable handler, ObservableValue<?> ... props)
+	public static Disconnectable onChange(Runnable callback, ObservableValue<?> ... props)
 	{
-		onChange(handler, false, props);
+		return onChange(callback, false, props);
 	}
 	
 	
 	/** adds a ChangeListener to the specified ObservableValue(s) */
-	public static void onChange(Runnable handler, boolean fireImmediately, ObservableValue<?> ... props)
+	public static Disconnectable onChange(Runnable callback, boolean fireImmediately, ObservableValue<?> ... props)
 	{
-		for(ObservableValue<?> p: props)
-		{
-			// weak listener gets collected... but why??
-			p.addListener((src,prev,cur) -> handler.run());
-		}
+		FxChangeListener li = new FxChangeListener(callback);
+		li.listen(props);
 		
 		if(fireImmediately)
 		{
-			handler.run();
+			li.fire();
 		}
+		
+		return li;
+	}
+	
+	
+	/** adds a ChangeListener to the specified ObservableValue(s).  The callback will be invokedLater() */
+	public static Disconnectable onChangeLater(Runnable callback, ObservableValue<?> ... props)
+	{
+		FxChangeListener li = new FxChangeListener(callback)
+		{
+			@Override
+			protected void invokeCallback()
+			{
+				later(() ->
+				{
+					super.invokeCallback();
+				});
+			}
+		};
+
+		li.listen(props);
+		
+		return li;
 	}
 	
 	
@@ -1573,45 +1661,6 @@ public final class FX
 		}
 	}
 	
-	
-	/** simplified version of addChangeListener that only invokes the callback on change */
-	public static Disconnectable addChangeListener(Runnable callback, boolean fireImmediately, ObservableValue<?> ... props)
-	{
-		FxChangeListener li = new FxChangeListener(callback);
-		for(ObservableValue<?> p: props)
-		{
-			li.listen(p);
-		}
-		
-		if(fireImmediately)
-		{
-			li.fire();
-		}
-		
-		return li;
-	}
-	
-	
-	/** 
-	 * A simplified version of addChangeListener that only invokes the callback on change, 
-	 * uses FxDisconnector to allow for easy removal of the listener.
-	 */
-	public static void addChangeListener(FxDisconnector d, Runnable callback, boolean fireImmediately, ObservableValue<?> ... props)
-	{
-		FxChangeListener li = new FxChangeListener(callback);
-		for(ObservableValue<?> p: props)
-		{
-			li.listen(p);
-		}
-		
-		if(fireImmediately)
-		{
-			li.fire();
-		}
-		
-		d.addDisconnectable(li);
-	}
-
 
 	/** converts java fx Color to a 32 bit RGBA integer */
 	public static Integer toRGBA(Color c)
@@ -1651,6 +1700,133 @@ public final class FX
 	public static Insets insets(double gap)
 	{
 		return new Insets(gap);
+	}
+	
+	
+	// FIX own file
+	public static <S,T> void bindContentWithTransform(ObservableList<? extends S> source, ObservableList<T> target, Function<S,T> converter)
+	{
+		ListContentBinding.bind(source, target, converter);
+	}
+	
+	
+	private static class ListContentBinding<S,T>
+		implements ListChangeListener<S>, WeakListener
+	{
+		private final Function<S,T> converter;
+		private final WeakReference<List<T>> ref;
+		
+
+		public ListContentBinding(List<T> target, Function<S,T> converter)
+		{
+			this.ref = new WeakReference<List<T>>(target);
+			this.converter = converter;
+		}
+		
+		
+		public static <S,T> void bind(ObservableList<? extends S> source, ObservableList<T> target, Function<S,T> converter)
+		{
+			ListContentBinding<S,T> li = new ListContentBinding<S,T>(target, converter);
+			target.setAll(transform(source, converter));
+			source.removeListener(li);
+			source.addListener(li);
+		}
+		
+		
+		protected T transform(S item)
+		{
+			return converter.apply(item);
+		}
+		
+		
+		protected static <S,T> List<T> transform(List<? extends S> items, Function<S,T> converter)
+		{
+			int sz = items.size();
+			CList<T> rv = new CList<T>(sz);
+			for(int i=0; i<sz; i++)
+			{
+				S item = items.get(i);
+				T val = converter.apply(item);
+				rv.add(val);
+			}
+			return rv;
+		}
+
+
+		@Override
+		public void onChanged(Change<? extends S> ch)
+		{
+			List<T> target = ref.get();
+			if(target == null)
+			{
+				ch.getList().removeListener(this);
+				return;
+			}
+			
+			while(ch.next())
+			{
+				if(ch.wasPermutated())
+				{
+					target.subList(ch.getFrom(), ch.getTo()).clear();
+					target.addAll(ch.getFrom(), transform(ch.getList().subList(ch.getFrom(), ch.getTo()), converter));
+				}
+				else
+				{
+					if(ch.wasRemoved())
+					{
+						target.subList(ch.getFrom(), ch.getFrom() + ch.getRemovedSize()).clear();
+					}
+					
+					if(ch.wasAdded())
+					{
+						target.addAll(ch.getFrom(), transform(ch.getAddedSubList(), converter));
+					}
+				}
+			}
+		}
+
+
+		@Override
+		public boolean wasGarbageCollected()
+		{
+			return ref.get() == null;
+		}
+
+
+		@Override
+		public int hashCode()
+		{
+			Object me = ref.get();
+			if(me == null)
+			{
+				return 0;
+			}
+			return me.hashCode();
+		}
+
+
+		@Override
+		public boolean equals(Object x)
+		{
+			if(this == x)
+			{
+				return true;
+			}
+
+			Object me = ref.get();
+			if(me == null)
+			{
+				return false;
+			}
+			else if(x instanceof ListContentBinding)
+			{
+				return me == ((ListContentBinding)x).ref.get();
+			}
+			else
+			{
+				return false;
+			}
+		}
 	}
 	
 	
@@ -1922,5 +2098,45 @@ public final class FX
 		{
 			action.run();
 		});
+	}
+
+
+	public static void openFile(File file)
+	{
+		String uri = file.toURI().toString();
+		FxApplication.getInstance().getHostServices().showDocument(uri);
+	}
+
+
+	public static Disconnectable onChange(ReadOnlyIntegerProperty prop, IntConsumer onChange)
+	{
+		return new DisconnectableIntegerListener(prop, onChange);
+	}
+	
+	
+	/** adds a new style */
+	public static void setStyle(Node n, String property, Object value)
+	{
+		if(n != null)
+		{
+			String s = n.getStyle();
+			FxStyleHandler m = new FxStyleHandler(s);
+			m.put(property, value);
+			String s2 = m.toStyleString();
+			n.setStyle(s2);
+		}
+	}
+	
+	
+	public static void removeStyle(Node n, String property)
+	{
+		if(n != null)
+		{
+			String s = n.getStyle();
+			FxStyleHandler m = new FxStyleHandler(s);
+			m.remove(property);
+			String s2 = m.toStyleString();
+			n.setStyle(s2);
+		}
 	}
 }

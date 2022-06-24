@@ -1,7 +1,7 @@
-// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
+import goryachev.fx.FxObject;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -21,7 +21,7 @@ import javafx.stage.Window;
  */
 public class ParentWindow
 {
-	private final ReadOnlyObjectWrapper<Window> windowProperty = new ReadOnlyObjectWrapper();
+	private final FxObject<Window> windowProperty = new FxObject();
 	private final ChangeListener<Scene> sceneListener;
 	
 	

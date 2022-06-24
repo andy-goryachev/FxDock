@@ -1,5 +1,8 @@
-// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import java.util.function.Supplier;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -21,6 +24,28 @@ public class FxTabPane
 		Tab t = new Tab(name, n);
 		t.setClosable(false);
 		getTabs().add(t);
+		return t;
+	}
+	
+	
+	public Tab addTab(String name, Supplier<Node> generator)
+	{
+		Tab t = new Tab(name);
+
+		ChangeListener<Boolean> li = new ChangeListener<Boolean>()
+		{
+			public void changed(ObservableValue<? extends Boolean> src, Boolean old, Boolean val)
+			{
+				Node n = generator.get();
+				t.setContent(n);
+				t.selectedProperty().removeListener(this);
+			}
+		};
+		
+		t.setClosable(false);
+		t.selectedProperty().addListener(li);
+		getTabs().add(t);
+		
 		return t;
 	}
 	
@@ -59,6 +84,21 @@ public class FxTabPane
 		for(Tab t: getTabs())
 		{
 			if(t.getContent() == n)
+			{
+				getSelectionModel().select(t);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	/** selects a tab with the specified text */
+	public boolean selectByText(String title)
+	{
+		for(Tab t: getTabs())
+		{
+			if(title.equals(t.getText()))
 			{
 				getSelectionModel().select(t);
 				return true;

@@ -1,4 +1,4 @@
-// Copyright © 2013-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.test;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
@@ -11,6 +11,22 @@ import java.util.function.BiFunction;
 /** Simple test framework */
 public class TF
 {
+	private static boolean forcePrint;
+
+	
+	
+	public static void setForcePrint(boolean on)
+	{
+		forcePrint = on;
+	}
+	
+	
+	public static boolean isForcePrint()
+	{
+		return forcePrint;
+	}
+	
+
 	/** checks if two arguments are CKit.equals() and throws a meaningful exception if not */
 	public static void eq(Object value, Object expected)
 	{

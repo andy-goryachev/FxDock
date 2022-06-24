@@ -1,8 +1,7 @@
-// Copyright © 2006-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2006-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
-import goryachev.common.util.CancellableThread;
 import goryachev.common.util.Progress;
 import javafx.application.Platform;
 
@@ -12,7 +11,7 @@ import javafx.application.Platform;
  * then updates the UI in an FX thread.
  */
 public abstract class FxThread
-	extends CancellableThread
+	extends Thread
 {
 	/** executed in a background thread */
 	protected abstract void process() throws Throwable;

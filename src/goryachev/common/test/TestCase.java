@@ -1,4 +1,4 @@
-// Copyright © 2013-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.test;
 import goryachev.common.util.SB;
 
@@ -73,7 +73,7 @@ public class TestCase
 	public static void print(Object x)
 	{
 		TestCase tc = get();
-		if(tc == null)
+		if((tc == null) || TF.isForcePrint())
 		{
 			System.out.println(x);	
 		}

@@ -1,4 +1,4 @@
-// Copyright © 2005-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2005-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -22,6 +22,19 @@ public class TextTools
 
 	// attempt to trim on the word boundary up to max characters
 	public static String trimNicely(String s, int max)
+	{
+		try
+		{
+			return trimNicely_FIX(s, max);
+		}
+		catch(Exception e)
+		{
+			return s;
+		}
+	}
+	// FIX throws an exception
+	// in the middle of this: "- https://icons.theforgesmith.com/"
+	private static String trimNicely_FIX(String s, int max)
 	{
 		if(s == null)
 		{
@@ -1323,5 +1336,56 @@ public class TextTools
 			}
 		}
 		return -1;
+	}
+	
+	
+	public static boolean isWhiteSpaceOrCtrl(char c)
+	{
+		if(c <= ' ')
+		{
+			return true;
+		}
+		return isWhitespace(c);
+	}
+	
+	
+	/** trims, replaces any repeating control or whitespace characters with a single space */ 
+	public static String toSingleLine(String text)
+	{
+		if(text == null)
+		{
+			return null;
+		}
+		
+		int len = text.length();
+		SB sb = new SB(len);
+		
+		boolean white = true;
+		for(int i=0; i<len; i++)
+		{
+			char c = text.charAt(i);
+			if(isWhiteSpaceOrCtrl(c))
+			{
+				if(!white)
+				{
+					white = true;
+				}
+				continue;
+			}
+			else
+			{
+				if(white)
+				{
+					if(sb.length() > 0)
+					{
+						sb.append(' ');
+					}
+				}
+				white = false;
+				sb.append(c);
+			}
+		}
+		
+		return sb.toString();
 	}
 }

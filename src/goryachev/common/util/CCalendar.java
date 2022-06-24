@@ -1,4 +1,4 @@
-// Copyright © 2014-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2014-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.Calendar;
 import java.util.GregorianCalendar;

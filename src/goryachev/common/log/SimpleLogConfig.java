@@ -1,4 +1,4 @@
-// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
 import goryachev.common.log.internal.ConsoleAppender;
 import goryachev.common.util.CList;
@@ -10,12 +10,12 @@ import java.util.List;
  * Simple Log Config.
  */
 public class SimpleLogConfig
-	extends AbstractLogConfig
+	implements ILogConfig
 {
 	private boolean verbose;
 	private LogLevel defaultLogLevel = LogLevel.OFF;
-	private final CMap<String,LogLevel> channels = new CMap();
-	private final CList<AppenderBase> appenders = new CList();
+	private final CMap<String,LogLevel> channels = new CMap<>();
+	private final CList<IAppender> appenders = new CList<>();
 	
 	
 	public SimpleLogConfig()
@@ -125,7 +125,7 @@ public class SimpleLogConfig
 	}
 
 
-	public List<AppenderBase> getAppenders() throws Exception
+	public List<IAppender> getAppenders() throws Exception
 	{
 		return appenders;
 	}

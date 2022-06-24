@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.Arrays;
 
@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class FH
 {
-	public static int hash(Class c)
+	public static int hash(Class<?> c)
 	{
 		return c.hashCode();
 	}
@@ -24,25 +24,6 @@ public class FH
 		}
 		
 		return 31 * h + val.hashCode();
-	}
-	
-	
-	public static int hash(Object a, Object b)
-	{
-		int h;
-		h = hash(0, a);
-		h = hash(h, b);
-		return h;
-	}
-	
-	
-	public static int hash(Object a, Object b, Object c)
-	{
-		int h;
-		h = hash(0, a);
-		h = hash(h, b);
-		h = hash(h, c);
-		return h;
 	}
 	
 	

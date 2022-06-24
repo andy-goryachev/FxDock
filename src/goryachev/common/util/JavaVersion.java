@@ -1,4 +1,4 @@
-// Copyright © 2018-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2018-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
 
@@ -52,7 +52,8 @@ public class JavaVersion
 	
 	public int hashCode()
 	{
-		return FH.hash(JavaVersion.class, version);
+		int h = FH.hash(JavaVersion.class);
+		return FH.hash(h, version);
 	}
 	
 	

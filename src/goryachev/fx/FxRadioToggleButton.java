@@ -1,5 +1,6 @@
-// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import javafx.scene.Node;
 
 
 /**
@@ -11,6 +12,12 @@ public class FxRadioToggleButton
 	public FxRadioToggleButton(String text, String tooltip)
 	{
 		super(text, tooltip);
+	}
+	
+	
+	public FxRadioToggleButton(String text, Node graphic)
+	{
+		super(text, graphic);
 	}
 
 

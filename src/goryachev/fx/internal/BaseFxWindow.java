@@ -1,7 +1,7 @@
-// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
+import goryachev.fx.FxObject;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 
@@ -13,7 +13,7 @@ public class BaseFxWindow
 	extends Stage
 {
 	private final FxWindowBoundsMonitor normalBoundsMonitor = new FxWindowBoundsMonitor(this);
-	private final static ReadOnlyObjectWrapper<Node> lastFocusOwner = new ReadOnlyObjectWrapper();
+	private final static FxObject<Node> lastFocusOwner = new FxObject();
 
 	
 	public BaseFxWindow()

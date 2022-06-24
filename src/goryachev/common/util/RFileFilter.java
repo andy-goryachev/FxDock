@@ -1,4 +1,4 @@
-// Copyright © 2014-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2014-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
 import java.io.File;
@@ -53,7 +53,9 @@ public class RFileFilter
 	
 	public int hashCode()
 	{
-		int h = FH.hash(RFileFilter.class, excludePatterns, includePatterns);
+		int h = FH.hash(RFileFilter.class);
+		h = FH.hash(h, excludePatterns);
+		h = FH.hash(h, includePatterns);
 		h = FH.hash(h, ignoreHidden);
 		return FH.hash(h, ignoreSystem); 
 	}

@@ -1,37 +1,19 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
-import goryachev.common.log.Log;
 import java.lang.reflect.Field;
 
 
 /**
- * A "typesafe" java.lang.reflect.Field equivalent that does not throw Exceptions.
+ * A "typesafe" java.lang.reflect.Field wrapper that throws RuntimeExceptions.
  */
 public final class CField<T>
 {
-	protected static final Log log = Log.get("CField");
 	private final Field field;
 	
 	
-	public CField(Class c, String name)
+	public CField(Field f)
 	{
-		this.field = init(c, name);
-	}
-	
-	
-	private static Field init(Class c, String name)
-	{
-		try
-		{
-			Field f = c.getDeclaredField(name);
-			f.setAccessible(true);
-			return f;
-		}
-		catch(Throwable e)
-		{
-			log.error(e);
-			return null;
-		}
+		this.field = f;
 	}
 	
 	
@@ -45,7 +27,7 @@ public final class CField<T>
 			}
 			catch(Throwable e)
 			{
-				log.error(e);
+				throw new RuntimeException(e);
 			}
 		}
 		return null;
@@ -62,7 +44,7 @@ public final class CField<T>
 			}
 			catch(Throwable e)
 			{
-				log.error(e);
+				throw new RuntimeException(e);
 			}
 		}
 	}

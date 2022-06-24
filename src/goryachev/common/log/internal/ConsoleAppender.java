@@ -1,6 +1,7 @@
-// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log.internal;
 import goryachev.common.log.AppenderBase;
+import goryachev.common.log.LogLevel;
 import java.io.PrintStream;
 
 
@@ -13,9 +14,16 @@ public class ConsoleAppender
 	private final PrintStream out;
 	
 	
+	public ConsoleAppender(LogLevel threshold, PrintStream out)
+	{
+		super(threshold);
+		this.out = out;
+	}
+	
+	
 	public ConsoleAppender(PrintStream out)
 	{
-		this.out = out;
+		this(LogLevel.ALL, out);
 	}
 	
 

@@ -1,13 +1,14 @@
-// Copyright © 2017-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
 import goryachev.common.util.FH;
-import goryachev.common.util.Hex;
-import goryachev.common.util.SB;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Window;
 
 
 /**
@@ -68,6 +69,12 @@ public class KeyMap
 	}
 	
 	
+	public static void onKeyReleased(Window w, KeyCode code, int modifiers, Runnable r)
+	{
+		get(w).add(KEY_RELEASED | (modifiers & MASK_MODIFIERS), code, null, r);
+	}
+	
+	
 	public static void onKeyReleased(Node n, KeyCode code, Runnable r)
 	{
 		get(n).add(KEY_RELEASED, code, null, r);
@@ -100,6 +107,14 @@ public class KeyMap
 		}
 		
 		return m.actions.get(key(ev));
+	}
+	
+	
+	protected static KeyMap get(Window w)
+	{
+		Scene sc = w.getScene();
+		Parent p = sc.getRoot();
+		return get(p);
 	}
 	
 	

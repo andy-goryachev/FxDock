@@ -1,4 +1,4 @@
-// Copyright © 2012-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 
 
@@ -19,6 +19,13 @@ public class SKey
 	public SKey(String key)
 	{
 		this.key = key;
+	}
+	
+	
+	public static SKey format(String format, Object ... args)
+	{
+		String s = String.format(format, args);
+		return new SKey(s);
 	}
 	
 	

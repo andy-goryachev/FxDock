@@ -1,6 +1,8 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -82,6 +84,31 @@ public class FxComboBox<T>
 	public void select(T item)
 	{
 		getSelectionModel().select(item);
+	}
+	
+	
+	/** 
+	 * selects an item by some key (based on equality), where the converter extracts a key of a similar type from containing items.
+	 * does nothing if key is null.
+	 */  
+	public <V> void select(V key, Function<T,V> converter)
+	{
+		if(key == null)
+		{
+			return;
+		}
+		
+		List<T> items = getItems();
+		for(int i=items.size()-1; i>=0; i--)
+		{
+			T item = items.get(i);
+			V k = converter.apply(item);
+			if(key.equals(k))
+			{
+				select(i);
+				return;
+			}
+		}
 	}
 	
 	

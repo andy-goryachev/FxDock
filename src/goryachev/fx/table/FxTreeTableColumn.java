@@ -1,8 +1,8 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.common.util.CKit;
+import goryachev.fx.FxObject;
 import java.util.function.Function;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -41,7 +41,7 @@ public class FxTreeTableColumn<ITEM,CELL>
 	private void init()
 	{
 		setCellFactory(cellFactory());
-		setCellValueFactory((cdf) -> new ReadOnlyObjectWrapper(CKit.toString(cdf.getValue())));
+		setCellValueFactory((cdf) -> new FxObject(CKit.toStringOrNull(cdf.getValue())));
 	}
 	
 	
@@ -99,7 +99,7 @@ public class FxTreeTableColumn<ITEM,CELL>
 		{
 			ITEM item = cdf.getValue().getValue();
 			CELL v = func.apply(item);
-			return new ReadOnlyObjectWrapper<CELL>(v);
+			return new FxObject<CELL>(v);
 		});
 		return this;
 	}

@@ -1,4 +1,4 @@
-// Copyright © 2005-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2005-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 
 
@@ -30,14 +30,14 @@ public class ElasticLongArray
 	
 	public long get(int index)
 	{
-		try
-		{
+//		try
+//		{
 			return array[index];
-		}
-		catch(ArrayIndexOutOfBoundsException e)
-		{
-			return 0;
-		}
+//		}
+//		catch(ArrayIndexOutOfBoundsException e)
+//		{
+//			return 0;
+//		}
 	}
 	
 	

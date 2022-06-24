@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SB;
@@ -452,7 +452,7 @@ public class FxSchema
 	}
 	
 	
-	private static String getName(Node n)
+	public static String getName(Node n)
 	{
 		Object x = n.getProperties().get(PROP_NAME);
 		if(x instanceof String)

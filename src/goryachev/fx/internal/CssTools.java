@@ -1,13 +1,17 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
+import goryachev.common.util.CKit;
+import goryachev.common.util.Parsers;
 import goryachev.common.util.SB;
 import goryachev.fx.CssID;
 import goryachev.fx.CssPseudo;
 import goryachev.fx.CssStyle;
+import java.text.DecimalFormat;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.FontSmoothingType;
 
 
 /**
@@ -18,6 +22,8 @@ public class CssTools
 	/** bold type face */
 	public static final CssStyle BOLD = new CssStyle("CommonStyles_BOLD");
 
+	private static DecimalFormat decimalFormat;
+	
 	
 	public static String toColor(Object x)
 	{
@@ -137,6 +143,19 @@ public class CssTools
 		else
 		{
 			return x.toString();
+		}
+	}
+	
+	
+	public static String toValue(FontSmoothingType t)
+	{
+		switch(t)
+		{
+		case LCD:
+			return "lcd";
+		case GRAY:
+		default:
+			return "gray";
 		}
 	}
 	
@@ -331,6 +350,112 @@ public class CssTools
 		else
 		{
 			return "\"" + s + "\"";
+		}
+	}
+	
+	
+	
+	
+	/** 
+	 * formats an CSS string using the following rules:
+	 * 
+	 * - %s inserts an argument
+	 * - %1s,%2s,%3s,... inserts 1st (at index 0), 2nd, 3rd, etc. argument
+	 * - %% inserts a single '%'
+	 * - \[n,r,t] inserts a NL, CR, TAB char correspondingly
+	 * - a string argument is quoted if it contains spaces
+	 * - a double argument is formatted to "#0.##" specification
+	 */
+	public static String format(String format, Object ... args)
+	{
+		int sz = format.length();
+		SB sb = new SB(sz * 3);
+		
+		for(int i=0; i<sz; i++)
+		{
+			char c = format.charAt(i);
+			switch(c)
+			{
+			case '%':
+				i++;
+				int ix = format.indexOf('s', i);
+				if(ix < 0)
+				{
+					sb.append(format, i, sz);
+					i = sz;
+					continue;
+				}
+				else if(ix == 0)
+				{
+					String a = formatArgument(args[0]);
+					sb.append(a);
+				}
+				else
+				{
+					String n = format.substring(i, ix);
+					i = ix;
+					
+					if(n.length() == 0)
+					{
+						ix = 1;
+					}
+					else
+					{
+						ix = Parsers.parseInteger(n);
+					}
+					String a = formatArgument(args[ix-1]);
+					sb.append(a);
+				}
+				break;
+			case '\\':
+				i++;
+				c = format.charAt(i);
+				switch(c)
+				{
+				case 'n':
+					sb.append('\n');
+					break;
+				case 'r':
+					sb.append('\r');
+					break;
+				case 't':
+					sb.append('\t');
+					break;
+				default:
+					sb.append(c);
+				}
+				break;
+			default:
+				sb.append(c);
+			}
+		}
+		
+		return sb.toString();
+	}
+	
+	
+	private static String formatArgument(Object x)
+	{
+		if(x == null)
+		{
+			return "";
+		}
+		else if(x instanceof Number)
+		{
+			if(decimalFormat == null)
+			{
+				decimalFormat = new DecimalFormat("#0.##");
+			}
+			return decimalFormat.format(x);
+		}
+		else
+		{
+			String s = x.toString();
+			if(CKit.containsAny(s, " "))
+			{
+				return '"' + s + '"';
+			}
+			return s;
 		}
 	}
 }

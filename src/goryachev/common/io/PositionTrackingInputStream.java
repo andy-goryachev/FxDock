@@ -1,4 +1,4 @@
-// Copyright © 2013-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.io;
 import java.io.IOException;
 import java.io.InputStream;

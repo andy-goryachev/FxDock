@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CPlatform;
 import goryachev.fx.internal.CssTools;
@@ -17,7 +17,7 @@ public class CommonStyles
 	/** disables alternative row color */
 	public static final CssStyle DISABLE_ALTERNATIVE_ROW_COLOR = new CssStyle("CommonStyles_DISABLE_ALTERNATIVE_ROW_COLOR");
 	
-	private static String TABLE_ROW_HEIGHT = "1.8em";
+//	private static String TABLE_ROW_HEIGHT = "1.8em";
 
 	
 	public CommonStyles()
@@ -38,7 +38,18 @@ public class CommonStyles
 				// focus outline
 				prop("-fx-focus-color", theme.focus),
 				// focus glow
-				prop("-fx-faint-focus-color", TRANSPARENT)
+				prop("-fx-faint-focus-color", TRANSPARENT),
+				
+				selector(".text-input").defines
+				(
+					textFill(theme.textFG)
+				),
+				selector(".text-input", FOCUSED).defines
+				(
+					textFill(theme.textFG)
+				)
+//				".text-input { -fx-text-fill: black; }",
+//				".text-input:focused { -fx-text-fill: black; }"
 			)
 		);
 		
@@ -591,12 +602,14 @@ public class CommonStyles
 		{
 			selector(".tree-table-cell").defines
 			(
-				prop("-fx-cell-size", TABLE_ROW_HEIGHT)
+//				prop("-fx-cell-size", TABLE_ROW_HEIGHT)
+				padding(0)
 			),
 			
 			selector(".tree-table-row-cell").defines
 			(
-				prop("-fx-cell-size", TABLE_ROW_HEIGHT)
+//				prop("-fx-cell-size", TABLE_ROW_HEIGHT)
+				padding(0)
 			)
 		};
 	}
@@ -609,14 +622,17 @@ public class CommonStyles
 		
 		return new Object[]
 		{
+			// breaks custom renderers
 			selector(".table-cell").defines
 			(
-				prop("-fx-cell-size", TABLE_ROW_HEIGHT)
+				padding(0)
+//				prop("-fx-cell-size", TABLE_ROW_HEIGHT)
 			),
 			
 			selector(".table-row-cell").defines
 			(
-				prop("-fx-cell-size", TABLE_ROW_HEIGHT)
+				padding(0)
+//				prop("-fx-cell-size", TABLE_ROW_HEIGHT)
 			),
 			
 			selector(".table-row-cell:filled:selected").defines

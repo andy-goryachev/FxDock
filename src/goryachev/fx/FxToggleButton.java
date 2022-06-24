@@ -1,6 +1,7 @@
-// Copyright © 2019-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.Property;
+import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 
 
@@ -53,5 +54,11 @@ public class FxToggleButton
 		super(text);
 		a.attach(this);
 		FX.setTooltip(this, tooltip);
+	}
+	
+	
+	public FxToggleButton(String text, Node graphic)
+	{
+		super(text, graphic);
 	}
 }

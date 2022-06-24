@@ -1,10 +1,8 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.common.util.CKit;
-import goryachev.common.util.D;
-import java.util.function.BiConsumer;
+import goryachev.fx.FxObject;
 import java.util.function.Function;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -32,8 +30,7 @@ public class FxTableColumn<ITEM,CELL>
 	extends TableColumn<ITEM,CELL>
 {
 	protected Function<CELL,String> formatter;
-	protected Function<CELL,Node> renderer;
-	protected BiConsumer<TableCell,CELL> decorator;
+	protected ICellRenderer<CELL> renderer;
 	protected OverrunStyle overrunStyle = OverrunStyle.ELLIPSIS;
 	protected Pos alignment = Pos.CENTER_LEFT;
 	
@@ -54,14 +51,64 @@ public class FxTableColumn<ITEM,CELL>
 	private void init()
 	{
 		setCellFactory(cellFactory());
-		setCellValueFactory((cdf) -> new ReadOnlyObjectWrapper(CKit.toString(cdf.getValue())));
+		setCellValueFactory((cdf) -> new FxObject(CKit.toStringOrNull(cdf.getValue())));
 	}
 	
 	
 	public FxTableColumn<ITEM,CELL> setAlignment(Pos a)
 	{
-		alignment = a;
+		alignment = (a == null ? Pos.CENTER_LEFT : a);
 		return this;
+	}
+	
+	
+	/** convenience method sets right cell alignment */
+	public FxTableColumn<ITEM,CELL> setRightAlignment()
+	{
+		setAlignment(Pos.CENTER_RIGHT);
+		return this;
+	}
+	
+	
+	/** sets the name of the column as its tooltip */
+	@Deprecated // FIX or remove
+	public void setToolTip()
+	{
+		String text = getText();
+		setToolTip(text);
+	}
+	
+	
+	/** sets a tooltip on the column header TODO: DOES NOT WORK */
+	@Deprecated // FIX or remove
+	public void setToolTip(String text)
+	{
+		/** 
+		 * oops not that easy: https://stackoverflow.com/questions/23224826/how-to-add-a-tooltip-to-a-tableview-header-cell-in-javafx-8
+		 * 
+	    TableColumn<Person, String> firstNameCol = new TableColumn<>();
+	    Label firstNameLabel = new Label("First Name");
+	    firstNameLabel.setTooltip(new Tooltip("This column shows the first name"));
+	    firstNameCol.setGraphic(firstNameLabel);
+	    
+	    nameLabel.textProperty().bindBidirectional(textProperty());
+		nameLabel.getStyleClass().add("column-header-label");
+		nameLabel.setMaxWidth(Double.MAX_VALUE); //Makes it take up the full width of the table column header and tooltip is shown more easily.
+		
+		.table-view .column-header .label{
+		    -fx-content-display: graphic-only;
+		}
+		.table-view .column-header .label .column-header-label{
+		    -fx-content-display: text-only;
+		}
+	    */
+		//FX.setTooltip(this, text);
+	}
+	
+	
+	public Pos getAlignment()
+	{
+		return alignment;
 	}
 	
 	
@@ -80,19 +127,18 @@ public class FxTableColumn<ITEM,CELL>
 	
 	
 	/** WARNING: might cause infinite layout() loop if table is inside a split pane? */ 
-	public FxTableColumn<ITEM,CELL> setRenderer(Function<CELL,Node> r)
+	public FxTableColumn<ITEM,CELL> setRenderer(ICellRenderer<CELL> r)
 	{
 		renderer = r;
 		return this;
 	}
 	
 	
-	public FxTableColumn<ITEM,CELL> setDecorator(BiConsumer<TableCell,CELL> d)
+	public ICellRenderer<CELL> getRenderer()
 	{
-		decorator = d;
-		return this;
+		return renderer;
 	}
-
+	
 
 	/** 
 	 * A simplified alternative to setCellValueFactory().  
@@ -120,7 +166,7 @@ public class FxTableColumn<ITEM,CELL>
 		{
 			ITEM item = cdf.getValue();
 			CELL v = func.apply(item);
-			return new ReadOnlyObjectWrapper<CELL>(v);
+			return new FxObject<CELL>(v);
 		});
 		return this;
 	}
@@ -130,6 +176,7 @@ public class FxTableColumn<ITEM,CELL>
 	public FxTableColumn<ITEM,CELL> setRealPrefWidth(double width)
 	{
 		setMaxWidth(width * 100);
+		setPrefWidth(width);
 		return this;
 	}
 	
@@ -157,15 +204,8 @@ public class FxTableColumn<ITEM,CELL>
 
 						if(empty || (item == null))
 						{
-							if(decorator != null)
-							{
-								decorator.accept(this, null);
-							}
-							else
-							{
-								setText(null);
-								setGraphic(null);
-							}
+							setText(null);
+							setGraphic(null);
 						}
 						else
 						{
@@ -174,15 +214,25 @@ public class FxTableColumn<ITEM,CELL>
 								super.setText(null);
 								super.setGraphic((Node)item);
 							}
-							else if(decorator != null)
-							{
-								decorator.accept(this, (CELL)item);
-							}
 							else if(renderer != null)
 							{
-								Node n = renderer.apply((CELL)item);
-								super.setText(null);
-								super.setGraphic(n);
+								Object rendered = renderer.renderCell(this, (CELL)item);
+								if(rendered == null)
+								{
+									// renderer has configured the table cell
+								}
+								else if(rendered instanceof Node)
+								{
+									Node n = (Node)rendered;
+									super.setText(null);
+									super.setGraphic(n);
+								}
+								else
+								{
+									String text = rendered.toString();
+									super.setText(text);
+									super.setGraphic(null);
+								}
 							}
 							else
 							{

@@ -1,4 +1,4 @@
-// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;

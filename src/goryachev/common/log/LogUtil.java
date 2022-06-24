@@ -1,4 +1,4 @@
-// Copyright © 2020-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
 import goryachev.common.log.internal.FormatField;
 import goryachev.common.util.CKit;
@@ -17,14 +17,14 @@ public class LogUtil
 	private static Pattern LEVELS = Pattern.compile("(OFF)|(FATAL)|(ERROR)|(WARN)|(INFO)|(DEBUG)|(TRACE)|(ALL)", Pattern.CASE_INSENSITIVE);
 	
 
-	public static AbstractLogConfig createDisabledLogConfig()
+	public static ILogConfig createDisabledLogConfig()
 	{
-		return new AbstractLogConfig()
+		return new ILogConfig()
 		{
 			public boolean isVerbose() { return true; }
 			public LogLevel getLogLevel(String name) { return LogLevel.OFF; }
 			public LogLevel getDefaultLogLevel() { return LogLevel.OFF; }
-			public List<AppenderBase> getAppenders() { return null; }
+			public List<IAppender> getAppenders() { return null; }
 		};
 	}
 
@@ -136,7 +136,7 @@ public class LogUtil
 	
 	public static void internalError(Throwable e)
 	{
-		if(Log.config.isVerbose())
+		if(Log.showInternalErrors)
 		{
 			e.printStackTrace();
 		}

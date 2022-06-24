@@ -1,4 +1,4 @@
-// Copyright © 2013-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.io;
 import goryachev.common.util.CKit;
 import java.io.EOFException;
@@ -9,8 +9,6 @@ import java.io.OutputStream;
 
 /** 
  * Common I/O tools.
- * 
- * TODO use this class for DWriter and DReader
  */
 public class CIOTools
 {
@@ -197,5 +195,32 @@ public class CIOTools
 			}
 			n += count;
 		}
+	}
+	
+	
+	public static long bytesToLong(byte[] buf)
+	{
+		return
+			((buf[0] & 0xffL) << 56) |
+			((buf[1] & 0xffL) << 48) |
+			((buf[2] & 0xffL) << 40) |
+			((buf[3] & 0xffL) << 32) |
+			((buf[4] & 0xffL) << 24) |
+			((buf[5] & 0xffL) << 16) |
+			((buf[6] & 0xffL) <<  8) |
+			((buf[7] & 0xffL));
+	}
+
+
+	public static void longToBytes(byte[] buf, long val)
+	{
+		buf[0] = (byte)(val >>> 56);
+		buf[1] = (byte)(val >>> 48);
+		buf[2] = (byte)(val >>> 40);
+		buf[3] = (byte)(val >>> 32);
+		buf[4] = (byte)(val >>> 24);
+		buf[5] = (byte)(val >>> 16);
+		buf[6] = (byte)(val >>>  8);
+		buf[7] = (byte)(val);
 	}
 }

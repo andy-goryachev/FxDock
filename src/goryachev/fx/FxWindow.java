@@ -1,7 +1,8 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.fx.internal.BaseFxWindow;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 
@@ -21,6 +22,9 @@ public class FxWindow
 	 * If a dialog must be shown, make sure to call toFront().
 	 */
 	public void confirmClosing(OnWindowClosing choice) { }
+	
+	/** closing last essential window exits the application, regardless of the number of open non-essential windows */
+	public boolean isEssentialWindow() { return true; }
 	
 	//
 	
@@ -108,6 +112,12 @@ public class FxWindow
 	public Node getCenter()
 	{
 		return pane.getCenter();
+	}
+	
+	
+	public Parent getContentPane()
+	{
+		return getScene().getRoot();
 	}
 	
 	

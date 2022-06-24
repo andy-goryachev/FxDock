@@ -1,4 +1,4 @@
-// Copyright © 2016-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.log.Log;
 import goryachev.common.util.CList;
@@ -61,7 +61,7 @@ public class WindowsFx
 	}
 	
 	
-	public int getWindowCount()
+	public int getEssentialWindowCount()
 	{
 		int ct = 0;
 		for(int i=windowStack.size()-1; i>=0; --i)
@@ -73,7 +73,7 @@ public class WindowsFx
 			}
 			else
 			{
-				if(w.isShowing())
+				if(w.isShowing() && w.isEssentialWindow())
 				{
 					ct++;
 				}
@@ -206,14 +206,12 @@ public class WindowsFx
 	public void storeNode(Node n)
 	{
 		FxWindow w = getFxWindow(n);
-		if(w == null)
+		if(w != null)
 		{
-			throw new Error();
+			String windowPrefix = lookupWindowPrefix(w);
+			Node root = w.getScene().getRoot();
+			FxSchema.storeNode(windowPrefix, root, n);
 		}
-		
-		String windowPrefix = lookupWindowPrefix(w);
-		Node root = w.getScene().getRoot();
-		FxSchema.storeNode(windowPrefix, root, n);
 	}
 	
 	
@@ -365,7 +363,7 @@ public class WindowsFx
 			windows.remove(id);
 		}
 		
-		if(getWindowCount() == 0)
+		if(getEssentialWindowCount() == 0) // FIX
 		{
 			exitPrivate();
 		}

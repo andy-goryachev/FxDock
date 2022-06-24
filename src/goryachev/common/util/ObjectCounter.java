@@ -1,4 +1,4 @@
-// Copyright © 2013-2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2022 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.Collection;
 
@@ -141,7 +141,8 @@ public class ObjectCounter<T>
 	
 	public int hashCode()
 	{
-		return FH.hash(ObjectCounter.class, counts);
+		int h = FH.hash(ObjectCounter.class);
+		return FH.hash(h, counts);
 	}
 
 
