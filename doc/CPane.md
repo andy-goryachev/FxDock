@@ -44,8 +44,7 @@ which in turn was inspired by
 
 ## License
 
-This project and its source code is licensed under the [GNU General Public License version 3](https://www.gnu.org/licenses/gpl-3.0.en.html) and you should feel free to make adaptations of this work. Please see the included LICENSE file for further details.
+This project and its source code is licensed under the [Apache Version 2.0 license](https://www.apache.org/licenses/) and you should feel free to make adaptations of this work. Please see the included LICENSE file for further details.
 
-Please contact me to acquire this library under a business-friendly license.
 
 
