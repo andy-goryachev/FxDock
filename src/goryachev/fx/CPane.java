@@ -645,7 +645,7 @@ public class CPane
 	
 	
 	/** component-constraint pair */
-	protected static class Entry
+	public static class Entry
 	{
 		public Node node;
 		public CC cc;

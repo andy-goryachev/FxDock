@@ -132,7 +132,7 @@ public abstract class BasicFileFilter
 	//
 	
 	
-	protected abstract static class SegmentMatcher
+	public abstract static class SegmentMatcher
 	{
 		// returns -1 if no match, otherwise the next position
 		public abstract int match(String text, int start);
