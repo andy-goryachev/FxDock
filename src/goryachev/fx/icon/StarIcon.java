@@ -1,4 +1,4 @@
-// Copyright © 2019-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.icon;
 import goryachev.common.util.CKit;
 import goryachev.fx.FxPath;

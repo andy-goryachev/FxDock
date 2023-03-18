@@ -1,4 +1,4 @@
-// Copyright © 2017-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
 import java.util.concurrent.ExecutorService;

@@ -1,4 +1,4 @@
-// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.icon;
 import goryachev.fx.FxIconBuilder;
 import goryachev.fx.IconBase;

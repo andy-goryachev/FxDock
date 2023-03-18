@@ -1,4 +1,4 @@
-// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
@@ -7,7 +7,6 @@ import goryachev.common.util.CPlatform;
 import goryachev.common.util.Disconnectable;
 import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SystemTask;
-import goryachev.fx.hacks.FxHacks;
 import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.DisconnectableIntegerListener;
 import goryachev.fx.internal.FxSchema;
@@ -1215,12 +1214,6 @@ public final class FX
 	}
 	
 	
-	public static List<Window> getWindows()
-	{
-		return FxHacks.get().getWindows();
-	}
-	
-	
 	/** 
 	 * attaches a double click handler to a node.
 	 */
@@ -1948,7 +1941,7 @@ public final class FX
 	/** returns the first window of the specified type, or null */ 
 	public static <T extends FxWindow> T findFirstWindowOfType(Class<T> type, boolean exact)
 	{
-		for(Window w: getWindows())
+		for(Window w: Window.getWindows())
 		{
 			if(exact)
 			{
@@ -2137,6 +2130,35 @@ public final class FX
 			m.remove(property);
 			String s2 = m.toStyleString();
 			n.setStyle(s2);
+		}
+	}
+	
+	
+	/** applies global stylesheet on top of the javafx one */
+	public static void applyStyleSheet(String old, String cur)
+	{
+		for(Window w: Window.getWindows())
+		{
+			applyStyleSheet(w, old, cur);
+		}
+	}
+	
+	
+	/** applies global stylesheet to a specific window on top of the javafx one */
+	public static void applyStyleSheet(Window w, String old, String cur)
+	{
+		if(cur != null)
+		{
+			Scene scene = w.getScene();
+			if(scene != null)
+			{
+				if(old != null)
+				{
+					scene.getStylesheets().remove(old);
+				}
+				
+				scene.getStylesheets().add(cur);
+			}			
 		}
 	}
 }

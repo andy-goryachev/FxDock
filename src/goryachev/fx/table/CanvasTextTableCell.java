@@ -1,4 +1,4 @@
-// Copyright © 2021-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.fx.CPane;
 import goryachev.fx.IStyledText;

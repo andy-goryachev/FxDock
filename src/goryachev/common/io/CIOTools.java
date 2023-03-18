@@ -1,4 +1,4 @@
-// Copyright © 2013-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.io;
 import goryachev.common.util.CKit;
 import java.io.EOFException;
@@ -222,5 +222,24 @@ public class CIOTools
 		buf[5] = (byte)(val >>> 16);
 		buf[6] = (byte)(val >>>  8);
 		buf[7] = (byte)(val);
+	}
+	
+	
+	public static int bytesToInt(byte[] buf)
+	{
+		return
+			((buf[0] & 0xff) << 24) |
+			((buf[1] & 0xff) << 16) |
+			((buf[2] & 0xff) <<  8) |
+			((buf[3] & 0xff));
+	}
+
+
+	public static void intToBytes(byte[] buf, int val)
+	{
+		buf[0] = (byte)(val >>> 24);
+		buf[1] = (byte)(val >>> 16);
+		buf[2] = (byte)(val >>>  8);
+		buf[3] = (byte)(val);
 	}
 }

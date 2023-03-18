@@ -1,4 +1,4 @@
-// Copyright © 2012-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.io;
 import goryachev.common.util.CKit;
 import goryachev.common.util.FileTools;
@@ -14,9 +14,15 @@ import java.nio.charset.Charset;
 public class CWriter
 	extends BufferedWriter
 {
-	public CWriter(File f) throws IOException
+	public CWriter(File file) throws IOException
 	{
-		this(f, CKit.CHARSET_UTF8);
+		this(file, CKit.CHARSET_UTF8);
+	}
+	
+	
+	public CWriter(File file, boolean append) throws IOException
+	{
+		this(file, CKit.CHARSET_UTF8, append);
 	}
 	
 	
@@ -26,9 +32,15 @@ public class CWriter
 	}
 	
 	
-	public CWriter(File f, Charset cs) throws IOException
+	public CWriter(File file, Charset cs) throws IOException
 	{
-		this(new FileOutputStream(ensureParent(f)), cs);
+		this(file, cs, false);
+	}
+	
+	
+	public CWriter(File file, Charset cs, boolean append) throws IOException
+	{
+		this(new FileOutputStream(ensureParent(file), append), cs);
 	}
 	
 	

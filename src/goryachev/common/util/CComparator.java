@@ -1,4 +1,4 @@
-// Copyright © 2009-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2009-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.text.Collator;
 import java.util.Arrays;
