@@ -1,9 +1,10 @@
-// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.common.util.CList;
 import goryachev.fx.CommonStyles;
 import goryachev.fx.FX;
 import goryachev.fx.FxBoolean;
+import goryachev.fx.util.FxTools;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -267,6 +268,12 @@ public class FxTable<T>
 	public void addItem(T item)
 	{
 		table.getItems().add(item);
+	}
+	
+	
+	public void addItem(int ix, T item)
+	{
+		table.getItems().add(ix, item);
 	}
 	
 	
@@ -558,5 +565,34 @@ public class FxTable<T>
 	public void setSortPolicy(Callback<TableView<T>,Boolean> policy)
 	{
 		table.setSortPolicy(policy);
+	}
+
+
+	/**
+	 * removes selected items, also selecting an item which immediately follows the last selected item,
+	 * or, if selection includes the last item, selects the last item
+	 */ 
+	public void removeSelectedItems()
+	{
+		TableViewSelectionModel<T> m = table.getSelectionModel(); 
+		List<Integer> indexes = m.getSelectedIndices();
+		if(indexes.size() >= 0)
+		{
+			int ix = FxTools.getMaximumValue(indexes) + 1;
+			
+			List<T> sel = m.getSelectedItems();
+			ix -= sel.size();
+			table.getItems().removeAll(sel);
+
+			if(ix >= table.getItems().size())
+			{
+				ix = table.getItems().size() - 1;
+			}
+			
+			if(ix >= 0)
+			{
+				m.clearAndSelect(ix);
+			}
+		}
 	}
 }

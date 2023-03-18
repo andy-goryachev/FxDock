@@ -1,4 +1,4 @@
-// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.log.Log;
 import goryachev.common.util.CList;
@@ -7,11 +7,11 @@ import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
 import goryachev.common.util.WeakList;
 import goryachev.fx.CssLoader;
+import goryachev.fx.FX;
 import goryachev.fx.FxAction;
 import goryachev.fx.FxDialog;
 import goryachev.fx.FxWindow;
 import goryachev.fx.OnWindowClosing;
-import goryachev.fx.hacks.FxHacks;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -86,7 +86,7 @@ public class WindowsFx
 	protected int getFxWindowCount()
 	{
 		int ct = 0;
-		for(Window w: FxHacks.get().getWindows())
+		for(Window w: Window.getWindows())
 		{
 			if(w instanceof FxWindow)
 			{
@@ -255,7 +255,12 @@ public class WindowsFx
 		return null;
 	}
 	
-	
+
+	/**
+	 * Opens all previously opened windows using the specified generator.
+	 * Open a default window when no windows has been opened from the settings.
+	 * The generator may return FxWindows that are either already opened or not. 
+	 */
 	public int openWindows(Function<String,FxWindow> generator, Class<? extends FxWindow> defaultWindowType)
 	{
 		SStream st = GlobalSettings.getStream(FxSchema.WINDOWS);
@@ -269,7 +274,10 @@ public class WindowsFx
 			FxWindow w = generator.apply(id);
 			if(w != null)
 			{
-				w.open();
+				if(!w.isShowing())
+				{
+					w.open();
+				}
 				
 				if(defaultWindowType != null)
 				{
@@ -503,7 +511,7 @@ public class WindowsFx
 		try
 		{
 			String style = CssLoader.getCurrentStyleSheet();
-			FxHacks.get().applyStyleSheet(w, null, style);
+			FX.applyStyleSheet(w, null, style);
 		}
 		catch(Throwable e)
 		{

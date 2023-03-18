@@ -1,4 +1,4 @@
-// Copyright © 2007-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2007-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -11,7 +11,7 @@ import java.util.function.Function;
 // TODO move conversion to Dump
 public class D
 {
-	// convert milliseconds to MM:SS or HHH:MM:SS String
+	/** convert milliseconds to MM:SS or HHH:MM:SS String */
 	public static String msToString(long ms)
 	{
 		StringBuffer sb = new StringBuffer();
@@ -480,5 +480,12 @@ public class D
 		
 		new JsonDump(sb, indent, prettyPrint, x).print();
 		print(sb);
+	}
+	
+	
+	/** throws an Error.  used in debugging to avoid 'unreachable code' warning */
+	public static void err()
+	{
+		throw new Error();
 	}
 }

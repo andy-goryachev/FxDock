@@ -1,4 +1,4 @@
-// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.Base64;
@@ -6,7 +6,6 @@ import goryachev.common.util.CKit;
 import goryachev.common.util.CSet;
 import goryachev.common.util.SB;
 import goryachev.common.util.UrlStreamFactory;
-import goryachev.fx.hacks.FxHacks;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -172,7 +171,7 @@ public class CssLoader
 		
 	protected static void update(String old, String cur)
 	{
-		FxHacks.get().applyStyleSheet(old, cur);
+		FX.applyStyleSheet(old, cur);
 		
 		if(old == null)
 		{

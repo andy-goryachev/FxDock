@@ -1,5 +1,6 @@
-// Copyright © 2016-2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.common.util.CSorter;
 import java.util.List;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
@@ -152,5 +153,12 @@ public class FxMenuBar
 	public void add(MenuItem m)
 	{
 		lastMenu().add(m);
+	}
+	
+	
+	/** collates the last menu */
+	public void collate()
+	{
+		CSorter.collate(lastMenu().getItems(), (m) -> m.getText());
 	}
 }
