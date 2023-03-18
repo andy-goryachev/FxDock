@@ -1,4 +1,4 @@
-// Copyright © 2022 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2022-2023 Andy Goryachev <andy@goryachev.com>
 module goryachev.fxdock
 {
 	exports goryachev.common.util.text;
@@ -14,7 +14,6 @@ module goryachev.fxdock
 	exports goryachev.fx.table;
 	exports goryachev.fx.internal;
 	exports goryachev.fx;
-	exports goryachev.fx.hacks;
 	exports goryachev.fxdock;
 	exports goryachev.common.test;
 	exports goryachev.fx.icon;
