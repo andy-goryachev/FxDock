@@ -1,6 +1,6 @@
 # FxDock
 
-This library was created to provide JavaFX developers with a simple docking framework that works well on Mac and Windows with multiple monitors.
+This library was created to provide JavaFX developers with a simple docking framework that works well on Mac, Windows, and Linux with multiple monitors.
 
 ![screenshot](https://github.com/andy-goryachev/FxDock/blob/master/screenshots/2016-0521-125006-709.png)
 
@@ -17,11 +17,11 @@ Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/raw/m
 
 ## How to Use the Library
 
+The library requires JDK 17+ with JavaFX 20+.
+
 Please refer to [HOWTO.md](doc/HOWTO.md) for detailed instructions on how to use the FxDock docking framework in your project. 
 
 [Release Notes](https://github.com/andy-goryachev/FxDock/blob/master/ReleaseNotes.md)
-
-[![Donate](https://cdn.rawgit.com/andy-goryachev/FxDock/master/doc/donate.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q7JAWD7FK99QC)
 
 
 ## Similar Projects
