@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
 import java.io.File;
@@ -27,7 +27,7 @@ public class FileSettingsProvider
 	}
 	
 
-	public void save()
+	protected void saveSettings()
 	{
 		try
 		{

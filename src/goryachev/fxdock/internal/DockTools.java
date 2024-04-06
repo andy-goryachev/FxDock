@@ -2,7 +2,6 @@
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.D;
-import goryachev.common.util.SStream;
 import goryachev.fx.FX;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
@@ -157,25 +156,27 @@ public class DockTools
 		return null;
 	}
 	
-	
+
 	public static FxDockWindow findWindow(double screenx, double screeny)
 	{
 		CList<FxDockWindow> list = null;
-		List<FxDockWindow> ws = FxDockFramework.getWindows();
-		for(FxDockWindow w: ws)
+		for(Window w2: Window.getWindows())
 		{
-			if(w.isIconified())
+			if(w2 instanceof FxDockWindow w)
 			{
-				continue;
-			}
-
-			if(contains(w, screenx, screeny))
-			{
-				if(list == null)
+				if(w.isIconified())
 				{
-					list = new CList<>(ws.size());
+					continue;
 				}
-				list.add(w);
+	
+				if(contains(w, screenx, screeny))
+				{
+					if(list == null)
+					{
+						list = new CList<>();
+					}
+					list.add(w);
+				}
 			}
 		}
 		
@@ -214,7 +215,7 @@ public class DockTools
 		FxDockWindow w = getWindow(n);
 		if(w != null)
 		{
-			if(FxDockFramework.getWindowCount() > 1)
+			if(FxDockFramework.getWindows().size() > 1)
 			{
 				// TODO this is not used
 				// w.discardSettings = true;
@@ -223,13 +224,6 @@ public class DockTools
 			}
 		}
 		return false;
-	}
-
-	
-	/** for debugging or information purposes */
-	public static SStream saveLayout(Node n)
-	{
-		return FxDockSchema.saveLayoutPrivate(n);
 	}
 	
 
@@ -731,7 +725,7 @@ public class DockTools
 		double op = win.getOpacity();
 		win.setOpacity(0);
 		
-		FxDockFramework.open(win);
+		win.show();
 
 		// take into account window decorations
 		// apparently, this is available only after show()
@@ -766,8 +760,7 @@ public class DockTools
 		w.setY(pos.getY() - m.getTop());
 		w.setWidth(client.getWidth() + m.getRight() + m.getLeft());
 		w.setHeight(client.getHeight() + m.getTop() + m.getBottom());
-		
-		FxDockFramework.open(w);
+		w.show();
 		
 		collapseEmptySpace(p);
 	}

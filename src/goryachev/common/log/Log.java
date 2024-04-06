@@ -1,4 +1,4 @@
-// Copyright © 2017-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log;
 import goryachev.common.log.internal.ConsoleAppender;
 import goryachev.common.util.CKit;
@@ -91,7 +91,7 @@ public class Log
 	{
 		SimpleLogConfig c = new SimpleLogConfig();
 		c.setDefaultLogLevel(level);
-		c.addAppender(new ConsoleAppender(level, System.out));
+		c.addAppender(new ConsoleAppender(System.out));
 		setConfig(c);
 	}
 	
@@ -447,11 +447,11 @@ public class Log
 	}
 	
 	
-	public void error(Supplier<Object> lambda)
+	public void error(Supplier<String> lambda)
 	{
 		if(ERROR >= effectiveLevel)
 		{
-			Object msg = lambda.get();
+			String msg = lambda.get();
 			logEvent(LogLevel.ERROR, null, msg);
 		}
 	}
@@ -506,11 +506,11 @@ public class Log
 	}
 	
 	
-	public void warn(Supplier<Object> lambda)
+	public void warn(Supplier<String> lambda)
 	{
 		if(WARN >= effectiveLevel)
 		{
-			Object msg = lambda.get();
+			String msg = lambda.get();
 			logEvent(LogLevel.WARN, null, msg);
 		}
 	}
@@ -565,11 +565,11 @@ public class Log
 	}
 	
 	
-	public void info(Supplier<Object> lambda)
+	public void info(Supplier<String> lambda)
 	{
 		if(INFO >= effectiveLevel)
 		{
-			Object msg = lambda.get();
+			String msg = lambda.get();
 			logEvent(LogLevel.INFO, null, msg);
 		}
 	}
@@ -624,11 +624,11 @@ public class Log
 	}
 	
 	
-	public void debug(Supplier<Object> lambda)
+	public void debug(Supplier<String> lambda)
 	{
 		if(DEBUG >= effectiveLevel)
 		{
-			Object msg = lambda.get();
+			String msg = lambda.get();
 			logEvent(LogLevel.DEBUG, null, msg);
 		}
 	}
@@ -683,11 +683,11 @@ public class Log
 	}
 	
 	
-	public void trace(Supplier<Object> lambda)
+	public void trace(Supplier<String> lambda)
 	{
 		if(TRACE >= effectiveLevel)
 		{
-			Object msg = lambda.get();
+			String msg = lambda.get();
 			logEvent(LogLevel.TRACE, null, msg);
 		}
 	}

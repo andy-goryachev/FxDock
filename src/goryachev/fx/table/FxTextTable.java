@@ -1,4 +1,4 @@
-// Copyright © 2022-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2022-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.common.util.CKit;
 import goryachev.fx.CssLoader;

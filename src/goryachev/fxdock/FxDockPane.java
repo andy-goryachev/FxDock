@@ -2,11 +2,9 @@
 package goryachev.fxdock;
 import goryachev.fx.FX;
 import goryachev.fx.FxAction;
-import goryachev.fx.internal.LocalSettings;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.DragAndDropHandler;
 import goryachev.fxdock.internal.FxDockBorderPane;
-import goryachev.fxdock.internal.FxDockSchema;
 import goryachev.fxdock.internal.FxDockTabPane;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -118,30 +116,6 @@ public abstract class FxDockPane
 	public final SimpleStringProperty titleProperty()
 	{
 		return title;
-	}
-	
-	
-	/** called by the framework to load values */
-	public void loadPaneSettings(String prefix)
-	{
-		LocalSettings s = LocalSettings.find(this);
-		if(s != null)
-		{
-			String k = FxDockSchema.getPath(prefix, this, FxDockSchema.SUFFIX_BINDINGS);
-			s.loadValues(k);
-		}
-	}
-	
-	
-	/** called by the framework to save values */
-	public void savePaneSettings(String prefix)
-	{
-		LocalSettings s = LocalSettings.find(this);
-		if(s != null)
-		{
-			String k = FxDockSchema.getPath(prefix, this, FxDockSchema.SUFFIX_BINDINGS);
-			s.saveValues(k);
-		}
 	}
 	
 	

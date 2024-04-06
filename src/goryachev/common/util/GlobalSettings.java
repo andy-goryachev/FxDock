@@ -1,5 +1,6 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import goryachev.fx.internal.ASettingsStore;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -8,30 +9,15 @@ import java.util.List;
 /**
  * Application-wide settings.
  */
+// FIX remove unnecessary level of indirection
+// Provider <- GlobalSettings <- instance <- ASettingsStore <- FxSettings
 public class GlobalSettings
 {
-	/** settings storage interface */
-	public interface Provider
-	{
-		public String getString(String key);
-		
-		public void setString(String key, String val);
-		
-		public SStream getStream(String key);
-		
-		public void setStream(String key, SStream s);
-		
-		public List<String> getKeys();
-		
-		public void save();
-	}
-	
-	//
-	
-	private static Provider provider;
+	private static GlobalSettingsProvider provider;
+	private static ASettingsStore store;
 	
 	
-	public static void setProvider(Provider p)
+	public static void setProvider(GlobalSettingsProvider p)
 	{
 		provider = p;
 	}
@@ -46,7 +32,7 @@ public class GlobalSettings
 	}
 	
 	
-	private static Provider provider()
+	private static GlobalSettingsProvider provider()
 	{
 		if(provider == null)
 		{
@@ -56,30 +42,69 @@ public class GlobalSettings
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static void save()
 	{
 		provider().save();
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static List<String> getKeys()
 	{
 		return provider().getKeys();
 	}
+
+
+	@Deprecated // FIX move to ASettingsStore
+	public static void setBoolean(String key, boolean value)
+	{
+		set(key, String.valueOf(value));
+	}
+
+
+	@Deprecated // FIX move to ASettingsStore
+	public static Boolean getBoolean(String key)
+	{
+		String v = getString(key);
+		if(v != null)
+		{
+			if("true".equals(v))
+			{
+				return Boolean.TRUE;
+			}
+			else if("false".equals(v))
+			{
+				return Boolean.FALSE;
+			}
+		}
+		return null;
+	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
+	public static boolean getBoolean(String key, boolean defaultValue)
+	{
+		Boolean b = getBoolean(key);
+		return b == null ? defaultValue : b;
+	}
+
+
+	@Deprecated // FIX move to ASettingsStore
 	public static String getString(String key)
 	{
 		return provider().getString(key);
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static void setString(String key, String val)
 	{
 		set(key, val);
 	}
 	
 	
+	@Deprecated // FIX remove
 	private static void set(String key, Object val)
 	{
 		String s = val == null ? null : val.toString();
@@ -87,30 +112,35 @@ public class GlobalSettings
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static int getInt(String key, int defaultValue)
 	{
 		return Parsers.parseInt(getString(key), defaultValue);
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static void setInt(String key, int val)
 	{
 		set(key, val);
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static SStream getStream(String key)
 	{
 		return provider().getStream(key);
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static void setStream(String key, SStream s)
 	{
 		provider().setStream(key, s);
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static File getFile(String key)
 	{
 		String s = getString(key);
@@ -122,6 +152,7 @@ public class GlobalSettings
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static void setFile(String key, File f)
 	{
 		String s = (f == null ? null : f.getAbsolutePath());
@@ -129,6 +160,7 @@ public class GlobalSettings
 	}
 	
 	
+	@Deprecated // FIX move to ASettingsStore
 	public static List<File> getFiles(String key)
 	{
 		SStream ss = GlobalSettings.getStream(key);
@@ -142,7 +174,8 @@ public class GlobalSettings
 		return list;
 	}
 	
-	
+
+	@Deprecated // FIX move to ASettingsStore
 	public static void setFiles(String key, Collection<File> files)
 	{
 		SStream ss = new SStream();
@@ -154,5 +187,51 @@ public class GlobalSettings
 			}
 		}
 		setStream(key, ss);
+	}
+
+
+	public static ASettingsStore instance()
+	{
+		if(store == null)
+		{
+			synchronized(GlobalSettings.class)
+			{
+				if(store == null)
+				{
+					store = new ASettingsStore()
+					{
+						public void setString(String key, String val)
+						{
+							GlobalSettings.setString(key, val);
+						}
+						
+						
+						public void setStream(String key, SStream stream)
+						{
+							GlobalSettings.setStream(key, stream);
+						}
+						
+						
+						public void save()
+						{
+							GlobalSettings.save();
+						}
+						
+						
+						public String getString(String key)
+						{
+							return GlobalSettings.getString(key);
+						}
+						
+						
+						public SStream getStream(String key)
+						{
+							return GlobalSettings.getStream(key);
+						}
+					};
+				}
+			}
+		}
+		return store;
 	}
 }

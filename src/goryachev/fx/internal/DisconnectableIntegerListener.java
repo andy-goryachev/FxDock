@@ -1,6 +1,6 @@
-// Copyright © 2021-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
-import goryachev.common.util.Disconnectable;
+import goryachev.common.util.IDisconnectable;
 import java.util.function.IntConsumer;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -11,7 +11,7 @@ import javafx.beans.value.ObservableValue;
  * Disconnectable Integer Listener.
  */
 public class DisconnectableIntegerListener
-	implements ChangeListener<Number>, Disconnectable
+	implements ChangeListener<Number>, IDisconnectable
 {
 	private final ReadOnlyIntegerProperty prop;
 	private final IntConsumer onChange;

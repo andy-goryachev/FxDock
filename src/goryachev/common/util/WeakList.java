@@ -1,6 +1,8 @@
-// Copyright © 2012-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.ref.WeakReference;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 
 /**
@@ -59,6 +61,25 @@ public class WeakList<T>
 	}
 	
 	
+	public void forEach(Consumer<T> client)
+	{
+		int sz = list.size();
+		for(int i=sz-1; i>=0; i--)
+		{
+			WeakReference<T> ref = list.get(i);
+			T item = ref.get();
+			if(item == null)
+			{
+				list.remove(i);
+			}
+			else
+			{
+				client.accept(item);
+			}
+		}
+	}
+	
+	
 	public T get(int ix)
 	{
 		return list.get(ix).get();
@@ -83,6 +104,26 @@ public class WeakList<T>
 	}
 	
 	
+	public int indexOf(T item)
+	{
+		Objects.nonNull(item);
+		int sz = list.size();
+		for(int i=0; i<sz; i++)
+		{
+			WeakReference<T> ref = list.get(i);
+			T v = ref.get();
+			if(v != null)
+			{
+				if(item.equals(v))
+				{
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	
 	public void remove(T item)
 	{
 		int sz = list.size();
@@ -102,9 +143,10 @@ public class WeakList<T>
 	}
 	
 	
-	public void remove(int ix)
+	public T remove(int ix)
 	{
-		list.remove(ix);
+		WeakReference<T> ref = list.remove(ix);
+		return ref.get();
 	}
 	
 	

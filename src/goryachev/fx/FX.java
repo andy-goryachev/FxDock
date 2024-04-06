@@ -1,30 +1,33 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CPlatform;
-import goryachev.common.util.Disconnectable;
-import goryachev.common.util.GlobalSettings;
+import goryachev.common.util.IDisconnectable;
 import goryachev.common.util.SystemTask;
 import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.DisconnectableIntegerListener;
-import goryachev.fx.internal.FxSchema;
+import goryachev.fx.internal.FxSettingsSchema;
 import goryachev.fx.internal.FxStyleHandler;
 import goryachev.fx.internal.ParentWindow;
-import goryachev.fx.internal.WindowsFx;
+import goryachev.fx.internal.WindowMgr;
 import goryachev.fx.table.FxTable;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.Supplier;
+import javax.imageio.ImageIO;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakListener;
 import javafx.beans.property.Property;
@@ -43,6 +46,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.collections.transformation.TransformationList;
 import javafx.css.Styleable;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -94,9 +98,9 @@ public final class FX
 	public static final double DEGREES_PER_RADIAN = 180.0 / Math.PI;
 	public static final double GAMMA = 2.2;
 	public static final double ONE_OVER_GAMMA = 1.0 / GAMMA;
-	private static WindowsFx windowsFx = new WindowsFx();
 	private static Text helper;
 	private static final Object PROP_TOOLTIP = new Object();
+	private static final Object PROP_NAME = new Object();
 
 	
 	public static FxWindow getWindow(Node n)
@@ -114,39 +118,6 @@ public final class FX
 	}
 	
 	
-	public static void storeSettings(Node n)
-	{
-		if(n != null)
-		{
-			windowsFx.storeNode(n);
-			GlobalSettings.save();
-		}
-	}
-	
-	
-	public static void restoreSettings(Node n)
-	{
-		if(n != null)
-		{
-			windowsFx.restoreNode(n);
-		}
-	}
-	
-	
-	public static void storeSettings(FxWindow w)
-	{
-		windowsFx.storeWindow(w);
-		GlobalSettings.save();
-	}
-	
-	
-	public static void restoreSettings(FxWindow w)
-	{
-		windowsFx.restoreWindow(w);
-		GlobalSettings.save();
-	}
-	
-	
 	/** 
 	 * disables persisting of settings for this node only.  
 	 * the LocalSettings, and the settings for its children will still be persisted.
@@ -155,46 +126,20 @@ public final class FX
 	{
 		if(n != null)
 		{
-			FxSchema.setSkipSettings(n);
+			FxSettingsSchema.setSkipSettings(n);
 		}
-	}
-	
-	
-	/** 
-	 * loads application windows stored in the global settings.  
-	 * A window of specified defaultWindowType is created when the layout does not contain any windows saved,
-	 * or when no window of the defaultWindowType was created.
-	 * Generator:
-	 * - for null argument (default window id) must return a non-null instance 
-	 * - may return null window for a non-null window id
-	 */ 
-	public static void openWindows(Function<String,FxWindow> generator, Class<? extends FxWindow> defaultWindowType)
-	{
-		windowsFx.openWindows(generator, defaultWindowType);
-	}
-	
-	
-	public static void open(FxWindow w)
-	{
-		windowsFx.open(w);
-	}
-	
-	
-	public static void close(FxWindow w)
-	{
-		windowsFx.close(w);
 	}
 	
 	
 	public static void exit()
 	{
-		windowsFx.exit();
+		WindowMgr.exit();
 	}
 	
 	
 	public static FxAction exitAction()
 	{
-		return windowsFx.exitAction();
+		return WindowMgr.exitAction();
 	}
 	
 	
@@ -762,26 +707,14 @@ public final class FX
 	}
 	
 	
-	/** assign a name to the node for the purposes of saving settings */
-	public static void setName(Node n, String name)
-	{
-		FxSchema.setName(n, name);
-	}
-	
-	
-	public static String getName(Node n)
-	{
-		return FxSchema.getName(n);
-	}
-	
-	
 	/** 
 	 * attaches a handler to be notified when settings for the node have been loaded.  
 	 * setting null clears the handler 
 	 */
-	public static void setOnSettingsLoaded(Node n, Runnable r)
+	@Deprecated // FIX remove
+	private static void setOnSettingsLoaded(Node n, Runnable r)
 	{
-		FxSchema.setOnSettingsLoaded(n, r);
+		//FxSchema.setOnSettingsLoaded(n, r);
 	}
 	
 	
@@ -1014,12 +947,6 @@ public final class FX
 	}
 	
 	
-	public static void storeSettings()
-	{
-		windowsFx.storeSettings();
-	}
-	
-	
 	public static ObservableValue toObservableValue(Object x)
 	{
 		if(x == null)
@@ -1067,20 +994,6 @@ public final class FX
 				((FxAction)x).setDisabled(on);
 			}
 		}
-	}
-	
-	
-	/** adds a callback which will be invoked before any FxWindow gets shown */
-	public static void addWindowMonitor(Consumer<FxWindow> monitor)
-	{
-		windowsFx.addWindowMonitor(monitor);
-	}
-	
-	
-	/** removes a window monitor */
-	public static void removeWindowMonitor(Consumer<FxWindow> monitor)
-	{
-		windowsFx.removeWindowMonitor(monitor);
 	}
 	
 
@@ -1429,14 +1342,14 @@ public final class FX
 	
 	
 	/** adds a ChangeListener to the specified ObservableValue(s) */
-	public static Disconnectable onChange(Runnable callback, ObservableValue<?> ... props)
+	public static IDisconnectable onChange(Runnable callback, ObservableValue<?> ... props)
 	{
 		return onChange(callback, false, props);
 	}
 	
 	
 	/** adds a ChangeListener to the specified ObservableValue(s) */
-	public static Disconnectable onChange(Runnable callback, boolean fireImmediately, ObservableValue<?> ... props)
+	public static IDisconnectable onChange(Runnable callback, boolean fireImmediately, ObservableValue<?> ... props)
 	{
 		FxChangeListener li = new FxChangeListener(callback);
 		li.listen(props);
@@ -1451,7 +1364,7 @@ public final class FX
 	
 	
 	/** adds a ChangeListener to the specified ObservableValue(s).  The callback will be invokedLater() */
-	public static Disconnectable onChangeLater(Runnable callback, ObservableValue<?> ... props)
+	public static IDisconnectable onChangeLater(Runnable callback, ObservableValue<?> ... props)
 	{
 		FxChangeListener li = new FxChangeListener(callback)
 		{
@@ -1582,6 +1495,24 @@ public final class FX
 	public static  ReadOnlyObjectProperty<Window> parentWindowProperty(Node n)
 	{
 		return new ParentWindow(n).windowProperty();
+	}
+	
+	
+	/** avoid ambiguous signature warning when using addListener */
+	public static void addInvalidationListener(Observable p, boolean fireImmediately, Runnable r)
+	{
+		p.addListener(new InvalidationListener()
+		{
+			public void invalidated(Observable observable)
+			{
+				r.run();
+			}
+		});
+		
+		if(fireImmediately)
+		{
+			r.run();
+		}
 	}
 	
 	
@@ -2101,7 +2032,7 @@ public final class FX
 	}
 
 
-	public static Disconnectable onChange(ReadOnlyIntegerProperty prop, IntConsumer onChange)
+	public static IDisconnectable onChange(ReadOnlyIntegerProperty prop, IntConsumer onChange)
 	{
 		return new DisconnectableIntegerListener(prop, onChange);
 	}
@@ -2160,5 +2091,54 @@ public final class FX
 				scene.getStylesheets().add(cur);
 			}			
 		}
+	}
+
+
+	public static void writePNG(Image im, File file)
+	{
+		try
+		{
+			BufferedImage bim = SwingFXUtils.fromFXImage(im, null);
+			ImageIO.write(bim, "PNG", file);
+		}
+		catch(Exception e)
+		{
+			log.error(e);
+		}
+	}
+
+	
+	public static void setName(Node n, String name)
+	{
+		n.getProperties().put(PROP_NAME, name);
+	}
+	
+	
+	public static String getName(Node n)
+	{
+		Object x = n.getProperties().get(PROP_NAME);
+		if(x instanceof String s)
+		{
+			return s;
+		}
+		return null;
+	}
+	
+	
+	public static void setName(Window w, String name)
+	{
+		Objects.nonNull(name);
+		w.getProperties().put(PROP_NAME, name);
+	}
+	
+	
+	public static String getName(Window w)
+	{
+		Object x = w.getProperties().get(PROP_NAME);
+		if(x instanceof String s)
+		{
+			return s;
+		}
+		return null;
 	}
 }

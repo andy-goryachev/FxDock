@@ -1,4 +1,4 @@
-// Copyright © 2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import javafx.scene.control.TableCell;
 

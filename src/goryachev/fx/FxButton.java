@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -47,6 +47,21 @@ public class FxButton
 	public FxButton(String text, Runnable action)
 	{
 		this(text, new FxAction(action));
+	}
+
+	
+	public FxButton(String text, String tooltip, FxAction a)
+	{
+		super(text);
+		a.attach(this);
+		FX.setTooltip(this, tooltip);
+	}
+	
+	
+	public FxButton(String text, String tooltip, Runnable action)
+	{
+		this(text, new FxAction(action));
+		FX.setTooltip(this, tooltip);
 	}
 	
 	

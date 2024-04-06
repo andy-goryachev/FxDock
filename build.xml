@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com> -->
+<!-- Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com> -->
 
 <project default="build-all" basedir=".">
 	
 	<!-- libraries -->
 	<path id="libs">
 	</path>
-		
-
+	
+	
 	<target name="clean">
 		<delete includeEmptyDirs="true" dir="build" failonerror="false" />
 	</target>
@@ -22,23 +22,24 @@
 			
 	<target name="compile" depends="init">
 		<javac
-			srcdir="src"
 			destdir="build/classes"
 			debug="true"
 			encoding="utf-8"
 			fork="true"
 			nowarn="true"
 			optimize="false"
-			source="1.8"
-			target="1.8"
+			source="21"
+			target="21"
 			includeantruntime="false"
 		>
 			<compilerarg value="-Xlint:none"/>
+			<src path="src" />
 			<classpath refid="libs" />
 		</javac>
 	</target>
 	
 	
+	<!-- copy non-java resources -->
 	<target name="copy-resources" depends="init">
 		<copy todir="build/classes">
 			<fileset dir="src" excludes="**/*.java" />

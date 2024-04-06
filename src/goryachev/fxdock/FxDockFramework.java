@@ -1,95 +1,47 @@
 // Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
-import goryachev.fxdock.internal.FrameworkBase;
+import goryachev.common.util.CList;
+import goryachev.fx.FxSettings;
+import goryachev.fx.internal.WinMonitor;
 import java.util.List;
+import javafx.stage.Window;
 
 
 /**
  * Docking Framework for JavaFX.
  */
+// TODO not sure if this is needed... remove?
 public class FxDockFramework
 {
-	/** a generator must be plugged into the framework to provide custom windows and panes */ 
-	public static interface Generator
-	{
-		public FxDockWindow createWindow();
-		
-		public FxDockPane createPane(String type);
-	}
-	
-	//
-	
-	/** implementation */
-	protected static FrameworkBase base = new FrameworkBase();
-	
-	
-	/** set your own implementation if you dare */
-	public static void setFrameworkBase(FrameworkBase b)
-	{
-		base = b;
-	}
-	
-	
-	/** generator allows for creation of custom docking Stages and docking Panes */ 
-	public static void setGenerator(Generator g)
-	{
-		base.setGenerator(g);
-	}
-	
-	
 	public static FxDockWindow createWindow()
 	{
-		return base.createWindow();
-	}
-	
-	
-	public static FxDockPane createPane(String type)
-	{
-		return base.createPane(type);
-	}
-	
-	
-	public static int loadLayout()
-	{
-		return base.loadLayout();
-	}
-	
-	
-	public static void saveLayout()
-	{
-		base.saveLayout();
-	}
-	
-
-	public static void open(FxDockWindow w)
-	{
-		base.open(w);
+		return (FxDockWindow)FxSettings.createDefaultWindow();
 	}
 	
 	
 	/** returns topmost window */
+	@Deprecated
 	public static FxDockWindow findTopWindow(List<FxDockWindow> ws)
 	{
-		return base.findTopWindow(ws);
+		// FIX may throw an exception if other windows are present
+		return (FxDockWindow)WinMonitor.getTopWindow();
 	}
 	
 	
 	/** returns a list of visible windows, topmost window first */
 	public static List<FxDockWindow> getWindows()
 	{
-		return base.getWindows();
-	}
-	
-	
-	/** returns the number of visible windows */
-	public static int getWindowCount()
-	{
-		return base.getWindowCount();
-	}
-	
-	
-	public static void exit()
-	{
-		base.exit();
+		List<Window> ws = WinMonitor.getWindowStack();
+		int sz = ws.size();
+		CList<FxDockWindow> rv = new CList<>(sz);
+		for(int i=sz-1; i>=0; i--)
+		{
+			Window w = ws.get(i);
+			if(w instanceof FxDockWindow dw)
+			{
+				rv.add(dw);
+			}
+		}
+		return rv;
 	}
 }

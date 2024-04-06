@@ -1,4 +1,4 @@
-// Copyright © 2004-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2004-2024 Andy Goryachev <andy@goryachev.com>
 // Contains fragments of Apache FileNameUtils code
 // http://www.apache.org/licenses/LICENSE-2.0
 package goryachev.common.util;
@@ -316,6 +316,34 @@ public class FileTools
 		}
 		
 		return sb.toString();
+	}
+	
+	
+	public static String[] pathToRoot(File root, File file)
+	{
+		CList<String> list = new CList<>();
+		File f = file;
+		
+		for(;;)
+		{
+			list.add(f.getName());
+			f = f.getParentFile();
+			if(f == null)
+			{
+				// not a root
+				return null;
+			}
+			else if(root.equals(f))
+			{
+				int sz = list.size();
+				String[] ss = new String[sz];
+				for(int i=0; i<sz; i++)
+				{
+					ss[i] = list.get(sz - i - 1);
+				}
+				return ss;
+			}
+		}
 	}
 	
 	

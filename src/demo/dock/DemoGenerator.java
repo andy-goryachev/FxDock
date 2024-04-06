@@ -1,8 +1,9 @@
 // Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
-import goryachev.fxdock.FxDockFramework;
+import goryachev.fx.internal.ASettingsStore;
 import goryachev.fxdock.FxDockPane;
-import goryachev.fxdock.FxDockWindow;
+import goryachev.fxdock.internal.FxDockSchema;
+import javafx.stage.Stage;
 
 
 /**
@@ -12,7 +13,7 @@ import goryachev.fxdock.FxDockWindow;
  * - DemoPane, an empty pane with a background color encoded in its type id.
  */
 public class DemoGenerator
-	implements FxDockFramework.Generator
+	extends FxDockSchema
 {
 	/** type id for a browser pane */
 	public static final String BROWSER = "BROWSER";
@@ -25,13 +26,12 @@ public class DemoGenerator
 	/** type id for a VPane demo */
 	public static final String VPANE = "VPANE";
 	
-
-	/** creates custom window */
-	public FxDockWindow createWindow()
+	
+	public DemoGenerator(ASettingsStore store)
 	{
-		return new DemoWindow();
+		super(store);
 	}
-
+	
 
 	/** creates custom pane using the type id */
 	public FxDockPane createPane(String type)
@@ -50,5 +50,17 @@ public class DemoGenerator
 			// type here codes for background color
 			return new DemoPane(type);
 		}
+	}
+	
+
+	public Stage createWindow(String name)
+	{
+		return new DemoWindow();
+	}
+
+
+	public Stage createDefaultWindow()
+	{
+		return DemoWindow.openBrowser("https://github.com/andy-goryachev/FxDock");
 	}
 }

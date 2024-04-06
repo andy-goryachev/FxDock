@@ -1,10 +1,12 @@
-// Copyright © 2021-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CList;
-import goryachev.common.util.Disconnectable;
+import goryachev.common.util.IDisconnectable;
 import java.lang.ref.WeakReference;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -16,9 +18,9 @@ import javafx.scene.Node;
  * Fx Disconnector.
  */
 public class FxDisconnector
-	implements Disconnectable
+	implements IDisconnectable
 {
-	private final CList<Disconnectable> items = new CList();
+	private final CList<IDisconnectable> items = new CList();
 	private static final Object KEY = new Object();
 	
 	
@@ -50,7 +52,7 @@ public class FxDisconnector
 	}
 	
 	
-	public void addDisconnectable(Disconnectable d)
+	public void addDisconnectable(IDisconnectable d)
 	{
 		items.add(d);
 	}
@@ -60,7 +62,7 @@ public class FxDisconnector
 	{
 		for(int i=items.size()-1; i>=0; i--)
 		{
-			Disconnectable d = items.remove(i);
+			IDisconnectable d = items.remove(i);
 			d.disconnect();
 		}
 	}
@@ -69,13 +71,13 @@ public class FxDisconnector
 	// change listeners
 	
 	
-	public Disconnectable addChangeListener(Runnable callback, ObservableValue<?> ... props)
+	public IDisconnectable addChangeListener(Runnable callback, ObservableValue<?> ... props)
 	{
 		return addChangeListener(callback, false, props);
 	}
 	
 
-	public Disconnectable addChangeListener(Runnable onChange, boolean fireImmediately, ObservableValue<?> ... props)
+	public IDisconnectable addChangeListener(Runnable onChange, boolean fireImmediately, ObservableValue<?> ... props)
 	{
 		ChLi li = new ChLi()
 		{
@@ -110,15 +112,15 @@ public class FxDisconnector
 	}
 	
 	
-	public <T> Disconnectable addChangeListener(ObservableValue<T> prop, ChangeListener<T> li)
+	public <T> IDisconnectable addChangeListener(ObservableValue<T> prop, ChangeListener<T> li)
 	{
 		return addChangeListener(prop, false, li);
 	}
 	
 	
-	public <T> Disconnectable addChangeListener(ObservableValue<T> prop, boolean fireImmediately, ChangeListener<T> li)
+	public <T> IDisconnectable addChangeListener(ObservableValue<T> prop, boolean fireImmediately, ChangeListener<T> li)
 	{
-		Disconnectable d = new Disconnectable()
+		IDisconnectable d = new IDisconnectable()
 		{
 			public void disconnect()
 			{
@@ -139,19 +141,18 @@ public class FxDisconnector
 	}
 
 
-	public Disconnectable addWeakChangeListener(Runnable onChange, ObservableValue<?> ... props)
+	public IDisconnectable addWeakChangeListener(Runnable onChange, ObservableValue<?> ... props)
 	{
 		return addWeakChangeListener(onChange, false, props);
 	}
 
 
-	public Disconnectable addWeakChangeListener(Runnable onChange, boolean fireImmediately, ObservableValue<?> ... props)
+	public IDisconnectable addWeakChangeListener(Runnable onChange, boolean fireImmediately, ObservableValue<?> ... props)
 	{
+		WeakReference<Runnable> ref = new WeakReference(onChange);
+
 		ChLi li = new ChLi()
 		{
-			WeakReference<Runnable> ref = new WeakReference(onChange);
-
-
 			public void disconnect()
 			{
 				for(ObservableValue p: props)
@@ -191,19 +192,18 @@ public class FxDisconnector
 	}
 
 
-	public <T> Disconnectable addWeakChangeListener(ObservableValue<T> prop, ChangeListener<T> li)
+	public <T> IDisconnectable addWeakChangeListener(ObservableValue<T> prop, ChangeListener<T> li)
 	{
 		return addChangeListener(prop, false, li);
 	}
 
 
-	public <T> Disconnectable addWeakChangeListener(ObservableValue<T> prop, boolean fireImmediately, ChangeListener<T> listener)
+	public <T> IDisconnectable addWeakChangeListener(ObservableValue<T> prop, boolean fireImmediately, ChangeListener<T> listener)
 	{
+		WeakReference<ChangeListener<T>> ref = new WeakReference<>(listener);
+
 		ChLi<T> d = new ChLi<T>()
 		{
-			WeakReference<ChangeListener<T>> ref = new WeakReference<>(listener);
-
-
 			public void disconnect()
 			{
 				prop.removeListener(this);
@@ -240,13 +240,13 @@ public class FxDisconnector
 	// invalidation listeners
 	
 	
-	public Disconnectable addInvalidationListener(Runnable callback, ObservableValue<?> ... props)
+	public IDisconnectable addInvalidationListener(Runnable callback, ObservableValue<?> ... props)
 	{
 		return addInvalidationListener(callback, false, props);
 	}
 	
 
-	public Disconnectable addInvalidationListener(Runnable onChange, boolean fireImmediately, ObservableValue<?> ... props)
+	public IDisconnectable addInvalidationListener(Runnable onChange, boolean fireImmediately, ObservableValue<?> ... props)
 	{
 		InLi li = new InLi()
 		{
@@ -281,15 +281,15 @@ public class FxDisconnector
 	}
 	
 	
-	public <T> Disconnectable addInvalidationListener(ObservableValue<T> prop, InvalidationListener li)
+	public <T> IDisconnectable addInvalidationListener(ObservableValue<T> prop, InvalidationListener li)
 	{
 		return addInvalidationListener(prop, false, li);
 	}
 	
 	
-	public <T> Disconnectable addInvalidationListener(ObservableValue<T> prop, boolean fireImmediately, InvalidationListener li)
+	public <T> IDisconnectable addInvalidationListener(ObservableValue<T> prop, boolean fireImmediately, InvalidationListener li)
 	{
-		Disconnectable d = new Disconnectable()
+		IDisconnectable d = new IDisconnectable()
 		{
 			public void disconnect()
 			{
@@ -309,19 +309,18 @@ public class FxDisconnector
 	}
 
 
-	public Disconnectable addWeakInvalidationListener(Runnable onChange, ObservableValue<?> ... props)
+	public IDisconnectable addWeakInvalidationListener(Runnable onChange, ObservableValue<?> ... props)
 	{
 		return addWeakInvalidationListener(onChange, false, props);
 	}
 
 
-	public Disconnectable addWeakInvalidationListener(Runnable onChange, boolean fireImmediately, ObservableValue<?> ... props)
+	public IDisconnectable addWeakInvalidationListener(Runnable onChange, boolean fireImmediately, ObservableValue<?> ... props)
 	{
+		WeakReference<Runnable> ref = new WeakReference(onChange);
+
 		InLi li = new InLi()
 		{
-			WeakReference<Runnable> ref = new WeakReference(onChange);
-
-
 			public void disconnect()
 			{
 				for(ObservableValue p: props)
@@ -361,19 +360,18 @@ public class FxDisconnector
 	}
 
 
-	public Disconnectable addWeakInvalidationListener(ObservableValue<?> prop, InvalidationListener li)
+	public IDisconnectable addWeakInvalidationListener(ObservableValue<?> prop, InvalidationListener li)
 	{
 		return addWeakInvalidationListener(prop, false, li);
 	}
 
 
-	public Disconnectable addWeakInvalidationListener(ObservableValue<?> prop, boolean fireImmediately, InvalidationListener listener)
+	public IDisconnectable addWeakInvalidationListener(ObservableValue<?> prop, boolean fireImmediately, InvalidationListener listener)
 	{
+		WeakReference<InvalidationListener> ref = new WeakReference<>(listener);
+
 		InLi d = new InLi()
 		{
-			WeakReference<InvalidationListener> ref = new WeakReference<>(listener);
-
-
 			public void disconnect()
 			{
 				prop.removeListener(this);
@@ -409,9 +407,9 @@ public class FxDisconnector
 	// list change listeners
 	
 	
-	public <T> Disconnectable addListChangeListener(ObservableList<T> list, ListChangeListener<T> listener)
+	public <T> IDisconnectable addListChangeListener(ObservableList<T> list, ListChangeListener<T> listener)
 	{
-		Disconnectable d = new Disconnectable()
+		IDisconnectable d = new IDisconnectable()
 		{
 			public void disconnect()
 			{
@@ -426,13 +424,12 @@ public class FxDisconnector
 	}
 	
 	
-	public <T> Disconnectable addWeakListChangeListener(ObservableList<T> list, ListChangeListener<T> listener)
+	public <T> IDisconnectable addWeakListChangeListener(ObservableList<T> list, ListChangeListener<T> listener)
 	{
+		WeakReference<ListChangeListener<T>> ref = new WeakReference<>(listener);
+
 		LiChLi<T> li = new LiChLi<T>()
 		{
-			WeakReference<ListChangeListener<T>> ref = new WeakReference<>(listener);
-			
-			
 			public void disconnect()
 			{
 				list.removeListener(this);
@@ -465,12 +462,30 @@ public class FxDisconnector
 	// TODO event filters
 	
 	
+	// bidirectional binding
+	
+	
+	public <T> IDisconnectable bindBidirectional(Property<T> p1, Property<T> p2)
+	{
+		Bindings.bindBidirectional(p1, p2);
+		IDisconnectable d = new IDisconnectable()
+		{
+			public void disconnect()
+			{
+				Bindings.unbindBidirectional(p1, p2);
+			}
+		};
+		items.add(d);
+		return d;
+	}
+	
+	
 	//
 	
 	
-	protected static abstract class ChLi<T> implements Disconnectable, ChangeListener<T> { }
+	protected static abstract class ChLi<T> implements IDisconnectable, ChangeListener<T> { }
 	
-	protected static abstract class InLi implements Disconnectable, InvalidationListener { }
+	protected static abstract class InLi implements IDisconnectable, InvalidationListener { }
 	
-	protected static abstract class LiChLi<T> implements Disconnectable, ListChangeListener<T> { }
+	protected static abstract class LiChLi<T> implements IDisconnectable, ListChangeListener<T> { }
 }

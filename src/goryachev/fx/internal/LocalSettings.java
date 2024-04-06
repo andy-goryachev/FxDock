@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.util.CMap;
 import goryachev.common.util.GlobalSettings;
@@ -77,6 +77,7 @@ public class LocalSettings
 	
 	
 	/** returns a Node-specific instance, or null if not found.  This method should not be called from the client code normally. */
+	// TODO rename get()
 	public static LocalSettings find(Node n)
 	{
 		return (LocalSettings)n.getProperties().get(PROP_BINDINGS);
@@ -84,6 +85,7 @@ public class LocalSettings
 	
 	
 	/** returns a Window-specific instance, or null if not found.  This method should not be called from the client code normally. */
+	// TODO rename get()
 	public static LocalSettings find(Window w)
 	{
 		return (LocalSettings)w.getProperties().get(PROP_BINDINGS);

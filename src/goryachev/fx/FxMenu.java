@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.Property;
 import javafx.scene.control.Menu;
@@ -51,6 +51,14 @@ public class FxMenu
 	public FxMenuItem item(String text, Runnable r)
 	{
 		FxMenuItem m = new FxMenuItem(text, r);
+		getItems().add(m);
+		return m;
+	}
+	
+	
+	public FxMenu submenu(String text)
+	{
+		FxMenu m = new FxMenu(text);
 		getItems().add(m);
 		return m;
 	}
