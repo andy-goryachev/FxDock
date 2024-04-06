@@ -1,15 +1,17 @@
 // Copyright © 2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.fx.internal.FxSettingsSchema;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
 
 /**
- * FX Application Settings Facade.
+ * FX Application Framework.
  */
-public class FxSettings
+public class FxFramework
 {
 	// TODO create an abstract base class ASettingsSchema (?) in the main package, not internal
 	private static FxSettingsSchema schema;
@@ -90,5 +92,98 @@ public class FxSettings
 	public static void save()
 	{
 		schema.save();
+	}
+	
+	
+	// TODO
+	// TODO replace with ClosingOperation (AUTOCLOSE)
+	// TODO ClosingOperation
+	private static boolean exiting;
+	
+	
+	private static boolean confirmExit()
+	{
+		OnWindowClosing choice = new OnWindowClosing(true);
+		// TODO in focus order?
+		for(Window w: Window.getWindows())
+		{
+			if(w instanceof FxWindow fw)
+			{
+				fw.confirmClosing(choice);
+	
+				if(choice.isCancelled())
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	
+	public static void exit()
+	{
+		FxFramework.storeLayout();
+		
+		if(confirmExit())
+		{
+			exitPrivate();
+		}
+	}
+
+	
+	public static FxAction exitAction()
+	{
+		return new FxAction(() -> exit());
+	}
+	
+	
+	private static void exitPrivate()
+	{
+		exiting = true;
+		// calls Application.close()
+		Platform.exit();
+	}
+	
+	
+//	protected void unlinkWindow(FxWindow w)
+//	{
+//		if(!exiting)
+//		{
+//			if(!(w instanceof FxDialog))
+//			{
+//				if(getFxWindowCount() == 1)
+//				{
+//					storeWindows();
+//				}
+//			}
+//		}
+//		
+//		storeWindow(w);
+//		GlobalSettings.save();
+//
+//		Object id = windows.remove(w);
+//		if(id instanceof String)
+//		{
+//			windows.remove(id);
+//		}
+//		
+//		if(getEssentialWindowCount() == 0) // FIX
+//		{
+//			exitPrivate();
+//		}
+//	}
+	
+	
+	// TODO
+	protected void handleClose(FxWindow w, WindowEvent ev)
+	{
+		OnWindowClosing ch = new OnWindowClosing(false);
+		w.confirmClosing(ch);
+		if(ch.isCancelled())
+		{
+			// don't close the window
+			ev.consume();
+		}
 	}
 }

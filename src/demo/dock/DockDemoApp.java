@@ -4,7 +4,7 @@ import goryachev.common.log.Log;
 import goryachev.common.log.LogLevel;
 import goryachev.common.log.SimpleLogConfig;
 import goryachev.common.util.GlobalSettings;
-import goryachev.fx.FxSettings;
+import goryachev.fx.FxFramework;
 import goryachev.fx.internal.ASettingsStore;
 import java.io.File;
 import javafx.application.Application;
@@ -45,6 +45,6 @@ public class DockDemoApp
 	{
 		ASettingsStore store = GlobalSettings.instance();
 		DemoDockSchema gen = new DemoDockSchema(store);
-		FxSettings.openLayout(gen);
+		FxFramework.openLayout(gen);
 	}
 }

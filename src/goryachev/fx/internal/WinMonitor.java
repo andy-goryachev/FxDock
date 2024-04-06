@@ -7,7 +7,7 @@ import goryachev.common.util.GlobalSettings;
 import goryachev.fx.CssLoader;
 import goryachev.fx.FX;
 import goryachev.fx.FxObject;
-import goryachev.fx.FxSettings;
+import goryachev.fx.FxFramework;
 import java.util.List;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
@@ -145,7 +145,7 @@ public class WinMonitor
 					{
 						log.debug("added: %s", w);
 						// window is already showing
-						FxSettings.restore(w);
+						FxFramework.restore(w);
 						applyStyleSheet(w);
 					}
 				}
@@ -156,7 +156,7 @@ public class WinMonitor
 						log.debug("removed: %s", w);
 						// the only problem here is that window is already hidden - does it matter?
 						// if it does, need to listen to WindowEvent.WINDOW_HIDING event
-						FxSettings.store(w);
+						FxFramework.store(w);
 						stack.remove(w);
 					}
 					

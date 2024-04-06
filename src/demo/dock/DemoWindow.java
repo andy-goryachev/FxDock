@@ -6,13 +6,12 @@ import goryachev.common.util.SB;
 import goryachev.fx.FX;
 import goryachev.fx.FxAction;
 import goryachev.fx.FxCheckMenuItem;
+import goryachev.fx.FxFramework;
 import goryachev.fx.FxMenu;
 import goryachev.fx.FxMenuBar;
-import goryachev.fx.FxSettings;
 import goryachev.fx.GlobalBooleanProperty;
 import goryachev.fx.OnWindowClosing;
 import goryachev.fx.internal.LocalSettings;
-import goryachev.fx.internal.WindowMgr;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.Version;
 import goryachev.fxdock.WindowListMenuItem;
@@ -38,7 +37,6 @@ public class DemoWindow
 	public static final FxAction newVPaneAction = new FxAction(DemoWindow::actionNewVPane);
 	public static final FxAction newLoginAction = new FxAction(DemoWindow::actionNewLogin);
 	public static final FxAction newWindowAction = new FxAction(DemoWindow::actionNewWindow);
-	public static final FxAction quitApplicationAction = new FxAction(WindowMgr::exit); // TODO
 	public static final FxAction saveSettingsAction = new FxAction(DemoWindow::actionSaveSettings);
 	public final FxAction windowCheckAction = new FxAction();
 	public final Label statusField = new Label();
@@ -66,7 +64,7 @@ public class DemoWindow
 		m.separator();
 		m.item("Close Window", closeWindowAction);
 		m.separator();
-		m.item("Quit Application", quitApplicationAction);
+		m.item("Quit Application", FxFramework.exitAction());
 		// window
 		m.menu("Window");
 		m.item("New Browser", newBrowserAction);
@@ -192,7 +190,7 @@ public class DemoWindow
 	
 	protected static void actionSaveSettings()
 	{
-		FxSettings.storeLayout();
+		FxFramework.storeLayout();
 	}
 
 	

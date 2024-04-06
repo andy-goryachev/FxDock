@@ -6,7 +6,7 @@ import goryachev.common.util.SStream;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
 import goryachev.fx.FxDialog;
-import goryachev.fx.FxSettings;
+import goryachev.fx.FxFramework;
 import goryachev.fx.util.FxTools;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
@@ -899,7 +899,7 @@ public abstract class FxSettingsSchema
 		for(int i=0; i<sz; i++)
 		{
 			Window w = ws.get(i);
-			FxSettings.store(w);
+			FxFramework.store(w);
 			
 			String name = FX.getName(w);
 			String id = WinMonitor.forWindow(w).getIDPart();

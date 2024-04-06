@@ -11,7 +11,6 @@ import goryachev.fx.internal.DisconnectableIntegerListener;
 import goryachev.fx.internal.FxSettingsSchema;
 import goryachev.fx.internal.FxStyleHandler;
 import goryachev.fx.internal.ParentWindow;
-import goryachev.fx.internal.WindowMgr;
 import goryachev.fx.table.FxTable;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -128,18 +127,6 @@ public final class FX
 		{
 			FxSettingsSchema.setSkipSettings(n);
 		}
-	}
-	
-	
-	public static void exit()
-	{
-		WindowMgr.exit();
-	}
-	
-	
-	public static FxAction exitAction()
-	{
-		return WindowMgr.exitAction();
 	}
 	
 	

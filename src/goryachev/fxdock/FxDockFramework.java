@@ -1,7 +1,7 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.common.util.CList;
-import goryachev.fx.FxSettings;
+import goryachev.fx.FxFramework;
 import goryachev.fx.internal.WinMonitor;
 import java.util.List;
 import javafx.stage.Window;
@@ -15,7 +15,7 @@ public class FxDockFramework
 {
 	public static FxDockWindow createWindow()
 	{
-		return (FxDockWindow)FxSettings.createDefaultWindow();
+		return (FxDockWindow)FxFramework.createDefaultWindow();
 	}
 	
 	
