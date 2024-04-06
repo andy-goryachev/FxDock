@@ -28,7 +28,7 @@ public class DockDemoApp
 	public static void main(String[] args)
 	{
 		// init logger
-		Log.initConsole(LogLevel.INFO);
+		Log.initConsole(LogLevel.OFF);
 		//Log.setLevel("DemoBrowser", LogLevel.ALL);
 		Log.setLevel("SettingsProviderBase.reads", LogLevel.ALL);
 		Log.setLevel("SettingsProviderBase.writes", LogLevel.ALL);
@@ -44,7 +44,7 @@ public class DockDemoApp
 	public void start(Stage s) throws Exception
 	{
 		ASettingsStore store = GlobalSettings.instance();
-		DemoGenerator gen = new DemoGenerator(store);
+		DemoDockSchema gen = new DemoDockSchema(store);
 		FxSettings.openLayout(gen);
 	}
 }

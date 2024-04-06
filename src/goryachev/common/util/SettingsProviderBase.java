@@ -15,11 +15,11 @@ public abstract class SettingsProviderBase
 
 	//
 	
-	// stores String or String[]
-	protected CMap<String,Object> data = new CMap<>();
 	private static final Log log = Log.get("SettingsProviderBase");
 	private static final Log logReads = Log.get("SettingsProviderBase.reads");
 	private static final Log logWrites = Log.get("SettingsProviderBase.writes");
+	// stores String or String[]
+	protected CMap<String,Object> data = new CMap<>();
 
 	
 	public SettingsProviderBase()
@@ -74,17 +74,17 @@ public abstract class SettingsProviderBase
 		if(x instanceof String[] ss)
 		{
 			rv = ss;
-			log.debug(() -> key + " " + new CList<>(rv));
+			logReads.debug(() -> key + " " + new CList<>(rv));
 		}
 		else if(x instanceof String s)
 		{
 			rv = new String[] { s };
-			log.debug(() -> key + " [" + s + "]");
+			logReads.debug(() -> key + " [" + s + "]");
 		}
 		else
 		{
 			rv = null;
-			log.debug(() -> key + " <null>");
+			logReads.debug(() -> key + " <null>");
 		}
 		return rv;
 	}

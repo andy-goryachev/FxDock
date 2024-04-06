@@ -171,7 +171,7 @@ public class DemoWindow
 	public static DemoWindow openBrowser(String url)
 	{
 		DemoBrowser b = new DemoBrowser();
-		b.openPage(url);
+		b.setUrl(url);
 		
 		DemoWindow w = new DemoWindow();
 		w.setContent(b);

@@ -30,7 +30,7 @@ public class DemoCPane
 	
 	public DemoCPane()
 	{
-		super(DemoGenerator.CPANE);
+		super(DemoDockSchema.CPANE);
 		setTitle("DemoCPane.java");
 
 		String info = "This demonstrates table layout capabilities of CPane.  CPane is easier to use than GridPane because one does not have to set so many constraints on the inidividual nodes, and you also have border layout capability as well.";

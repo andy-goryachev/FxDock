@@ -1,6 +1,8 @@
 // Copyright © 2022-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.util;
+import goryachev.fx.FX;
 import java.util.List;
+import javafx.stage.Window;
 
 
 /**
@@ -21,5 +23,15 @@ public class FxTools
 			}
 		}
 		return rv;
+	}
+	
+	
+	public static String describe(Window w)
+	{
+		if(w == null)
+		{
+			return null;
+		}
+		return w.getClass().getSimpleName() + "(" + FX.getName(w) + ")";
 	}
 }

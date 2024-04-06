@@ -30,6 +30,7 @@ import javafx.util.StringConverter;
  *    add(...).
  *    add(...);
  */
+// FIX must be a part of FxSettings and use their storage provider!
 public class LocalSettings
 {
 	protected abstract class Entry
@@ -150,13 +151,19 @@ public class LocalSettings
 			public void saveValue(String prefix)
 			{
 				String v = p.getValue();
-				GlobalSettings.setString(prefix + "." + subKey, v);
+				if(v != null)
+				{
+					GlobalSettings.setString(prefix + "." + subKey, v);
+				}
 			}
 
 			public void loadValue(String prefix)
 			{
 				String v = GlobalSettings.getString(prefix + "." + subKey);
-				p.setValue(v);
+				if(v != null)
+				{
+					p.setValue(v);
+				}
 			}
 		});
 		return this;

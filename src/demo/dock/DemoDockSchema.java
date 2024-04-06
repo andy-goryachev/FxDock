@@ -7,12 +7,9 @@ import javafx.stage.Stage;
 
 
 /**
- * Demo Generator creates custom window of type DemoWindow
- * and two kinds of panes:
- * - DemoBrowser, a simple web browser, with a type id BROWSER,
- * - DemoPane, an empty pane with a background color encoded in its type id.
+ * Demo Schema creates custom dock windows and dock panes.
  */
-public class DemoGenerator
+public class DemoDockSchema
 	extends FxDockSchema
 {
 	/** type id for a browser pane */
@@ -27,16 +24,16 @@ public class DemoGenerator
 	public static final String VPANE = "VPANE";
 	
 	
-	public DemoGenerator(ASettingsStore store)
+	public DemoDockSchema(ASettingsStore store)
 	{
 		super(store);
 	}
 	
 
 	/** creates custom pane using the type id */
-	public FxDockPane createPane(String type)
+	public FxDockPane createPane(String id)
 	{
-		switch(type)
+		switch(id)
 		{
 		case BROWSER:
 			return new DemoBrowser();
@@ -47,8 +44,8 @@ public class DemoGenerator
 		case LOGIN:
 			return new DemoLoginPane();
 		default:
-			// type here codes for background color
-			return new DemoPane(type);
+			// id determines the background color
+			return new DemoPane(id);
 		}
 	}
 	

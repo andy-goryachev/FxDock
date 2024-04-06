@@ -1,11 +1,13 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
+import goryachev.common.log.Log;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
 import goryachev.fx.FxDialog;
 import goryachev.fx.FxSettings;
+import goryachev.fx.util.FxTools;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -48,6 +50,7 @@ import javafx.stage.Window;
 /**
  * Stores and restores the UI state.
  */
+// TODO consider making it generic
 public abstract class FxSettingsSchema
 {
 	public abstract Stage createDefaultWindow();
@@ -58,7 +61,7 @@ public abstract class FxSettingsSchema
 
 	//
 	
-	private static final String FX_PREFIX = "FX.";
+	protected static final String FX_PREFIX = "FX.";
 	
 	private static final String SFX_WINDOWS = "WINDOWS";
 	private static final String SFX_COLUMNS = ".COLS";
@@ -80,6 +83,7 @@ public abstract class FxSettingsSchema
 	private static final Object PROP_LOAD_HANDLER = new Object();
 	private static final Object PROP_SKIP_SETTINGS = new Object();
 	
+	private static final Log log = Log.get("FxSettingsSchema");
 	private final ASettingsStore store;
 	
 	
@@ -89,23 +93,23 @@ public abstract class FxSettingsSchema
 	}
 	
 	
-	public void storeWindow(Window win)
+	public void storeWindow(Window w)
 	{
-		WinMonitor m = WinMonitor.forWindow(win);
+		WinMonitor m = WinMonitor.forWindow(w);
 		if(m != null)
 		{
 			double x = m.getX();
 			double y = m.getY();
-			double w = m.getW();
-			double h = m.getH();
+			double width = m.getW();
+			double height = m.getH();
 			
 			SStream ss = new SStream();
 			ss.add(x);
 			ss.add(y);
-			ss.add(w);
-			ss.add(h);
+			ss.add(width);
+			ss.add(height);
 			
-			if(win instanceof Stage s)
+			if(w instanceof Stage s)
 			{
 				if(s.isFullScreen())
 				{
@@ -127,19 +131,21 @@ public abstract class FxSettingsSchema
 
 			store.setStream(FX_PREFIX + m.getID(), ss);
 			
-			Node n = win.getScene().getRoot();
+			Node n = w.getScene().getRoot();
             storeNode(n);
 		}
 	}
 	
 	
-	public void restoreWindow(Window win)
+	public void restoreWindow(Window w)
 	{
-		if(win instanceof PopupWindow)
+		log.debug(() -> FxTools.describe(w));
+
+		if(w instanceof PopupWindow)
 		{
 			return;
 		}
-		else if(win instanceof Stage s)
+		else if(w instanceof Stage s)
 		{
 			if(s.getModality() != Modality.NONE)
 			{
@@ -147,7 +153,7 @@ public abstract class FxSettingsSchema
 			}
 		}
 		
-		WinMonitor m = WinMonitor.forWindow(win);
+		WinMonitor m = WinMonitor.forWindow(w);
 		if(m != null)
 		{
 			SStream ss = store.getStream(FX_PREFIX + m.getID());
@@ -155,35 +161,35 @@ public abstract class FxSettingsSchema
 			{
 				double x = ss.nextDouble(-1);
 				double y = ss.nextDouble(-1);
-				double w = ss.nextDouble(-1);
-				double h = ss.nextDouble(-1);
+				double width = ss.nextDouble(-1);
+				double height = ss.nextDouble(-1);
 				String state = ss.nextString(WINDOW_NORMAL);
 				
-				if((w > 0) && (h > 0))
+				if((width > 0) && (height > 0))
 				{
 					if
 					(
 						FX.isValidCoordinates(x, y) &&
-						(!(win instanceof FxDialog))
+						(!(w instanceof FxDialog))
 					)
 					{
 						// iconified windows have (x,y) of -32000 for some reason
 						// their coordinates are essentially lost (unless there is a way to get them in FX)
-						win.setX(x);
-						win.setY(y);
+						w.setX(x);
+						w.setY(y);
 					}
 
-					if(win instanceof Stage s)
+					if(w instanceof Stage s)
 					{
 						if(s.isResizable())
 						{
-							win.setWidth(w);
-							win.setHeight(h);
+							w.setWidth(width);
+							w.setHeight(height);
 						}
 						else
 						{
-							w = win.getWidth();
-							h = win.getHeight();
+							width = w.getWidth();
+							height = w.getHeight();
 						}
 						
 						switch(state)
@@ -196,7 +202,7 @@ public abstract class FxSettingsSchema
 							break;
 						}
 						
-						if(win instanceof FxDialog d)
+						if(w instanceof FxDialog d)
 						{
 							Window parent = d.getOwner();
 							if(parent != null)
@@ -204,15 +210,15 @@ public abstract class FxSettingsSchema
 								double cx = parent.getX() + (parent.getWidth() / 2);
 								double cy = parent.getY() + (parent.getHeight() / 2);
 								// TODO check 
-								d.setX(cx - w/2);
-								d.setY(cy - h/2);
+								d.setX(cx - width/2);
+								d.setY(cy - height/2);
 							}
 						}
 					}
 				}
 			}
 			
-			Node n = win.getScene().getRoot();
+			Node n = w.getScene().getRoot();
             restoreNode(n);
 		}
 	}
@@ -882,6 +888,8 @@ public abstract class FxSettingsSchema
 	
 	public void storeLayout()
 	{
+		log.debug();
+
 		SStream ss = new SStream();
 		List<Window> ws = WinMonitor.getWindowStack();
 		

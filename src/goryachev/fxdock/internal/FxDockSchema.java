@@ -1,11 +1,13 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
+import goryachev.common.log.Log;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import goryachev.fx.internal.ASettingsStore;
 import goryachev.fx.internal.FxSettingsSchema;
 import goryachev.fx.internal.LocalSettings;
 import goryachev.fx.internal.WinMonitor;
+import goryachev.fx.util.FxTools;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import javafx.application.Platform;
@@ -32,18 +34,14 @@ public abstract class FxDockSchema
 	
 	//
 	
-	private static final String PREFIX_DOCK = "FXDOCK.";
-	private static final String PREFIX_WINDOW = PREFIX_DOCK + "w.";
-	
 	private static final String NAME_PANE = ".P";
 	private static final String NAME_TAB = ".T";
 	private static final String NAME_SPLIT = ".S";
 	
 	private static final String SUFFIX_BINDINGS = ".bindings";
-	private static final String SUFFIX_LAYOUT = ".layout";
+	private static final String SUFFIX_CONTENT = ".layout";
 	private static final String SUFFIX_SELECTED_TAB = ".tab";
 	private static final String SUFFIX_SPLITS = ".splits";
-	private static final String SUFFIX_WINDOW = ".window";
 	
 	private static final String TYPE_EMPTY = "E";
 	private static final String TYPE_PANE = "P";
@@ -51,45 +49,34 @@ public abstract class FxDockSchema
 	private static final String TYPE_VSPLIT = "V";
 	private static final String TYPE_TAB = "T";
 	
+	private static final Log log = Log.get("FxDockSchema");
+	
 	
 	public FxDockSchema(ASettingsStore s)
 	{
 		super(s);
 	}
 	
-	
-	// FIX remove
-	public static String windowID(int n)
-	{
-		return PREFIX_WINDOW + n;
-	}
-	
-	
-	public static void clearSettings()
-	{
-		// remove previously saved layout
-//		for(String k: GlobalSettings.getKeys())
-//		{
-//			if(k.startsWith(PREFIX_WINDOW))
-//			{
-//				GlobalSettings.setString(k, null);
-//			}
-//		}
-	}
 
-	
+	@Override
 	public void restoreWindow(Window w)
 	{
+		log.debug(() -> FxTools.describe(w));
+
 		if(w instanceof FxDockWindow dw)
 		{
 			WinMonitor m = WinMonitor.forWindow(w);
 			if(m != null)
 			{
-				String prefix = PREFIX_DOCK + m.getID();
-				Node n = loadLayout(prefix);
-				dw.setContent(n);
-				
-				loadContentSettings(prefix, n);
+				String prefix = FX_PREFIX + m.getID();
+
+				if(dw.getContent() == null)
+				{
+					Node n = loadDockWindowContent(prefix);
+					dw.setContent(n);
+
+					loadContentSettings(prefix, n);
+				}
 
 				// FIX remove duplicate call?
 				LocalSettings settings = LocalSettings.find(w);
@@ -107,6 +94,8 @@ public abstract class FxDockSchema
 	
 	public void storeWindow(Window w)
 	{
+		log.debug(() -> FxTools.describe(w));
+		
 		super.storeWindow(w);
 		
 		if(w instanceof FxDockWindow dw)
@@ -114,9 +103,9 @@ public abstract class FxDockSchema
 			WinMonitor m = WinMonitor.forWindow(w);
 			if(m != null)
 			{
-				String prefix = PREFIX_DOCK + m.getID();
+				String prefix = FX_PREFIX + m.getID();
 				Node n = dw.getContent();
-				saveLayout(prefix, n);
+				saveDockWindowContent(prefix, n);
 				
 				// FIX remove duplicate call?
 				LocalSettings settings = LocalSettings.get(w);
@@ -132,11 +121,18 @@ public abstract class FxDockSchema
 	}
 
 
-	// TODO rename loadDockWindowContent
-	public Node loadLayout(String prefix)
+	protected Node loadDockWindowContent(String prefix)
 	{
-		SStream s = store().getStream(prefix + SUFFIX_LAYOUT);
-		return loadLayoutRecursively(s);
+		SStream s = store().getStream(prefix + SUFFIX_CONTENT);
+		return loadContentRecursively(s);
+	}
+	
+
+	protected void saveDockWindowContent(String prefix, Node n)
+	{
+		SStream s = new SStream();
+		saveContentRecursively(s, n);
+		store().setStream(prefix + SUFFIX_CONTENT, s);
 	}
 	
 	
@@ -147,14 +143,14 @@ public abstract class FxDockSchema
 		int sz = s.nextInt();
 		for(int i=0; i<sz; i++)
 		{
-			Node ch = loadLayoutRecursively(s);
+			Node ch = loadContentRecursively(s);
 			sp.addPane(ch);
 		}
 		return sp;
 	}
 	
 	
-	protected Node loadLayoutRecursively(SStream s)
+	protected Node loadContentRecursively(SStream s)
 	{
 		String t = s.nextString();
 		if(t == null)
@@ -180,7 +176,7 @@ public abstract class FxDockSchema
 			int sz = s.nextInt();
 			for(int i=0; i<sz; i++)
 			{
-				Node ch = loadLayoutRecursively(s);
+				Node ch = loadContentRecursively(s);
 				tp.addTab(ch);
 			}
 			return tp;
@@ -196,22 +192,7 @@ public abstract class FxDockSchema
 	}
 
 
-	public void saveLayout(String prefix, Node n)
-	{
-		SStream s = saveLayoutPrivate(n);
-		store().setStream(prefix + SUFFIX_LAYOUT, s);
-	}
-	
-	
-	protected SStream saveLayoutPrivate(Node content)
-	{
-		SStream s = new SStream();
-		saveLayoutRecursively(s, content);
-		return s;
-	}
-
-
-	protected void saveLayoutRecursively(SStream s, Node n)
+	protected void saveContentRecursively(SStream s, Node n)
 	{
 		if(n == null)
 		{
@@ -235,7 +216,7 @@ public abstract class FxDockSchema
 			
 			for(Node ch: sp.getPanes())
 			{
-				saveLayoutRecursively(s, ch);
+				saveContentRecursively(s, ch);
 			}
 		}
 		else if(n instanceof FxDockTabPane)
@@ -248,7 +229,7 @@ public abstract class FxDockSchema
 			
 			for(Node ch: tp.getPanes())
 			{
-				saveLayoutRecursively(s, ch);
+				saveContentRecursively(s, ch);
 			}
 		}
 		else if(n instanceof FxDockEmptyPane)
@@ -363,7 +344,7 @@ public abstract class FxDockSchema
 	 * - split positions
 	 * - settings bindings
 	 */
-	public void saveContentSettings(String prefix, Node n)
+	protected void saveContentSettings(String prefix, Node n)
 	{
 		if(n != null)
 		{

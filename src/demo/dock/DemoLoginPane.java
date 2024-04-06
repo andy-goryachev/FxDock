@@ -25,7 +25,7 @@ public class DemoLoginPane
 	
 	public DemoLoginPane()
 	{
-		super(DemoGenerator.LOGIN);
+		super(DemoDockSchema.LOGIN);
 		setTitle("CPane Demo // Login Form");
 
 		String info = "This demonstrates table layout capabilities of CPane component.  CPane is easier to use than GridPane because one does not have to set so many constraints on the inidividual nodes, and you also have border layout capability as well.";

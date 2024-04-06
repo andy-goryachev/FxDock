@@ -22,7 +22,7 @@ public class GlobalSettings
 		provider = p;
 	}
 	
-	
+
 	/** a convenience shortcut to set file-based provider and load the settings */
 	public static void setFileProvider(File f)
 	{

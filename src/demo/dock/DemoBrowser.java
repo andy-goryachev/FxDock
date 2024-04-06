@@ -20,8 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
@@ -42,11 +40,16 @@ public class DemoBrowser
 	
 	public DemoBrowser()
 	{
-		super(DemoGenerator.BROWSER);
+		super(DemoDockSchema.BROWSER);
 		setTitle("Browser / " + CSystem.getJavaVersion());
 		
 		addressField = new TextField();
-		addressField.addEventHandler(KeyEvent.KEY_PRESSED, (ev) -> handleKeyTyped(ev));
+		addressField.setOnAction((ev) -> 
+		{
+			String url = addressField.getText();
+			setUrl(url);
+		});
+		// FIX bind the property
 		LocalSettings.get(this).add("URL", addressField);
 		
 		view = new WebView();
@@ -104,16 +107,10 @@ public class DemoBrowser
 		String url = getUrl();
 		if(CKit.isNotBlank(url))
 		{
-			openPage(url);
+			setUrl(url);
 		}
 	}
 	
-	
-	public String getUrl()
-	{
-		return addressField.getText();
-	}
-
 
 	protected void handleStatusChange(WebEvent<String> ev)
 	{
@@ -127,7 +124,7 @@ public class DemoBrowser
 	}
 
 
-	public void openPage(String url)
+	public void setUrl(String url)
 	{
 		log.info(url);
 		
@@ -136,18 +133,8 @@ public class DemoBrowser
 	}
 	
 	
-	protected void handleKeyTyped(KeyEvent ev)
+	public String getUrl()
 	{
-		KeyCode c = ev.getCode();
-		switch(c)
-		{
-		case ENTER:
-			openPage(addressField.getText());
-			break;
-		default:
-			return;
-		}
-		
-		ev.consume();
+		return addressField.getText();
 	}
 }
