@@ -27,7 +27,7 @@ public class DockDemoApp
 	public static void main(String[] args)
 	{
 		// init logger
-		Log.initConsole(LogLevel.OFF);
+		Log.initConsole(LogLevel.WARN);
 		Log.setLevel
 		(
 			LogLevel.ALL,

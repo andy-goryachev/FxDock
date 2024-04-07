@@ -50,16 +50,16 @@ public class FxDockSplitPane
 		for(int i=getPaneCount()-1; i>=0; i--)
 		{
 			Node n = getPane(i);
-			if(n instanceof FxDockEmptyPane)
+			if(n instanceof FxDockEmptyPane p)
 			{
 				double sz;
 				if(ori == Orientation.HORIZONTAL)
 				{
-					sz = ((FxDockEmptyPane)n).getWidth();
+					sz = p.getWidth();
 				}
 				else
 				{
-					sz = ((FxDockEmptyPane)n).getHeight();
+					sz = p.getHeight();
 				}
 				
 				if(sz < DragAndDropHandler.SPLIT_COLLAPSE_THRESHOLD)

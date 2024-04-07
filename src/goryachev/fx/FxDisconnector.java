@@ -45,9 +45,9 @@ public class FxDisconnector
 	public static void disconnect(Node n)
 	{
 		Object x = n.getProperties().get(KEY);
-		if(x instanceof FxDisconnector)
+		if(x instanceof FxDisconnector d)
 		{
-			((FxDisconnector)x).disconnect();
+			d.disconnect();
 		}
 	}
 	

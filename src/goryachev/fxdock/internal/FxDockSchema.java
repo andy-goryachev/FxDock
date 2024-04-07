@@ -182,41 +182,39 @@ public abstract class FxDockSchema
 		{
 			return;
 		}
-		else if(n instanceof FxDockPane)
+		else if(n instanceof FxDockPane p)
 		{
-			String type = ((FxDockPane)n).getDockPaneType();
+			String type = p.getDockPaneType();
 			
 			s.add(TYPE_PANE);
 			s.add(type);
 		}
-		else if(n instanceof FxDockSplitPane)
+		else if(n instanceof FxDockSplitPane p)
 		{
-			FxDockSplitPane sp = (FxDockSplitPane)n;
-			int ct = sp.getPaneCount();
-			Orientation or = sp.getOrientation();
+			int ct = p.getPaneCount();
+			Orientation or = p.getOrientation();
 			
 			s.add(or == Orientation.HORIZONTAL ? TYPE_HSPLIT : TYPE_VSPLIT);
 			s.add(ct);
 			
-			for(Node ch: sp.getPanes())
+			for(Node ch: p.getPanes())
 			{
 				saveContentRecursively(s, ch);
 			}
 		}
-		else if(n instanceof FxDockTabPane)
+		else if(n instanceof FxDockTabPane p)
 		{
-			FxDockTabPane tp = (FxDockTabPane)n;
-			int ct = tp.getTabCount();
+			int ct = p.getTabCount();
 			
 			s.add(TYPE_TAB);
 			s.add(ct);
 			
-			for(Node ch: tp.getPanes())
+			for(Node ch: p.getPanes())
 			{
 				saveContentRecursively(s, ch);
 			}
 		}
-		else if(n instanceof FxDockEmptyPane)
+		else if(n instanceof FxDockEmptyPane p)
 		{
 			s.add(TYPE_EMPTY);
 		}
@@ -240,46 +238,46 @@ public abstract class FxDockSchema
 	}
 
 
-	protected void getPathRecursive(SB sb, Node n)
+	protected void getPathRecursive(SB sb, Node node)
 	{
-		Node p = DockTools.getParent(n);
-		if(p != null)
+		Node n = DockTools.getParent(node);
+		if(n != null)
 		{
-			getPathRecursive(sb, p);
+			getPathRecursive(sb, n);
 			
-			if(p instanceof FxDockSplitPane)
+			if(n instanceof FxDockSplitPane p)
 			{
-				int ix = ((FxDockSplitPane)p).indexOfPane(n);
+				int ix = p.indexOfPane(node);
 				sb.a('.');
 				sb.a(ix);
 			}
-			else if(p instanceof FxDockTabPane)
+			else if(n instanceof FxDockTabPane p)
 			{
-				int ix = ((FxDockTabPane)p).indexOfTab(n);
+				int ix = p.indexOfTab(node);
 				sb.a('.');
 				sb.a(ix);
 			}
 		}
 		
-		if(n instanceof FxDockRootPane)
+		if(node instanceof FxDockRootPane)
 		{
 			return;
 		}
-		else if(n instanceof FxDockSplitPane)
+		else if(node instanceof FxDockSplitPane)
 		{
 			sb.a(NAME_SPLIT);
 		}
-		else if(n instanceof FxDockTabPane)
+		else if(node instanceof FxDockTabPane)
 		{
 			sb.a(NAME_TAB);
 		}
-		else if(n instanceof FxDockPane)
+		else if(node instanceof FxDockPane)
 		{
 			sb.a(NAME_PANE);
 		}
 		else
 		{
-			throw new Error("?" + n);
+			throw new Error("?" + node);
 		}
 	}
 	

@@ -1,8 +1,9 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
+import goryachev.common.log.Log;
 import goryachev.common.util.CList;
-import goryachev.common.util.D;
 import goryachev.fx.FX;
+import goryachev.fx.FxFramework;
 import goryachev.fx.internal.WindowMonitor;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
@@ -24,15 +25,18 @@ import javafx.stage.Window;
  */
 public class DockTools
 {
+	private static final Log log = Log.get("DockTools");
+	
+	
 	private static boolean isEmpty(Node n)
 	{
 		if(n == null)
 		{
 			return true;
 		}
-		else if(n instanceof FxDockRootPane)
+		else if(n instanceof FxDockRootPane p)
 		{
-			return isEmpty(((FxDockRootPane)n).getContent());
+			return isEmpty(p.getContent());
 		}
 		else if(n instanceof FxDockBorderPane)
 		{
@@ -42,13 +46,13 @@ public class DockTools
 		{
 			return true;
 		}
-		else if(n instanceof FxDockSplitPane)
+		else if(n instanceof FxDockSplitPane p)
 		{
-			return (((FxDockSplitPane)n).getPaneCount() == 0);
+			return (p.getPaneCount() == 0);
 		}
-		else if(n instanceof FxDockTabPane)
+		else if(n instanceof FxDockTabPane p)
 		{
-			return (((FxDockTabPane)n).getTabCount() == 0);
+			return (p.getTabCount() == 0);
 		}
 		return true;
 	}
@@ -64,7 +68,7 @@ public class DockTools
 			{
 				if(oldp == p)
 				{
-					D.print("same parent", p); // FIX ???
+					log.warn("same parent: %s", p); // FIX ???
 				}
 				else
 				{
@@ -82,21 +86,21 @@ public class DockTools
 	
 	private static ReadOnlyObjectWrapper<Node> getParentProperty(Node n)
 	{
-		if(n instanceof FxDockBorderPane)
+		if(n instanceof FxDockBorderPane p)
 		{
-			return ((FxDockBorderPane)n).parent;
+			return p.parent;
 		}
-		else if(n instanceof FxDockSplitPane)
+		else if(n instanceof FxDockSplitPane p)
 		{
-			return ((FxDockSplitPane)n).parent;
+			return p.parent;
 		}
-		else if(n instanceof FxDockTabPane)
+		else if(n instanceof FxDockTabPane p)
 		{
-			return ((FxDockTabPane)n).parent;
+			return p.parent;
 		}
-		else if(n instanceof FxDockEmptyPane)
+		else if(n instanceof FxDockEmptyPane p)
 		{
-			return ((FxDockEmptyPane)n).parent;
+			return p.parent;
 		}
 		else if(n instanceof DeletedPane)
 		{
@@ -117,17 +121,17 @@ public class DockTools
 	
 	private static void remove(Node parent, Node child)
 	{
-		if(parent instanceof FxDockTabPane)
+		if(parent instanceof FxDockTabPane p)
 		{
-			((FxDockTabPane)parent).removeTab(child);
+			p.removeTab(child);
 		}
-		else if(parent instanceof FxDockSplitPane)
+		else if(parent instanceof FxDockSplitPane p)
 		{
-			((FxDockSplitPane)parent).removePane(child);
+			p.removePane(child);
 		}
-		else if(parent instanceof Pane)
+		else if(parent instanceof Pane p)
 		{
-			((Pane)parent).getChildren().remove(child);
+			p.getChildren().remove(child);
 		}
 		else
 		{
@@ -138,21 +142,21 @@ public class DockTools
 	
 	public static Node getParent(Node n)
 	{
-		if(n instanceof FxDockBorderPane)
+		if(n instanceof FxDockBorderPane p)
 		{
-			return ((FxDockBorderPane)n).parent.get();
+			return p.parent.get();
 		}
-		else if(n instanceof FxDockSplitPane)
+		else if(n instanceof FxDockSplitPane p)
 		{
-			return ((FxDockSplitPane)n).parent.get();
+			return p.parent.get();
 		}
-		else if(n instanceof FxDockTabPane)
+		else if(n instanceof FxDockTabPane p)
 		{
-			return ((FxDockTabPane)n).parent.get();
+			return p.parent.get();
 		}
-		else if(n instanceof FxDockEmptyPane)
+		else if(n instanceof FxDockEmptyPane p)
 		{
-			return ((FxDockEmptyPane)n).parent.get();
+			return p.parent.get();
 		}
 		return null;
 	}
@@ -216,6 +220,7 @@ public class DockTools
 	// returns true if the window has been closed
 	public static boolean closeWindowUnlessLast(Node n)
 	{
+		log.debug(n);
 		FxDockWindow w = getWindow(n);
 		if(w != null)
 		{
@@ -286,8 +291,8 @@ public class DockTools
 	{
 		if(n != null)
 		{
-			Point2D p = n.screenToLocal(screenx, screeny);
-			if(n.contains(p))
+			Point2D pt = n.screenToLocal(screenx, screeny);
+			if(n.contains(pt))
 			{
 				if(n instanceof FxDockPane)
 				{
@@ -297,9 +302,9 @@ public class DockTools
 				{
 					return n;
 				}
-				else if(n instanceof FxDockSplitPane)
+				else if(n instanceof FxDockSplitPane p)
 				{
-					Node ch = findDockElement(((FxDockSplitPane)n).getPanes(), screenx, screeny);
+					Node ch = findDockElement(p.getPanes(), screenx, screeny);
 					if(ch == null)
 					{
 						return n;
@@ -344,36 +349,36 @@ public class DockTools
 	}
 
 
-	private static void unlink(Node n)
+	private static void unlink(Node node)
 	{
-		Node p = getParent(n);
-		if(p == null)
+		Node n = getParent(node);
+		if(n == null)
 		{
 			// ok
 		}
-		else if(p instanceof FxDockSplitPane)
+		else if(n instanceof FxDockSplitPane p)
 		{
 			// make sure an empty pane is left in place
-			int ix = indexInParent(n);
-			((FxDockSplitPane)p).setPane(ix, new DeletedPane());
+			int ix = indexInParent(node);
+			p.setPane(ix, new DeletedPane());
 		}
-		else if(p instanceof FxDockTabPane)
+		else if(n instanceof FxDockTabPane p)
 		{
 			// make sure an empty pane is left in place
-			int ix = indexInParent(n);
-			((FxDockTabPane)p).setTab(ix, new DeletedPane());
+			int ix = indexInParent(node);
+			p.setTab(ix, new DeletedPane());
 		}
-		else if(p instanceof FxDockRootPane)
+		else if(n instanceof FxDockRootPane p)
 		{
-			((FxDockRootPane)p).setContent(new DeletedPane());
+			p.setContent(new DeletedPane());
 		}
-		else if(p instanceof DeletedPane)
+		else if(n instanceof DeletedPane)
 		{
 			// no problemo
 		}
 		else
 		{
-			throw new Error("?" + p);
+			throw new Error("?" + n);
 		}
 	}
 
@@ -458,39 +463,39 @@ public class DockTools
 	}
 	
 	
-	public static int indexInParent(Node n)
+	public static int indexInParent(Node node)
 	{
-		Node p = getParent(n);
-		if(p instanceof FxDockSplitPane)
+		Node n = getParent(node);
+		if(n instanceof FxDockSplitPane p)
 		{
-			return ((FxDockSplitPane)p).indexOfPane(n);
+			return p.indexOfPane(node);
 		}
-		else if(p instanceof FxDockTabPane)
+		else if(n instanceof FxDockTabPane p)
 		{
-			return ((FxDockTabPane)p).indexOfTab(n);
+			return p.indexOfTab(node);
 		}
 		return -1;
 	}
 	
 	
 	/** replaces a child at the specified index in the parent */
-	private static void replaceChild(Node p, int index, Node newChild)
+	private static void replaceChild(Node parent, int index, Node newChild)
 	{
-		if(p instanceof FxDockSplitPane)
+		if(parent instanceof FxDockSplitPane p)
 		{
-			((FxDockSplitPane)p).setPane(index, newChild);
+			p.setPane(index, newChild);
 		}
-		else if(p instanceof FxDockTabPane)
+		else if(parent instanceof FxDockTabPane p)
 		{
-			((FxDockTabPane)p).setTab(index, newChild);
+			p.setTab(index, newChild);
 		}
-		else if(p instanceof FxDockRootPane)
+		else if(parent instanceof FxDockRootPane p)
 		{
-			((FxDockRootPane)p).setContent(newChild);
+			p.setContent(newChild);
 		}
 		else
 		{
-			throw new Error("?" + p);
+			throw new Error("?" + parent);
 		}
 	}
 	
@@ -711,38 +716,44 @@ public class DockTools
 			throw new Error("?" + target);
 		}
 	}
+	
+	
+	public static FxDockWindow createWindow()
+	{
+		return (FxDockWindow)FxFramework.createDefaultWindow();
+	}
 
 
 	public static void moveToNewWindow(FxDockPane client, double screenx, double screeny)
 	{
 		Node p = getParent(client);
-		double w = client.getWidth();
-		double h = client.getHeight();
+		double width = client.getWidth();
+		double height = client.getHeight();
 				
-		FxDockWindow win = FxDockFramework.createWindow();
-		win.setContent(client);		
+		FxDockWindow w = createWindow();
+		w.setContent(client);		
 		
-		win.setX(screenx);
-		win.setY(screeny);
+		w.setX(screenx);
+		w.setY(screeny);
 		
 		// moving window after show() seems to cause flicker
-		double op = win.getOpacity();
-		win.setOpacity(0);
+		double op = w.getOpacity();
+		w.setOpacity(0);
 		
-		win.show();
+		w.show();
 
 		// take into account window decorations
 		// apparently, this is available only after show()
-		Node n = win.getDockRootPane().getCenter();
-		Insets m = FX.getInsetsInWindow(win, n);
+		Node n = w.getDockRootPane().getCenter();
+		Insets m = FX.getInsetsInWindow(w, n);
 		
 		// this may still cause flicker
-		win.setX(screenx - m.getLeft());
-		win.setY(screeny - m.getTop());
-		win.setWidth(w + m.getLeft() + m.getRight());
-		win.setHeight(h + m.getTop() + m.getBottom());
+		w.setX(screenx - m.getLeft());
+		w.setY(screeny - m.getTop());
+		w.setWidth(width + m.getLeft() + m.getRight());
+		w.setHeight(height + m.getTop() + m.getBottom());
 		
-		win.setOpacity(op);
+		w.setOpacity(op);
 		
 		collapseEmptySpace(p);
 	}
@@ -757,7 +768,7 @@ public class DockTools
 		Insets m = getWindowInsets(clientWindow);
 		Point2D pos = client.localToScreen(0, 0);
 		
-		FxDockWindow w = FxDockFramework.createWindow();
+		FxDockWindow w = createWindow();
 
 		w.setContent(client);
 		w.setX(pos.getX() - m.getLeft());

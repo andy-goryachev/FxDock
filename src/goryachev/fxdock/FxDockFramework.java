@@ -13,12 +13,6 @@ import javafx.stage.Window;
 // TODO not sure if this is needed... remove?
 public class FxDockFramework
 {
-	public static FxDockWindow createWindow()
-	{
-		return (FxDockWindow)FxFramework.createDefaultWindow();
-	}
-	
-	
 	/** returns a list of visible windows, topmost window first */
 	public static List<FxDockWindow> getWindows()
 	{
