@@ -32,10 +32,10 @@ public class DemoPane
 		super(type);
 		
 		CheckBox cb = new CheckBox("boolean property");
-		LocalSettings.get(this).add("CHECKBOX", cb);
+		FX.setName(cb, "CHECKBOX");
 		
 		TextField textField = new TextField();
-		LocalSettings.get(this).add("TEXTFIELD", textField); 
+		FX.setName(textField, "TEXTFIELD"); 
 		
 //		VPane vb = new VPane();
 //		a(vb, 2, 0.25, 0.25, HPane.FILL);

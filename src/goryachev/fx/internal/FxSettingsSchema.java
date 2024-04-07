@@ -131,6 +131,13 @@ public abstract class FxSettingsSchema
 
 			store.setStream(FX_PREFIX + m.getID(), ss);
 			
+			LocalSettings s = LocalSettings.find(w);
+			if(s != null)
+			{
+				String k = FX_PREFIX + m.getID() + SFX_SETTINGS;
+				s.saveValues(k);
+			}
+			
 			Node n = w.getScene().getRoot();
             storeNode(n);
 		}
@@ -216,6 +223,13 @@ public abstract class FxSettingsSchema
 						}
 					}
 				}
+			}
+			
+			LocalSettings s = LocalSettings.find(w);
+			if(s != null)
+			{
+				String k = FX_PREFIX + m.getID() + SFX_SETTINGS;
+				s.loadValues(k);
 			}
 			
 			Node n = w.getScene().getRoot();

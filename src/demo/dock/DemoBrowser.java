@@ -49,8 +49,7 @@ public class DemoBrowser
 			String url = addressField.getText();
 			setUrl(url);
 		});
-		// FIX bind the property
-		LocalSettings.get(this).add("URL", addressField);
+		LocalSettings.get(this).add("URL", addressField.textProperty());
 		
 		view = new WebView();
 		view.getEngine().setOnError((ev) -> handleError(ev));

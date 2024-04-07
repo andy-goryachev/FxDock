@@ -5,7 +5,6 @@ import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import goryachev.fx.internal.ASettingsStore;
 import goryachev.fx.internal.FxSettingsSchema;
-import goryachev.fx.internal.LocalSettings;
 import goryachev.fx.internal.WindowMonitor;
 import goryachev.fx.util.FxTools;
 import goryachev.fxdock.FxDockPane;
@@ -38,7 +37,6 @@ public abstract class FxDockSchema
 	private static final String NAME_TAB = ".T";
 	private static final String NAME_SPLIT = ".S";
 	
-	private static final String SUFFIX_BINDINGS = ".bindings";
 	private static final String SUFFIX_CONTENT = ".layout";
 	private static final String SUFFIX_SELECTED_TAB = ".tab";
 	private static final String SUFFIX_SPLITS = ".splits";
@@ -70,20 +68,14 @@ public abstract class FxDockSchema
 			{
 				String prefix = FX_PREFIX + m.getID();
 
-				if(dw.getContent() == null)
+//				if(dw.getContent() == null)
 				{
 					Node n = loadDockWindowContent(prefix);
-					dw.setContent(n);
-
-					loadContentSettings(prefix, n);
-				}
-
-				// FIX remove duplicate call?
-				LocalSettings settings = LocalSettings.find(w);
-				if(settings != null)
-				{
-					String k = prefix + SUFFIX_BINDINGS;
-					settings.loadValues(k);
+					if(n != null)
+					{
+						dw.setContent(n);
+						restoreContent(prefix, n);
+					}
 				}
 			}
 		}
@@ -107,15 +99,7 @@ public abstract class FxDockSchema
 				Node n = dw.getContent();
 				saveDockWindowContent(prefix, n);
 				
-				// FIX remove duplicate call?
-				LocalSettings settings = LocalSettings.get(w);
-				if(settings != null)
-				{
-					String k = prefix + SUFFIX_BINDINGS;
-					settings.saveValues(k);
-				}
-				
-				saveContentSettings(prefix, n);
+				storeContent(prefix, n);
 			}
 		}
 	}
@@ -306,20 +290,19 @@ public abstract class FxDockSchema
 	 * - split positions
 	 * - settings bindings
 	 */
-	// TODO use to load content
-	protected void loadContentSettings(String prefix, Node n)
+	protected void restoreContent(String prefix, Node n)
 	{
 		if(n != null)
 		{
 			if(n instanceof FxDockPane p)
 			{
-				loadPaneSettings(prefix, p);
+				//loadPaneSettings(prefix, p);
 			}
 			else if(n instanceof FxDockSplitPane p)
 			{
 				for(Node ch: p.getPanes())
 				{
-					loadContentSettings(prefix, ch);
+					restoreContent(prefix, ch);
 				}
 
 				// because of the split pane idiosyncrasy with layout
@@ -331,9 +314,11 @@ public abstract class FxDockSchema
 				
 				for(Node ch: p.getPanes())
 				{
-					loadContentSettings(prefix, ch);
+					restoreContent(prefix, ch);
 				}
 			}
+			
+			restoreNode(n);
 		}
 	}
 
@@ -344,13 +329,15 @@ public abstract class FxDockSchema
 	 * - split positions
 	 * - settings bindings
 	 */
-	protected void saveContentSettings(String prefix, Node n)
+	protected void storeContent(String prefix, Node n)
 	{
 		if(n != null)
 		{
+			storeNode(n);
+			
 			if(n instanceof FxDockPane p)
 			{
-				savePaneSettings(prefix, p);
+				//savePaneSettings(prefix, p);
 			}
 			else if(n instanceof FxDockSplitPane p)
 			{
@@ -358,7 +345,7 @@ public abstract class FxDockSchema
 				
 				for(Node ch: p.getPanes())
 				{
-					saveContentSettings(prefix, ch);
+					storeContent(prefix, ch);
 				}
 			}
 			else if(n instanceof FxDockTabPane p)
@@ -367,31 +354,9 @@ public abstract class FxDockSchema
 				
 				for(Node ch: p.getPanes())
 				{
-					saveContentSettings(prefix, ch);
+					storeContent(prefix, ch);
 				}
 			}
-		}
-	}
-
-
-	protected void loadPaneSettings(String prefix, FxDockPane p)
-	{
-		LocalSettings s = LocalSettings.find(p);
-		if(s != null)
-		{
-			String k = getPath(prefix, p, SUFFIX_BINDINGS);
-			s.loadValues(k);
-		}
-	}
-
-
-	protected void savePaneSettings(String prefix, FxDockPane p)
-	{
-		LocalSettings s = LocalSettings.find(p);
-		if(s != null)
-		{
-			String k = getPath(prefix, p, SUFFIX_BINDINGS);
-			s.saveValues(k);
 		}
 	}
 

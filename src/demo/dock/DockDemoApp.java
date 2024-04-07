@@ -34,7 +34,8 @@ public class DockDemoApp
 //			"DemoBrowser",
 			"SettingsProviderBase.reads",
 			"SettingsProviderBase.writes",
-			"WindowMonitor"
+//			"WindowMonitor",
+			"$"
 		);
 		
 		// init non-ui subsystems

@@ -11,11 +11,7 @@ import goryachev.fx.HasSettings;
 import goryachev.fx.SSConverter;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
 import javafx.util.StringConverter;
 
@@ -246,76 +242,6 @@ public class LocalSettings
 			}
 		});
 		return this;
-	}
-	
-	
-	public LocalSettings add(String subKey, ComboBox cb)
-	{
-		entries.put(subKey, new Entry()
-		{
-			public void saveValue(String prefix)
-			{
-				Object v = cb.getValue();
-				String s = encode(v);
-				GlobalSettings.setString(prefix + "." + subKey, s);
-			}
-
-			public void loadValue(String prefix)
-			{
-				String v = GlobalSettings.getString(prefix + "." + subKey);
-				if(v != null)
-				{
-					ObservableList<?> items = cb.getItems();
-					if(items != null)
-					{
-						for(Object x: items)
-						{
-							String s = encode(x);
-							if(v.equals(s))
-							{
-								cb.setValue(x);
-								return;
-							}
-						}
-					}
-					
-					if(cb.isEditable())
-					{
-						cb.setValue(v);
-					}
-				}
-			}
-		});
-		return this;
-	}
-	
-	
-	public LocalSettings add(String subKey, CheckBox cb)
-	{
-		entries.put(subKey, new Entry()
-		{
-			public void saveValue(String prefix)
-			{
-				boolean v = cb.isSelected();
-				GlobalSettings.setString(prefix + "." + subKey, v ? "true" : "false");
-			}
-
-			public void loadValue(String prefix)
-			{
-				String s = GlobalSettings.getString(prefix + "." + subKey);
-				if(s != null)
-				{
-					cb.setSelected(Boolean.parseBoolean(s));
-				}
-			}
-		});
-		return this;
-	}
-	
-	
-	public LocalSettings add(String subKey, TextInputControl t)
-	{
-		return add(subKey, t.textProperty());
 	}
 	
 	
