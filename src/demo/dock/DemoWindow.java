@@ -41,6 +41,7 @@ public class DemoWindow
 	public final FxAction windowCheckAction = new FxAction();
 	public final Label statusField = new Label();
 	private static GlobalBooleanProperty showCloseDialogProperty = new GlobalBooleanProperty("show.close.dialog", true);
+	private static int seq;
 
 	
 	public DemoWindow()
@@ -49,7 +50,7 @@ public class DemoWindow
 		
 		setTop(createMenu());
 		setBottom(createStatusBar());
-		setTitle(DockDemoApp.TITLE + " " + Version.VERSION);
+		setTitle(DockDemoApp.TITLE + " [" + ++seq + "] " + Version.VERSION);
 		
 		LocalSettings.get(this).add("CHECKBOX_MENU", windowCheckAction);
 	}

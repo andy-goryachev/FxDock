@@ -203,11 +203,22 @@ public class Log
 	}
 	
 	
-	/** sets log level for a specific log, does not update children */
-	public static synchronized void setLevel(String channel, LogLevel level)
+	/** sets the log level for the specific channel, not updating the children */
+	public static synchronized void setLevel(LogLevel level, String channel)
 	{
 		Log log = get(channel);
 		log.setLevel(level);
+	}
+	
+	
+	/** sets the log level for the specified channels only, not updating the children */
+	public static synchronized void setLevel(LogLevel level, String channel1, String ... channels)
+	{
+		setLevel(level, channel1);
+		for(String ch: channels)
+		{
+			setLevel(level, ch);			
+		}
 	}
 	
 	

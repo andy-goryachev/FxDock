@@ -6,7 +6,7 @@ import goryachev.common.util.SStream;
 import goryachev.fx.internal.ASettingsStore;
 import goryachev.fx.internal.FxSettingsSchema;
 import goryachev.fx.internal.LocalSettings;
-import goryachev.fx.internal.WinMonitor;
+import goryachev.fx.internal.WindowMonitor;
 import goryachev.fx.util.FxTools;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -65,7 +65,7 @@ public abstract class FxDockSchema
 
 		if(w instanceof FxDockWindow dw)
 		{
-			WinMonitor m = WinMonitor.forWindow(w);
+			WindowMonitor m = WindowMonitor.forWindow(w);
 			if(m != null)
 			{
 				String prefix = FX_PREFIX + m.getID();
@@ -100,7 +100,7 @@ public abstract class FxDockSchema
 		
 		if(w instanceof FxDockWindow dw)
 		{
-			WinMonitor m = WinMonitor.forWindow(w);
+			WindowMonitor m = WindowMonitor.forWindow(w);
 			if(m != null)
 			{
 				String prefix = FX_PREFIX + m.getID();

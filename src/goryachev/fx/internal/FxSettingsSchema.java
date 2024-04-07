@@ -57,7 +57,7 @@ public abstract class FxSettingsSchema
 
 	protected abstract Stage createWindow(String name);
 	
-	protected void loadWindowContent(WinMonitor m, Stage w) { }
+	protected void loadWindowContent(WindowMonitor m, Stage w) { }
 
 	//
 	
@@ -95,7 +95,7 @@ public abstract class FxSettingsSchema
 	
 	public void storeWindow(Window w)
 	{
-		WinMonitor m = WinMonitor.forWindow(w);
+		WindowMonitor m = WindowMonitor.forWindow(w);
 		if(m != null)
 		{
 			double x = m.getX();
@@ -153,7 +153,7 @@ public abstract class FxSettingsSchema
 			}
 		}
 		
-		WinMonitor m = WinMonitor.forWindow(w);
+		WindowMonitor m = WindowMonitor.forWindow(w);
 		if(m != null)
 		{
 			SStream ss = store.getStream(FX_PREFIX + m.getID());
@@ -419,7 +419,7 @@ public abstract class FxSettingsSchema
 
 	protected String computeName(Node n)
 	{
-		WinMonitor m = WinMonitor.forNode(n);
+		WindowMonitor m = WindowMonitor.forNode(n);
 		if(m != null)
 		{
 			SB sb = new SB();
@@ -841,7 +841,7 @@ public abstract class FxSettingsSchema
 	public int openLayout()
 	{
 		// ensure WinMonitor is initialized 
-		WinMonitor.forWindow(null);
+		WindowMonitor.forWindow(null);
 		
 		// numEntries,name,id,... in reverse order 
 		SStream st = store.getStream(FX_PREFIX + SFX_WINDOWS);
@@ -858,7 +858,7 @@ public abstract class FxSettingsSchema
 				if(w != null)
 				{
 					// ensure that the window monitor is created with the right id
-					WinMonitor m = WinMonitor.forWindow(w, id);
+					WindowMonitor m = WindowMonitor.forWindow(w, id);
 					
 					loadWindowContent(m, w);
 
@@ -891,7 +891,7 @@ public abstract class FxSettingsSchema
 		log.debug();
 
 		SStream ss = new SStream();
-		List<Window> ws = WinMonitor.getWindowStack();
+		List<Window> ws = WindowMonitor.getWindowStack();
 		
 		int sz = ws.size();
 		ss.add(sz);
@@ -902,7 +902,7 @@ public abstract class FxSettingsSchema
 			FxFramework.store(w);
 			
 			String name = FX.getName(w);
-			String id = WinMonitor.forWindow(w).getIDPart();
+			String id = WindowMonitor.forWindow(w).getIDPart();
 			
 			ss.add(name);
 			ss.add(id);

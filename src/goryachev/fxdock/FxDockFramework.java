@@ -2,7 +2,7 @@
 package goryachev.fxdock;
 import goryachev.common.util.CList;
 import goryachev.fx.FxFramework;
-import goryachev.fx.internal.WinMonitor;
+import goryachev.fx.internal.WindowMonitor;
 import java.util.List;
 import javafx.stage.Window;
 
@@ -20,18 +20,19 @@ public class FxDockFramework
 	
 	
 	/** returns topmost window */
+	// FIX remove
 	@Deprecated
 	public static FxDockWindow findTopWindow(List<FxDockWindow> ws)
 	{
 		// FIX may throw an exception if other windows are present
-		return (FxDockWindow)WinMonitor.getTopWindow();
+		return (FxDockWindow)WindowMonitor.getTopWindow();
 	}
 	
 	
 	/** returns a list of visible windows, topmost window first */
 	public static List<FxDockWindow> getWindows()
 	{
-		List<Window> ws = WinMonitor.getWindowStack();
+		List<Window> ws = WindowMonitor.getWindowStack();
 		int sz = ws.size();
 		CList<FxDockWindow> rv = new CList<>(sz);
 		for(int i=sz-1; i>=0; i--)
