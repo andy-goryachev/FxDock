@@ -3,6 +3,7 @@ package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
 import goryachev.common.util.D;
 import goryachev.fx.FX;
+import goryachev.fx.internal.WindowMonitor;
 import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
@@ -160,22 +161,21 @@ public class DockTools
 	public static FxDockWindow findWindow(double screenx, double screeny)
 	{
 		CList<FxDockWindow> list = null;
-		for(Window w2: Window.getWindows())
+		for(Window w: Window.getWindows())
 		{
-			if(w2 instanceof FxDockWindow w)
+			if(w instanceof FxDockWindow dw)
 			{
-				if(w.isIconified())
+				if(dw.isIconified())
 				{
 					continue;
 				}
-	
-				if(contains(w, screenx, screeny))
+				else if(contains(dw, screenx, screeny))
 				{
 					if(list == null)
 					{
 						list = new CList<>();
 					}
-					list.add(w);
+					list.add(dw);
 				}
 			}
 		}
@@ -184,9 +184,13 @@ public class DockTools
 		{
 			return null;
 		}
+		else if(list.size() == 1)
+		{
+			return list.get(0);
+		}
 		else
 		{
-			return FxDockFramework.findTopWindow(list);
+			return WindowMonitor.findTopWindow(list);
 		}
 	}
 	

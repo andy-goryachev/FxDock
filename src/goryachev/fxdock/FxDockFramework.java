@@ -19,16 +19,6 @@ public class FxDockFramework
 	}
 	
 	
-	/** returns topmost window */
-	// FIX remove
-	@Deprecated
-	public static FxDockWindow findTopWindow(List<FxDockWindow> ws)
-	{
-		// FIX may throw an exception if other windows are present
-		return (FxDockWindow)WindowMonitor.getTopWindow();
-	}
-	
-	
 	/** returns a list of visible windows, topmost window first */
 	public static List<FxDockWindow> getWindows()
 	{

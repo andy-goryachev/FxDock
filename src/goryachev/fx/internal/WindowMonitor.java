@@ -6,9 +6,9 @@ import goryachev.common.util.CSet;
 import goryachev.common.util.GlobalSettings;
 import goryachev.fx.CssLoader;
 import goryachev.fx.FX;
+import goryachev.fx.FxFramework;
 import goryachev.fx.FxObject;
 import goryachev.fx.util.FxTools;
-import goryachev.fx.FxFramework;
 import java.util.List;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
@@ -368,7 +368,24 @@ public class WindowMonitor
 	}
 	
 	
-	private static void updateFocusedWindow(Window w)
+	/**
+	 * Finds a topmost window in the supplied list.
+	 */ 
+	public static <W extends Window> W findTopWindow(List<W> list)
+	{
+		for(int i=stack.size() - 1; i>=0; i--)
+		{
+			Window w = stack.get(i);
+			if(list.contains(w))
+			{
+				return (W)w;
+			}
+		}
+		return null;
+	}
+	
+	
+	static void updateFocusedWindow(Window w)
 	{
 		log.debug(w);
 		stack.remove(w);
@@ -377,7 +394,7 @@ public class WindowMonitor
 	}
 	
 	
-	private static void updateFocusOwner(Node n)
+	static void updateFocusOwner(Node n)
 	{
 		if(n != null)
 		{
@@ -396,13 +413,5 @@ public class WindowMonitor
 	public static ReadOnlyObjectProperty<Node> lastFocusOwnerProperty()
 	{
 		return lastFocusOwner.getReadOnlyProperty();
-	}
-
-	
-	public static Window getTopWindow()
-	{
-		Window w = stack.getLast();
-		log.debug(w);
-		return w;
 	}
 }

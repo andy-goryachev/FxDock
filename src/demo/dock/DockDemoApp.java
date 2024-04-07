@@ -32,9 +32,9 @@ public class DockDemoApp
 		(
 			LogLevel.ALL,
 //			"DemoBrowser",
-			"SettingsProviderBase.reads",
-			"SettingsProviderBase.writes",
-//			"WindowMonitor",
+//			"SettingsProviderBase.reads",
+//			"SettingsProviderBase.writes",
+			"WindowMonitor",
 			"$"
 		);
 		
