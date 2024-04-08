@@ -50,7 +50,7 @@ import javafx.stage.Window;
 /**
  * Stores and restores the UI state.
  */
-// TODO consider making it generic
+// TODO consider making it generic <ActualWindow>
 public abstract class FxSettingsSchema
 {
 	public abstract Stage createDefaultWindow();
@@ -141,11 +141,11 @@ public abstract class FxSettingsSchema
 
 		store.setStream(FX_PREFIX + m.getID(), ss);
 		
-		LocalSettings s = LocalSettings.find(w);
+		LocalSettings s = LocalSettings.getOrNull(w);
 		if(s != null)
 		{
 			String k = FX_PREFIX + m.getID() + SFX_SETTINGS;
-			s.saveValues(k);
+			s.saveValues(k, store);
 		}
 		
 		Node n = w.getScene().getRoot();
@@ -179,11 +179,11 @@ public abstract class FxSettingsSchema
 		{
 			restoreWindowLocal(w, m);
 			
-			LocalSettings s = LocalSettings.find(w);
+			LocalSettings s = LocalSettings.getOrNull(w);
 			if(s != null)
 			{
 				String k = FX_PREFIX + m.getID() + SFX_SETTINGS;
-				s.loadValues(k);
+				s.loadValues(k, store);
 			}
 			
 			Node n = w.getScene().getRoot();
@@ -276,11 +276,11 @@ public abstract class FxSettingsSchema
 			return;
 		}
 
-		LocalSettings s = LocalSettings.find(n);
+		LocalSettings s = LocalSettings.getOrNull(n);
 		if(s != null)
 		{
 			String k = name + SFX_SETTINGS;
-			s.saveValues(k);
+			s.saveValues(k, store);
 		}
 		
 		storeNodeLocal(n, name);
@@ -340,13 +340,11 @@ public abstract class FxSettingsSchema
 		{
 			return;
 		}
-
-		if(FX.isSkipSettings(n))
+		else if(FX.isSkipSettings(n))
 		{
 			return;
 		}
-
-		if(handleNullScene(n))
+		else if(handleNullScene(n))
 		{
 			return;
 		}
@@ -357,11 +355,11 @@ public abstract class FxSettingsSchema
 			return;
 		}
 
-		LocalSettings s = LocalSettings.find(n);
+		LocalSettings s = LocalSettings.getOrNull(n);
 		if(s != null)
 		{
 			String k = name + SFX_SETTINGS;
-			s.loadValues(k);
+			s.loadValues(k, store);
 		}
 		
 		restoreNodeLocal(n, name);
@@ -425,11 +423,11 @@ public abstract class FxSettingsSchema
 		{
 			node.sceneProperty().addListener(new ChangeListener<Scene>()
 			{
-				public void changed(ObservableValue<? extends Scene> src, Scene old, Scene scene)
+				public void changed(ObservableValue<? extends Scene> src, Scene old, Scene sc)
 				{
-					if(scene != null)
+					if(sc != null)
 					{
-						Window w = scene.getWindow();
+						Window w = sc.getWindow();
 						if(w != null)
 						{
 							node.sceneProperty().removeListener(this);
