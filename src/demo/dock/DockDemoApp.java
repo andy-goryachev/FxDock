@@ -22,6 +22,7 @@ public class DockDemoApp
 {
 	public static final String COPYRIGHT = "copyright © 2016-2024 andy goryachev";
 	public static final String TITLE = "FxDock Framework Demo";
+	public static final String VERSION = "2024.0407.1750";
 
 
 	public static void main(String[] args)
