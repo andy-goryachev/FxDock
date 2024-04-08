@@ -1,4 +1,4 @@
-// Copyright © 2021 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.fx.FX;
 import javafx.scene.paint.Color;

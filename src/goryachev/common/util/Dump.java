@@ -1,4 +1,4 @@
-// Copyright © 2004-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2004-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 
 /** converts various objects to their printable user-friendly representation for debugging purposes */
@@ -807,5 +808,63 @@ public class Dump
 			}
 		}
 		return sb.toString();
+	}
+	
+
+	// TODO I wonder if I should switch to JSON instead
+	// with JSON, it will be absolutely clear whether the value is "null" or null.
+	private static String f(Object x)
+	{
+		return x == null ? "<null>" : String.valueOf(x);
+	}
+	
+	
+	public static Supplier<String> spaces(Object a, Object b)
+	{
+		return () ->
+		{
+			return f(a) + " " + f(b); 
+		};
+	}
+	
+	
+	public static Supplier<String> spaces(Object a, Object b, Object c)
+	{
+		return () ->
+		{
+			return f(a) + " " + f(b) + " " + f(c); 
+		};
+	}
+	
+	
+	public static Supplier<String> spaces(Object a, Object b, Object c, Object d)
+	{
+		return () ->
+		{
+			return f(a) + " " + f(b) + " " + f(c) + " " + f(d);
+		};
+	}
+
+	
+	public static Supplier<String> spaces(Object ... items)
+	{
+		return () ->
+		{
+			SB sb = new SB();
+			boolean sep = false;
+			for(Object x: items)
+			{
+				if(sep)
+				{
+					sb.sp();
+				}
+				else
+				{
+					sep = true;
+				}
+				sb.append(f(x));
+			}
+			return sb.toString();
+		};
 	}
 }

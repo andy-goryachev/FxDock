@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
@@ -8,7 +8,7 @@ import goryachev.fx.FX;
 import goryachev.fx.FxAction;
 import goryachev.fx.FxButton;
 import goryachev.fx.HPane;
-import goryachev.fx.internal.LocalSettings;
+import goryachev.fx.settings.LocalSettings;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockStyles;
 import javafx.beans.value.ChangeListener;
@@ -20,8 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
@@ -42,12 +40,16 @@ public class DemoBrowser
 	
 	public DemoBrowser()
 	{
-		super(DemoGenerator.BROWSER);
+		super(DemoDockSchema.BROWSER);
 		setTitle("Browser / " + CSystem.getJavaVersion());
 		
 		addressField = new TextField();
-		addressField.addEventHandler(KeyEvent.KEY_PRESSED, (ev) -> handleKeyTyped(ev));
-		LocalSettings.get(this).add("URL", addressField);
+		addressField.setOnAction((ev) -> 
+		{
+			String url = addressField.getText();
+			setUrl(url);
+		});
+		LocalSettings.get(this).add("URL", addressField.textProperty());
 		
 		view = new WebView();
 		view.getEngine().setOnError((ev) -> handleError(ev));
@@ -104,16 +106,10 @@ public class DemoBrowser
 		String url = getUrl();
 		if(CKit.isNotBlank(url))
 		{
-			openPage(url);
+			setUrl(url);
 		}
 	}
 	
-	
-	public String getUrl()
-	{
-		return addressField.getText();
-	}
-
 
 	protected void handleStatusChange(WebEvent<String> ev)
 	{
@@ -127,7 +123,7 @@ public class DemoBrowser
 	}
 
 
-	public void openPage(String url)
+	public void setUrl(String url)
 	{
 		log.info(url);
 		
@@ -136,18 +132,8 @@ public class DemoBrowser
 	}
 	
 	
-	protected void handleKeyTyped(KeyEvent ev)
+	public String getUrl()
 	{
-		KeyCode c = ev.getCode();
-		switch(c)
-		{
-		case ENTER:
-			openPage(addressField.getText());
-			break;
-		default:
-			return;
-		}
-		
-		ev.consume();
+		return addressField.getText();
 	}
 }

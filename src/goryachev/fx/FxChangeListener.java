@@ -1,6 +1,6 @@
-// Copyright © 2020-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.common.util.Disconnectable;
+import goryachev.common.util.IDisconnectable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,7 +11,7 @@ import javafx.beans.value.ObservableValue;
  * This class allows for disconnecting the listeners from all the registered properties.
  */
 public class FxChangeListener
-	implements ChangeListener, Disconnectable
+	implements ChangeListener, IDisconnectable
 {
 	private final Runnable callback;
 	private final CopyOnWriteArrayList<ObservableValue> properties = new CopyOnWriteArrayList<>();

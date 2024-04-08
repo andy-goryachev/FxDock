@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.Parsers;
 import goryachev.fx.CPane;
@@ -30,7 +30,7 @@ public class DemoCPane
 	
 	public DemoCPane()
 	{
-		super(DemoGenerator.CPANE);
+		super(DemoDockSchema.CPANE);
 		setTitle("DemoCPane.java");
 
 		String info = "This demonstrates table layout capabilities of CPane.  CPane is easier to use than GridPane because one does not have to set so many constraints on the inidividual nodes, and you also have border layout capability as well.";

@@ -1,7 +1,6 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
-package goryachev.fx.internal;
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+package goryachev.fx.settings;
 import goryachev.common.util.CMap;
-import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.SStream;
 import goryachev.fx.Converters;
 import goryachev.fx.FxAction;
@@ -11,11 +10,7 @@ import goryachev.fx.HasSettings;
 import goryachev.fx.SSConverter;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
 import javafx.util.StringConverter;
 
@@ -30,13 +25,14 @@ import javafx.util.StringConverter;
  *    add(...).
  *    add(...);
  */
+// FIX must be a part of FxSettings and use their storage provider!
 public class LocalSettings
 {
 	protected abstract class Entry
 	{
-		public abstract void saveValue(String prefix);
+		public abstract void saveValue(String prefix, ASettingsStore store);
 		
-		public abstract void loadValue(String prefix);
+		public abstract void loadValue(String prefix, ASettingsStore store);
 	}
 	
 	//
@@ -50,10 +46,24 @@ public class LocalSettings
 	}
 	
 	
+	/** returns a Node-specific instance, or null if not found.  This method should not be called from the client code normally. */
+	public static LocalSettings getOrNull(Node n)
+	{
+		return (LocalSettings)n.getProperties().get(PROP_BINDINGS);
+	}
+	
+	
+	/** returns a Window-specific instance, or null if not found.  This method should not be called from the client code normally. */
+	public static LocalSettings getOrNull(Window w)
+	{
+		return (LocalSettings)w.getProperties().get(PROP_BINDINGS);
+	}
+	
+	
 	/** returns a Node-specific instance, creating it within the Node's properties when necessary */
 	public static LocalSettings get(Node n)
 	{
-		LocalSettings s = find(n);
+		LocalSettings s = getOrNull(n);
 		if(s == null)
 		{
 			s = new LocalSettings();
@@ -66,7 +76,7 @@ public class LocalSettings
 	/** returns a Window-specific instance, creating it within the Window's properties when necessary */
 	public static LocalSettings get(Window w)
 	{
-		LocalSettings s = find(w);
+		LocalSettings s = getOrNull(w);
 		if(s == null)
 		{
 			s = new LocalSettings();
@@ -75,36 +85,24 @@ public class LocalSettings
 		return s;
 	}
 	
-	
-	/** returns a Node-specific instance, or null if not found.  This method should not be called from the client code normally. */
-	public static LocalSettings find(Node n)
-	{
-		return (LocalSettings)n.getProperties().get(PROP_BINDINGS);
-	}
-	
-	
-	/** returns a Window-specific instance, or null if not found.  This method should not be called from the client code normally. */
-	public static LocalSettings find(Window w)
-	{
-		return (LocalSettings)w.getProperties().get(PROP_BINDINGS);
-	}
-	
 
 	public <T> LocalSettings add(String subKey, Property<T> p, StringConverter<T> c)
 	{
 		StringConverter<T> conv = (c == null) ? Converters.get(p) : c;
 		entries.put(subKey, new Entry()
 		{
-			public void saveValue(String prefix)
+			@Override
+			public void saveValue(String prefix, ASettingsStore store)
 			{
 				T v = p.getValue();
 				String s = (v == null ? null : conv.toString(v));
-				GlobalSettings.setString(prefix + "." + subKey, s);
+				store.setString(prefix + "." + subKey, s);
 			}
 
-			public void loadValue(String prefix)
+			@Override
+			public void loadValue(String prefix, ASettingsStore store)
 			{
-				String s = GlobalSettings.getString(prefix + "." + subKey);
+				String s = store.getString(prefix + "." + subKey);
 				if(s != null)
 				{
 					T v = conv.fromString(s);
@@ -120,16 +118,18 @@ public class LocalSettings
 	{
 		entries.put(subKey, new Entry()
 		{
-			public void saveValue(String prefix)
+			@Override
+			public void saveValue(String prefix, ASettingsStore store)
 			{
 				T v = p.getValue();
 				SStream s = (v == null ? null : c.toStream(v));
-				GlobalSettings.setStream(prefix + "." + subKey, s);
+				store.setStream(prefix + "." + subKey, s);
 			}
 
-			public void loadValue(String prefix)
+			@Override
+			public void loadValue(String prefix, ASettingsStore store)
 			{
-				SStream s = GlobalSettings.getStream(prefix + "." + subKey);
+				SStream s = store.getStream(prefix + "." + subKey);
 				if(s != null)
 				{
 					T v = c.fromStream(s);
@@ -145,16 +145,24 @@ public class LocalSettings
 	{
 		entries.put(subKey, new Entry()
 		{
-			public void saveValue(String prefix)
+			@Override
+			public void saveValue(String prefix, ASettingsStore store)
 			{
 				String v = p.getValue();
-				GlobalSettings.setString(prefix + "." + subKey, v);
+				if(v != null)
+				{
+					store.setString(prefix + "." + subKey, v);
+				}
 			}
 
-			public void loadValue(String prefix)
+			@Override
+			public void loadValue(String prefix, ASettingsStore store)
 			{
-				String v = GlobalSettings.getString(prefix + "." + subKey);
-				p.setValue(v);
+				String v = store.getString(prefix + "." + subKey);
+				if(v != null)
+				{
+					p.setValue(v);
+				}
 			}
 		});
 		return this;
@@ -165,15 +173,17 @@ public class LocalSettings
 	{
 		entries.put(subKey, new Entry()
 		{
-			public void saveValue(String prefix)
+			@Override
+			public void saveValue(String prefix, ASettingsStore store)
 			{
 				double v = p.getValue();
-				GlobalSettings.setString(prefix + "." + subKey, String.valueOf(v));
+				store.setString(prefix + "." + subKey, String.valueOf(v));
 			}
 
-			public void loadValue(String prefix)
+			@Override
+			public void loadValue(String prefix, ASettingsStore store)
 			{
-				String s = GlobalSettings.getString(prefix + "." + subKey);
+				String s = store.getString(prefix + "." + subKey);
 				if(s != null)
 				{
 					try
@@ -194,15 +204,17 @@ public class LocalSettings
 	{
 		entries.put(subKey, new Entry()
 		{
-			public void saveValue(String prefix)
+			@Override
+			public void saveValue(String prefix, ASettingsStore store)
 			{
 				int v = p.getValue();
-				GlobalSettings.setString(prefix + "." + subKey, String.valueOf(v));
+				store.setString(prefix + "." + subKey, String.valueOf(v));
 			}
 
-			public void loadValue(String prefix)
+			@Override
+			public void loadValue(String prefix, ASettingsStore store)
 			{
-				String s = GlobalSettings.getString(prefix + "." + subKey);
+				String s = store.getString(prefix + "." + subKey);
 				if(s != null)
 				{
 					try
@@ -223,90 +235,22 @@ public class LocalSettings
 	{
 		entries.put(subKey, new Entry()
 		{
-			public void saveValue(String prefix)
+			@Override
+			public void saveValue(String prefix, ASettingsStore store)
 			{
 				boolean v = p.getValue();
-				GlobalSettings.setString(prefix + "." + subKey, v ? "true" : "false");
+				store.setString(prefix + "." + subKey, v ? "true" : "false");
 			}
 
-			public void loadValue(String prefix)
+			@Override
+			public void loadValue(String prefix, ASettingsStore store)
 			{
-				String v = GlobalSettings.getString(prefix + "." + subKey);
+				String v = store.getString(prefix + "." + subKey);
 				boolean on = Boolean.parseBoolean(v);
 				p.setValue(on);
 			}
 		});
 		return this;
-	}
-	
-	
-	public LocalSettings add(String subKey, ComboBox cb)
-	{
-		entries.put(subKey, new Entry()
-		{
-			public void saveValue(String prefix)
-			{
-				Object v = cb.getValue();
-				String s = encode(v);
-				GlobalSettings.setString(prefix + "." + subKey, s);
-			}
-
-			public void loadValue(String prefix)
-			{
-				String v = GlobalSettings.getString(prefix + "." + subKey);
-				if(v != null)
-				{
-					ObservableList<?> items = cb.getItems();
-					if(items != null)
-					{
-						for(Object x: items)
-						{
-							String s = encode(x);
-							if(v.equals(s))
-							{
-								cb.setValue(x);
-								return;
-							}
-						}
-					}
-					
-					if(cb.isEditable())
-					{
-						cb.setValue(v);
-					}
-				}
-			}
-		});
-		return this;
-	}
-	
-	
-	public LocalSettings add(String subKey, CheckBox cb)
-	{
-		entries.put(subKey, new Entry()
-		{
-			public void saveValue(String prefix)
-			{
-				boolean v = cb.isSelected();
-				GlobalSettings.setString(prefix + "." + subKey, v ? "true" : "false");
-			}
-
-			public void loadValue(String prefix)
-			{
-				String s = GlobalSettings.getString(prefix + "." + subKey);
-				if(s != null)
-				{
-					cb.setSelected(Boolean.parseBoolean(s));
-				}
-			}
-		});
-		return this;
-	}
-	
-	
-	public LocalSettings add(String subKey, TextInputControl t)
-	{
-		return add(subKey, t.textProperty());
 	}
 	
 	
@@ -320,12 +264,14 @@ public class LocalSettings
 	{
 		entries.put(subKey, new Entry()
 		{
-			public void saveValue(String prefix)
+			@Override
+			public void saveValue(String prefix, ASettingsStore store)
 			{
 				x.storeSettings(prefix + "." + subKey);
 			}
 
-			public void loadValue(String prefix)
+			@Override
+			public void loadValue(String prefix, ASettingsStore store)
 			{
 				x.restoreSettings(prefix + "." + subKey);
 			}
@@ -346,22 +292,22 @@ public class LocalSettings
 	}
 
 
-	public void loadValues(String prefix)
+	public void loadValues(String prefix, ASettingsStore store)
 	{
 		for(String k: entries.keySet())
 		{
 			Entry en = entries.get(k);
-			en.loadValue(prefix);
+			en.loadValue(prefix, store);
 		}
 	}
 
 
-	public void saveValues(String prefix)
+	public void saveValues(String prefix, ASettingsStore store)
 	{
 		for(String k: entries.keySet())
 		{
 			Entry en = entries.get(k);
-			en.saveValue(prefix);
+			en.saveValue(prefix, store);
 		}
 	}
 }

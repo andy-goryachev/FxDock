@@ -1,11 +1,11 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.Property;
 import javafx.scene.control.CheckMenuItem;
 
 
 /**
- * CheckMenuItem that knows how to deal with CAction or a Property.
+ * CheckMenuItem that knows how to deal with FxAction or a Property.
  */
 public class FxCheckMenuItem
 	extends CheckMenuItem

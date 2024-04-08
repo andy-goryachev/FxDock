@@ -1,4 +1,4 @@
-// Copyright © 2013-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2013-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.io.File;
 import java.io.FileNotFoundException;

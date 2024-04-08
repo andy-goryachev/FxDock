@@ -1,4 +1,4 @@
-// Copyright © 2017-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.util.CMap;
 import goryachev.fx.FX;

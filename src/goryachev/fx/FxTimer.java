@@ -1,4 +1,4 @@
-// Copyright © 2021-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import javafx.animation.KeyFrame;
@@ -78,7 +78,7 @@ public class FxTimer
 		}
 		catch(Throwable e)
 		{
-			log.error("action.run", e);
+			log.error(e);
 		}
 	}
 }

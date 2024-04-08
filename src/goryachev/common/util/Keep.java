@@ -1,4 +1,4 @@
-// Copyright © 2012-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import static java.lang.annotation.ElementType.*;
 import java.lang.annotation.Documented;

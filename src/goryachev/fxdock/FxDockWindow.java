@@ -1,9 +1,9 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fx.FxAction;
 import goryachev.fx.FxDump;
+import goryachev.fx.FxWindow;
 import goryachev.fx.OnWindowClosing;
-import goryachev.fx.internal.BaseFxWindow;
 import goryachev.fxdock.internal.FxDockRootPane;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -13,8 +13,8 @@ import javafx.scene.layout.BorderPane;
 /**
  * Base class for docking framework Stage.
  */
-public abstract class FxDockWindow
-	extends BaseFxWindow
+public class FxDockWindow
+	extends FxWindow
 {
 	/** 
 	 * Override to ask the user to confirm closing of window.
@@ -31,8 +31,10 @@ public abstract class FxDockWindow
 	private final FxDockRootPane root;
 	
 	
-	public FxDockWindow()
+	public FxDockWindow(String name)
 	{
+		super(name);
+		
 		root = new FxDockRootPane(this);
 		frame = new BorderPane(root);
 		
@@ -45,7 +47,7 @@ public abstract class FxDockWindow
 	
 	public void open()
 	{
-		FxDockFramework.open(this);
+		show();
 	}
 	
 	
@@ -112,13 +114,6 @@ public abstract class FxDockWindow
 	public final Node getRight()
 	{
 		return frame.getRight();
-	}
-	
-	
-	/** saves all windows */
-	public void saveLayout()
-	{
-		FxDockFramework.saveLayout();
 	}
 
 	

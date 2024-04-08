@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CList;
 import goryachev.common.util.SB;
@@ -69,13 +69,13 @@ public class FxStyleSheet
 	{
 		for(Object x: elements)
 		{
-			if(x instanceof Selector)
+			if(x instanceof Selector s)
 			{
-				((Selector)x).write(sb, null);
+				s.write(sb, null);
 			}
-			else if(x instanceof FxStyleSheet)
+			else if(x instanceof FxStyleSheet s)
 			{
-				((FxStyleSheet)x).generate(sb);
+				s.generate(sb);
 			}
 			else if(x != null)
 			{
@@ -162,15 +162,15 @@ public class FxStyleSheet
 			CList<Selector> selectors = null;
 			for(Object x: items)
 			{
-				if(x instanceof Selector)
+				if(x instanceof Selector s)
 				{
 					if(selectors == null)
 					{
 						selectors = new CList<>();
 					}
-					selectors.add((Selector)x);
+					selectors.add(s);
 				}
-				else if(x instanceof FxCssProp)
+				else if(x instanceof FxCssProp p)
 				{
 					if(!epilogue)
 					{
@@ -191,12 +191,13 @@ public class FxStyleSheet
 					}
 					
 					sb.a("\t");
-					((FxCssProp)x).write(sb);
+					p.write(sb);
 					sb.nl();
 				}
 				else if(x != null)
 				{
-					throw new Error("?" + x);
+					sb.a(x.toString());
+					sb.a('\n');
 				}
 			}
 

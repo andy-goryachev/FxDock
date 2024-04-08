@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
@@ -645,7 +645,7 @@ public class CPane
 	
 	
 	/** component-constraint pair */
-	protected static class Entry
+	private static class Entry
 	{
 		public Node node;
 		public CC cc;

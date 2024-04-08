@@ -1,6 +1,7 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fx.FX;
+import goryachev.fxdock.internal.DockTools;
 import java.util.List;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -56,7 +57,7 @@ public class WindowListMenuItem
 		}
 		
 		int ct = 1;
-		for(FxDockWindow w: FxDockFramework.getWindows())
+		for(FxDockWindow w: DockTools.getWindows())
 		{
 			WindowMenuItem mi = new WindowMenuItem(ct + ": " + w.getTitle());
 			mi.setOnAction((ev) -> FX.toFront(w));

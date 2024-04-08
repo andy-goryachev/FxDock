@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.SB;
 import goryachev.fx.CPane;
@@ -30,7 +30,7 @@ public class DemoHPane
 	
 	public DemoHPane()
 	{
-		super(DemoGenerator.HPANE);
+		super(DemoDockSchema.HPANE);
 		setTitle("DemoHPane.java");
 
 		String info = "HPane is a horizontal Pane with a single row layout similar to CPane.";

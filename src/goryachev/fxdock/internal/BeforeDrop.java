@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CMap;
 import goryachev.fx.FxSize;
@@ -39,9 +39,9 @@ public class BeforeDrop
 	{
 		while(n != null)
 		{
-			if(n instanceof FxDockSplitPane)
+			if(n instanceof FxDockSplitPane p)
 			{
-				sizeSplit((FxDockSplitPane)n);
+				sizeSplit(p);
 			}
 			else if(n instanceof FxDockRootPane)
 			{
@@ -86,9 +86,9 @@ public class BeforeDrop
 	{
 		while(n != null)
 		{
-			if(n instanceof FxDockSplitPane)
+			if(n instanceof FxDockSplitPane p)
 			{
-				restoreSplits((FxDockSplitPane)n);
+				restoreSplits(p);
 			}
 			else if(n instanceof FxDockRootPane)
 			{

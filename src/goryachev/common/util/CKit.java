@@ -1,4 +1,4 @@
-// Copyright © 1996-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 1996-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CWriter;
 import goryachev.common.log.Log;
@@ -47,7 +47,7 @@ import java.util.zip.ZipFile;
 
 public final class CKit
 {
-	public static final String COPYRIGHT = "Copyright © 1996-2023 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
+	public static final String COPYRIGHT = "Copyright © 1996-2024 Andy Goryachev <andy@goryachev.com>  All Rights Reserved.";
 	protected static final Log log = Log.get("CKit");
 	public static final char APPLE = '\u2318';
 	public static final char BOM = '\ufeff';
@@ -209,10 +209,19 @@ public final class CKit
 	}
 	
 	
-	/** returns true if the character is a whitespace or a space character (0x00a0 for example) */
+	/** 
+	 * returns true if the character is either:
+	 * - a whitespace
+	 * - a space character (e.g. 0x00a0)
+	 * - is ASCII control character or space (< 0x20)
+	 */
 	public static boolean isBlank(int c)
 	{
-		if(Character.isWhitespace(c))
+		if(c <= 0x20)
+		{
+			return true;
+		}
+		else if(Character.isWhitespace(c))
 		{
 			return true;
 		}
@@ -1144,13 +1153,6 @@ public final class CKit
 			return sb.toString();
 		}
 	}
-
-
-	public static void forceGC()
-	{
-		System.runFinalization();
-		System.gc();
-	}
 	
 	
 	/** returns amount of theoretically available memory */
@@ -1563,7 +1565,6 @@ public final class CKit
 		{
 			// let's see if gc can help
 			System.gc();
-			System.runFinalization();
 			
 			total = r.totalMemory();
 			used = total - r.freeMemory();
@@ -2379,6 +2380,38 @@ public final class CKit
 		byte[] c = new byte[b.length];
 		System.arraycopy(b, 0, c, 0, b.length);
 		return c;
+	}
+	
+	
+	public static byte[] copy(byte[] b, int off, int len)
+	{
+		if(b == null)
+		{
+			return null;
+		}
+		
+		if(off < 0)
+		{
+			off = 0;
+		}
+		else if(off > b.length)
+		{
+			return new byte[0];
+		}
+		
+		if(off + len > b.length)
+		{
+			len = b.length - off;
+		}
+		
+		if(len <= 0)
+		{
+			return new byte[0];
+		}
+		
+		byte[] rv = new byte[len];
+		System.arraycopy(b, off, rv, 0, len);
+		return rv;
 	}
 	
 	

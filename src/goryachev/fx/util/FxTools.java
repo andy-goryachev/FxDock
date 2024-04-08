@@ -1,6 +1,10 @@
-// Copyright © 2022-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2022-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.util;
+import goryachev.common.util.CKit;
+import goryachev.fx.FX;
 import java.util.List;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 
 /**
@@ -21,5 +25,24 @@ public class FxTools
 			}
 		}
 		return rv;
+	}
+	
+	
+	public static String describe(Window w)
+	{
+		if(w == null)
+		{
+			return "<null>";
+		}
+		
+		if(w instanceof Stage s)
+		{
+			String title = s.getTitle();
+			if(CKit.isNotBlank(title))
+			{
+				return title;
+			}
+		}
+		return w.getClass().getSimpleName() + "(" + FX.getName(w) + ")";
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.fx.CPane;
 import goryachev.fx.FX;
@@ -25,7 +25,7 @@ public class DemoLoginPane
 	
 	public DemoLoginPane()
 	{
-		super(DemoGenerator.LOGIN);
+		super(DemoDockSchema.LOGIN);
 		setTitle("CPane Demo // Login Form");
 
 		String info = "This demonstrates table layout capabilities of CPane component.  CPane is easier to use than GridPane because one does not have to set so many constraints on the inidividual nodes, and you also have border layout capability as well.";

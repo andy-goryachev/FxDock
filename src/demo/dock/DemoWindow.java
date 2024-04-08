@@ -1,20 +1,18 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
 import goryachev.common.util.D;
-import goryachev.common.util.GlobalSettings;
 import goryachev.common.util.Hex;
 import goryachev.common.util.SB;
 import goryachev.fx.FX;
 import goryachev.fx.FxAction;
 import goryachev.fx.FxCheckMenuItem;
+import goryachev.fx.FxFramework;
 import goryachev.fx.FxMenu;
 import goryachev.fx.FxMenuBar;
 import goryachev.fx.GlobalBooleanProperty;
 import goryachev.fx.OnWindowClosing;
-import goryachev.fx.internal.LocalSettings;
-import goryachev.fxdock.FxDockFramework;
+import goryachev.fx.settings.LocalSettings;
 import goryachev.fxdock.FxDockWindow;
-import goryachev.fxdock.Version;
 import goryachev.fxdock.WindowListMenuItem;
 import java.util.Random;
 import javafx.geometry.Insets;
@@ -38,18 +36,20 @@ public class DemoWindow
 	public static final FxAction newVPaneAction = new FxAction(DemoWindow::actionNewVPane);
 	public static final FxAction newLoginAction = new FxAction(DemoWindow::actionNewLogin);
 	public static final FxAction newWindowAction = new FxAction(DemoWindow::actionNewWindow);
-	public static final FxAction quitApplicationAction = new FxAction(FxDockFramework::exit);
 	public static final FxAction saveSettingsAction = new FxAction(DemoWindow::actionSaveSettings);
 	public final FxAction windowCheckAction = new FxAction();
 	public final Label statusField = new Label();
 	private static GlobalBooleanProperty showCloseDialogProperty = new GlobalBooleanProperty("show.close.dialog", true);
+	private static int seq;
 
 	
 	public DemoWindow()
 	{
+		super("DemoWindow");
+		
 		setTop(createMenu());
 		setBottom(createStatusBar());
-		setTitle(DockDemoApp.TITLE + " " + Version.VERSION);
+		setTitle(DockDemoApp.TITLE + " [" + ++seq + "] " + DockDemoApp.VERSION);
 		
 		LocalSettings.get(this).add("CHECKBOX_MENU", windowCheckAction);
 	}
@@ -64,7 +64,7 @@ public class DemoWindow
 		m.separator();
 		m.item("Close Window", closeWindowAction);
 		m.separator();
-		m.item("Quit Application", quitApplicationAction);
+		m.item("Quit Application", FxFramework.exitAction());
 		// window
 		m.menu("Window");
 		m.item("New Browser", newBrowserAction);
@@ -169,7 +169,7 @@ public class DemoWindow
 	public static DemoWindow openBrowser(String url)
 	{
 		DemoBrowser b = new DemoBrowser();
-		b.openPage(url);
+		b.setUrl(url);
 		
 		DemoWindow w = new DemoWindow();
 		w.setContent(b);
@@ -190,8 +190,7 @@ public class DemoWindow
 	
 	protected static void actionSaveSettings()
 	{
-		FxDockFramework.saveLayout();
-		GlobalSettings.save();
+		FxFramework.storeLayout();
 	}
 
 	

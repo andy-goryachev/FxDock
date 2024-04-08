@@ -1,4 +1,4 @@
-// Copyright © 2016-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CSorter;
 import java.util.List;
@@ -50,12 +50,12 @@ public class FxMenuBar
 	}
 	
 	
-	public FxCheckMenuItem checkItem(String text, GlobalBooleanProperty p)
-	{
-		FxCheckMenuItem m = new FxCheckMenuItem(text, p);
-		add(m);
-		return m;
-	}
+//	public FxCheckMenuItem checkItem(String text, GlobalBooleanProperty p)
+//	{
+//		FxCheckMenuItem m = new FxCheckMenuItem(text, p);
+//		add(m);
+//		return m;
+//	}
 	
 	
 	public FxCheckMenuItem checkItem(String text, Property<Boolean> p)

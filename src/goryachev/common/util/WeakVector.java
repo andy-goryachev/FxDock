@@ -1,5 +1,7 @@
-// Copyright © 2012-2023 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
+import java.util.function.Consumer;
+
 
 /**
  * Synchronized List of WeakListeners.
@@ -54,8 +56,20 @@ public class WeakVector<T>
 	}
 	
 	
-	public synchronized void remove(int ix)
+	public synchronized T remove(int ix)
 	{
-		super.remove(ix);
+		return super.remove(ix);
+	}
+	
+	
+	public synchronized int indexOf(T item)
+	{
+		return super.indexOf(item);
+	}
+	
+	
+	public synchronized void forEach(Consumer<T> client)
+	{
+		super.forEach(client);
 	}
 }
