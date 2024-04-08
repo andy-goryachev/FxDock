@@ -1,5 +1,5 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
-package goryachev.fx.internal;
+package goryachev.fx.settings;
 import goryachev.common.log.Log;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;

@@ -4,7 +4,7 @@ import goryachev.common.log.Log;
 import goryachev.common.util.CList;
 import goryachev.fx.FX;
 import goryachev.fx.FxFramework;
-import goryachev.fx.internal.WindowMonitor;
+import goryachev.fx.settings.WindowMonitor;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import java.util.List;

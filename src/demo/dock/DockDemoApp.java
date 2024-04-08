@@ -4,7 +4,7 @@ import goryachev.common.log.Log;
 import goryachev.common.log.LogLevel;
 import goryachev.common.util.GlobalSettings;
 import goryachev.fx.FxFramework;
-import goryachev.fx.internal.ASettingsStore;
+import goryachev.fx.settings.ASettingsStore;
 import java.io.File;
 import javafx.application.Application;
 import javafx.stage.Stage;

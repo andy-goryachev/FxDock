@@ -8,7 +8,7 @@ import goryachev.fx.FX;
 import goryachev.fx.FxAction;
 import goryachev.fx.FxButton;
 import goryachev.fx.HPane;
-import goryachev.fx.internal.LocalSettings;
+import goryachev.fx.settings.LocalSettings;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockStyles;
 import javafx.beans.value.ChangeListener;

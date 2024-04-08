@@ -35,7 +35,7 @@ public class Log
 	private Log parent;
 	private LogLevel level;
 	private int effectiveLevel;
-	private final CMap<String,Log> children = new CMap(0); // TODO null by default
+	private final CMap<String,Log> children = new CMap<>(0); // TODO null by default
 
 
 	protected Log(Log parent, String name, String fullName)

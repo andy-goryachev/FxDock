@@ -4,7 +4,7 @@ import goryachev.common.util.Hex;
 import goryachev.fx.FX;
 import goryachev.fx.FxPopupMenu;
 import goryachev.fx.HPane;
-import goryachev.fx.internal.LocalSettings;
+import goryachev.fx.settings.LocalSettings;
 import goryachev.fxdock.FxDockPane;
 import javafx.geometry.Insets;
 import javafx.scene.Node;

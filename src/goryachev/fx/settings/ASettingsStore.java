@@ -1,5 +1,5 @@
 // Copyright © 2024 Andy Goryachev <andy@goryachev.com>
-package goryachev.fx.internal;
+package goryachev.fx.settings;
 import goryachev.common.util.Parsers;
 import goryachev.common.util.SStream;
 

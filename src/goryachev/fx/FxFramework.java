@@ -1,6 +1,6 @@
 // Copyright © 2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.fx.internal.FxSettingsSchema;
+import goryachev.fx.settings.FxSettingsSchema;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.stage.Stage;

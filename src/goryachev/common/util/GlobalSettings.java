@@ -1,6 +1,6 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
-import goryachev.fx.internal.ASettingsStore;
+import goryachev.fx.settings.ASettingsStore;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;

@@ -11,7 +11,7 @@ import goryachev.fx.FxMenu;
 import goryachev.fx.FxMenuBar;
 import goryachev.fx.GlobalBooleanProperty;
 import goryachev.fx.OnWindowClosing;
-import goryachev.fx.internal.LocalSettings;
+import goryachev.fx.settings.LocalSettings;
 import goryachev.fxdock.FxDockWindow;
 import goryachev.fxdock.WindowListMenuItem;
 import java.util.Random;
