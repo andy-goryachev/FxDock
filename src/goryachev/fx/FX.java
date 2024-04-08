@@ -99,8 +99,11 @@ public final class FX
 	public static final double ONE_OVER_GAMMA = 1.0 / GAMMA;
 	private static Text helper;
 	private static final Object PROP_TOOLTIP = new Object();
+	
+	// TODO move both to FxSettings?
 	private static final Object PROP_NAME = new Object();
-
+	private static final Object PROP_SKIP_SETTINGS = new Object();
+	
 	
 	public static FxWindow getWindow(Node n)
 	{
@@ -123,12 +126,29 @@ public final class FX
 	 */
 	public static void setSkipSettings(Node n)
 	{
-		if(n != null)
-		{
-			FxSettingsSchema.setSkipSettings(n);
-		}
+		n.getProperties().put(PROP_SKIP_SETTINGS, Boolean.TRUE);
 	}
 	
+	
+	public static boolean isSkipSettings(Node n)
+	{
+		Object x = n.getProperties().get(PROP_SKIP_SETTINGS);
+		return Boolean.TRUE.equals(x);
+	}
+	
+	
+	public static void setSkipSettings(Window w)
+	{
+		w.getProperties().put(PROP_SKIP_SETTINGS, Boolean.TRUE);
+	}
+	
+	
+	public static boolean isSkipSettings(Window w)
+	{
+		Object x = w.getProperties().get(PROP_SKIP_SETTINGS);
+		return Boolean.TRUE.equals(x);
+	}
+
 	
 	/** creates a label.  accepts: CssStyle, CssID, FxCtl, Insets, OverrunStyle, Pos, TextAlignment, Color, Node, Background */
 	public static Label label(Object ... attrs)
@@ -691,17 +711,6 @@ public final class FX
 		double bottom = w.getY() + w.getHeight() - b.getMaxY();
 
 		return new Insets(top, right, bottom, left);
-	}
-	
-	
-	/** 
-	 * attaches a handler to be notified when settings for the node have been loaded.  
-	 * setting null clears the handler 
-	 */
-	@Deprecated // FIX remove
-	private static void setOnSettingsLoaded(Node n, Runnable r)
-	{
-		//FxSchema.setOnSettingsLoaded(n, r);
 	}
 	
 	

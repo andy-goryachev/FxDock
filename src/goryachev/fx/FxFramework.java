@@ -13,6 +13,8 @@ import javafx.stage.WindowEvent;
  */
 public class FxFramework
 {
+	// TODO move name/ignore settings here?
+
 	// TODO create an abstract base class ASettingsSchema (?) in the main package, not internal
 	private static FxSettingsSchema schema;
 

@@ -57,50 +57,39 @@ public abstract class FxDockSchema
 	
 
 	@Override
-	public void restoreWindow(Window w)
+	protected void restoreWindowLocal(Window w, WindowMonitor m)
 	{
-		log.debug(() -> FxTools.describe(w));
+		super.restoreWindowLocal(w, m);
 
 		if(w instanceof FxDockWindow dw)
 		{
-			WindowMonitor m = WindowMonitor.forWindow(w);
-			if(m != null)
-			{
-				String prefix = FX_PREFIX + m.getID();
+			String prefix = FX_PREFIX + m.getID();
 
-//				if(dw.getContent() == null)
+//			if(dw.getContent() == null)
+			{
+				Node n = loadDockWindowContent(prefix);
+				if(n != null)
 				{
-					Node n = loadDockWindowContent(prefix);
-					if(n != null)
-					{
-						dw.setContent(n);
-						restoreContent(prefix, n);
-					}
+					dw.setContent(n);
+					restoreContent(prefix, n);
 				}
 			}
 		}
-		
-		super.restoreWindow(w);
 	}
 	
-	
-	public void storeWindow(Window w)
+
+	@Override
+	protected void storeWindowLocal(Window w, WindowMonitor m)
 	{
-		log.debug(() -> FxTools.describe(w));
-		
-		super.storeWindow(w);
+		super.storeWindowLocal(w, m);
 		
 		if(w instanceof FxDockWindow dw)
 		{
-			WindowMonitor m = WindowMonitor.forWindow(w);
-			if(m != null)
-			{
-				String prefix = FX_PREFIX + m.getID();
-				Node n = dw.getContent();
-				saveDockWindowContent(prefix, n);
-				
-				storeContent(prefix, n);
-			}
+			String prefix = FX_PREFIX + m.getID();
+			Node n = dw.getContent();
+			saveDockWindowContent(prefix, n);
+
+			storeContent(prefix, n);
 		}
 	}
 

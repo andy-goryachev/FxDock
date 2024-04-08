@@ -144,21 +144,27 @@ public class WindowMonitor
 				{
 					for(Window w: ch.getAddedSubList())
 					{
-						log.debug("added: %s", w);
-						// window is already showing
-						FxFramework.restore(w);
-						applyStyleSheet(w);
+						if(!isIgnore(w))
+						{
+							log.debug("added: %s", w);
+							// window is already showing
+							FxFramework.restore(w);
+							applyStyleSheet(w);
+						}
 					}
 				}
 				else if(ch.wasRemoved())
 				{
 					for(Window w: ch.getRemoved())
 					{
-						log.debug("removed: %s", w);
-						// the only problem here is that window is already hidden - does it matter?
-						// if it does, need to listen to WindowEvent.WINDOW_HIDING event
-						FxFramework.store(w);
-						stack.remove(w);
+						if(!isIgnore(w))
+						{
+							log.debug("removed: %s", w);
+							// the only problem here is that window is already hidden - does it matter?
+							// if it does, need to listen to WindowEvent.WINDOW_HIDING event
+							FxFramework.store(w);
+							stack.remove(w);
+						}
 					}
 					
 					GlobalSettings.save();
@@ -264,15 +270,11 @@ public class WindowMonitor
 	{
 		if(w != null)
 		{
-			if(w instanceof Tooltip)
+			if(isIgnore(w))
 			{
 				return null;
 			}
-			else if(w instanceof ContextMenu)
-			{
-				return null;
-			}
-			
+				
 			WindowMonitor m = get(w);
 			if(m == null)
 			{
@@ -286,6 +288,20 @@ public class WindowMonitor
 			return m;
 		}
 		return null;
+	}
+	
+	
+	static boolean isIgnore(Window w)
+	{
+		if(w instanceof Tooltip)
+		{
+			return true;
+		}
+		else if(w instanceof ContextMenu)
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	

@@ -5,7 +5,6 @@ import goryachev.common.util.CList;
 import goryachev.fx.FX;
 import goryachev.fx.FxFramework;
 import goryachev.fx.internal.WindowMonitor;
-import goryachev.fxdock.FxDockFramework;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockWindow;
 import java.util.List;
@@ -199,6 +198,24 @@ public class DockTools
 	}
 	
 	
+	/** returns a list of visible windows, topmost window first */
+	public static List<FxDockWindow> getWindows()
+	{
+		List<Window> ws = WindowMonitor.getWindowStack();
+		int sz = ws.size();
+		CList<FxDockWindow> rv = new CList<>(sz);
+		for(int i=sz-1; i>=0; i--)
+		{
+			Window w = ws.get(i);
+			if(w instanceof FxDockWindow dw)
+			{
+				rv.add(dw);
+			}
+		}
+		return rv;
+	}
+	
+	
 	public static FxDockWindow getWindow(Node n)
 	{
 		if(n != null)
@@ -224,10 +241,10 @@ public class DockTools
 		FxDockWindow w = getWindow(n);
 		if(w != null)
 		{
-			if(FxDockFramework.getWindows().size() > 1)
+			if(getWindows().size() > 1)
 			{
-				// TODO this is not used
-				// w.discardSettings = true;
+				// do not store the empty window
+				FX.setSkipSettings(w);
 				w.close();
 				return true;
 			}

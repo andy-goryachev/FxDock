@@ -79,10 +79,6 @@ public abstract class FxSettingsSchema
 	private static final String WINDOW_ICONIFIED = "I";
 	private static final String WINDOW_NORMAL = "N";
 	
-	@Deprecated // FIX remove
-	private static final Object PROP_LOAD_HANDLER = new Object();
-	private static final Object PROP_SKIP_SETTINGS = new Object();
-	
 	private static final Log log = Log.get("FxSettingsSchema");
 	private final ASettingsStore store;
 	
@@ -95,52 +91,65 @@ public abstract class FxSettingsSchema
 	
 	public void storeWindow(Window w)
 	{
+		log.debug(() -> FxTools.describe(w));
+		
+		if(FX.isSkipSettings(w))
+		{
+			return;
+		}
+
 		WindowMonitor m = WindowMonitor.forWindow(w);
 		if(m != null)
 		{
-			double x = m.getX();
-			double y = m.getY();
-			double width = m.getW();
-			double height = m.getH();
-			
-			SStream ss = new SStream();
-			ss.add(x);
-			ss.add(y);
-			ss.add(width);
-			ss.add(height);
-			
-			if(w instanceof Stage s)
-			{
-				if(s.isFullScreen())
-				{
-					ss.add(WINDOW_FULLSCREEN);
-				}
-				else if(s.isMaximized())
-				{
-					ss.add(WINDOW_MAXIMIZED);
-				}
-				else if(s.isIconified())
-				{
-					ss.add(WINDOW_ICONIFIED);
-				}
-				else
-				{
-					ss.add(WINDOW_NORMAL);
-				}
-			}
-
-			store.setStream(FX_PREFIX + m.getID(), ss);
-			
-			LocalSettings s = LocalSettings.find(w);
-			if(s != null)
-			{
-				String k = FX_PREFIX + m.getID() + SFX_SETTINGS;
-				s.saveValues(k);
-			}
-			
-			Node n = w.getScene().getRoot();
-            storeNode(n);
+			storeWindowLocal(w, m);
 		}
+	}
+	
+	
+	protected void storeWindowLocal(Window w, WindowMonitor m)
+	{
+		double x = m.getX();
+		double y = m.getY();
+		double width = m.getW();
+		double height = m.getH();
+		
+		SStream ss = new SStream();
+		ss.add(x);
+		ss.add(y);
+		ss.add(width);
+		ss.add(height);
+		
+		if(w instanceof Stage s)
+		{
+			if(s.isFullScreen())
+			{
+				ss.add(WINDOW_FULLSCREEN);
+			}
+			else if(s.isMaximized())
+			{
+				ss.add(WINDOW_MAXIMIZED);
+			}
+			else if(s.isIconified())
+			{
+				ss.add(WINDOW_ICONIFIED);
+			}
+			else
+			{
+				ss.add(WINDOW_NORMAL);
+			}
+		}
+
+		store.setStream(FX_PREFIX + m.getID(), ss);
+		
+		LocalSettings s = LocalSettings.find(w);
+		if(s != null)
+		{
+			String k = FX_PREFIX + m.getID() + SFX_SETTINGS;
+			s.saveValues(k);
+		}
+		
+		Node n = w.getScene().getRoot();
+        storeNode(n);
 	}
 	
 	
@@ -149,6 +158,11 @@ public abstract class FxSettingsSchema
 		log.debug(() -> FxTools.describe(w));
 
 		if(w instanceof PopupWindow)
+		{
+			return;
+		}
+		
+		if(FX.isSkipSettings(w))
 		{
 			return;
 		}
@@ -163,67 +177,7 @@ public abstract class FxSettingsSchema
 		WindowMonitor m = WindowMonitor.forWindow(w);
 		if(m != null)
 		{
-			SStream ss = store.getStream(FX_PREFIX + m.getID());
-			if(ss != null)
-			{
-				double x = ss.nextDouble(-1);
-				double y = ss.nextDouble(-1);
-				double width = ss.nextDouble(-1);
-				double height = ss.nextDouble(-1);
-				String state = ss.nextString(WINDOW_NORMAL);
-				
-				if((width > 0) && (height > 0))
-				{
-					if
-					(
-						FX.isValidCoordinates(x, y) &&
-						(!(w instanceof FxDialog))
-					)
-					{
-						// iconified windows have (x,y) of -32000 for some reason
-						// their coordinates are essentially lost (unless there is a way to get them in FX)
-						w.setX(x);
-						w.setY(y);
-					}
-
-					if(w instanceof Stage s)
-					{
-						if(s.isResizable())
-						{
-							w.setWidth(width);
-							w.setHeight(height);
-						}
-						else
-						{
-							width = w.getWidth();
-							height = w.getHeight();
-						}
-						
-						switch(state)
-						{
-						case WINDOW_FULLSCREEN:
-							s.setFullScreen(true);
-							break;
-						case WINDOW_MAXIMIZED:
-							s.setMaximized(true);
-							break;
-						}
-						
-						if(w instanceof FxDialog d)
-						{
-							Window parent = d.getOwner();
-							if(parent != null)
-							{
-								double cx = parent.getX() + (parent.getWidth() / 2);
-								double cy = parent.getY() + (parent.getHeight() / 2);
-								// TODO check 
-								d.setX(cx - width/2);
-								d.setY(cy - height/2);
-							}
-						}
-					}
-				}
-			}
+			restoreWindowLocal(w, m);
 			
 			LocalSettings s = LocalSettings.find(w);
 			if(s != null)
@@ -236,6 +190,72 @@ public abstract class FxSettingsSchema
             restoreNode(n);
 		}
 	}
+	
+	
+	protected void restoreWindowLocal(Window w, WindowMonitor m)
+	{
+		SStream ss = store.getStream(FX_PREFIX + m.getID());
+		if(ss != null)
+		{
+			double x = ss.nextDouble(-1);
+			double y = ss.nextDouble(-1);
+			double width = ss.nextDouble(-1);
+			double height = ss.nextDouble(-1);
+			String state = ss.nextString(WINDOW_NORMAL);
+			
+			if((width > 0) && (height > 0))
+			{
+				if
+				(
+					FX.isValidCoordinates(x, y) &&
+					(!(w instanceof FxDialog))
+				)
+				{
+					// iconified windows have (x,y) of -32000 for some reason
+					// their coordinates are essentially lost (unless there is a way to get them in FX)
+					w.setX(x);
+					w.setY(y);
+				}
+
+				if(w instanceof Stage s)
+				{
+					if(s.isResizable())
+					{
+						w.setWidth(width);
+						w.setHeight(height);
+					}
+					else
+					{
+						width = w.getWidth();
+						height = w.getHeight();
+					}
+					
+					switch(state)
+					{
+					case WINDOW_FULLSCREEN:
+						s.setFullScreen(true);
+						break;
+					case WINDOW_MAXIMIZED:
+						s.setMaximized(true);
+						break;
+					}
+					
+					if(w instanceof FxDialog d)
+					{
+						Window parent = d.getOwner();
+						if(parent != null)
+						{
+							double cx = parent.getX() + (parent.getWidth() / 2);
+							double cy = parent.getY() + (parent.getHeight() / 2);
+							// TODO check 
+							d.setX(cx - width/2);
+							d.setY(cy - height/2);
+						}
+					}
+				}
+			}
+		}
+	}
 
 
 	public void storeNode(Node n)
@@ -245,7 +265,7 @@ public abstract class FxSettingsSchema
 			return;
 		}
 
-		if(isSkipSettings(n))
+		if(FX.isSkipSettings(n))
 		{
 			return;
 		}
@@ -321,7 +341,7 @@ public abstract class FxSettingsSchema
 			return;
 		}
 
-		if(isSkipSettings(n))
+		if(FX.isSkipSettings(n))
 		{
 			return;
 		}
@@ -391,13 +411,6 @@ public abstract class FxSettingsSchema
 					restoreNode(ch);
 				}
 			}
-		}
-
-		// TODO is this really needed?
-		Runnable r = getOnSettingsLoaded(n);
-		if(r != null)
-		{
-			r.run();
 		}
 	}
 	
@@ -558,40 +571,7 @@ public abstract class FxSettingsSchema
 		}
 		return null;
 	}
-
-
-	@Deprecated // FIX remove
-	// replace with binding properties to LocalSettings
-	private static void setOnSettingsLoaded(Node n, Runnable r)
-	{
-		n.getProperties().put(PROP_LOAD_HANDLER, r);
-	}
 	
-	
-	@Deprecated // FIX remove
-	private static Runnable getOnSettingsLoaded(Node n)
-	{
-		Object x = n.getProperties().get(PROP_LOAD_HANDLER);
-		if(x instanceof Runnable)
-		{
-			return (Runnable)x;
-		}
-		return null;
-	}
-	
-	
-	public static void setSkipSettings(Node n)
-	{
-		n.getProperties().put(PROP_SKIP_SETTINGS, Boolean.TRUE);
-	}
-	
-	
-	public static boolean isSkipSettings(Node n)
-	{
-		Object x = n.getProperties().get(PROP_SKIP_SETTINGS);
-		return Boolean.TRUE.equals(x);
-	}
-
 
 	protected void storeCheckBox(CheckBox n, String name)
 	{
