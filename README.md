@@ -27,7 +27,7 @@ The library requires JDK 21+ with JavaFX 21+.
 
 Please refer to [HOWTO.md](doc/HOWTO.md) for detailed instructions on how to use the FxDock docking framework in your project. 
 
-[Release Notes](https://github.com/andy-goryachev/FxDock/blob/master/ReleaseNotes.md)
+[Release Notes](https://github.com/andy-goryachev/FxDock/blob/master/doc/ReleaseNotes.md)
 
 
 
