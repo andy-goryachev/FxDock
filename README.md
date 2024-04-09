@@ -12,12 +12,12 @@ This project and its source code is licensed under the [Apache License 2.0](http
 
 ## Try It
 
-Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/raw/master/lib/FxDock/FxDockDemo.jar)
+Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/raw/master/dist/FxDock/FxDockDemo.jar)
 
 
 ## How to Use the Library
 
-The library requires JDK 17+ with JavaFX 20+.
+The library requires JDK 21+ with JavaFX 21+.
 
 Please refer to [HOWTO.md](doc/HOWTO.md) for detailed instructions on how to use the FxDock docking framework in your project. 
 

@@ -85,8 +85,17 @@
 		<checksum file="build/jars/FxDock.jar" algorithm="sha-256" forceoverwrite="yes" fileext=".sha256.txt" />
 	</target>
 	
+	
+	<!-- copy jars to dist -->
+	<target name="copy-jar" depends="make-jar">
+		<copy file="build/jars/FxDockDemo.jar" todir="dist" />
+		<copy file="build/jars/FxDockDemo.jar.sha256.txt" todir="dist" />
+		<copy file="build/jars/FxDock.jar" todir="dist" />
+		<copy file="build/jars/FxDock.jar.sha256.txt" todir="dist" />
+	</target>
+	
 
 	<!-- build all -->
-	<target name="build-all" depends="compile, copy-resources, make-jar, make-lib-jar, sha-jar" />
+	<target name="build-all" depends="compile, copy-resources, make-jar, make-lib-jar, sha-jar, copy-jar" />
 	
 </project>
