@@ -2,7 +2,7 @@
 package demo.dock;
 import goryachev.fx.settings.ASettingsStore;
 import goryachev.fxdock.FxDockPane;
-import goryachev.fxdock.internal.FxDockSchema;
+import goryachev.fxdock.FxDockSchema;
 import javafx.stage.Stage;
 
 

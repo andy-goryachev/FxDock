@@ -1,13 +1,16 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
-package goryachev.fxdock.internal;
+package goryachev.fxdock;
 import goryachev.common.log.Log;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
 import goryachev.fx.settings.ASettingsStore;
 import goryachev.fx.settings.FxSettingsSchema;
 import goryachev.fx.settings.WindowMonitor;
-import goryachev.fxdock.FxDockPane;
-import goryachev.fxdock.FxDockWindow;
+import goryachev.fxdock.internal.DockTools;
+import goryachev.fxdock.internal.FxDockEmptyPane;
+import goryachev.fxdock.internal.FxDockRootPane;
+import goryachev.fxdock.internal.FxDockSplitPane;
+import goryachev.fxdock.internal.FxDockTabPane;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -18,7 +21,6 @@ import javafx.stage.Window;
 /**
  * FxDock framework schema for the layout storage.
  */
-// TODO rename
 public abstract class FxDockSchema
 	extends FxSettingsSchema
 {

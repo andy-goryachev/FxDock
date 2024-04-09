@@ -20,7 +20,7 @@ and
 There could be only one type of application window (FX Stage), and it must extend FxDockWindow class.  Each window may contain one or more (or zero, if it is a last window) panes, which must extend FxDockPane class.  You can have as many different types of FxDockPanes as you wish, each type identified by a String type ID.
 
 Before the framework loads the layout, you must set a 
-[FxDockFramework](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/fxdock/FxDockFramework.java),
+[FxDockSchema](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/fxdock/FxDockSchema.java),
 which creates windows and panes for your application.
 
 Here is an example:
@@ -83,12 +83,16 @@ public class DemoDockSchema
 }
 ```
 
+
+
 ## Global Settings
 
 The docking framework uses an implementation of
 [ASettingsStore](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/fx/settings/ASettingsStore.java)
 to store the layout.  This is a facade that can use your custom key-value database to store application-wide settings, or you
 can simply use the file-based implementation provided by `GlobalSettings.instance()`.
+
+
 
 ## Local Settings
 
@@ -97,11 +101,13 @@ The framework also provides a mechanism to store JavaFX properties as a part of 
 which can be obtained from either a `Node` or a `Window` with `LocalSettings.get()`.
 
 
+
 ## Logging
 
 The framework uses custom logging façade
 [Log](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/common/log/Log.java)
 .
+
 
 
 ## Startup
