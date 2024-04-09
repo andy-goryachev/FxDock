@@ -8,6 +8,8 @@
 
 Please refer to [DockDemoApp.java](https://github.com/andy-goryachev/FxDock/blob/master/src/demo/dock/DockDemoApp.java) for an example of how to integrate this library into your project.
 
+
+
 ## Generator
 
 The docking framework operates with two types of objects: 
@@ -15,14 +17,14 @@ The docking framework operates with two types of objects:
 and
 [FxDockPanes](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/fxdock/FxDockPane.java).
 
-There could be only one type of application window (FX Stage), and it must extend FxDockWindow class.  Each window may contain one or more (or zero, if it is a last window) FX Panes, which must extend FxDockPane class.  You can have as many different types of FxDockPanes as you wish, each type identified by a String type ID.
+There could be only one type of application window (FX Stage), and it must extend FxDockWindow class.  Each window may contain one or more (or zero, if it is a last window) panes, which must extend FxDockPane class.  You can have as many different types of FxDockPanes as you wish, each type identified by a String type ID.
 
 Before the framework loads the layout, you must set a 
-[FxDockFramework.Generator](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/fxdock/FxDockFramework.java),
+[FxDockFramework](https://github.com/andy-goryachev/FxDock/blob/master/src/goryachev/fxdock/FxDockFramework.java),
 which creates windows and panes for your application.
 
 Here is an example:
-[DemoGenerator.java](https://github.com/andy-goryachev/FxDock/blob/master/src/demo/dock/DemoDockSchema.java)
+[DemoDockSchema.java](https://github.com/andy-goryachev/FxDock/blob/master/src/demo/dock/DemoDockSchema.java)
 ```java
 /**
  * Demo Schema creates custom dock windows and dock panes.
@@ -106,7 +108,7 @@ The framework uses custom logging façade
 
 Here is an example of startup code (taken from 
 [DockDemoApp](https://github.com/andy-goryachev/FxDock/blob/master/src/demo/dock/DockDemoApp.java)
-.  The framework attempts to load an existing layout first, the proceeds to creating the default window if no prior layout exists:
+).  The framework attempts to load an existing layout first, the proceeds to creating the default window if no prior layout exists:
 
 ```java
 public class DockDemoApp
