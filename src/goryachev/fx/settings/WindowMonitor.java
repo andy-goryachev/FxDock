@@ -4,19 +4,25 @@ import goryachev.common.log.Log;
 import goryachev.common.util.CList;
 import goryachev.common.util.CSet;
 import goryachev.common.util.GlobalSettings;
+import goryachev.fx.ClosingWindowOperation;
 import goryachev.fx.CssLoader;
 import goryachev.fx.FX;
 import goryachev.fx.FxFramework;
 import goryachev.fx.FxObject;
+import goryachev.fx.ShutdownChoice;
 import goryachev.fx.util.FxTools;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
 
 /**
@@ -28,79 +34,89 @@ public class WindowMonitor
 {
 	private static final Log log = Log.get("WindowMonitor");
 	private static final String SEPARATOR = "_";
-	private static final Object WIN_MONITOR_PROP = new Object();
+	private static final Object PROP_CLOSING = new Object();
+	private static final Object PROP_MONITOR = new Object();
+	private static final Object PROP_NON_ESSENTIAL = new Object();
 	/** in reverse order: top window is last */
 	private static final CList<Window> stack = new CList<>();
 	private final static FxObject<Node> lastFocusOwner = new FxObject<>();
+	private static boolean exiting;
+	private static ShutdownChoice shutdownChoice;
 	static { init(); }
 	
 	private final Window window;
 	private final String id;
 	private double x;
 	private double y;
-	private double w;
-	private double h;
+	private double width;
+	private double height;
 	private double xNorm;
 	private double yNorm;
-	private double wNorm;
-	private double hNorm;
+	private double widthNorm;
+	private double heightNorm;
 
 
-	public WindowMonitor(Window win, String id)
+	public WindowMonitor(Window w, String id)
 	{
-		this.window = win;
+		this.window = w;
 		this.id = id;
 
-		x = win.getX();
-		y = win.getY();
-		w = win.getWidth();
-		h = win.getHeight();
-		
-		win.sceneProperty().addListener((src,prev,cur) ->
+		x = w.getX();
+		y = w.getY();
+		width = w.getWidth();
+		height = w.getHeight();
+
+		ChangeListener<Node> focusListener = (s,p,c) ->
 		{
+			updateFocusOwner(c);
+		};
+		
+		w.sceneProperty().addListener((src,prev,cur) ->
+		{
+			if(prev != null)
+			{
+				prev.focusOwnerProperty().removeListener(focusListener);
+			}
+			
 			if(cur != null)
 			{
-				// TODO remove listener!
-				cur.focusOwnerProperty().addListener((s,p,n) ->
-				{
-					updateFocusOwner(n);
-				});
+				cur.focusOwnerProperty().addListener(focusListener);
 			}
 		});
 		
-		win.focusedProperty().addListener((src,prev,cur) ->
+		w.focusedProperty().addListener((src,prev,cur) ->
 		{
 			if(cur)
 			{
-				updateFocusedWindow(win);
+				updateFocusedWindow(w);
 			}
 		});
 
-		win.xProperty().addListener((p) ->
+		w.xProperty().addListener((p) ->
 		{
 			xNorm = x;
-			x = win.getX();
+			x = w.getX();
 		});
 		
-		win.yProperty().addListener((p) ->
+		w.yProperty().addListener((p) ->
 		{
 			yNorm = y;
-			y = win.getY();
+			y = w.getY();
 		});
 		
-		win.widthProperty().addListener((p) ->
+		w.widthProperty().addListener((p) ->
 		{
-			wNorm = w;
-			w = win.getWidth();
+			widthNorm = width;
+			width = w.getWidth();
 		});
 		
-		win.heightProperty().addListener((p) ->
+		w.heightProperty().addListener((p) ->
 		{
-			hNorm = h;
-			h = win.getHeight();
+			heightNorm = height;
+			height = w.getHeight();
 		});
 		
-		if(win instanceof Stage s)
+		if(w instanceof Stage s)
 		{
 			s.iconifiedProperty().addListener((p) ->
 			{
@@ -126,8 +142,8 @@ public class WindowMonitor
 				{
 					x = xNorm;
 					y = yNorm;
-					w = wNorm;
-					h = hNorm;
+					width = widthNorm;
+					height = heightNorm;
 				}
 			});
 		}
@@ -147,7 +163,6 @@ public class WindowMonitor
 						if(!isIgnore(w))
 						{
 							log.debug("added: %s", w);
-							// window is already showing
 							FxFramework.restore(w);
 							applyStyleSheet(w);
 						}
@@ -307,7 +322,7 @@ public class WindowMonitor
 	
 	private static WindowMonitor get(Window w)
 	{
-		Object x = w.getProperties().get(WIN_MONITOR_PROP);
+		Object x = w.getProperties().get(PROP_MONITOR);
 		if(x instanceof WindowMonitor m)
 		{
 			return m;
@@ -318,7 +333,7 @@ public class WindowMonitor
 	
 	private static void set(Window w, WindowMonitor m)
 	{
-		w.getProperties().put(WIN_MONITOR_PROP, m);
+		w.getProperties().put(PROP_MONITOR, m);
 	}
 
 	
@@ -351,13 +366,13 @@ public class WindowMonitor
 	
 	public double getW()
 	{
-		return w;
+		return width;
 	}
 	
 	
 	public double getH()
 	{
-		return h;
+		return height;
 	}
 	
 	
@@ -429,5 +444,159 @@ public class WindowMonitor
 	public static ReadOnlyObjectProperty<Node> lastFocusOwnerProperty()
 	{
 		return lastFocusOwner.getReadOnlyProperty();
+	}
+	
+	
+	public static void setClosingWindowOperation(Window w, ClosingWindowOperation op)
+	{
+		if(op == null)
+		{
+			Object x = w.getProperties().remove(PROP_CLOSING);
+			if(x instanceof CloseRequestListener old)
+			{
+				w.removeEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, old);
+			}
+		}
+		else
+		{
+			CloseRequestListener c = new CloseRequestListener(op);
+			Object x = w.getProperties().put(PROP_CLOSING, c);
+			if(x instanceof CloseRequestListener old)
+			{
+				w.removeEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, old);
+			}
+			w.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, c);
+		}
+	}
+	
+	
+	private static ClosingWindowOperation getClosingWindowOperation(Window w)
+	{
+		Object x = w.getProperties().get(PROP_CLOSING);
+		if(x instanceof CloseRequestListener op)
+		{
+			return op.operation;
+		}
+		return null;
+	}
+	
+	
+	public static void setNonEssentialWindow(Window w)
+	{
+		w.getProperties().put(PROP_NON_ESSENTIAL, Boolean.TRUE);
+	}
+	
+	
+	private static boolean isNonEssentialWindow(Window w)
+	{
+		return Boolean.TRUE.equals(w.getProperties().get(PROP_NON_ESSENTIAL));
+	}
+	
+	
+	private static int countEssentialWindows(Object caller)
+	{
+		int count = 0;
+		for(Window w: stack)
+		{
+			if((caller == w) || isNonEssentialWindow(w))
+			{
+				continue;
+			}
+			count++;
+		}
+		return count;
+	}
+	
+	
+	public static void exit()
+	{
+		if(!exiting)
+		{
+			exiting = true;
+			shutdownChoice = ShutdownChoice.UNDEFINED;
+
+			if(confirmExit())
+			{
+				doExit();
+			}
+			else
+			{
+				exiting = false;
+			}
+		}
+	}
+	
+	
+	private static void doExit()
+	{
+		Platform.exit();
+		System.exit(0);
+	}
+	
+	
+	/** returns true when ok to exit */
+	private static boolean confirmExit()
+	{
+		for(int i=stack.size()-1; i>=0; i--)
+		{
+			Window w = stack.get(i);
+			ClosingWindowOperation op = getClosingWindowOperation(w);
+			if(op != null)
+			{
+				ShutdownChoice rsp = op.confirmClosing(exiting, true, shutdownChoice);
+				switch(rsp)
+				{
+				case DISCARD_ALL:
+				case SAVE_ALL:
+					shutdownChoice = rsp;
+					break;
+				case CONTINUE:
+					break;
+				case CANCEL:
+				case UNDEFINED:
+				default:
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	
+	private static class CloseRequestListener implements EventHandler<WindowEvent>
+	{
+		public final ClosingWindowOperation operation;
+		
+		
+		public CloseRequestListener(ClosingWindowOperation op)
+		{
+			this.operation = op;
+		}
+
+		
+		public void handle(WindowEvent ev)
+		{
+			if(exiting)
+			{
+				// application exit, handled in exit()
+				return;
+			}
+			
+			// user or program closing the window
+			shutdownChoice = ShutdownChoice.UNDEFINED;
+
+			ShutdownChoice rsp = operation.confirmClosing(exiting, false, shutdownChoice);
+			switch(rsp)
+			{
+			case CANCEL:
+				ev.consume();
+				return;
+			}
+			
+			if(countEssentialWindows(ev.getSource()) == 0)
+			{
+				doExit();
+			}
+		}
 	}
 }

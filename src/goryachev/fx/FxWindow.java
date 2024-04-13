@@ -1,43 +1,34 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.fx.settings.WindowMonitor;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 
 /**
- * Fx Window.
- * 
- * It is highly recommended not to show a Window again after it has been closed.
+ * Convenient FX Stage.
  */
 public class FxWindow
 	extends Stage
 {
-	/** 
-	 * Override to ask the user to confirm closing of window.
-	 * Make sure to check if the argument already has the user's choice and
-	 * perform the necessary action.
-	 * If a dialog must be shown, make sure to call toFront().
-	 */
-	public void confirmClosing(OnWindowClosing choice) { }
-	
-	/** closing last essential window exits the application, regardless of the number of open non-essential windows */
-	public boolean isEssentialWindow() { return true; }
-	
-	//
-	
-	protected final BorderPane pane;
+	private final BorderPane contentPane;
 	
 	
 	public FxWindow(String name)
 	{
-		this.pane = new BorderPane();
+		this.contentPane = new BorderPane();
 		FX.setName(this, name);
 		
-		Scene sc = new Scene(pane);
+		Scene sc = new Scene(contentPane);
 		setScene(sc);
+	}
+	
+	
+	protected BorderPane getContentPane()
+	{
+		return contentPane;
 	}
 	
 	
@@ -47,76 +38,63 @@ public class FxWindow
 	}
 	
 	
-	public final FxAction closeWindowAction()
-	{
-		return new FxAction(this::closeWithConfirmation);
-	}
-
-	
-	
 	public void setTop(Node n)
 	{
-		pane.setTop(n);
+		contentPane.setTop(n);
 	}
 	
 	
 	public Node getTop()
 	{
-		return pane.getTop();
+		return contentPane.getTop();
 	}
 	
 	
 	public void setBottom(Node n)
 	{
-		pane.setBottom(n);
+		contentPane.setBottom(n);
 	}
 	
 	
 	public Node getBottom()
 	{
-		return pane.getBottom();
+		return contentPane.getBottom();
 	}
 	
 	
 	public void setLeft(Node n)
 	{
-		pane.setLeft(n);
+		contentPane.setLeft(n);
 	}
 	
 	
 	public Node getLeft()
 	{
-		return pane.getLeft();
+		return contentPane.getLeft();
 	}
 	
 	
 	public void setRight(Node n)
 	{
-		pane.setRight(n);
+		contentPane.setRight(n);
 	}
 	
 	
 	public Node getRight()
 	{
-		return pane.getRight();
+		return contentPane.getRight();
 	}
 	
 	
 	public void setCenter(Node n)
 	{
-		pane.setCenter(n);
+		contentPane.setCenter(n);
 	}
 	
 	
 	public Node getCenter()
 	{
-		return pane.getCenter();
-	}
-	
-	
-	public Parent getContentPane()
-	{
-		return getScene().getRoot();
+		return contentPane.getCenter();
 	}
 	
 	
@@ -142,16 +120,16 @@ public class FxWindow
 		setMaxHeight(height);
 	}
 	
-
-	// TODO change to setClosingPolicy()
-	public void closeWithConfirmation()
+	
+	public void setClosingWindowOperation(ClosingWindowOperation op)
 	{
-		OnWindowClosing ch = new OnWindowClosing(false);
-		confirmClosing(ch);
-		if(!ch.isCancelled())
-		{
-			close();
-		}
+		WindowMonitor.setClosingWindowOperation(this, op);
+	}
+	
+	
+	public void setNonEssentialWindow()
+	{
+		WindowMonitor.setNonEssentialWindow(this);
 	}
 	
 	

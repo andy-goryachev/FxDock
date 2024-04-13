@@ -8,17 +8,15 @@ import javafx.stage.Window;
 
 /**
  * FX Dialogs might be a nice idea, but completely unacceptable:
- * buttons cannot be FxButtons, FxAction cannot be used,
+ * buttons cannot be FxButtons, FxAction cannot be used;
  * too many hoops need to be jumped through to get even a simple dialog 
  * (converters, button types).
  * 
- * This is a different take which uses FxWindow and plugs in into our
- * FX framework.
+ * This class is of a more traditional design which uses a modal FxWindow.
  */
 public class FxDialog
 	extends FxWindow
 {
-	public final FxAction closeDialogAction = new FxAction(this::close);
 	public static final CssStyle PANE = new CssStyle("FxDialog_PANE");
 	
 	
@@ -27,7 +25,7 @@ public class FxDialog
 		super(name);
 		
 		initModality(Modality.APPLICATION_MODAL);
-		FX.style(pane, PANE);
+		FX.style(getContentPane(), PANE);
 
 		Window win = FX.getParentWindow(owner);
 		initOwner(win);
@@ -100,7 +98,7 @@ public class FxDialog
 		double w = getWidth();
 		double h = getHeight();
 		
-		// FIX what's goin on here?
+		// FIX what's going on here?
 		if(isInvalid(w))
 		{
 			w = 400;
@@ -135,6 +133,6 @@ public class FxDialog
 	
 	public void closeOnEscape()
 	{
-		KeyMap.onKeyPressed(pane, KeyCode.ESCAPE, closeDialogAction);
+		KeyMap.onKeyPressed(getContentPane(), KeyCode.ESCAPE, this::close);
 	}
 }

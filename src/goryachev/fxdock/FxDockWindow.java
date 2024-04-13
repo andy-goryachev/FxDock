@@ -1,9 +1,7 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
-import goryachev.fx.FxAction;
 import goryachev.fx.FxDump;
 import goryachev.fx.FxWindow;
-import goryachev.fx.OnWindowClosing;
 import goryachev.fxdock.internal.FxDockRootPane;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -16,17 +14,6 @@ import javafx.scene.layout.BorderPane;
 public class FxDockWindow
 	extends FxWindow
 {
-	/** 
-	 * Override to ask the user to confirm closing of window.
-	 * Make sure to check if the argument already has the user's choice and
-	 * perform the necessary action.
-	 * If a dialog must be shown, make sure to call toFront().
-	 */
-	public void confirmClosing(OnWindowClosing choice) { }
-	
-	//
-	
-	public final FxAction closeWindowAction = new FxAction(this::actionClose);
 	private final BorderPane frame;
 	private final FxDockRootPane root;
 	
@@ -114,16 +101,5 @@ public class FxDockWindow
 	public final Node getRight()
 	{
 		return frame.getRight();
-	}
-
-	
-	protected void actionClose()
-	{
-		OnWindowClosing ch = new OnWindowClosing(false);
-		confirmClosing(ch);
-		if(!ch.isCancelled())
-		{
-			close();
-		}
 	}
 }

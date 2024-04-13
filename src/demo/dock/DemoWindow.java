@@ -10,7 +10,7 @@ import goryachev.fx.FxFramework;
 import goryachev.fx.FxMenu;
 import goryachev.fx.FxMenuBar;
 import goryachev.fx.GlobalBooleanProperty;
-import goryachev.fx.OnWindowClosing;
+import goryachev.fx.ShutdownChoice;
 import goryachev.fx.settings.LocalSettings;
 import goryachev.fxdock.FxDockVersion;
 import goryachev.fxdock.FxDockWindow;
@@ -53,6 +53,70 @@ public class DemoWindow
 		setTitle(DockDemoApp.TITLE + " [" + ++seq + "] " + FxDockVersion.VERSION);
 		
 		LocalSettings.get(this).add("CHECKBOX_MENU", windowCheckAction);
+		
+		// this method illustrates how to handle closing window request
+		setClosingWindowOperation((exiting, multiple, choice) ->
+		{
+			if(!showCloseDialogProperty.get())
+			{
+				return ShutdownChoice.CONTINUE;
+			}
+
+			switch(choice)
+			{
+			case CANCEL: // won't happen
+			case CONTINUE: // won't happen
+			case DISCARD_ALL: // should not call
+				return ShutdownChoice.DISCARD_ALL;
+			case SAVE_ALL:
+				save();
+				return ShutdownChoice.SAVE_ALL;
+			}
+			
+			toFront();
+			
+			// FIX switch to FxDialog
+			Dialog d = new Dialog();
+			d.initOwner(this);
+			d.setTitle("Save Changes?");
+			d.setContentText("This is an example of a dialog shown when closing a window.");
+			
+			Object save = addButton(d, "Save", ButtonBar.ButtonData.OTHER);
+			Object saveAll = null;
+			if(multiple)
+			{
+				saveAll = addButton(d, "Save All", ButtonBar.ButtonData.OTHER);
+			}
+			addButton(d, "Discard", ButtonBar.ButtonData.OTHER);
+			Object discardAll = null;
+			if(multiple)
+			{
+				discardAll = addButton(d, "Discard All", ButtonBar.ButtonData.OTHER);
+			}
+			Object cancel = addButton(d, "Cancel", ButtonBar.ButtonData.APPLY);
+			
+			d.showAndWait();
+			Object rv = d.getResult();
+
+			if(rv == cancel)
+			{
+				return ShutdownChoice.CANCEL;
+			}
+			else if(rv == save)
+			{
+				save();
+			}
+			else if(rv == saveAll)
+			{
+				save();
+				return ShutdownChoice.SAVE_ALL;
+			}
+			else if(rv == discardAll)
+			{
+				return ShutdownChoice.DISCARD_ALL;
+			}
+			return ShutdownChoice.CONTINUE;
+		});
 	}
 	
 	
@@ -63,9 +127,9 @@ public class DemoWindow
 		m.menu("File");
 		m.item("Save Settings", saveSettingsAction);
 		m.separator();
-		m.item("Close Window", closeWindowAction);
+		m.item("Close Window", this::close);
 		m.separator();
-		m.item("Quit Application", FxFramework.exitAction());
+		m.item("Quit Application", FxFramework::exit);
 		// window
 		m.menu("Window");
 		m.item("New Browser", newBrowserAction);
@@ -201,70 +265,6 @@ public class DemoWindow
 		D.print("save");
 	}
 
-
-	// this method illustrates how to handle closing a window,
-	// or closing multiple window when quitting the application.
-	public void confirmClosing(OnWindowClosing ch)
-	{
-		if(!showCloseDialogProperty.get())
-		{
-			return;
-		}
-		
-		if(ch.isSaveAll())
-		{
-			save();
-			return;
-		}
-		else if(ch.isDiscardAll())
-		{
-			return;
-		}
-		
-		toFront();
-		
-		// FIX switch to FxDialog
-		Dialog d = new Dialog();
-		d.initOwner(this);
-		d.setTitle("Save Changes?");
-		d.setContentText("This is an example of a dialog shown when closing a window.");
-		
-		Object save = addButton(d, "Save", ButtonBar.ButtonData.OTHER);
-		Object saveAll = null;
-		if(ch.isClosingMultipleWindows())
-		{
-			saveAll = addButton(d, "Save All", ButtonBar.ButtonData.OTHER);
-		}
-		addButton(d, "Discard", ButtonBar.ButtonData.OTHER);
-		Object discardAll = null;
-		if(ch.isClosingMultipleWindows())
-		{
-			discardAll = addButton(d, "Discard All", ButtonBar.ButtonData.OTHER);
-		}
-		Object cancel = addButton(d, "Cancel", ButtonBar.ButtonData.APPLY);
-		
-		d.showAndWait();
-		Object rv = d.getResult();
-
-		if(rv == cancel)
-		{
-			ch.setCancelled();
-		}
-		else if(rv == save)
-		{
-			save();
-		}
-		else if(rv == saveAll)
-		{
-			ch.setSaveAll();
-			save();
-		}
-		else if(rv == discardAll)
-		{
-			ch.setDiscardAll();
-		}
-	}
-	
 	
 	protected static Object addButton(Dialog d, String text, ButtonBar.ButtonData type)
 	{
