@@ -1,7 +1,10 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 
@@ -14,10 +17,12 @@ import javafx.stage.Window;
  * 
  * This class is of a more traditional design which uses a modal FxWindow.
  */
-public class FxDialog
+public class FxDialog<T>
 	extends FxWindow
 {
 	public static final CssStyle PANE = new CssStyle("FxDialog_PANE");
+	private final BorderPane pane;
+	private T result;
 	
 	
 	public FxDialog(Object owner, String name)
@@ -26,17 +31,24 @@ public class FxDialog
 		
 		initModality(Modality.APPLICATION_MODAL);
 		FX.style(getContentPane(), PANE);
-
-		Window win = FX.getParentWindow(owner);
-		initOwner(win);
 		
-		// TODO center around parent window, but not outside of the current device
-		if(win != null)
+		pane = new BorderPane();
+		setCenter(pane);
+
+		Window w = FX.getParentWindow(owner);
+		initOwner(w);
+		
+		setMinSize(300, 200);
+		
+		if(w != null)
 		{
-			double x = win.getX();
-			double y = win.getY();
-			double w = win.getWidth();
-			double h = win.getHeight();
+			double x = w.getX();
+			double y = w.getY();
+			double width = w.getWidth();
+			double height = w.getHeight();
+			
+			// TODO center around parent window, but not outside of the current device
+			// or move it to FxFramework...
 		}
 	}
 	
@@ -50,50 +62,50 @@ public class FxDialog
 		}
 		
 		FxButtonPane p = new FxButtonPane();
+		p.setPadding(new Insets(10));
 		setBottom(p);
 		return p;
 	}
 	
 	
-//	public FxButton addButton(String text, FxAction a, CssStyle style)
-//	{
-//		FxButton b = new FxButton(text, a, style);
-//		buttonPane().add(b);
-//		return b;
-//	}
-//	
-//	
-//	public FxButton addButton(String text, Runnable r, CssStyle style)
-//	{
-//		FxButton b = new FxButton(text, r, style);
-//		buttonPane().add(b);
-//		return b;
-//	}
-//	
-//	
-//	public FxButton addButton(String text, FxAction a)
-//	{
-//		FxButton b = new FxButton(text, a);
-//		buttonPane().add(b);
-//		return b;
-//	}
-//	
-//	
-//	public FxButton addButton(String text)
-//	{
-//		FxButton b = new FxButton(text, FxAction.DISABLED);
-//		buttonPane().add(b);
-//		return b;
-//	}
-//	
-//	
-//	public void fill()
-//	{
-//		buttonPane().fill();
-//	}
+	protected void setResult(T result)
+	{
+		this.result = result;
+		close();
+	}
 	
 	
-	public void open()
+	public FxButton addButton(String text, CssStyle style, T result)
+	{
+		FxButton b = new FxButton(text, style, () -> setResult(result));
+		buttonPane().add(b);
+		return b;
+	}
+	
+	
+	public FxButton addButton(String text, T result)
+	{
+		FxButton b = new FxButton(text, () -> setResult(result));
+		buttonPane().add(b);
+		return b;
+	}
+	
+	
+	public FxButton addButton(String text)
+	{
+		FxButton b = new FxButton(text, FxAction.DISABLED);
+		buttonPane().add(b);
+		return b;
+	}
+	
+	
+	public void fill()
+	{
+		buttonPane().fill();
+	}
+	
+	
+	public T open(T defaultValue)
 	{
 		double w = getWidth();
 		double h = getHeight();
@@ -113,7 +125,8 @@ public class FxDialog
 		
 		// TODO center over parent, but not to go outside of the screen
 		
-		super.open();
+		super.showAndWait();
+		return result == null ? defaultValue : result;
 	}
 	
 	
@@ -134,5 +147,11 @@ public class FxDialog
 	public void closeOnEscape()
 	{
 		KeyMap.onKeyPressed(getContentPane(), KeyCode.ESCAPE, this::close);
+	}
+
+
+	public void setContentText(String text)
+	{
+		pane.setCenter(new Label(text));
 	}
 }

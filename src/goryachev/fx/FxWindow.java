@@ -109,8 +109,6 @@ public class FxWindow
 	{
 		setMinWidth(width);
 		setMinHeight(height);
-		
-		setSize(width, height);
 	}
 	
 	

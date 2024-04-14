@@ -37,9 +37,9 @@ public class FxToolBar
 	}
 	
 	
-	public FxButton addButton(String text, FxAction a, CssStyle st)
+	public FxButton addButton(String text, CssStyle style, FxAction a)
 	{
-		FxButton b = new FxButton(text, a, st);
+		FxButton b = new FxButton(text, style, a);
 		getItems().add(b);
 		return b;
 	}

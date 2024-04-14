@@ -16,7 +16,7 @@ public class FxButton
 	public static final CssStyle DESTRUCT = new CssStyle("FxButton_DESTRUCT");
 	
 	
-	public FxButton(String text, FxAction a, CssStyle style)
+	public FxButton(String text, CssStyle style, FxAction a)
 	{
 		super(text);
 		a.attach(this);
@@ -31,9 +31,9 @@ public class FxButton
 	}
 	
 	
-	public FxButton(String text, Runnable handler, CssStyle style)
+	public FxButton(String text, CssStyle style, Runnable handler)
 	{
-		this(text, new FxAction(handler), style);
+		this(text, style, new FxAction(handler));
 	}
 	
 	
@@ -54,6 +54,20 @@ public class FxButton
 	{
 		super(text);
 		a.attach(this);
+		FX.setTooltip(this, tooltip);
+	}
+	
+	
+	public FxButton(String text, String tooltip, CssStyle style, FxAction a)
+	{
+		this(text, style, a);
+		FX.setTooltip(this, tooltip);
+	}
+	
+	
+	public FxButton(String text, String tooltip, CssStyle style, Runnable r)
+	{
+		this(text, style, r);
 		FX.setTooltip(this, tooltip);
 	}
 	

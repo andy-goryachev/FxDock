@@ -40,7 +40,8 @@ public class CssStyle
 		if(CssLoader.DUMP)
 		{
 			StackTraceElement s = new Throwable().getStackTrace()[2];
-			return s.getClassName() + "-" + s.getLineNumber() + (name == null ? "" : "-" + name);
+			String c = s.getClassName().replace('.', '_');
+			return c + "-L" + s.getLineNumber() + (name == null ? "" : "-" + name);
 		}
 		else
 		{
