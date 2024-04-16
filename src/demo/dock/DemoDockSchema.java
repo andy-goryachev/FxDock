@@ -1,6 +1,6 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package demo.dock;
-import goryachev.fx.settings.ASettingsStore;
+import goryachev.common.util.ASettingsStore;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockSchema;
 import javafx.stage.Stage;

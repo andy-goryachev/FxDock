@@ -1,5 +1,6 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.settings;
+import goryachev.common.util.ASettingsStore;
 import goryachev.common.util.CMap;
 import goryachev.common.util.SStream;
 import goryachev.fx.Converters;

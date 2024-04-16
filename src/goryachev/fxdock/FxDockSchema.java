@@ -1,9 +1,9 @@
 // Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.common.log.Log;
+import goryachev.common.util.ASettingsStore;
 import goryachev.common.util.SB;
 import goryachev.common.util.SStream;
-import goryachev.fx.settings.ASettingsStore;
 import goryachev.fx.settings.FxSettingsSchema;
 import goryachev.fx.settings.WindowMonitor;
 import goryachev.fxdock.internal.DockTools;
