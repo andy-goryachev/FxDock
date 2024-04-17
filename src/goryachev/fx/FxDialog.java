@@ -39,17 +39,6 @@ public class FxDialog<T>
 		initOwner(w);
 		
 		setMinSize(300, 200);
-		
-		if(w != null)
-		{
-			double x = w.getX();
-			double y = w.getY();
-			double width = w.getWidth();
-			double height = w.getHeight();
-			
-			// TODO center around parent window, but not outside of the current device
-			// or move it to FxFramework...
-		}
 	}
 	
 	
@@ -107,29 +96,31 @@ public class FxDialog<T>
 	
 	public T open(T defaultValue)
 	{
-		double w = getWidth();
-		double h = getHeight();
+//		double w = getWidth();
+//		double h = getHeight();
 		
-		// FIX what's going on here?
-		if(isInvalid(w))
-		{
-			w = 400;
-			setWidth(w);
-		}
+		// FIX what's going on here? dialog is not yet shown:
+		// x,y,w,h are all NaN's.
+//		if(isInvalid(w))
+//		{
+//			w = 400;
+//			setWidth(w);
+//		}
+//		
+//		if(isInvalid(h))
+//		{
+//			h = 300;
+//			setHeight(h);
+//		}
 		
-		if(isInvalid(h))
-		{
-			h = 300;
-			setHeight(h);
-		}
-		
-		// TODO center over parent, but not to go outside of the screen
+		FX.center(this);
 		
 		super.showAndWait();
 		return result == null ? defaultValue : result;
 	}
 	
 	
+	// FIX remove
 	protected static boolean isInvalid(double x)
 	{
 		if(Double.isNaN(x))
@@ -152,6 +143,8 @@ public class FxDialog<T>
 
 	public void setContentText(String text)
 	{
-		pane.setCenter(new Label(text));
+		Label t = new Label(text);
+		t.setPadding(new Insets(10));
+		pane.setCenter(t);
 	}
 }

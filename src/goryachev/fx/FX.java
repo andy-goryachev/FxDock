@@ -10,7 +10,6 @@ import goryachev.fx.internal.CssTools;
 import goryachev.fx.internal.DisconnectableIntegerListener;
 import goryachev.fx.internal.FxStyleHandler;
 import goryachev.fx.internal.ParentWindow;
-import goryachev.fx.settings.FxSettingsSchema;
 import goryachev.fx.table.FxTable;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -53,6 +52,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
@@ -2136,5 +2136,52 @@ public final class FX
 			return s;
 		}
 		return null;
+	}
+	
+	
+	public static void center(Window window)
+	{
+		if(window instanceof Stage w)
+		{
+			if(w.getOwner() instanceof Stage owner)
+			{
+				Parent root = w.getScene().getRoot(); 
+				root.applyCss();
+				root.layout();
+
+				double width = root.prefWidth(-1);
+				double height = root.prefHeight(width);
+
+				Scene ownerScene = owner.getScene();
+				double ownerWidth = ownerScene.getRoot().prefWidth(-1);
+				double ownerHeight = ownerScene.getRoot().prefHeight(ownerWidth);
+				double cascadeOffset = 20;
+
+				double x;
+				if(width < ownerWidth)
+				{
+					x = owner.getX() + (ownerScene.getWidth() - width) / 2.0;
+				}
+				else
+				{
+					x = owner.getX() + cascadeOffset;
+					w.setWidth(width);
+				}
+
+				double y;
+				if(height < ownerHeight)
+				{
+					double titleBarHeight = ownerScene.getY();
+					y = owner.getY() + (titleBarHeight + ownerScene.getHeight() - height) / 2.0;
+				}
+				else
+				{
+					y = owner.getY() + cascadeOffset;
+				}
+
+				w.setX(x);
+				w.setY(y);
+			}
+		}
 	}
 }

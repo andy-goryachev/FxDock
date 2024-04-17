@@ -543,7 +543,9 @@ public class WindowMonitor
 			ClosingWindowOperation op = getClosingWindowOperation(w);
 			if(op != null)
 			{
-				ShutdownChoice rsp = op.confirmClosing(exiting, true, shutdownChoice);
+				int count = countEssentialWindows(null);
+				boolean multiple = count > 1;
+				ShutdownChoice rsp = op.confirmClosing(exiting, multiple, shutdownChoice);
 				switch(rsp)
 				{
 				case DISCARD_ALL:
