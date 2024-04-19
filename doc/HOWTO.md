@@ -6,25 +6,25 @@
 - Implement a generator which creates custom FxDockWindows and FxDockPanes.
 - Load the layout by calling FxFramework.openLayout().
 
-Please refer to [DockDemoApp.java](src/demo/dock/DockDemoApp.java) for an example of how to integrate this library into your project.
+Please refer to [DockDemoApp.java](../src/demo/dock/DockDemoApp.java) for an example of how to integrate this library into your project.
 
 
 
 ## Generator
 
 The docking framework operates with two types of objects: 
-[FxDockWindows](src/goryachev/fxdock/FxDockWindow.java)
+[FxDockWindows](../src/goryachev/fxdock/FxDockWindow.java)
 and
-[FxDockPanes](src/goryachev/fxdock/FxDockPane.java).
+[FxDockPanes](../src/goryachev/fxdock/FxDockPane.java).
 
 There could be only one type of application window (FX Stage), and it must extend FxDockWindow class.  Each window may contain one or more (or zero, if it is a last window) panes, which must extend FxDockPane class.  You can have as many different types of FxDockPanes as you wish, each type identified by a String type ID.
 
 Before the framework loads the layout, you must set a 
-[FxDockSchema](src/goryachev/fxdock/FxDockSchema.java),
+[FxDockSchema](../src/goryachev/fxdock/FxDockSchema.java),
 which creates windows and panes for your application.
 
 Here is an example:
-[DemoDockSchema.java](src/demo/dock/DemoDockSchema.java)
+[DemoDockSchema.java](../src/demo/dock/DemoDockSchema.java)
 ```java
 /**
  * Demo Schema creates custom dock windows and dock panes.
@@ -88,7 +88,7 @@ public class DemoDockSchema
 ## Global Settings
 
 The docking framework uses an implementation of
-[ASettingsStore](src/goryachev/common/util/ASettingsStore.java)
+[ASettingsStore](../src/goryachev/common/util/ASettingsStore.java)
 to store the layout.  This is a facade that can use your custom key-value database to store application-wide settings, or you
 can simply use the file-based implementation provided by `GlobalSettings.instance()`.
 
@@ -97,7 +97,7 @@ can simply use the file-based implementation provided by `GlobalSettings.instanc
 ## Local Settings
 
 The framework also provides a mechanism to store JavaFX properties as a part of the layout.  All you need to do is to add a property to an instance of
-[LocalSettings](src/goryachev/fx/settings/LocalSettings.java)
+[LocalSettings](../src/goryachev/fx/settings/LocalSettings.java)
 which can be obtained from either a `Node` or a `Window` with `LocalSettings.get()`.
 
 
@@ -105,7 +105,7 @@ which can be obtained from either a `Node` or a `Window` with `LocalSettings.get
 ## Logging
 
 The framework uses custom logging façade
-[Log](src/goryachev/common/log/Log.java)
+[Log](../src/goryachev/common/log/Log.java)
 .
 
 
@@ -113,7 +113,7 @@ The framework uses custom logging façade
 ## Startup
 
 Here is an example of startup code (taken from 
-[DockDemoApp](src/demo/dock/DockDemoApp.java)
+[DockDemoApp](../src/demo/dock/DockDemoApp.java)
 ).  The framework attempts to load an existing layout first, the proceeds to creating the default window if no prior layout exists:
 
 ```java
