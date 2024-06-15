@@ -162,6 +162,7 @@ public class WeakList<T>
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		int sz = list.size();

@@ -39,6 +39,7 @@ public class ZQuery
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return getExpression();

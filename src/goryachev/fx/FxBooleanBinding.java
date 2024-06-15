@@ -10,6 +10,7 @@ import javafx.beans.binding.BooleanBinding;
 public abstract class FxBooleanBinding
 	extends BooleanBinding
 {
+	@Override
 	protected abstract boolean computeValue();
 	
 	

@@ -91,6 +91,7 @@ public abstract class CJob
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return getName(); 
@@ -108,6 +109,7 @@ public abstract class CJob
 	}
 	
 	
+	@Override
 	public void run()
 	{
 		if(isCancelled())

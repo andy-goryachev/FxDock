@@ -36,6 +36,7 @@ public class XScrollBar
 	}
 	
 	
+	@Override
 	protected void layoutChildren()
 	{
 		super.layoutChildren();

@@ -122,6 +122,7 @@ public class ObjectCounter<T>
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -139,6 +140,7 @@ public class ObjectCounter<T>
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		int h = FH.hash(ObjectCounter.class);

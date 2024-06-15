@@ -27,6 +27,7 @@ public class ClipPlayer
 			final Clip clip = (Clip)AudioSystem.getLine(info);
 			clip.addLineListener(new LineListener()
 			{
+				@Override
 				public void update(LineEvent ev)
 				{
 					LineEvent.Type t = ev.getType();

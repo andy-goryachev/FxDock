@@ -97,6 +97,7 @@ public class LongArray
 	}
 	
 	
+	@Override
 	public void readExternal(ObjectInput in) throws ClassNotFoundException, IOException
 	{
 		size = in.readInt();
@@ -104,6 +105,7 @@ public class LongArray
 	}
 	
 	
+	@Override
 	public void writeExternal(ObjectOutput out) throws IOException
 	{
 		out.writeInt(size);

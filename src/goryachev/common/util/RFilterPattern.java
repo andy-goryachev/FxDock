@@ -59,6 +59,7 @@ public class RFilterPattern
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return getSpec();
@@ -131,6 +132,7 @@ public class RFilterPattern
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -148,6 +150,7 @@ public class RFilterPattern
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		return RFilterPattern.class.hashCode() ^ spec.hashCode();

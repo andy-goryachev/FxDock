@@ -21,6 +21,7 @@ public class BitStreamReader
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		CKit.close(inp);

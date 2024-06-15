@@ -62,6 +62,7 @@ public class CList<T>
 	
 	
 	// why ArrayList declares this method as protected is unclear
+	@Override
 	public void removeRange(int fromInclusive, int toExclusive)
 	{
 		super.removeRange(fromInclusive,toExclusive);
@@ -77,6 +78,7 @@ public class CList<T>
 	}
 	
 	
+	@Override
 	public Object clone()
 	{
 		return copyCList();
@@ -89,6 +91,7 @@ public class CList<T>
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -118,6 +121,7 @@ public class CList<T>
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		return CList.class.hashCode() ^ super.hashCode();
@@ -192,6 +196,7 @@ public class CList<T>
 	 * keep in mind this method does not distingush between two scenarios:
 	 * when the list is empty and when the last element is null.
 	 */
+	@Override
 	public T getLast()
 	{
 		if(size() > 0)
@@ -203,6 +208,7 @@ public class CList<T>
 	
 	
 	/** removes last element */
+	@Override
 	public T removeLast()
 	{
 		int ix = size() - 1;

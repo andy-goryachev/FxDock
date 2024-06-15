@@ -28,6 +28,7 @@ public abstract class FormatField
 	{
 		return new FormatField()
 		{
+			@Override
 			public void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 			{
 				// TODO need to propagate needsCaller flag!
@@ -49,6 +50,7 @@ public abstract class FormatField
 			}
 
 
+			@Override
 			public boolean needsCaller()
 			{
 				return true;
@@ -65,6 +67,7 @@ public abstract class FormatField
 
 		return new FormatField()
 		{
+			@Override
 			public void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 			{
 				LocalDateTime t = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), tz);
@@ -80,6 +83,7 @@ public abstract class FormatField
 		// TODO is this needed?
 		return new FormatField()
 		{
+			@Override
 			public void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 			{
 				if(err != null)
@@ -97,6 +101,7 @@ public abstract class FormatField
 	{
 		return new FormatField()
 		{
+			@Override
 			public void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 			{
 				sb.append(level);
@@ -110,6 +115,7 @@ public abstract class FormatField
 	{
 		return new FormatField()
 		{
+			@Override
 			public void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 			{
 				if(caller == null)
@@ -124,6 +130,7 @@ public abstract class FormatField
 			}
 			
 			
+			@Override
 			public boolean needsCaller()
 			{
 				return true;
@@ -137,6 +144,7 @@ public abstract class FormatField
 	{
 		return new FormatField()
 		{
+			@Override
 			public void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 			{
 				if(caller == null)
@@ -151,6 +159,7 @@ public abstract class FormatField
 			}
 
 
+			@Override
 			public boolean needsCaller()
 			{
 				return true;
@@ -164,6 +173,7 @@ public abstract class FormatField
 	{
 		return new FormatField()
 		{
+			@Override
 			public void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 			{
 				sb.append(msg);
@@ -176,6 +186,7 @@ public abstract class FormatField
 	{
 		return new FormatField()
 		{
+			@Override
 			public void format(SB sb, LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 			{
 				sb.append(text);

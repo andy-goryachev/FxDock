@@ -576,6 +576,7 @@ public class WindowMonitor
 		}
 
 		
+		@Override
 		public void handle(WindowEvent ev)
 		{
 			if(exiting)

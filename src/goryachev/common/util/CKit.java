@@ -2521,12 +2521,14 @@ public final class CKit
 				private int ix;
 				
 				
+				@Override
 				public boolean hasNext()
 				{
 					return ix < items.length;
 				}
 
 				
+				@Override
 				public T next()
 				{
 					return items[ix++];

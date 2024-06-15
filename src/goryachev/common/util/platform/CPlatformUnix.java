@@ -7,6 +7,7 @@ import java.io.File;
 public class CPlatformUnix
 	extends CPlatform
 {
+	@Override
 	protected File getSettingsFolderPrivate()
 	{
 		return new File(getUserHome(), "." + SETTINGS_FOLDER);

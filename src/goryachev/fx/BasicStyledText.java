@@ -27,24 +27,28 @@ public class BasicStyledText
 	}
 
 
+	@Override
 	public String getPlainText()
 	{
 		return text;
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return getPlainText();
 	}
 
 
+	@Override
 	public int getTextLength()
 	{
 		return text.length();
 	}
 
 
+	@Override
 	public TextCellStyle getCellStyle(int ix)
 	{
 		Color fg = getForeground(ix);
@@ -82,12 +86,14 @@ public class BasicStyledText
 	}
 
 
+	@Override
 	public Color getLineColor()
 	{
 		return null;
 	}
 
 
+	@Override
 	public char charAt(int ix)
 	{
 		return text.charAt(ix);

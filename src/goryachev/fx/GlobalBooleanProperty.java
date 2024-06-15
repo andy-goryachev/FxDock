@@ -30,18 +30,21 @@ public class GlobalBooleanProperty
 
 
 	/** who knows what this is for */
+	@Override
 	public Object getBean()
 	{
 		return null;
 	}
 
 
+	@Override
 	public String getName()
 	{
 		return key;
 	}
 	
 	
+	@Override
 	public StringConverter<Boolean> getConverter()
 	{
 		return Converters.BOOLEAN();

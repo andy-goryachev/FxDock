@@ -281,6 +281,7 @@ public class IntHashtable<T>
 	// Creates a clone of the hashtable. A shallow copy is made,
 	// the keys and elements themselves are NOT cloned. This is a
 	// relatively expensive operation.
+	@Override
 	public synchronized Object clone()
 	{
 		try
@@ -301,6 +302,7 @@ public class IntHashtable<T>
 	}
 
 
+	@Override
 	public synchronized String toString()
 	{
 		int max = size() - 1;
@@ -336,6 +338,7 @@ public class IntHashtable<T>
 		private static final long serialVersionUID = 1;
 		
 		
+		@Override
 		protected Object clone()
 		{
 			Entry<T> entry = new Entry<T>();
@@ -367,6 +370,7 @@ public class IntHashtable<T>
 		}
 		
 		
+		@Override
 		public boolean hasMoreElements()
 		{
 			if(entry != null)
@@ -386,6 +390,7 @@ public class IntHashtable<T>
 		}
 
 
+		@Override
 		public Object nextElement()
 		{
 			if(entry == null)

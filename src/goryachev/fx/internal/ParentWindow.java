@@ -29,6 +29,7 @@ public class ParentWindow
 	{
 		sceneListener = new ChangeListener<Scene>()
 		{
+			@Override
 			public void changed(ObservableValue<? extends Scene> observable, Scene prev, Scene cur)
 			{
 				handleSceneChange(prev, cur);
@@ -81,6 +82,7 @@ public class ParentWindow
 	{
 		return new ChangeListener<Boolean>()
 		{
+			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean prev, Boolean cur)
 			{
 				handleShowingChange(w, cur);

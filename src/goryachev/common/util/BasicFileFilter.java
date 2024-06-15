@@ -9,8 +9,22 @@ import java.util.StringTokenizer;
 public abstract class BasicFileFilter
 	implements FileFilter
 {
-	public static final FileFilter ACCEPT = new FileFilter() { public boolean accept(File f) { return true; } };
-	public static final FileFilter DENY = new FileFilter() { public boolean accept(File f) { return false; } };
+	public static final FileFilter ACCEPT = new FileFilter()
+	{
+		@Override
+		public boolean accept(File f)
+		{
+			return true;
+		}
+	};
+	public static final FileFilter DENY = new FileFilter()
+	{
+		@Override
+		public boolean accept(File f)
+		{
+			return false;
+		}
+	};
 
 
 	//
@@ -26,6 +40,7 @@ public abstract class BasicFileFilter
 		{
 			return new BasicFileFilter()
 			{
+				@Override
 				public boolean accept(File f)
 				{
 					if(f != null)
@@ -100,6 +115,7 @@ public abstract class BasicFileFilter
 		}
 
 
+		@Override
 		public boolean accept(File f)
 		{
 			String name = f.getName().toLowerCase();
@@ -117,6 +133,7 @@ public abstract class BasicFileFilter
 		}
 		
 		
+		@Override
 		public String toString()
 		{
 			StringBuilder sb = new StringBuilder();
@@ -155,6 +172,7 @@ public abstract class BasicFileFilter
 		}
 		
 
+		@Override
 		public int match(String text, int start)
 		{
 			if(text.startsWith(pattern, start))
@@ -168,6 +186,7 @@ public abstract class BasicFileFilter
 		}
 		
 		
+		@Override
 		public void dump(StringBuilder sb)
 		{
 			sb.append("<M:").append(pattern).append(">");
@@ -190,6 +209,7 @@ public abstract class BasicFileFilter
 		
 		
 		// returns -1 if no match, otherwise the next position
+		@Override
 		public int match(String text, int start)
 		{
 			int ix = text.indexOf(pattern, start); 
@@ -204,6 +224,7 @@ public abstract class BasicFileFilter
 		}
 		
 		
+		@Override
 		public void dump(StringBuilder sb)
 		{
 			sb.append("<W:").append(pattern).append(">");
@@ -217,6 +238,7 @@ public abstract class BasicFileFilter
 	// matches any character - "?"
 	protected static class AnyCharMatcher extends SegmentMatcher
 	{
+		@Override
 		public int match(String text, int start)
 		{
 			int ix = start + 1;
@@ -231,6 +253,7 @@ public abstract class BasicFileFilter
 		}
 		
 		
+		@Override
 		public void dump(StringBuilder sb)
 		{
 			sb.append("<A>");
@@ -244,12 +267,14 @@ public abstract class BasicFileFilter
 	// matches end of text 
 	protected static class EndMatcher extends SegmentMatcher
 	{
+		@Override
 		public int match(String text, int start)
 		{
 			return (start == text.length() ? start : -1);
 		}
 		
 		
+		@Override
 		public void dump(StringBuilder sb)
 		{
 			sb.append("<E>");

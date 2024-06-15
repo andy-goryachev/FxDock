@@ -20,18 +20,21 @@ public class BitStream
 	}
 	
 	
+	@Override
 	public int getIndex()
 	{
 		return index;
 	}
 	
 	
+	@Override
 	public boolean hasMoreBits()
 	{
 		return (index < (bytes.length * 8));
 	}
 	
 	
+	@Override
 	public int nextBits(int count) throws Exception
 	{
 		int d = 0;
@@ -44,6 +47,7 @@ public class BitStream
 	}
 		
 	
+	@Override
 	public int nextBit() throws Exception
 	{
 		int byteIndex = index/8;
@@ -65,6 +69,7 @@ public class BitStream
 	}
 	
 	
+	@Override
 	public void skip(int bits)
 	{
 		if(bits < 0)

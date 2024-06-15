@@ -33,24 +33,28 @@ public interface IMessageDigest
 			
 			return new IMessageDigest()
 			{
+				@Override
 				public void update(byte[] buf, int offset, int length)
 				{
 					md.update(buf, offset, length);
 				}
 				
 				
+				@Override
 				public void update(byte b)
 				{
 					md.update(b);
 				}
 				
 				
+				@Override
 				public void reset()
 				{
 					md.reset();
 				}
 				
 				
+				@Override
 				public byte[] digest()
 				{
 					return md.digest();

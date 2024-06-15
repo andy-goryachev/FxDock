@@ -24,6 +24,7 @@ public class PositionTrackingInputStream
 	}
 
 
+	@Override
 	public int read() throws IOException
 	{
 		int r = in.read();
@@ -35,6 +36,7 @@ public class PositionTrackingInputStream
 	}
 
 
+	@Override
 	public int read(byte b[]) throws IOException
 	{
 		int r = in.read(b);
@@ -46,6 +48,7 @@ public class PositionTrackingInputStream
 	}
 
 
+	@Override
 	public int read(byte b[], int off, int len) throws IOException
 	{
 		int r = in.read(b, off, len);
@@ -57,6 +60,7 @@ public class PositionTrackingInputStream
 	}
 
 
+	@Override
 	public long skip(long n) throws IOException
 	{
 		long r = in.skip(n);
@@ -65,30 +69,35 @@ public class PositionTrackingInputStream
 	}
 
 
+	@Override
 	public int available() throws IOException
 	{
 		return in.available();
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		in.close();
 	}
 
 
+	@Override
 	public synchronized void mark(int readlimit)
 	{
 		in.mark(readlimit);
 	}
 
 
+	@Override
 	public synchronized void reset() throws IOException
 	{
 		in.reset();
 	}
 
 
+	@Override
 	public boolean markSupported()
 	{
 		return in.markSupported();

@@ -27,6 +27,7 @@ public class ConsoleAppender
 	}
 	
 
+	@Override
 	public void emit(String s)
 	{
 		out.println(s);

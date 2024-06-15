@@ -21,9 +21,13 @@ public class LogUtil
 	{
 		return new ILogConfig()
 		{
+			@Override
 			public boolean isVerbose() { return true; }
+			@Override
 			public LogLevel getLogLevel(String name) { return LogLevel.OFF; }
+			@Override
 			public LogLevel getDefaultLogLevel() { return LogLevel.OFF; }
+			@Override
 			public List<IAppender> getAppenders() { return null; }
 		};
 	}

@@ -42,12 +42,14 @@ public class CFileSettings
 	}
 
 
+	@Override
 	public String getProperty(String key)
 	{
 		return properties.getProperty(key);
 	}
 
 
+	@Override
 	public void setProperty(String key, String value)
 	{
 		if(value == null)
@@ -61,6 +63,7 @@ public class CFileSettings
 	}
 
 
+	@Override
 	public CList<String> getPropertyNames()
 	{
 		return new CList<String>(properties.stringPropertyNames());
@@ -87,6 +90,7 @@ public class CFileSettings
 	}
 	
 
+	@Override
 	public void save() throws Exception
 	{
 		save(getFile());

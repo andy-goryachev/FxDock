@@ -32,6 +32,7 @@ public class JavaVersion
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -50,6 +51,7 @@ public class JavaVersion
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		int h = FH.hash(JavaVersion.class);
@@ -57,6 +59,7 @@ public class JavaVersion
 	}
 	
 	
+	@Override
 	public int compareTo(JavaVersion v)
 	{
 		int n = Math.min(ver.length, v.ver.length);
@@ -74,6 +77,7 @@ public class JavaVersion
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return version;

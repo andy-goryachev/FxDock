@@ -133,6 +133,7 @@ public class TestRunner
 		{
 			CJob job = new CJob("test " + CKit.getSimpleName(c))
 			{
+				@Override
 				protected void process() throws Exception
 				{
 					try
@@ -187,6 +188,7 @@ public class TestRunner
 		{
 			CJob job = new CJob(parent, "test " + CKit.getSimpleName(c) + "." + m)
 			{
+				@Override
 				protected void process() throws Exception
 				{
 					executeInstance(c, m, before, after);
@@ -339,6 +341,7 @@ public class TestRunner
 		}
 		
 	
+		@Override
 		public String toString()
 		{
 			return getName();
@@ -383,6 +386,7 @@ public class TestRunner
 		}
 	
 	
+		@Override
 		public int compareTo(RunEntry x)
 		{
 			return getName().compareTo(x.getName());

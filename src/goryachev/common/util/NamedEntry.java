@@ -16,12 +16,14 @@ public class NamedEntry
 	}
 	
 	
+	@Override
 	public String getName()
 	{
 		return name;
 	}
 	
 	
+	@Override
 	public String getStringValue()
 	{
 		return value;

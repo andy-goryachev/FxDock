@@ -38,12 +38,14 @@ public abstract class AppenderBase
 	}
 	
 	
+	@Override
 	public int getThreshold()
 	{
 		return threshold;
 	}
 	
 	
+	@Override
 	public boolean needsCaller()
 	{
 		return formatter.needsCaller();
@@ -56,6 +58,7 @@ public abstract class AppenderBase
 	}
 	
 	
+	@Override
 	public void append(LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 	{
 		if(level.ordinal() >= threshold)

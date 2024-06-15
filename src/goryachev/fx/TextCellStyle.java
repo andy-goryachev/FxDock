@@ -52,6 +52,7 @@ public class TextCellStyle
 	}
 	
 	
+	@Override
 	public Object clone()
 	{
 		return new TextCellStyle(textColor, backgroundColor, bold, italic, strikeThrough, underscore);
@@ -81,6 +82,7 @@ public class TextCellStyle
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -102,6 +104,7 @@ public class TextCellStyle
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		int h = FH.hash(TextCellStyle.class);

@@ -57,6 +57,7 @@ public class CMap<K,V>
 	}
 	
 	
+	@Override
 	public Object clone()
 	{
 		return copyCMap();

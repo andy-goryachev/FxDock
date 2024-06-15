@@ -43,6 +43,7 @@ public abstract class QuerySegment
 		}
 		
 		
+		@Override
 		public boolean isMatch(String s)
 		{
 			s = normalize(s);
@@ -50,12 +51,14 @@ public abstract class QuerySegment
 		}
 		
 		
+		@Override
 		public String toString()
 		{
 			return "I." + pattern; 
 		}
 
 
+		@Override
 		public int indexOf(String s, int fromIndex)
 		{
 			s = normalize(s);
@@ -63,6 +66,7 @@ public abstract class QuerySegment
 		}
 
 
+		@Override
 		public int length()
 		{
 			return pattern.length();
@@ -85,24 +89,28 @@ public abstract class QuerySegment
 		}
 		
 		
+		@Override
 		public boolean isMatch(String s)
 		{
 			return s.contains(pattern);
 		}
 		
 		
+		@Override
 		public String toString()
 		{
 			return "E." + pattern; 
 		}
 		
 		
+		@Override
 		public int indexOf(String s, int fromIndex)
 		{
 			return s.indexOf(pattern, fromIndex);
 		}
 		
 		
+		@Override
 		public int length()
 		{
 			return pattern.length();
@@ -125,6 +133,7 @@ public abstract class QuerySegment
 		}
 		
 		
+		@Override
 		public boolean isMatch(String s)
 		{
 			s = normalize(s);
@@ -132,12 +141,14 @@ public abstract class QuerySegment
 		}
 		
 		
+		@Override
 		public String toString()
 		{
 			return "X." + pattern; 
 		}
 		
 		
+		@Override
 		public int indexOf(String s, int fromIndex)
 		{
 			s = normalize(s);
@@ -145,6 +156,7 @@ public abstract class QuerySegment
 		}
 		
 		
+		@Override
 		public int length()
 		{
 			return pattern.length();
@@ -168,24 +180,28 @@ public abstract class QuerySegment
 		}
 		
 		
+		@Override
 		public boolean isMatch(String s)
 		{
 			return s.contains(pattern);
 		}
 		
 		
+		@Override
 		public String toString()
 		{
 			return "XE." + pattern; 
 		}
 		
 		
+		@Override
 		public int indexOf(String s, int fromIndex)
 		{
 			return s.indexOf(pattern, fromIndex);
 		}
 		
 		
+		@Override
 		public int length()
 		{
 			return pattern.length();

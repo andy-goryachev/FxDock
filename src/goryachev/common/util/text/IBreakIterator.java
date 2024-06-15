@@ -39,18 +39,21 @@ public interface IBreakIterator
 	{
 		return new IBreakIterator()
 		{
+			@Override
 			public void setText(String text)
 			{
 				br.setText(text);
 			}
 
 
+			@Override
 			public int first()
 			{
 				return br.first();
 			}
 
 
+			@Override
 			public int next()
 			{
 				int rv = br.next();
@@ -62,6 +65,7 @@ public interface IBreakIterator
 			}
 			
 			
+			@Override
 			public IBreakIterator copy()
 			{
 				return (IBreakIterator)br.clone();

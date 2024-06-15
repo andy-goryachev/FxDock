@@ -38,6 +38,7 @@ public class CompoundKey
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -55,6 +56,7 @@ public class CompoundKey
 	}
 
 
+	@Override
 	public int hashCode()
 	{
 		if(hash == 0)

@@ -11,5 +11,6 @@ import javafx.util.Callback;
 public abstract class FxTreeTableCellFactory<T>
 	implements Callback<TreeTableColumn<T,T>, TreeTableCell<T,T>>
 {
+	@Override
 	public abstract TreeTableCell<T,T> call(TreeTableColumn<T,T> col);
 }

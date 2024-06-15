@@ -424,6 +424,7 @@ public abstract class FxSettingsSchema
 		{
 			node.sceneProperty().addListener(new ChangeListener<Scene>()
 			{
+				@Override
 				public void changed(ObservableValue<? extends Scene> src, Scene old, Scene sc)
 				{
 					if(sc != null)

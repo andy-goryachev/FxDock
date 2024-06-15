@@ -48,6 +48,7 @@ public class FxSize
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -66,6 +67,7 @@ public class FxSize
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		int h = FH.hash(FxSize.class.hashCode(), width);

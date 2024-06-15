@@ -14,9 +14,12 @@ public class TextTools
 	{
 		public boolean isSeparator(char c);
 	}
-	public static final SeparatorFunction NOT_LETTER_OR_DIGIT = new SeparatorFunction() { public boolean isSeparator(char c) { return !Character.isLetterOrDigit(c); }};
-	public static final SeparatorFunction ANY_BLANK = new SeparatorFunction() { public boolean isSeparator(char c) { return CKit.isBlank(c); }};
-	public static final SeparatorFunction BLANK_OR_PUNCT = new SeparatorFunction() { public boolean isSeparator(char c) { return isBlankOrPunctuation(c); }};
+	public static final SeparatorFunction NOT_LETTER_OR_DIGIT = new SeparatorFunction() { @Override
+	public boolean isSeparator(char c) { return !Character.isLetterOrDigit(c); }};
+	public static final SeparatorFunction ANY_BLANK = new SeparatorFunction() { @Override
+	public boolean isSeparator(char c) { return CKit.isBlank(c); }};
+	public static final SeparatorFunction BLANK_OR_PUNCT = new SeparatorFunction() { @Override
+	public boolean isSeparator(char c) { return isBlankOrPunctuation(c); }};
 	
 	//
 

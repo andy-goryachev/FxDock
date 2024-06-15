@@ -199,30 +199,35 @@ public class GlobalSettings
 				{
 					store = new ASettingsStore()
 					{
+						@Override
 						public void setString(String key, String val)
 						{
 							GlobalSettings.setString(key, val);
 						}
 						
 						
+						@Override
 						public void setStream(String key, SStream stream)
 						{
 							GlobalSettings.setStream(key, stream);
 						}
 						
 						
+						@Override
 						public void save()
 						{
 							GlobalSettings.save();
 						}
 						
 						
+						@Override
 						public String getString(String key)
 						{
 							return GlobalSettings.getString(key);
 						}
 						
 						
+						@Override
 						public SStream getStream(String key)
 						{
 							return GlobalSettings.getStream(key);

@@ -151,30 +151,35 @@ public class HPane
 	}
 
 	
+	@Override
 	protected double computePrefWidth(double height)
 	{
 		return h().computeSizes(true);
 	}
 	
 
+	@Override
 	protected double computeMinWidth(double height)
 	{
 		return h().computeSizes(false);
 	}
 	
 	
+	@Override
 	protected double computePrefHeight(double width)
 	{
 		return h().computeHeight(width, true);
 	}
 
 	
+	@Override
 	protected double computeMinHeight(double width)
 	{
 		return h().computeHeight(width, false);
 	}
 	
 	
+	@Override
 	protected void layoutChildren()
 	{
 		try

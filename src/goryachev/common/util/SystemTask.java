@@ -30,6 +30,7 @@ public abstract class SystemTask
 	{
 		return new SystemTask()
 		{
+			@Override
 			protected void systemTaskBody() throws Exception
 			{
 				r.run();
@@ -42,6 +43,7 @@ public abstract class SystemTask
 	{
 		new SystemTask()
 		{
+			@Override
 			protected void systemTaskBody() throws Exception
 			{
 				r.run();
@@ -54,6 +56,7 @@ public abstract class SystemTask
 	{
 		new SystemTask()
 		{
+			@Override
 			protected void systemTaskBody() throws Exception
 			{
 				r.run();
@@ -92,6 +95,7 @@ public abstract class SystemTask
 	}
 	
 	
+	@Override
 	public final void run()
 	{
 		try

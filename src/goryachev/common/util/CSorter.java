@@ -38,6 +38,7 @@ public class CSorter
 		{
 			Arrays.sort(a, new Comparator<T>()
 			{
+				@Override
 				public int compare(T a, T b)
 				{
 					return compareItems(a, b, conv);
@@ -54,6 +55,7 @@ public class CSorter
 		{
 			Collections.sort(a, new Comparator<T>()
 			{
+				@Override
 				public int compare(T a, T b)
 				{
 					return compareItems(a, b, conv);
@@ -113,6 +115,7 @@ public class CSorter
 				private final Collator collator = Collator.getInstance();
 				
 				
+				@Override
 				public int compare(T a, T b)
 				{
 					return collateItems(a, b, collator, conv);
@@ -132,6 +135,7 @@ public class CSorter
 				private final Collator collator = Collator.getInstance();
 				
 				
+				@Override
 				public int compare(T a, T b)
 				{
 					return collateItems(a, b, collator, conv);
@@ -219,6 +223,7 @@ public class CSorter
 	{
 		return new Comparator<Object>()
 		{
+			@Override
 			public int compare(Object a, Object b)
 			{
 				int rv = smartCompare(a,b);
@@ -293,6 +298,7 @@ public class CSorter
 			private Collator collator = Collator.getInstance();
 			
 			
+			@Override
 			public int compare(Object a, Object b)
 			{
 				String sa = toStringValue(a);

@@ -22,9 +22,13 @@ public class CSettings
 	
 	public static final Provider NONE = new Provider()
 	{
+		@Override
 		public String getProperty(String key) { return null; }
+		@Override
 		public void setProperty(String key, String value) { }
+		@Override
 		public CList<String> getPropertyNames() { return new CList(0); }
+		@Override
 		public void save() throws Exception { }
 	};
 	private Provider provider = NONE;
@@ -38,9 +42,13 @@ public class CSettings
 			{
 				protected final Hashtable<String,Object> settings = new Hashtable();
 
+				@Override
 				public String getProperty(String key) { return Parsers.parseString(settings.get(key)); }
+				@Override
 				public void setProperty(String key, String value) { settings.put(key, value); }
+				@Override
 				public CList<String> getPropertyNames() { return new CList(settings.keySet()); }
+				@Override
 				public void save() throws Exception { }
 			});
 		};

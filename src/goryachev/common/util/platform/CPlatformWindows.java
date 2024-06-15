@@ -43,6 +43,7 @@ public class CPlatformWindows
 	}
 	
 	
+	@Override
 	@Deprecated
 	public File getDefaultSettingsFolder()
 	{
@@ -50,6 +51,7 @@ public class CPlatformWindows
 	}
 
 
+	@Override
 	protected File getSettingsFolderPrivate()
 	{
 		// TODO "Documents"?

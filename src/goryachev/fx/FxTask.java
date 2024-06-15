@@ -16,6 +16,7 @@ public class FxTask<T>
 	}
 	
 	
+	@Override
 	protected void handleSuccess(T result)
 	{
 		if(onSuccess != null)
@@ -25,6 +26,7 @@ public class FxTask<T>
 	}
 	
 	
+	@Override
 	protected void handleError(Throwable e)
 	{
 		if(onError == null)
@@ -38,6 +40,7 @@ public class FxTask<T>
 	}
 	
 	
+	@Override
 	protected void handleFinish()
 	{
 		if(onFinish != null)

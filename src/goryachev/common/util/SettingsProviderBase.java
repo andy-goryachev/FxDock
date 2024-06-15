@@ -27,6 +27,7 @@ public abstract class SettingsProviderBase
 	}
 	
 	
+	@Override
 	public synchronized List<String> getKeys()
 	{
 		return data.keys();
@@ -90,12 +91,14 @@ public abstract class SettingsProviderBase
 	}
 	
 	
+	@Override
 	public String getString(String key)
 	{
 		return getStringPrivate(key);
 	}
 
 
+	@Override
 	public synchronized void setString(String key, String val)
 	{
 		if(val == null)
@@ -111,6 +114,7 @@ public abstract class SettingsProviderBase
 	}
 
 
+	@Override
 	public SStream getStream(String key)
 	{
 		String[] ss = getArrayPrivate(key);
@@ -118,6 +122,7 @@ public abstract class SettingsProviderBase
 	}
 
 
+	@Override
 	public synchronized void setStream(String key, SStream s)
 	{
 		String[] ss = s.toArray();
@@ -316,6 +321,7 @@ public abstract class SettingsProviderBase
 	}
 	
 	
+	@Override
 	public final void save()
 	{
 		saveSettings();

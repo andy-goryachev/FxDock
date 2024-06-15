@@ -13,6 +13,7 @@ public class Choices<T>
 		protected C choice;
 		protected String text;
 		
+		@Override
 		public String toString() { return text; }
 	}
 	

@@ -30,18 +30,21 @@ public class GlobalDoubleProperty
 
 
 	/** who knows what this is for */
+	@Override
 	public Object getBean()
 	{
 		return null;
 	}
 
 
+	@Override
 	public String getName()
 	{
 		return key;
 	}
 	
 	
+	@Override
 	public StringConverter<Number> getConverter()
 	{
 		return Converters.NUMBER_DOUBLE();

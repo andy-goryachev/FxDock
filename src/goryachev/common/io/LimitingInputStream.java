@@ -20,6 +20,7 @@ public class LimitingInputStream
 	}
 
 
+	@Override
 	public int read() throws IOException
 	{
 		if(read < length)
@@ -35,6 +36,7 @@ public class LimitingInputStream
 	}
 
 
+	@Override
 	public int read(byte b[], int off, int len) throws IOException
 	{
 		int rv;

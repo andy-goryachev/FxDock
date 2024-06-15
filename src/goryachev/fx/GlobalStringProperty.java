@@ -30,18 +30,21 @@ public class GlobalStringProperty
 
 
 	/** who knows what this is for */
+	@Override
 	public Object getBean()
 	{
 		return null;
 	}
 
 
+	@Override
 	public String getName()
 	{
 		return key;
 	}
 	
 	
+	@Override
 	public StringConverter<String> getConverter()
 	{
 		return Converters.STRING();

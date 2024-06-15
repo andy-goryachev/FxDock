@@ -131,6 +131,7 @@ public class FxWindow
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return "FxWindow{" + FX.getName(this) + "." + hashCode() + "}";

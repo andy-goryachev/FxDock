@@ -65,6 +65,7 @@ public class SStream
 	}
 
 
+	@Override
 	public Iterator<String> iterator()
 	{
 		return list.iterator();
@@ -122,6 +123,7 @@ public class SStream
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return list.toString();

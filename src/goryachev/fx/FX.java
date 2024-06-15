@@ -59,6 +59,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
@@ -582,33 +583,38 @@ public final class FX
 	
 	
 	/** 
-	 * returns parent window or null, accepts either a Node or a Window.
-	 * unfortunately, FX Window is not a Node, so we have to lose some type safety 
+	 * Returns parent window or null.
+	 * Accepts either a Node, a Window, or a MenuItem.
 	 */
-	public static Window getParentWindow(Object nodeOrWindow)
+	public static Window getParentWindow(Object x)
 	{
-		if(nodeOrWindow == null)
+		if(x == null)
 		{
 			return null;
 		}
-		else if(nodeOrWindow instanceof Window)
+		else if(x instanceof Window w)
 		{
-			return (Window)nodeOrWindow;
+			return w;
 		}
-		else if(nodeOrWindow instanceof Node)
+		else if(x instanceof Node n)
 		{
-			Scene s = ((Node)nodeOrWindow).getScene();
+			Scene s = n.getScene();
 			if(s != null)
 			{
 				return s.getWindow();
 			}
 			return null;
 		}
+		else if(x instanceof MenuItem m)
+		{
+			ContextMenu cm = m.getParentPopup();
+			return cm == null ? null : cm.getOwnerWindow();
+		}
 		else
 		{
-			throw new Error("node or window");
+			throw new Error("node, window, or menu item " + x);
 		}
-	}
+	}	
 	
 	
 	/** shortcut for Platform.runLater() */
@@ -1175,6 +1181,7 @@ public final class FX
 							// clicks on the owner node
 							EventHandler<MouseEvent> li = new EventHandler<MouseEvent>()
 							{
+								@Override
 								public void handle(MouseEvent event)
 								{
 									m.hide();
@@ -1228,6 +1235,7 @@ public final class FX
 	{
 		p.addListener(new ChangeListener<T>()
 		{
+			@Override
 			public void changed(ObservableValue<? extends T> observable, T old, T cur)
 			{
 				c.accept(cur);
@@ -1499,6 +1507,7 @@ public final class FX
 	{
 		p.addListener(new InvalidationListener()
 		{
+			@Override
 			public void invalidated(Observable observable)
 			{
 				r.run();
@@ -1755,18 +1764,21 @@ public final class FX
 	{
 		return new TransformationList<T,S>(source)
 		{
+			@Override
 			public int getSourceIndex(int index)
 			{
 				return index;
 			}
 			
 			
+			@Override
 			public int getViewIndex(int index)
 			{
 				return index;
 			}
 
 
+			@Override
 			public T get(int index)
 			{
 				S src = getSource().get(index);
@@ -1774,16 +1786,19 @@ public final class FX
 			}
 
 
+			@Override
 			public int size()
 			{
 				return getSource().size();
 			}
 			
 			
+			@Override
 			protected void sourceChanged(Change<? extends S> c)
 			{
 				fireChange(new Change<T>(this)
 				{
+					@Override
 					public List<T> getRemoved()
 					{
 						ArrayList<T> rv = new ArrayList<>(c.getRemovedSize());
@@ -1795,66 +1810,77 @@ public final class FX
 					}
 					
 
+					@Override
 					public boolean wasAdded()
 					{
 						return c.wasAdded();
 					}
 
 
+					@Override
 					public boolean wasRemoved()
 					{
 						return c.wasRemoved();
 					}
 
 
+					@Override
 					public boolean wasReplaced()
 					{
 						return c.wasReplaced();
 					}
 
 
+					@Override
 					public boolean wasUpdated()
 					{
 						return c.wasUpdated();
 					}
 
 
+					@Override
 					public boolean wasPermutated()
 					{
 						return c.wasPermutated();
 					}
 
 
+					@Override
 					public int getPermutation(int ix)
 					{
 						return c.getPermutation(ix);
 					}
 
 
+					@Override
 					protected int[] getPermutation()
 					{
 						return new int[0];
 					}
 
 
+					@Override
 					public int getFrom()
 					{
 						return c.getFrom();
 					}
 
 
+					@Override
 					public int getTo()
 					{
 						return c.getTo();
 					}
 
 
+					@Override
 					public boolean next()
 					{
 						return c.next();
 					}
 
 
+					@Override
 					public void reset()
 					{
 						c.reset();

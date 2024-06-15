@@ -43,6 +43,7 @@ public class FxChangeListener
 	}
 	
 	
+	@Override
 	public void disconnect()
 	{
 		for(ObservableValue p: properties)
@@ -76,6 +77,7 @@ public class FxChangeListener
 	}
 
 
+	@Override
 	public void changed(ObservableValue src, Object prev, Object curr)
 	{
 		fire();

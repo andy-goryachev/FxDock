@@ -102,6 +102,7 @@ public abstract class FileScanner
 				{
 					new CComparator<File>()
 					{
+						@Override
 						public int compare(File a, File b)
 						{
 							CKit.checkCancelled();

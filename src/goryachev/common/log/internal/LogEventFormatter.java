@@ -23,6 +23,7 @@ public class LogEventFormatter
 	}
 
 
+	@Override
 	public String format(LogLevel level, long time, StackTraceElement caller, Throwable err, String msg)
 	{
 		SB sb = new SB(128);
@@ -35,6 +36,7 @@ public class LogEventFormatter
 	}
 
 
+	@Override
 	public boolean needsCaller()
 	{
 		return needsCaller;

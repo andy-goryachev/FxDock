@@ -239,53 +239,62 @@ public class DReader
 	}
 	
 	
+	@Override
 	public void close() throws IOException
 	{
 		in.close();
 	}
 	
 	
+	@Override
 	public long skip(long nbytes) throws IOException
 	{
 		return in.skip(nbytes);
 	}
 	
 
+	@Override
 	public int read() throws IOException
 	{
 		return in.read();
 	}
 
 
+	@Override
 	public int read(byte[] buf) throws IOException
 	{
 		return in.read(buf);
 	}
 
 
+	@Override
 	public int read(byte[] buf, int off, int len) throws IOException
 	{
 		return in.read(buf, off, len);
 	}
 
 
+	@Override
 	public int available() throws IOException
 	{
 		return in.available();
 	}
 
 
+	@Override
 	public synchronized void mark(int readlimit)
 	{
 	}
 
 
+	@Override
 	public synchronized void reset() throws IOException
 	{
 		throw new IOException("reset not supported");
 	}
 
 
+	@Override
 	public boolean markSupported()
 	{
 		return false;

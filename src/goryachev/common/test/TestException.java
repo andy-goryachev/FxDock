@@ -35,6 +35,7 @@ public class TestException
 	}
 
 
+	@Override
 	public StackTraceElement[] getStackTrace()
 	{
 		StackTraceElement[] ss = super.getStackTrace();

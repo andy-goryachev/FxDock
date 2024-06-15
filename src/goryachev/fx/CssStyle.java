@@ -50,6 +50,7 @@ public class CssStyle
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -67,6 +68,7 @@ public class CssStyle
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		int h = FH.hash(CssStyle.class);
@@ -81,6 +83,7 @@ public class CssStyle
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return name;

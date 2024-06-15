@@ -10,6 +10,7 @@ import java.util.List;
 public abstract class CComparator<T>
 	implements Comparator<T>
 {
+	@Override
 	public abstract int compare(T a, T b);
 
 	//

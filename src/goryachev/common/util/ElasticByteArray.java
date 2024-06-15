@@ -168,6 +168,7 @@ public class ElasticByteArray
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return super.toString();

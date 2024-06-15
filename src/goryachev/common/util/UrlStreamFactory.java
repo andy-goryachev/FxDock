@@ -23,6 +23,7 @@ public class UrlStreamFactory
 			
 			URL.setURLStreamHandlerFactory(new URLStreamHandlerFactory()
 			{
+				@Override
 				public URLStreamHandler createURLStreamHandler(String protocol)
 				{
 					URLStreamHandler h = getHandler(protocol);

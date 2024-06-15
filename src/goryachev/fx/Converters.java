@@ -54,11 +54,13 @@ public class Converters
 		{
 			booleanConverter = new StringConverter<Boolean>()
 			{
+				@Override
 				public Boolean fromString(String s)
 				{
 					return Parsers.parseBoolean(s);
 				}
 
+				@Override
 				public String toString(Boolean x)
 				{
 					return Boolean.TRUE.equals(x) ? "true" : "false";
@@ -75,11 +77,13 @@ public class Converters
 		{
 			intConverter = new StringConverter<Integer>()
 			{
+				@Override
 				public Integer fromString(String s)
 				{
 					return Parsers.parseInt(s, 0);
 				}
 
+				@Override
 				public String toString(Integer x)
 				{
 					return String.valueOf(x);
@@ -96,11 +100,13 @@ public class Converters
 		{
 			intNumberConverter = new StringConverter<Number>()
 			{
+				@Override
 				public Number fromString(String s)
 				{
 					return Parsers.parseInt(s, 0);
 				}
 
+				@Override
 				public String toString(Number x)
 				{
 					return String.valueOf(x);
@@ -117,11 +123,13 @@ public class Converters
 		{
 			doubleNumberConverter = new StringConverter<Number>()
 			{
+				@Override
 				public Number fromString(String s)
 				{
 					return Parsers.parseDouble(s, 0.0);
 				}
 
+				@Override
 				public String toString(Number x)
 				{
 					return String.valueOf(x);
@@ -138,11 +146,13 @@ public class Converters
 		{
 			stringConverter = new StringConverter<String>()
 			{
+				@Override
 				public String toString(String s)
 				{
 					return s;
 				}
 
+				@Override
 				public String fromString(String s)
 				{
 					return s;
@@ -159,11 +169,13 @@ public class Converters
 		{
 			objectConverter = new StringConverter<Object>()
 			{
+				@Override
 				public String toString(Object x)
 				{
 					return x == null ? null : x.toString();
 				}
 
+				@Override
 				public Object fromString(String s)
 				{
 					return s;

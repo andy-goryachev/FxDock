@@ -251,6 +251,7 @@ public class HtmlTools
 	{
 		new CComparator<String>()
 		{
+			@Override
 			public int compare(String a, String b)
 			{
 				return compareAsStrings(a, b);

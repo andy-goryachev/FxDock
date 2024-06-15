@@ -290,6 +290,7 @@ public class KeyMap
 		}
 		
 		
+		@Override
 		public boolean equals(Object x)
 		{
 			if(x == this)
@@ -311,6 +312,7 @@ public class KeyMap
 		}
 		
 		
+		@Override
 		public int hashCode()
 		{
 			int h = FH.hash(KKey.class);

@@ -58,6 +58,7 @@ public class FxDisconnector
 	}
 
 
+	@Override
 	public void disconnect()
 	{
 		for(int i=items.size()-1; i>=0; i--)
@@ -81,6 +82,7 @@ public class FxDisconnector
 	{
 		ChLi li = new ChLi()
 		{
+			@Override
 			public void disconnect()
 			{
 				for(ObservableValue p: props)
@@ -90,6 +92,7 @@ public class FxDisconnector
 			}
 
 			
+			@Override
 			public void changed(ObservableValue p, Object oldValue, Object newValue)
 			{
 				onChange.run();
@@ -122,6 +125,7 @@ public class FxDisconnector
 	{
 		IDisconnectable d = new IDisconnectable()
 		{
+			@Override
 			public void disconnect()
 			{
 				prop.removeListener(li);
@@ -153,6 +157,7 @@ public class FxDisconnector
 
 		ChLi li = new ChLi()
 		{
+			@Override
 			public void disconnect()
 			{
 				for(ObservableValue p: props)
@@ -162,6 +167,7 @@ public class FxDisconnector
 			}
 
 
+			@Override
 			public void changed(ObservableValue p, Object oldValue, Object newValue)
 			{
 				Runnable r = ref.get();
@@ -204,12 +210,14 @@ public class FxDisconnector
 
 		ChLi<T> d = new ChLi<T>()
 		{
+			@Override
 			public void disconnect()
 			{
 				prop.removeListener(this);
 			}
 
 
+			@Override
 			public void changed(ObservableValue<? extends T> p, T oldValue, T newValue)
 			{
 				ChangeListener<T> li = ref.get();
@@ -250,6 +258,7 @@ public class FxDisconnector
 	{
 		InLi li = new InLi()
 		{
+			@Override
 			public void disconnect()
 			{
 				for(ObservableValue p: props)
@@ -259,6 +268,7 @@ public class FxDisconnector
 			}
 
 
+			@Override
 			public void invalidated(Observable p)
 			{
 				onChange.run();
@@ -291,6 +301,7 @@ public class FxDisconnector
 	{
 		IDisconnectable d = new IDisconnectable()
 		{
+			@Override
 			public void disconnect()
 			{
 				prop.removeListener(li);
@@ -321,6 +332,7 @@ public class FxDisconnector
 
 		InLi li = new InLi()
 		{
+			@Override
 			public void disconnect()
 			{
 				for(ObservableValue p: props)
@@ -330,6 +342,7 @@ public class FxDisconnector
 			}
 
 
+			@Override
 			public void invalidated(Observable p)
 			{
 				Runnable r = ref.get();
@@ -372,12 +385,14 @@ public class FxDisconnector
 
 		InLi d = new InLi()
 		{
+			@Override
 			public void disconnect()
 			{
 				prop.removeListener(this);
 			}
 
 
+			@Override
 			public void invalidated(Observable p)
 			{
 				InvalidationListener li = ref.get();
@@ -411,6 +426,7 @@ public class FxDisconnector
 	{
 		IDisconnectable d = new IDisconnectable()
 		{
+			@Override
 			public void disconnect()
 			{
 				list.removeListener(listener);
@@ -430,11 +446,13 @@ public class FxDisconnector
 
 		LiChLi<T> li = new LiChLi<T>()
 		{
+			@Override
 			public void disconnect()
 			{
 				list.removeListener(this);
 			}
 
+			@Override
 			public void onChanged(Change<? extends T> ch)
 			{
 				ListChangeListener<T> li = ref.get();
@@ -470,6 +488,7 @@ public class FxDisconnector
 		Bindings.bindBidirectional(p1, p2);
 		IDisconnectable d = new IDisconnectable()
 		{
+			@Override
 			public void disconnect()
 			{
 				Bindings.unbindBidirectional(p1, p2);

@@ -19,6 +19,7 @@ public abstract class FxTreeTableCellValueFactory<T>
 	
 	//
 	
+	@Override
 	public ObservableValue<T> call(CellDataFeatures<T,T> f)
 	{
 		T v = value(f.getValue(), f.getTreeTableColumn(), f.getTreeTableView());

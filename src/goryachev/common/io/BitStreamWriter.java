@@ -62,6 +62,7 @@ public class BitStreamWriter
 	}
 
 
+	@Override
 	public void flush() throws IOException
 	{
 		if(count != BITS_PER_BYTE)
@@ -75,6 +76,7 @@ public class BitStreamWriter
 	}
 
 
+	@Override
 	public void close() throws IOException
 	{
 		try

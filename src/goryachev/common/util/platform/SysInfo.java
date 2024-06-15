@@ -224,18 +224,21 @@ public class SysInfo
 		}
 
 	
+		@Override
 		public void header(String title)
 		{
 			sb.a(title).nl();
 		}
 		
 		
+		@Override
 		public void nl()
 		{
 			sb.nl();
 		}
 		
 		
+		@Override
 		public void print(int count, String name, String value)
 		{
 			for(int i=0; i<count; i++)

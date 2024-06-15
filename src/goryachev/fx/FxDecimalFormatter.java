@@ -18,6 +18,7 @@ public class FxDecimalFormatter
 	}
 
 	
+	@Override
 	public String toString(Object x)
 	{
 		if(x == null)

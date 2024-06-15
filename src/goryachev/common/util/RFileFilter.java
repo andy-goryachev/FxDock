@@ -29,6 +29,7 @@ public class RFileFilter
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -51,6 +52,7 @@ public class RFileFilter
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		int h = FH.hash(RFileFilter.class);
@@ -435,6 +437,7 @@ public class RFileFilter
 	{
 		return new FileFilter()
 		{
+			@Override
 			public boolean accept(File f)
 			{
 				String pathToRoot = CKit.pathToRoot(root, f);

@@ -220,6 +220,7 @@ public class PTable
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -264,6 +265,7 @@ public class PTable
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		int h = PTable.class.hashCode();

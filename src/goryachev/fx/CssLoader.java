@@ -33,6 +33,7 @@ public class CssLoader
 			{
 				Thread t = new Thread("reloading css")
 				{
+					@Override
 					public void run()
 					{
 						for(;;)

@@ -52,12 +52,14 @@ public class CanvasTextTableCell
 	}
 	
 	
+	@Override
 	protected double computePrefHeight(double width)
 	{
 		return 10;
 	}
 
 
+	@Override
 	protected double computePrefWidth(double height)
 	{
 		double w;
@@ -76,6 +78,7 @@ public class CanvasTextTableCell
 	}
 	
 	
+	@Override
 	protected void layoutChildren()
 	{
 		super.layoutChildren();

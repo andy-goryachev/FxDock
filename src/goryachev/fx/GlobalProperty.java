@@ -11,6 +11,7 @@ public interface GlobalProperty<T>
 	extends Property<T>
 {
 	/** name will be used as key to store the value in the GlobalSettings */
+	@Override
 	public String getName();
 	
 	

@@ -22,6 +22,7 @@ public class CssPseudo
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return getName();

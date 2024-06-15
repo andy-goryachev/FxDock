@@ -34,6 +34,7 @@ public class FxTabPane
 
 		ChangeListener<Boolean> li = new ChangeListener<Boolean>()
 		{
+			@Override
 			public void changed(ObservableValue<? extends Boolean> src, Boolean old, Boolean val)
 			{
 				Node n = generator.get();

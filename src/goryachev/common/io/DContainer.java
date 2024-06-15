@@ -19,6 +19,7 @@ public class DContainer
 			return type;
 		}
 		
+		@Override
 		public String toString()
 		{
 			return "Object:" + getType();
@@ -42,6 +43,7 @@ public class DContainer
 	}
 	
 	
+	@Override
 	public Object clone()
 	{
 		return copyObjectList();

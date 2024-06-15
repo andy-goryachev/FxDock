@@ -21,6 +21,7 @@ public class FxRadioToggleButton
 	}
 
 
+	@Override
 	public void fire()
 	{
 		// behave like RadioButton

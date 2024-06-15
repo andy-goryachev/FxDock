@@ -113,6 +113,7 @@ public class BufferedFile
 	
 	
 	/** the file pointer may be DIFFERENT from current position because of buffering.  Use getCurrentPosition() */
+	@Override
 	public long getFilePointer() throws IOException
 	{
 		return super.getFilePointer();
@@ -214,6 +215,7 @@ public class BufferedFile
 	}
 
 
+	@Override
 	public synchronized int read() throws IOException
 	{
 		return readPrivate(true);
@@ -283,18 +285,21 @@ public class BufferedFile
 	}
 	
 
+	@Override
 	public int read(byte b[], int off, int len) throws IOException
 	{
 		return readBytes(b, off, len);
 	}
 
 
+	@Override
 	public int read(byte b[]) throws IOException
 	{
 		return readBytes(b, 0, b.length);
 	}
 	
 
+	@Override
 	public synchronized void write(int b) throws IOException
 	{
 		syncMarker();
@@ -304,6 +309,7 @@ public class BufferedFile
 	}
 
 
+	@Override
 	public synchronized void write(byte b[]) throws IOException
 	{
 		syncMarker();
@@ -313,6 +319,7 @@ public class BufferedFile
 	}
 
 
+	@Override
 	public synchronized void write(byte b[], int off, int len) throws IOException
 	{
 		syncMarker();
@@ -322,6 +329,7 @@ public class BufferedFile
 	}
 	
 	
+	@Override
 	public synchronized void seek(long pos) throws IOException
 	{
 		marker = pos;
@@ -487,6 +495,7 @@ public class BufferedFile
 		}
 		
 		
+		@Override
 		public String toString()
 		{
 			return "Buffer[" + offset + ":" + available + "]";

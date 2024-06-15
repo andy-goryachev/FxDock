@@ -191,6 +191,7 @@ public class SB
 	}
 	
 	
+	@Override
 	public Appendable append(CharSequence cs)
 	{
 		sb.append(cs);
@@ -198,6 +199,7 @@ public class SB
 	}
 
 
+	@Override
 	public SB append(CharSequence cs, int start, int end)
 	{
 		sb.append(cs, start, end);
@@ -226,6 +228,7 @@ public class SB
 	}
 
 
+	@Override
 	public SB append(char x)
 	{
 		sb.append(x);
@@ -465,12 +468,14 @@ public class SB
 	}
 
 
+	@Override
 	public String toString()
 	{
 		return sb.toString();
 	}
 	
 	
+	@Override
 	public int length()
 	{
 		return getLength();
@@ -495,6 +500,7 @@ public class SB
 	}
 
 
+	@Override
 	public char charAt(int ix)
 	{
 		return sb.charAt(ix);
@@ -520,6 +526,7 @@ public class SB
 	}
 
 
+	@Override
 	public boolean isEmpty()
 	{
 		return sb.length() == 0;
@@ -763,6 +770,7 @@ public class SB
 	}
 
 
+	@Override
 	public CharSequence subSequence(int start, int end)
 	{
 		return sb.subSequence(start, end);

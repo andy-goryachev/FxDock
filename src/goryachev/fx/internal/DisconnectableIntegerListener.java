@@ -26,12 +26,14 @@ public class DisconnectableIntegerListener
 	}
 
 
+	@Override
 	public void disconnect()
 	{
 		prop.removeListener(this);
 	}
 
 
+	@Override
 	public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
 	{
 		// newValue cannot be null because the source is a ReadOnlyIntegerProperty.

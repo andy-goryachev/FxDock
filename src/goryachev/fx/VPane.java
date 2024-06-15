@@ -122,30 +122,35 @@ public class VPane
 	}
 
 	
+	@Override
 	protected double computePrefWidth(double height)
 	{
 		return h().computeWidth(height, true);	
 	}
 	
 
+	@Override
 	protected double computeMinWidth(double height)
 	{
 		return h().computeWidth(height, false);
 	}
 	
 	
+	@Override
 	protected double computePrefHeight(double width)
 	{
 		return h().computeSizes(true);
 	}
 
 	
+	@Override
 	protected double computeMinHeight(double width)
 	{
 		return h().computeSizes(false);
 	}
 	
 	
+	@Override
 	protected void layoutChildren()
 	{
 		try

@@ -117,6 +117,7 @@ public class FxDump
 		{
 			sorter = new CComparator<CssMetaData<? extends Styleable,?>>()
 			{
+				@Override
 				public int compare(CssMetaData<? extends Styleable,?> a, CssMetaData<? extends Styleable,?> b)
 				{
 					return compareAsStrings(a.getProperty(), b.getProperty());

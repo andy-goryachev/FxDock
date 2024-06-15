@@ -29,6 +29,7 @@ public class SimpleLogConfig
 	}
 
 
+	@Override
 	public boolean isVerbose()
 	{
 		return verbose;
@@ -89,6 +90,7 @@ public class SimpleLogConfig
 	}
 
 
+	@Override
 	public LogLevel getLogLevel(String name)
 	{
 		LogLevel lv = channels.get(name);
@@ -106,6 +108,7 @@ public class SimpleLogConfig
 	}
 
 
+	@Override
 	public LogLevel getDefaultLogLevel()
 	{
 		return defaultLogLevel;
@@ -125,6 +128,7 @@ public class SimpleLogConfig
 	}
 
 
+	@Override
 	public List<IAppender> getAppenders() throws Exception
 	{
 		return appenders;
