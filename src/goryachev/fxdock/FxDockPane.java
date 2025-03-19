@@ -1,6 +1,5 @@
 // Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
-import goryachev.fx.FX;
 import goryachev.fx.FxAction;
 import goryachev.fxdock.internal.DockTools;
 import goryachev.fxdock.internal.DragAndDropHandler;
@@ -36,10 +35,10 @@ public abstract class FxDockPane
 	{
 		this.type = type;
 		
-		FX.style(this, FxDockStyles.FX_DOCK_PANE);
+		FxDockStyles.FX_DOCK_PANE.set(this);
 		
 		titleField = new Label();
-		FX.style(titleField, FxDockStyles.TOOLBAR_TITLE);
+		FxDockStyles.TOOLBAR_TITLE.set(titleField);
 		titleField.textProperty().bindBidirectional(titleProperty());
 		DragAndDropHandler.attach(titleField, this);
 		
@@ -90,11 +89,11 @@ public abstract class FxDockPane
 		else
 		{
 			Button b = new Button("x");
-			FX.style(b, FxDockStyles.TOOLBAR_CLOSE_BUTTON);
+			FxDockStyles.TOOLBAR_CLOSE_BUTTON.set(b);
 			closeAction.attach(b);
 			
 			ToolBar t = new ToolBar();
-			FX.style(t, FxDockStyles.TOOLBAR);
+			FxDockStyles.TOOLBAR.set(t);
 			t.getItems().addAll(titleField, b);
 			return t;
 		}

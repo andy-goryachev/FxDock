@@ -91,7 +91,7 @@ public class DemoBrowser
 		if(!tabMode)
 		{
 			Button b = new Button("x");
-			FX.style(b, FxDockStyles.TOOLBAR_CLOSE_BUTTON);
+			FxDockStyles.TOOLBAR_CLOSE_BUTTON.set(b);
 			closeAction.attach(b);
 
 			t.add(titleField);

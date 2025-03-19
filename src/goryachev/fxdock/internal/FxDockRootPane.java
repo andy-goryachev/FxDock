@@ -1,6 +1,5 @@
 // Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
-import goryachev.fx.FX;
 import goryachev.fxdock.FxDockStyles;
 import goryachev.fxdock.FxDockWindow;
 import javafx.scene.Node;
@@ -19,7 +18,7 @@ public class FxDockRootPane
 	{
 		this.window = w;
 		
-		FX.style(this, FxDockStyles.FX_ROOT_PANE);
+		FxDockStyles.FX_ROOT_PANE.set(this);
 		setContent(new FxDockEmptyPane());
 	}
 	

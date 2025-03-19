@@ -1,6 +1,5 @@
 // Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
-import goryachev.fx.FX;
 import goryachev.fxdock.FxDockStyles;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
@@ -19,7 +18,7 @@ public class FxDockEmptyPane
 	
 	public FxDockEmptyPane()
 	{
-		FX.style(this, FxDockStyles.FX_EMPTY_PANE);
+		FxDockStyles.FX_EMPTY_PANE.set(this);
 	}
 
 

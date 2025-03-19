@@ -1,7 +1,6 @@
 // Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock.internal;
 import goryachev.common.util.CList;
-import goryachev.fx.FX;
 import goryachev.fxdock.FxDockPane;
 import goryachev.fxdock.FxDockStyles;
 import java.util.List;
@@ -24,7 +23,7 @@ public class FxDockTabPane
 	
 	public FxDockTabPane()
 	{
-		FX.style(this, FxDockStyles.FX_TAB_PANE);
+		FxDockStyles.FX_TAB_PANE.set(this);
 	}
 	
 	
