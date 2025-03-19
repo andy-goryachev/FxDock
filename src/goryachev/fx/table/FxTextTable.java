@@ -1,10 +1,10 @@
-// Copyright © 2022-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2022-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
 import goryachev.common.util.CKit;
-import goryachev.fx.CssLoader;
 import goryachev.fx.FX;
 import goryachev.fx.FxObject;
 import goryachev.fx.internal.CssHack;
+import goryachev.fx.internal.CssLoader;
 import goryachev.fx.internal.CssTools;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;

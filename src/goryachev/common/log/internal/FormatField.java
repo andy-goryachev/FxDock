@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.log.internal;
 import goryachev.common.log.LogLevel;
 import goryachev.common.util.CKit;

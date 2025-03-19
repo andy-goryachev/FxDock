@@ -19,6 +19,7 @@ public class WhereScreen
 	}
 	
 	
+	@Override
 	public boolean equals(Object x)
 	{
 		if(x == this)
@@ -39,6 +40,7 @@ public class WhereScreen
 	}
 	
 	
+	@Override
 	public int hashCode()
 	{
 		int h = FH.hash(0, WhereScreen.class);
@@ -47,6 +49,7 @@ public class WhereScreen
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return "(" + screenx + "," + screeny + ")";

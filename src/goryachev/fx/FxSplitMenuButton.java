@@ -1,4 +1,4 @@
-// Copyright © 2023-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2023-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;

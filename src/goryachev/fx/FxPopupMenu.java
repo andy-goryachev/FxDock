@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.Property;
 import javafx.scene.control.ContextMenu;
@@ -12,7 +12,7 @@ import javafx.scene.control.SeparatorMenuItem;
 public class FxPopupMenu
 	extends ContextMenu
 {
-	public static final CssStyle MENU = new CssStyle("FxPopupMenu");
+	public static final CssStyle MENU = new CssStyle();
 	
 	
 	public FxPopupMenu()
@@ -21,7 +21,7 @@ public class FxPopupMenu
 		setAutoHide(true);
 		setAutoFix(true);
 		
-		FX.style(this, MENU);
+		MENU.set(this);
 	}
 	
 	

@@ -1,4 +1,4 @@
-// Copyright © 2012-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2012-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
 import goryachev.common.util.platform.ApplicationSupport;

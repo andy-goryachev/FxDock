@@ -1,4 +1,4 @@
-// Copyright © 2009-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2009-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
 import java.nio.charset.Charset;
@@ -7,7 +7,7 @@ import java.util.SortedMap;
 
 
 public class CEncoding
-	implements HasDisplayName, HasProperty
+	implements HasDisplayText, HasProperty
 {
 	protected static final Log log = Log.get("CEncoding");
 	public static final CEncoding UTF8 = new CEncoding(Charset.forName("UTF-8"));
@@ -30,7 +30,7 @@ public class CEncoding
 
 
 	@Override
-	public String getDisplayName()
+	public String getDisplayText()
 	{
 		return charset.displayName(Locale.getDefault());
 	}
@@ -39,7 +39,7 @@ public class CEncoding
 	@Override
 	public String toString()
 	{
-		return getDisplayName();
+		return getDisplayText();
 	}
 	
 	

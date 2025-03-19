@@ -1,4 +1,4 @@
-// Copyright © 2019-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2019-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import java.util.function.Function;
 import javafx.beans.value.ChangeListener;
@@ -13,7 +13,7 @@ import javafx.scene.control.ToggleButton;
 public class FlatToggleButton
 	extends ToggleButton
 {
-	public static final CssStyle STYLE = new CssStyle("FlatToggleButton_STYLE");
+	public static final CssStyle STYLE = new CssStyle();
 	private static final Object ICONS = new Object();
 	
 	
@@ -46,7 +46,7 @@ public class FlatToggleButton
 	
 	private void init()
 	{
-		FX.style(this, STYLE);
+		STYLE.set(this);
 	}
 	
 	

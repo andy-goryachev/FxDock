@@ -1,4 +1,4 @@
-// Copyright © 2022-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2022-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.util;
 import goryachev.common.util.CKit;
 import goryachev.fx.IStyledText;
@@ -151,7 +151,7 @@ public class TextPainter
 	}
 	
 	
-	protected double computeStartX(int cellWidth, int textLength, HPos alignment)
+	protected double computeStartX(double cellWidth, int textLength, HPos alignment)
 	{
 		double x;
 		switch(alignment)
@@ -212,7 +212,7 @@ public class TextPainter
 			String s = GlyphCache.get(c);
 			if(s != null)
 			{
-				gx.fillText(s, x, -tm.baseline, tm.cellWidth);
+				gx.fillText(s, x, -tm.baseLine, tm.cellWidth);
 			}
 		}
 	}
@@ -275,7 +275,7 @@ public class TextPainter
 				Font f = getFont(style);
 				gx.setFont(f);
 				gx.setFill(fg);
-				gx.fillText(s, x, -tm.baseline, tm.cellWidth);
+				gx.fillText(s, x, -tm.baseLine, tm.cellWidth);
 			
 				if(style.isStrikeThrough())
 				{

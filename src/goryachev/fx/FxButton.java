@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -11,23 +11,23 @@ public class FxButton
 	extends Button
 {
 	/** style for a button that performs some kind of affirmative action, such as OK, Continue, Yes and so on */
-	public static final CssStyle AFFIRM = new CssStyle("FxButton_AFFIRM");
+	public static final CssStyle AFFIRM = new CssStyle();
 	/** style for a button that performs some kind of destructive action, such as No, Reject, Abort, and so on */
-	public static final CssStyle DESTRUCT = new CssStyle("FxButton_DESTRUCT");
+	public static final CssStyle DESTRUCT = new CssStyle();
 	
 	
 	public FxButton(String text, CssStyle style, FxAction a)
 	{
 		super(text);
 		a.attach(this);
-		FX.style(this, style);
+		style.set(this);
 	}
 	
 	
 	public FxButton(String text, CssStyle style)
 	{
 		super(text);
-		FX.style(this, style);
+		style.set(this);
 	}
 	
 	

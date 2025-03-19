@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -20,7 +20,7 @@ import javafx.stage.Window;
 public class FxDialog<T>
 	extends FxWindow
 {
-	public static final CssStyle PANE = new CssStyle("FxDialog_PANE");
+	public static final CssStyle PANE = new CssStyle();
 	private final BorderPane pane;
 	private T result;
 	
@@ -30,7 +30,7 @@ public class FxDialog<T>
 		super(name);
 		
 		initModality(Modality.APPLICATION_MODAL);
-		FX.style(getContentPane(), PANE);
+		PANE.set(getContentPane());
 		
 		pane = new BorderPane();
 		setCenter(pane);

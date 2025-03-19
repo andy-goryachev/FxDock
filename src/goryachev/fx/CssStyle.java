@@ -1,11 +1,12 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import goryachev.common.util.FH;
-import javafx.scene.Node;
+import goryachev.fx.internal.CssLoader;
+import javafx.collections.ObservableList;
+import javafx.css.Styleable;
 
 
 /**
- * CSS Style.
+ * CSS Style Identifier.
  * 
  * Usage example:
  * <pre>
@@ -16,64 +17,18 @@ import javafx.scene.Node;
  *     EXAMPLE.set(pane);
  * }
  * <pre>
+ * 
+ * @see FxStyleSheet
  */
 public class CssStyle
 {
-	private String name;
-	private static long seq;
-
-
-	public CssStyle(String name)
-	{
-		this.name = generateName(name);
-	}
+	private final String name;
+	private static int seq;
 	
 	
 	public CssStyle()
 	{
-		this.name = generateName(null);
-	}
-	
-	
-	private static synchronized String generateName(String name)
-	{
-		if(CssLoader.DUMP)
-		{
-			StackTraceElement s = new Throwable().getStackTrace()[2];
-			String c = s.getClassName().replace('.', '_');
-			return c + "-L" + s.getLineNumber() + (name == null ? "" : "-" + name);
-		}
-		else
-		{
-			return "S" + (seq++); 
-		}
-	}
-	
-	
-	@Override
-	public boolean equals(Object x)
-	{
-		if(x == this)
-		{
-			return true;
-		}
-		else if(x instanceof CssStyle s)
-		{
-			return getName().equals(s.getName());
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	
-	@Override
-	public int hashCode()
-	{
-		int h = FH.hash(CssStyle.class);
-		h = FH.hash(h, getName());
-		return h;
+		name = generateName(new Throwable().getStackTrace()[1]);
 	}
 	
 	
@@ -90,8 +45,57 @@ public class CssStyle
 	}
 	
 	
-	public void set(Node n)
+	/**
+	 * Adds the CssStyle to the Styleable.
+	 */
+	public void set(Styleable n)
 	{
-		n.getStyleClass().add(getName());
+		ObservableList<String> ss = n.getStyleClass();
+		if(!ss.contains(name))
+		{
+			n.getStyleClass().add(getName());
+		}
+	}
+	
+	
+	/**
+	 * Adds or removes the CssStyle based on the condition.
+	 */
+	public void set(Styleable n, boolean condition)
+	{
+		if(n == null)
+		{
+			return;
+		}
+		
+		String name = getName();
+		ObservableList<String> ss = n.getStyleClass();
+		if(condition)
+		{
+			if(!ss.contains(name))
+			{
+				ss.add(name);
+			}
+		}
+		else
+		{
+			ss.remove(name);
+		}
+	}
+	
+	
+	private static String generateName(StackTraceElement s)
+	{
+		if(CssLoader.DUMP)
+		{
+			return s.getClassName().replace('.', '_') + "_L" + s.getLineNumber();
+		}
+		else
+		{
+			synchronized(CssStyle.class)
+			{
+				return "S" + (seq++);
+			}
+		}
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright © 2018-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2018-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.Property;
 import javafx.scene.Node;
@@ -14,12 +14,12 @@ import javafx.scene.layout.Priority;
 public class FxToolBar
 	extends ToolBar
 {
-	public static final CssStyle STYLE = new CssStyle("FxToolBar_STYLE");
+	public static final CssStyle STYLE = new CssStyle();
 	
 	
 	public FxToolBar()
 	{
-		FX.style(this, STYLE);
+		STYLE.set(this);
 	}
 	
 	

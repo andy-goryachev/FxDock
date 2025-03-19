@@ -1,4 +1,4 @@
-// Copyright © 2018-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2018-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.SimpleStringProperty;
 

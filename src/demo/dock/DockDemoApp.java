@@ -46,6 +46,7 @@ public class DockDemoApp
 	}
 	
 
+	@Override
 	public void start(Stage s) throws Exception
 	{
 		ASettingsStore store = GlobalSettings.instance();

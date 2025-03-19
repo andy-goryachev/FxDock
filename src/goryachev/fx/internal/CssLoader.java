@@ -1,10 +1,14 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
-package goryachev.fx;
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
+package goryachev.fx.internal;
 import goryachev.common.log.Log;
 import goryachev.common.util.Base64;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CSet;
 import goryachev.common.util.SB;
+import goryachev.fx.FX;
+import goryachev.fx.FxFlags;
+import goryachev.fx.FxStyleSheet;
+import goryachev.fx.settings.WindowMonitor;
 import java.util.function.Supplier;
 import javafx.application.Platform;
 
@@ -15,50 +19,49 @@ import javafx.application.Platform;
  */
 public class CssLoader
 {
+	/** enables stylesheet auto refresh */
+	public static final boolean REFRESH = Boolean.getBoolean(FxFlags.CSS_REFRESH);
+	/** dumps the stylesheet to stdout */
+	public static final boolean DUMP = Boolean.getBoolean(FxFlags.CSS_DUMP);
+
 	private static final Log log = Log.get("CssLoader");
+	
+	private static RefreshThread refreshThread;
 	private static String url;
 	private static Supplier<FxStyleSheet> generator;
 	private static CSet<String> styles;
-	/** enables stylesheet auto refresh */
-	private static boolean REFRESH = Boolean.getBoolean(FxFlags.CSS_REFRESH);
-	/** dumps the stylesheet to stdout */
-	static boolean DUMP = Boolean.getBoolean(FxFlags.CSS_DUMP);
 	
 	
-	static
+	public static synchronized void setGenerator(Supplier<FxStyleSheet> gen)
 	{
-		try
+		FX.checkThread();
+		
+		generator = gen;
+		
+		// ensure WinMonitor is initialized 
+		WindowMonitor.forWindow(null);
+
+		updateStyles();
+
+		if(REFRESH)
 		{
-			if(REFRESH)
+			if(gen == null)
 			{
-				Thread t = new Thread("reloading css")
+				if(refreshThread != null)
 				{
-					@Override
-					public void run()
-					{
-						for(;;)
-						{
-							CKit.sleep(999);
-							updateStyles();
-						}
-					}
-				};
-				t.setDaemon(true);
-				t.start();
+					refreshThread.cancel();
+					refreshThread = null;
+				}
+			}
+			else
+			{
+				if(refreshThread == null)
+				{
+					refreshThread = new RefreshThread();
+					refreshThread.start();
+				}
 			}
 		}
-		catch(Throwable e)
-		{
-			// css will be disabled
-			log.error(e);
-		}
-	}
-	
-	
-	public static synchronized void setStyles(Supplier<FxStyleSheet> g)
-	{
-		generator = g;
-		updateStyles();
 	}
 	
 	
@@ -156,5 +159,45 @@ public class CssLoader
 		}
 		styles.add(style);
 		updateStyles();
+	}
+
+	
+	//
+	
+	
+	static class RefreshThread extends Thread
+	{
+		private volatile boolean running = true;
+		
+		
+		public RefreshThread()
+		{
+			super("reloading css");
+			setDaemon(true);
+		}
+
+
+		@Override
+		public void run()
+		{
+			while(running)
+			{
+				CKit.sleep(999);
+
+				if(running)
+				{
+					Platform.runLater(() ->
+					{
+						updateStyles();
+					});
+				}
+			}
+		}
+		
+		
+		public void cancel()
+		{
+			running = false;
+		}
 	}
 }

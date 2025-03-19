@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
@@ -23,12 +23,13 @@ import javafx.scene.layout.Region;
  * CPane is like my Swing CPanel, lays out nodes with an outer border layout and an inner table layout.
  * 
  * TODO ignore unmanaged components
+ * TODO snap to pixel!
  */
 public class CPane
 	extends Pane
 {
 	private static final Log log = Log.get("CPane");
-	public static final CssStyle STYLE = new CssStyle("CPane_PANE");
+	public static final CssStyle STYLE = new CssStyle();
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;
 	
@@ -60,7 +61,7 @@ public class CPane
 	/** sets standard padding and gaps */
 	public void setDefaultStyle()
 	{
-		FX.style(this, STYLE);
+		STYLE.set(this);
 	}
 	
 	

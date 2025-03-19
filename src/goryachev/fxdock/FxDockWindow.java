@@ -32,6 +32,7 @@ public class FxDockWindow
 	}
 	
 	
+	@Override
 	public void open()
 	{
 		show();
@@ -56,48 +57,56 @@ public class FxDockWindow
 	}
 	
 	
+	@Override
 	public final void setTop(Node n)
 	{
 		frame.setTop(n);
 	}
 	
 	
+	@Override
 	public final Node getTop()
 	{
 		return frame.getTop();
 	}
 	
 	
+	@Override
 	public final void setBottom(Node n)
 	{
 		frame.setBottom(n);
 	}
 	
 	
+	@Override
 	public final Node getBottom()
 	{
 		return frame.getBottom();
 	}
 	
 	
+	@Override
 	public final void setLeft(Node n)
 	{
 		frame.setLeft(n);
 	}
 	
 	
+	@Override
 	public final Node getLeft()
 	{
 		return frame.getLeft();
 	}
 	
 	
+	@Override
 	public final void setRight(Node n)
 	{
 		frame.setRight(n);
 	}
 	
 	
+	@Override
 	public final Node getRight()
 	{
 		return frame.getRight();

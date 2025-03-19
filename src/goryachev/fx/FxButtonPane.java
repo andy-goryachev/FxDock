@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 
 
@@ -13,14 +13,14 @@ package goryachev.fx;
 public class FxButtonPane
 	extends HPane
 {
-	public static final CssStyle PANE = new CssStyle("FxButtonPane_PANE");
+	public static final CssStyle PANE = new CssStyle();
 	private static final int MIN_WIDTH = 70;
 
 	
 	public FxButtonPane()
 	{
 		super(5);
-		FX.style(this, PANE);
+		PANE.set(this);
 	}
 	
 	

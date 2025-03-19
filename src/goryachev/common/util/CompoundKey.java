@@ -1,4 +1,4 @@
-// Copyright © 2014-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2014-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 
 

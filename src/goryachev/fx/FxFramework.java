@@ -1,7 +1,9 @@
 // Copyright © 2024 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.fx.internal.CssLoader;
 import goryachev.fx.settings.FxSettingsSchema;
 import goryachev.fx.settings.WindowMonitor;
+import java.util.function.Supplier;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -10,9 +12,26 @@ import javafx.stage.Window;
 /**
  * FX Application Framework.
  */
+// TODO shorter name?
 public class FxFramework
 {
 	private static FxSettingsSchema schema;
+	
+
+	/**
+	 * Sets application-wide stylesheet.  This method must be invoked from the FX application thread.
+	 * <p>
+	 * The first call initializes the global stylesheet subsystem, possibly starting the periodic
+	 * refresh and dumping of the stylesheet to stdout.
+	 * 
+	 * @param generator generator which supplies the actual CSS stylesheet (can be null)
+	 * @see FxFlags.CSS_REFRESH
+	 * @see FxFlags.CSS_DUMP
+	 */
+	public static synchronized void setStyleSheet(Supplier<FxStyleSheet> generator)
+	{
+		CssLoader.setGenerator(generator);
+	}
 
 	
 	/** 
@@ -83,7 +102,10 @@ public class FxFramework
 	
 	public static void restore(Window w)
 	{
-		schema.restoreWindow(w);
+		if(schema != null)
+		{
+			schema.restoreWindow(w);
+		}
 	}
 	
 	

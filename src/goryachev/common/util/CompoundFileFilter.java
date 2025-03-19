@@ -1,4 +1,4 @@
-// Copyright © 2009-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2009-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.io.CommaDelimitedParser;
 import java.io.File;

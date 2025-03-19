@@ -1,4 +1,4 @@
-// Copyright © 2018-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2018-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.scene.text.Font;
 
@@ -6,19 +6,21 @@ import javafx.scene.text.Font;
 /**
  * Monospaced Text Cell Metrics.
  */
-public class TextCellMetrics
+public final class TextCellMetrics
 {
 	public final Font font;
-	public final double baseline;
-	public final int cellWidth;
-	public final int cellHeight;
+	public final double baseLine;
+	/** snapped */
+	public final double cellWidth;
+	/** snapped */
+	public final double cellHeight;
 	
 	
-	public TextCellMetrics(Font f, double baseline, int cellWidth, int cellHeight)
+	public TextCellMetrics(Font font, double baseline, double cellWidth, double cellHeight)
 	{
-		this.font = f;
+		this.font = font;
 		this.cellHeight = cellHeight;
-		this.baseline = baseline;
+		this.baseLine = baseline;
 		this.cellWidth = cellWidth;
 	}
 }

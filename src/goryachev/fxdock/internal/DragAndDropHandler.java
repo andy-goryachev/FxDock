@@ -222,6 +222,7 @@ public class DragAndDropHandler
 		{
 			DropOp op = new DropOp(root, WhereEdge.LEFT)
 			{
+				@Override
 				public void executePrivate()
 				{
 					DockTools.insertPane(client, root, Where.LEFT);
@@ -234,6 +235,7 @@ public class DragAndDropHandler
 		{
 			DropOp op = new DropOp(root, WhereEdge.RIGHT)
 			{
+				@Override
 				public void executePrivate()
 				{
 					DockTools.insertPane(client, root,  Where.RIGHT);
@@ -248,6 +250,7 @@ public class DragAndDropHandler
 		{
 			DropOp op = new DropOp(root, WhereEdge.TOP)
 			{
+				@Override
 				public void executePrivate()
 				{
 					DockTools.insertPane(client, root, Where.TOP);
@@ -260,6 +263,7 @@ public class DragAndDropHandler
 		{
 			DropOp op = new DropOp(root, WhereEdge.BOTTOM)
 			{
+				@Override
 				public void executePrivate()
 				{
 					DockTools.insertPane(client, root, Where.BOTTOM);
@@ -277,6 +281,7 @@ public class DragAndDropHandler
 	{
 		return new DropOp(null, new WhereScreen(screenx, screeny))
 		{
+			@Override
 			public void executePrivate()
 			{
 				DockTools.moveToNewWindow(client, screenx - deltax, screeny - deltay);
@@ -346,6 +351,7 @@ public class DragAndDropHandler
 		
 		DropOp op = new DropOp(target, where)
 		{
+			@Override
 			public void executePrivate()
 			{
 				DockTools.moveToPane(client, target, where);
@@ -402,6 +408,7 @@ public class DragAndDropHandler
 				
 				DropOp op = new DropOp(n, ix)
 				{
+					@Override
 					public void executePrivate()
 					{
 						DockTools.moveToSplit(client, parent, ix);

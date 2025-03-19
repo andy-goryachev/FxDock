@@ -1,4 +1,4 @@
-// Copyright © 2021-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2021-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util.api;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

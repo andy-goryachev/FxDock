@@ -1,4 +1,4 @@
-// Copyright © 2006-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2006-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;

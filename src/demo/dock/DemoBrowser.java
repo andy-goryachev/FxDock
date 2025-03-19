@@ -57,6 +57,7 @@ public class DemoBrowser
 		Worker<Void> w = view.getEngine().getLoadWorker();
 		w.stateProperty().addListener(new ChangeListener<Worker.State>()
 		{
+			@Override
 			public void changed(ObservableValue v, Worker.State old, Worker.State cur)
 			{
 				log.debug(cur);
@@ -80,6 +81,7 @@ public class DemoBrowser
 	}
 	
 	
+	@Override
 	protected Node createToolBar(boolean tabMode)
 	{
 		HPane t = new HPane(5);

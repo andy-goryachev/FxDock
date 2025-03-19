@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.internal;
 import goryachev.common.util.CKit;
 import goryachev.common.util.Parsers;
@@ -20,7 +20,7 @@ import javafx.scene.text.FontSmoothingType;
 public class CssTools
 {
 	/** bold type face */
-	public static final CssStyle BOLD = new CssStyle("CommonStyles_BOLD");
+	public static final CssStyle BOLD = new CssStyle();
 
 	private static DecimalFormat decimalFormat;
 	

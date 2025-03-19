@@ -1,4 +1,4 @@
-// Copyright © 2020-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.icon;
 import javafx.scene.layout.Region;
 

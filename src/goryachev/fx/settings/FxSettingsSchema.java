@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.settings;
 import goryachev.common.log.Log;
 import goryachev.common.util.ASettingsStore;
@@ -29,6 +29,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -284,12 +285,6 @@ public abstract class FxSettingsSchema
 			s.saveValues(k, store);
 		}
 		
-		storeNodeLocal(n, name);
-	}
-	
-	
-	protected void storeNodeLocal(Node n, String name)
-	{
 		if(n instanceof CheckBox cb)
 		{
 			storeCheckBox(cb, name);
@@ -324,9 +319,10 @@ public abstract class FxSettingsSchema
 		}
 		else
 		{
-			if(n instanceof Parent p)
+			List<Node> nodes = listNodes(n);
+			if(nodes != null)
 			{
-				for(Node ch: p.getChildrenUnmodifiable())
+				for(Node ch: nodes)
 				{
 					storeNode(ch);
 				}
@@ -363,12 +359,6 @@ public abstract class FxSettingsSchema
 			s.loadValues(k, store);
 		}
 		
-		restoreNodeLocal(n, name);
-	}
-	
-	
-	protected void restoreNodeLocal(Node n, String name)
-	{
 		if(n instanceof CheckBox cb)
 		{
 			restoreCheckBox(cb, name);
@@ -403,14 +393,29 @@ public abstract class FxSettingsSchema
 		}
 		else
 		{
-			if(n instanceof Parent p)
+			List<Node> nodes = listNodes(n);
+			if(nodes != null)
 			{
-				for(Node ch: p.getChildrenUnmodifiable())
+				for(Node ch: nodes)
 				{
 					restoreNode(ch);
 				}
 			}
 		}
+	}
+	
+	
+	private List listNodes(Node n)
+	{
+		if(n instanceof ToolBar p)
+		{
+			return p.getItems();
+		}
+		else if(n instanceof Parent p)
+		{
+			return p.getChildrenUnmodifiable();
+		}
+		return null;
 	}
 	
 
@@ -585,7 +590,10 @@ public abstract class FxSettingsSchema
 		Boolean sel = store.getBoolean(FX_PREFIX + name);
 		if(sel != null)
 		{
-			n.setSelected(sel);
+			if(!n.selectedProperty().isBound())
+			{
+				n.setSelected(sel);
+			}
 		}
 	}
 

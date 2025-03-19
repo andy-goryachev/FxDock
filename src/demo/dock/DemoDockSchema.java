@@ -31,6 +31,7 @@ public class DemoDockSchema
 	
 
 	/** creates custom pane using the type id */
+	@Override
 	public FxDockPane createPane(String id)
 	{
 		switch(id)
@@ -50,12 +51,14 @@ public class DemoDockSchema
 	}
 	
 
+	@Override
 	public Stage createWindow(String name)
 	{
 		return new DemoWindow();
 	}
 
 
+	@Override
 	public Stage createDefaultWindow()
 	{
 		return DemoWindow.openBrowser("https://github.com/andy-goryachev/FxDock");

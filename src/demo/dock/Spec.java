@@ -35,6 +35,7 @@ public enum Spec
 	}
 	
 	
+	@Override
 	public String toString()
 	{
 		return name;

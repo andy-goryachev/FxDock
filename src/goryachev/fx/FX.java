@@ -1,9 +1,10 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.log.Log;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CList;
 import goryachev.common.util.CPlatform;
+import goryachev.common.util.HasDisplayText;
 import goryachev.common.util.IDisconnectable;
 import goryachev.common.util.SystemTask;
 import goryachev.fx.internal.CssTools;
@@ -15,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -43,9 +45,12 @@ import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.collections.transformation.TransformationList;
+import javafx.css.CssMetaData;
 import javafx.css.Styleable;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -54,6 +59,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
@@ -75,7 +82,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -85,6 +91,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.StringConverter;
 
 
 /**
@@ -100,10 +107,10 @@ public final class FX
 	public static final double ONE_OVER_GAMMA = 1.0 / GAMMA;
 	private static Text helper;
 	private static final Object PROP_TOOLTIP = new Object();
-	
-	// TODO move both to FxSettings?
 	private static final Object PROP_NAME = new Object();
 	private static final Object PROP_SKIP_SETTINGS = new Object();
+	private static EventHandler consumeAll;
+	private static StringConverter converter;
 	
 	
 	public static FxWindow getWindow(Node n)
@@ -300,36 +307,23 @@ public final class FX
 	
 	
 	/** adds a style to a Styleable */
+	@Deprecated // use CssStyle.set()
 	public static void style(Styleable n, CssStyle style)
 	{
-		n.getStyleClass().add(style.getName());
+		if(style != null)
+		{
+			style.set(n);
+		}
 	}
 	
 	
 	/** adds or removes the specified style, depending on the condition */
-	public static void style(Styleable n, boolean condition, CssStyle st)
+	@Deprecated // use CssStyle.set()
+	public static void style(Styleable n, boolean condition, CssStyle style)
 	{
-		if(n == null)
+		if(style != null)
 		{
-			return;
-		}
-		else if(st == null)
-		{
-			return;
-		}
-		
-		String name = st.getName();
-		ObservableList<String> ss = n.getStyleClass();
-		if(condition)
-		{
-			if(!ss.contains(name))
-			{
-				ss.add(st.getName());
-			}
-		}
-		else
-		{
-			ss.remove(name);
+			style.set(n, condition);
 		}
 	}
 	
@@ -468,7 +462,7 @@ public final class FX
 		{
 			return null;
 		}
-		return new Background(new BackgroundFill(c, null, null));
+		return Background.fill(c);
 	}
 	
 	
@@ -1295,19 +1289,19 @@ public final class FX
 
 	public static void disableAlternativeRowColor(FxTable<?> table)
 	{
-		FX.style(table.table, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR);
+		CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR.set(table.table);
 	}
 	
 	
 	public static void disableAlternativeRowColor(TableView<?> table)
 	{
-		FX.style(table, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR);
+		CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR.set(table);
 	}
 	
 	
 	public static void disableAlternativeRowColor(ListView<?> v)
 	{
-		FX.style(v, CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR);
+		CommonStyles.DISABLE_ALTERNATIVE_ROW_COLOR.set(v);
 	}
 
 
@@ -1454,10 +1448,10 @@ public final class FX
 	/** converts non-null Color to #RRGGBBAA */
 	public static String toFormattedColor(Color c)
 	{
-        int r = CKit.round(c.getRed() * 255.0);
-        int g = CKit.round(c.getGreen() * 255.0);
-        int b = CKit.round(c.getBlue() * 255.0);
-        int a = CKit.round(c.getOpacity() * 255.0);
+        int r = toInt8(c.getRed());
+        int g = toInt8(c.getGreen());
+        int b = toInt8(c.getBlue());
+        int a = toInt8(c.getOpacity());
 		return String.format("#%02X%02X%02X%02X", r, g, b, a);
 	}
 	
@@ -1465,10 +1459,64 @@ public final class FX
 	/** converts non-null Color to #RRGGBB */
 	public static String toFormattedColorRGB(Color c)
 	{
-        int r = CKit.round(c.getRed() * 255.0);
-        int g = CKit.round(c.getGreen() * 255.0);
-        int b = CKit.round(c.getBlue() * 255.0);
+        int r = toInt8(c.getRed());
+        int g = toInt8(c.getGreen());
+        int b = toInt8(c.getBlue());
 		return String.format("#%02X%02X%02X", r, g, b);
+	}
+	
+	
+	/** converts Color to RRGGBBAA, or null */
+	public static String toHexColor(Color c)
+	{
+		if(c == null)
+		{
+			return null;
+		}
+        int r = toInt8(c.getRed());
+        int g = toInt8(c.getGreen());
+        int b = toInt8(c.getBlue());
+        int a = toInt8(c.getOpacity());
+		return String.format("%02X%02X%02X%02X", r, g, b, a);
+	}
+	
+	
+	/** parses "RRGGBBAA" -> Color, or null */
+	public static Color parseHexColor(String s)
+	{
+		if(s != null)
+		{
+			if(s.length() == 8)
+			{
+				try
+				{
+					int r = Integer.parseInt(s, 0, 2, 16);
+					int g = Integer.parseInt(s, 2, 4, 16);
+					int b = Integer.parseInt(s, 4, 6, 16);
+					int a = Integer.parseInt(s, 6, 8, 16);
+					double op = a / 255.0;
+					return Color.rgb(r, g, b, op);
+				}
+				catch(Exception ignore)
+				{ }
+			}
+		}
+		return null;
+	}
+
+	
+	/** converts double value in the range 0.0 ... 1.0 to an int of range 0 ... 255 */
+	private static int toInt8(double value)
+	{
+		if(value < 0.0)
+		{
+			value = 0.0;
+		}
+		else if(value > 1.0)
+		{
+			value = 1.0;
+		}
+		return CKit.round(value * 255.0);
 	}
 
 
@@ -1518,6 +1566,20 @@ public final class FX
 		{
 			r.run();
 		}
+	}
+	
+	
+	/** avoid ambiguous signature warning when using addListener */
+	public static void addInvalidationListener(Observable p, Runnable r)
+	{
+		p.addListener(new InvalidationListener()
+		{
+			@Override
+			public void invalidated(Observable observable)
+			{
+				r.run();
+			}
+		});
 	}
 	
 	
@@ -2209,5 +2271,104 @@ public final class FX
 				w.setY(y);
 			}
 		}
+	}
+	
+	
+	/** creates an image with the given color and dimensions */
+	public static Image image(Color color, int width, int height)
+	{
+		Canvas c = new Canvas(width, height);
+		GraphicsContext g = c.getGraphicsContext2D();
+		g.setFill(color);
+		g.fillRect(0, 0, width, height);
+		return c.snapshot(null, null);
+	}
+	
+	
+	/** sets both X/Y scales, node can be null */
+	public static void setScale(Node node, double scale)
+	{
+		if(node != null)
+		{
+			
+			node.setScaleX(scale);
+			node.setScaleY(scale);
+		}
+	}
+
+
+	/**
+	 * Returns the property value, or the default value if the property value is null.
+	 */
+	public static <T> T noNull(Property<T> p, T defaultValue)
+	{
+		T v = p.getValue();
+		return (v == null) ? defaultValue : v;
+	}
+
+
+	/**
+	 * Adds an event filter which consumes all events of the specified type.
+	 */
+	public static <T extends Event> void consumeAllEvents(EventType<T> type, Node n)
+	{
+		if(consumeAll == null)
+		{
+			consumeAll = (ev) -> ev.consume();
+		}
+		n.addEventFilter(type, consumeAll);
+	}
+
+
+	/**
+	 * Combines parent CSS metadata with the list of metadata items for the given class.
+	 */
+	public static List<CssMetaData<? extends Styleable,?>> initCssMetadata(List<CssMetaData<? extends Styleable,?>> parentCss, CssMetaData<?,?> ... css)
+	{
+		int sz = parentCss.size() + css.length;
+		ArrayList<CssMetaData<? extends Styleable,?>> a = new ArrayList<>(sz);
+		a.addAll(parentCss);
+		for(int i = 0; i < css.length; i++)
+		{
+			a.add(css[i]);
+		}
+		return Collections.unmodifiableList(a);
+	}
+	
+	
+	/**
+	 * Returns a StringConverter which uses HasDisplayText.getDisplayText()
+	 * or Object.toString().
+	 * This converter cannot convert a String to an Object.
+	 */
+	public static  <T> StringConverter<T> standardConverter()
+	{
+		if(converter == null)
+		{
+			converter = new StringConverter<Object>()
+			{
+				@Override
+				public String toString(Object x)
+				{
+					if(x == null)
+					{
+						return "";
+					}
+					else if(x instanceof HasDisplayText t)
+					{
+						return t.getDisplayText();
+					}
+					return x.toString();
+				}
+				
+
+				@Override
+				public Object fromString(String s)
+				{
+					throw new Error("not supported");
+				}
+			};
+		}
+		return converter;
 	}
 }

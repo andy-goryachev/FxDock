@@ -1,4 +1,4 @@
-// Copyright © 2017-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2017-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import goryachev.common.util.CKit;
 import goryachev.common.util.CMap;
@@ -16,6 +16,7 @@ import javafx.stage.Window;
  * These mappings are designed to be permanent - there is no provision for
  * removing a mapping.
  */
+@Deprecated // TODO replace with InputMap
 public class KeyMap
 {
 	public static final int SHIFT = 0x0000_0001;

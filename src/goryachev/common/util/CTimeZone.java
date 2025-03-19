@@ -1,4 +1,4 @@
-// Copyright © 2010-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2010-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -6,7 +6,7 @@ import java.util.TimeZone;
 
 // TODO why do I have this class?
 public class CTimeZone
-	implements HasProperty, HasDisplayName
+	implements HasProperty, HasDisplayText
 {
 	public final TimeZone tz;
 
@@ -24,7 +24,7 @@ public class CTimeZone
 
 
 	@Override
-	public String getDisplayName()
+	public String getDisplayText()
 	{
 		return tz.getDisplayName(Locale.getDefault());
 	}
@@ -40,7 +40,7 @@ public class CTimeZone
 	@Override
 	public String toString()
 	{
-		return getDisplayName() + " - " + getID();
+		return getDisplayText() + " - " + getID();
 	}
 	
 	

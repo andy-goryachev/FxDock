@@ -1,4 +1,4 @@
-// Copyright © 2016-2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.settings;
 import goryachev.common.util.ASettingsStore;
 import goryachev.common.util.CMap;
@@ -134,6 +134,36 @@ public class LocalSettings
 				if(s != null)
 				{
 					T v = c.fromStream(s);
+					p.setValue(v);
+				}
+			}
+		});
+		return this;
+	}
+	
+	
+	public <T extends Enum> LocalSettings add(String subKey, Property<T> p, Class<T> type, T defaultValue)
+	{
+		entries.put(subKey, new Entry()
+		{
+			StringConverter<T> conv = Converters.enumConverter(type);
+			
+			
+			@Override
+			public void saveValue(String prefix, ASettingsStore store)
+			{
+				T v = p.getValue();
+				String s = (v == null ? null : conv.toString(v));
+				store.setString(prefix + "." + subKey, s);
+			}
+
+			@Override
+			public void loadValue(String prefix, ASettingsStore store)
+			{
+				String s = store.getString(prefix + "." + subKey);
+				if(s != null)
+				{
+					T v = conv.fromString(s);
 					p.setValue(v);
 				}
 			}
