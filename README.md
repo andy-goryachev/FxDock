@@ -6,12 +6,6 @@ This library was created to provide JavaFX developers with a simple docking fram
 
 
 
-## License
-
-This project and its source code is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) and you should feel free to make adaptations of this work. Please see the included LICENSE file for further details.
-
-
-
 ## Try It
 
 Download and run [FxDockDemo.jar](https://github.com/andy-goryachev/FxDock/raw/master/dist/FxDockDemo.jar).
@@ -40,4 +34,10 @@ Please refer to [HOWTO.md](doc/HOWTO.md) for detailed instructions on how to use
 [Drombler FX](http://www.drombler.org/drombler-fx/) (CDDL v.1.0)
 
 [DockFX](https://github.com/RobertBColton/DockFX) by Robert B. Colton (LGPL v.3).
+
+
+
+## License
+
+This project and its source code is licensed under the [BSD 2-Clause "Simplified" License](LICENSE).
 
