@@ -1,4 +1,4 @@
-// Copyright © 2024 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2024-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.settings;
 import goryachev.common.log.Log;
 import goryachev.common.util.CList;
@@ -6,13 +6,13 @@ import goryachev.common.util.CSet;
 import goryachev.fx.ClosingWindowOperation;
 import goryachev.fx.FX;
 import goryachev.fx.FxFramework;
-import goryachev.fx.FxObject;
 import goryachev.fx.ShutdownChoice;
 import goryachev.fx.internal.CssLoader;
 import goryachev.fx.util.FxTools;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -38,7 +38,7 @@ public class WindowMonitor
 	private static final Object PROP_NON_ESSENTIAL = new Object();
 	/** in reverse order: top window is last */
 	private static final CList<Window> stack = new CList<>();
-	private final static FxObject<Node> lastFocusOwner = new FxObject<>();
+	private final static ReadOnlyObjectWrapper<Node> lastFocusOwner = new ReadOnlyObjectWrapper<>();
 	private static boolean exiting;
 	private static ShutdownChoice shutdownChoice;
 	

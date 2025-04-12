@@ -1,13 +1,13 @@
 // Copyright © 2018-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.SimpleBooleanProperty;
 
 
 /**
  * Alias for SimpleBooleanProperty.
  */
 public class FxBoolean
-	extends ReadOnlyBooleanWrapper
+	extends SimpleBooleanProperty
 {
 	public FxBoolean(boolean initialValue)
 	{

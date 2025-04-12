@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.BooleanSupplier;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.scene.control.Control;
 import javafx.scene.input.KeyEvent;
@@ -18,7 +19,7 @@ import javafx.scene.input.KeyEvent;
  */
 public class InputMap
 {
-	private final Control control;
+	private final EventTarget eventTarget;
 	// Func -> Runnable
 	// KB -> Func or Runnable
 	// EventType -> EHandlers, or null for key binding handler
@@ -28,9 +29,9 @@ public class InputMap
 	private SkinInputMap skinInputMap;
 	
 	
-	public InputMap(Control c)
+	public InputMap(EventTarget c)
 	{
-		this.control = c;
+		this.eventTarget = c;
 	}
 	
 	
@@ -176,7 +177,7 @@ public class InputMap
 		{
 			hs = new EHandlers();
 			map.put(t, hs);
-			control.addEventHandler(t, eventHandler); // TODO if handler == null, then key bindings eH
+			eventTarget.addEventHandler(t, eventHandler); // TODO if handler == null, then key bindings eH
 		}
 		hs.add(pri, handler);
 	}
@@ -195,7 +196,7 @@ public class InputMap
 					if(hs.removeSkinHandlers())
 					{
 						map.remove(en.getKey());
-						control.removeEventHandler(t, eventHandler);
+						eventTarget.removeEventHandler(t, eventHandler);
 					}
 				}
 			}

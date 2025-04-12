@@ -1,4 +1,5 @@
 /build/
+/dist/settings.conf
 /out/
 /user.data*/
 /user.home*/

@@ -1,5 +1,6 @@
 // Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
+import goryachev.fx.input.InputMap;
 import goryachev.fx.settings.WindowMonitor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -13,6 +14,7 @@ import javafx.stage.Stage;
 public class FxWindow
 	extends Stage
 {
+	private InputMap inputMap;
 	private final BorderPane contentPane;
 	
 	
@@ -135,5 +137,15 @@ public class FxWindow
 	public String toString()
 	{
 		return "FxWindow{" + FX.getName(this) + "." + hashCode() + "}";
+	}
+	
+	
+	public final InputMap getInputMap()
+	{
+		if(inputMap == null)
+		{
+			inputMap = new InputMap(this);
+		}
+		return inputMap;
 	}
 }

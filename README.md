@@ -17,7 +17,7 @@ from Azul.
 
 ## How to Use the Library
 
-The library requires JDK 23+ with JavaFX 24+.
+The library requires JDK 24+ with JavaFX 24+.
 
 Please refer to [HOWTO.md](doc/HOWTO.md) for detailed instructions on how to use the FxDock docking framework in your project. 
 
