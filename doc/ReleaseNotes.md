@@ -1,6 +1,13 @@
 # FxDock Release Notes
 
 
+## 2025.0412.1610
+- MIT license
+- requires JDK 24+ / JavaFX 24+
+- common update
+- CPane doc update
+
+
 ## 2024.0408.1735
 - major API changes
 - redesigned fx framework
