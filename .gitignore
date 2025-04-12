@@ -1,8 +1,10 @@
 /build/
 /out/
+/user.data*/
 /user.home*/
-~*
 /*.jar
 /*.log
 /*.conf
+~*
 hs_err_pid*
+.DS_Store
