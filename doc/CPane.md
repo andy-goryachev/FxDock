@@ -54,4 +54,4 @@ which in turn was inspired by
 
 ## License
 
-This project and its source code is licensed under the [MIT License](../LICENSE).
+This project and its source code is licensed under the [BSD 2-Clause License](../LICENSE).

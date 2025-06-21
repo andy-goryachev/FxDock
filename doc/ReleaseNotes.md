@@ -1,5 +1,8 @@
 # FxDock Release Notes
 
+##
+- BSD 2-Clause License
+
 
 ## 2025.0412.1610
 - MIT license
