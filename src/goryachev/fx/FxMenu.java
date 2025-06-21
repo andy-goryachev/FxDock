@@ -73,11 +73,34 @@ public class FxMenu
 	
 	
 	/** adds a disabled menu item */
-	public MenuItem item(String text)
+	public FxMenuItem item(String text)
 	{
 		FxMenuItem m = new FxMenuItem(text);
 		m.setDisable(true);
 		return add(m);
+	}
+	
+	
+	public FxCheckMenuItem checkItem(String text, FxAction a)
+	{
+		FxCheckMenuItem m = new FxCheckMenuItem(text, a);
+		add(m);
+		return m;
+	}
+	
+	
+	public FxCheckMenuItem checkItem(String text, Property<Boolean> p)
+	{
+		FxCheckMenuItem m = new FxCheckMenuItem(text, p);
+		add(m);
+		return m;
+	}
+	
+	
+	/** adds a disabled check menu item */
+	public FxCheckMenuItem checkItem(String text)
+	{
+		return checkItem(text, FxAction.DISABLED);
 	}
 	
 	

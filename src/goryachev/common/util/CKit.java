@@ -398,7 +398,7 @@ public final class CKit
 	
 	public static String readString(InputStream is) throws Exception
 	{
-		Reader in = new InputStreamReader(is, CHARSET_UTF8);
+		Reader in = new InputStreamReader(toBufferedInputStream(is), CHARSET_UTF8);
 		try
 		{
 			SB sb = new SB(16384);
@@ -446,6 +446,11 @@ public final class CKit
 	public static String readString(String resource, Charset encoding) throws Exception
 	{
 		InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resource);
+		if(in == null)
+		{
+			throw new IOException("resource not found:" + resource);
+		}
+		
 		try
 		{
 			return readString(in, encoding);
@@ -522,12 +527,7 @@ public final class CKit
 	
 	public static String readString(InputStream is, int max, Charset cs) throws Exception
 	{
-		if(!(is instanceof BufferedInputStream))
-		{
-			is = new BufferedInputStream(is);
-		}
-		
-		Reader in = new InputStreamReader(is, cs);
+		Reader in = new InputStreamReader(toBufferedInputStream(is), cs);
 		try
 		{
 			return readString(in, max);

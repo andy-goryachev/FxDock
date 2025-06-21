@@ -1,6 +1,5 @@
 // Copyright © 2021-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
-import goryachev.fx.CPane;
 import goryachev.fx.IStyledText;
 import goryachev.fx.util.TextPainter;
 import javafx.beans.binding.Bindings;
@@ -8,6 +7,7 @@ import javafx.beans.binding.ObjectBinding;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 
 
@@ -16,7 +16,7 @@ import javafx.scene.text.Font;
  * inside of FxTextTable.
  */
 public class CanvasTextTableCell
-	extends CPane
+	extends BorderPane
 {
 	protected final TextPainter painter = new TextPainter();
 	protected final Object value;

@@ -1,6 +1,5 @@
 // Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.table;
-import goryachev.fx.CPane;
 import goryachev.fx.FxBoolean;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
@@ -12,6 +11,7 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeTableView.TreeTableViewSelectionModel;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
@@ -20,7 +20,7 @@ import javafx.util.Callback;
  * Convenient TreeTable.
  */
 public class FxTreeTable<T>
-	extends CPane
+	extends BorderPane
 {
 	public final FxBoolean autoResizeMode = new FxBoolean();
 	public final TreeTableView<T> tree;
