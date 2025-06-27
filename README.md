@@ -31,6 +31,8 @@ Please refer to [HOWTO.md](doc/HOWTO.md) for detailed instructions on how to use
 
 [AnchorFX](https://github.com/alexbodogit/AnchorFX) by Alessio Vinerbi (LGPL v.3).
 
+[BentoFX](https://github.com/Col-E/BentoFX) (MIT)
+
 [Drombler FX](http://www.drombler.org/drombler-fx/) (CDDL v.1.0)
 
 [DockFX](https://github.com/RobertBColton/DockFX) by Robert B. Colton (LGPL v.3).
