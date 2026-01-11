@@ -1,4 +1,4 @@
-// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.fxdock;
 import goryachev.fx.FxAction;
 import goryachev.fxdock.internal.DockTools;

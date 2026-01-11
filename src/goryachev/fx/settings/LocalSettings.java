@@ -1,4 +1,4 @@
-// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx.settings;
 import goryachev.common.util.ASettingsStore;
 import goryachev.common.util.CMap;

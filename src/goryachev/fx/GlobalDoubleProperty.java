@@ -1,4 +1,4 @@
-// Copyright © 2016-2025 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2016-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.fx;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.util.StringConverter;

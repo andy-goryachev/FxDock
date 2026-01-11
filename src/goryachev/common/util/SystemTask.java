@@ -1,4 +1,4 @@
-// Copyright © 2020-2025 Andy Goryachev <andy@goryachev.com>
+// Copyright © 2020-2026 Andy Goryachev <andy@goryachev.com>
 package goryachev.common.util;
 import goryachev.common.log.Log;
 import java.util.Timer;
