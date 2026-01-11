@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 
 /**
- * Synchronized List of WeakListeners.
+ * Synchronized WeakList.
  */
 public class WeakVector<T>
 	extends WeakList<T>

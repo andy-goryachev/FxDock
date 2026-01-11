@@ -5,7 +5,7 @@ package goryachev.common.util;
 /**
  * When a value needs display text to be shown to the user.
  */
-public final class NamedValue<T> implements HasDisplayText
+public class NamedValue<T> implements HasDisplayText
 {
 	private final String text;
 	private final T value;

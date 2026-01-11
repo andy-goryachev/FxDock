@@ -6,6 +6,7 @@ import goryachev.common.util.Dump;
 import goryachev.common.util.SB;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 
 /** Simple test framework */
@@ -28,7 +29,7 @@ public class TF
 	
 
 	/** checks if two arguments are CKit.equals() and throws a meaningful exception if not */
-	public static void eq(Object value, Object expected)
+	public static void eq(Object expected, Object value)
 	{
 		if(CKit.notEquals(value, expected))
 		{
@@ -44,7 +45,7 @@ public class TF
 	
 	
 	/** checks if two arguments are not CKit.equals() and throws a meaningful exception if not */
-	public static void notEquals(Object value, Object expected)
+	public static void notEquals(Object expected, Object value)
 	{
 		if(CKit.equals(value, expected))
 		{
@@ -58,13 +59,30 @@ public class TF
 	
 	
 	/** checks if two arguments are CKit.equals() and throws a meaningful exception if not */
-	public static void eq(Object value, Object expected, Object message)
+	public static void eq(Object expected, Object value, String message)
 	{
 		if(CKit.notEquals(value, expected))
 		{
 			throw new TestException
 			(
 				message +
+				", unexpected value=" + 
+				Dump.describe(value) + 
+				", expected=" + 
+				Dump.describe(expected)
+			);
+		}
+	}
+	
+	
+	/** checks if two arguments are CKit.equals() and throws a meaningful exception if not */
+	public static void eq(Object expected, Object value, Supplier<String> message)
+	{
+		if(CKit.notEquals(value, expected))
+		{
+			throw new TestException
+			(
+				message.get() +
 				", unexpected value=" + 
 				Dump.describe(value) + 
 				", expected=" + 
@@ -355,5 +373,30 @@ public class TF
 		print(sb);
 		
 		return new RuntimeException("Mismatch at index " + mismatchIndex + ": " + get(left, mismatchIndex, "N/A") + " " + get(right, mismatchIndex, "N/A"));
+	}
+	
+	
+	@FunctionalInterface
+	public static interface TestRunnable
+	{
+		public void run() throws Throwable;
+	}
+	
+	
+	public static <T extends Throwable> void assertThrows(Class<T> expected, TestRunnable action)
+	{
+		try
+		{
+			action.run();
+		}
+		catch(Throwable e)
+		{
+			if(!expected.isAssignableFrom(e.getClass()))
+			{
+				TF.fail("Expecting " + expected + " but " + e + " was thrown.");
+			}
+			return;
+		}
+		TF.fail("Expecting " + expected + " but no exception was thrown.");
 	}
 }

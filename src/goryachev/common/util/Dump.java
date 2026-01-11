@@ -382,6 +382,17 @@ public class Dump
 	}
 	
 	
+	public static String formatDouble(double x)
+	{
+		long v = (long)x;
+		if(v == x)
+		{
+			return Long.toString(v);
+		}
+		return Double.toString(x);
+	}
+	
+	
 	private static void dumpASCII(SB sb, byte[] bytes, int lineStart)
 	{
 		// first, print padding

@@ -22,7 +22,7 @@ public class KB
 	private final EnumSet<KMod> modifiers;
 
 
-	private KB(Object key, EnumSet<KMod> modifiers)
+	KB(Object key, EnumSet<KMod> modifiers)
 	{
 		this.key = key;
 		this.modifiers = modifiers;

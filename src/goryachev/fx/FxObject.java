@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleObjectProperty;
 
 
 /**
- * Alias for ReadOnlyObjectWrapper.
+ * Alias for SimpleObjectProperty.
  */
 public class FxObject<T>
 	extends SimpleObjectProperty<T>

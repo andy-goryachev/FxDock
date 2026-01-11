@@ -22,8 +22,8 @@ public class HPane
 	private static final Log log = Log.get("HPane");
 	public static final double FILL = -1.0;
 	public static final double PREF = -2.0;
-	private int gap;
-	private static final Object KEY_CONSTRAINT = new Object();
+	int gap;
+	static final Object KEY_CONSTRAINT = new Object();
 	
 	
 	public HPane(int hgap)

@@ -161,22 +161,6 @@ public class SB
 	}
 	
 	
-	/** appends json-escaped value */
-	public SB safeJson(Object x)
-	{
-		if(x == null)
-		{
-			sb.append("null");
-		}
-		else
-		{
-			String s = JsonDump.toJsonString(x);
-			sb.append(s);
-		}
-		return this;
-	}
-	
-	
 	// StringBuilder methods
 
 
@@ -562,6 +546,7 @@ public class SB
 	}
 
 
+	@Override
 	public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)
 	{
 		sb.getChars(srcBegin, srcEnd, dst, dstBegin);
@@ -888,6 +873,7 @@ public class SB
 	/**
 	 * Appends "name=value" to the buffer, with proper JSON escaping the key and the value.
 	 */
+	@Deprecated // use JW
 	public SB json(Object key, Object value)
 	{
 		jsonKey(key);
@@ -900,6 +886,7 @@ public class SB
 	/**
 	 * Appends the key (with proper JSON escapes) to the buffer.
 	 */
+	@Deprecated // use JW
 	public SB jsonKey(Object key)
 	{
 		String s = key.toString();
@@ -913,6 +900,7 @@ public class SB
 	/**
 	 * Appends the value (with proper JSON escapes) to the buffer.
 	 */
+	@Deprecated // use JW
 	public SB jsonValue(Object value)
 	{
 		if(value == null)
@@ -943,6 +931,7 @@ public class SB
 	
 
 	// FIX one for each type: array, list, iterable
+	@Deprecated // use JW
 	public <T> SB jsonArray(Object array, Function<T,String> toString)
 	{
 		if(array == null)
@@ -1006,5 +995,137 @@ public class SB
 			safeJson(array);
 		}
 		return this;
+	}
+	
+	
+	/** appends json-escaped value */
+	@Deprecated // use JW
+	public SB safeJson(Object x)
+	{
+		if(x == null)
+		{
+			sb.append("null");
+		}
+		else if(x instanceof Number)
+		{
+			sb.append(x.toString());
+		}
+		else if(x instanceof Boolean)
+		{
+			sb.append(x.toString());
+		}
+		else
+		{
+			sb.append('"');
+			String s = x.toString();
+			int len = s.length();
+			for(int i=0; i<len; i++)
+			{
+				char c = s.charAt(i);
+				switch(c)
+				{
+				case '\r':
+					sb.append("\\r");
+					break;
+				case '\n':
+					sb.append("\\n");
+					break;
+				case '\t':
+					sb.append("\\t");
+					break;
+				case '\b':
+					sb.append("\\b");
+					break;
+				case '\f':
+					sb.append("\\f");
+					break;
+				case '"':
+					sb.append("\\\"");
+					break;
+				case '&':
+					sb.append("\\u0026");
+					break;
+				case '\'':
+					sb.append("\\u0027");
+					break;
+				case '<':
+					sb.append("\\u003c");
+					break;
+				case '=':
+					sb.append("\\u003d");
+					break;
+				case '>':
+					sb.append("\\u003e");
+					break;
+				case '\\':
+					sb.append("\\\\");
+					break;
+				default:
+					if(c < 0x20)
+					{
+						sb.append(String.format("\\u%04x", (int)c));
+					}
+					else
+					{
+						sb.append(c);
+					}
+				}
+			}
+			sb.append('"');
+		}
+		return this;
+	}
+	
+	
+	public SB hex1(int c)
+	{
+		hex(c);
+		return this;
+	}
+	
+	
+	public SB hex2(int c)
+	{
+		hex(c >> 4);
+		hex(c);
+		return this;
+	}
+
+	
+	
+	public SB hex4(int c)
+	{
+		hex(c >> 12);
+		hex(c >> 8);
+		hex(c >> 4);
+		hex(c);
+		return this;
+	}
+
+	
+	public SB hex8(long c)
+	{
+		hex(c >> 28);
+		hex(c >> 24);
+		hex(c >> 20);
+		hex(c >> 16);
+		hex(c >> 12);
+		hex(c >> 8);
+		hex(c >> 4);
+		hex(c);
+		return this;
+	}
+
+	
+	private void hex(int v)
+	{
+		char c = Hex.toHexChar(v);
+		sb.append(c);
+	}
+	
+	
+	private void hex(long c)
+	{
+		hex((int)c);
 	}
 }

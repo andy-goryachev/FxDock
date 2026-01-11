@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 
 
 /**
- * Alias for SimpleLongProperty.
+ * Alias for SimpleDoubleProperty.
  */
 public class FxDouble
 	extends SimpleDoubleProperty

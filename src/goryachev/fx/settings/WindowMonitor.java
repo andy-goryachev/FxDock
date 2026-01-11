@@ -39,8 +39,8 @@ public class WindowMonitor
 	/** in reverse order: top window is last */
 	private static final CList<Window> stack = new CList<>();
 	private final static ReadOnlyObjectWrapper<Node> lastFocusOwner = new ReadOnlyObjectWrapper<>();
-	private static boolean exiting;
-	private static ShutdownChoice shutdownChoice;
+	static boolean exiting;
+	static ShutdownChoice shutdownChoice;
 	
 	static { init(); }
 	
@@ -508,7 +508,7 @@ public class WindowMonitor
 	}
 	
 	
-	private static int countEssentialWindows(Object caller)
+	static int countEssentialWindows(Object caller)
 	{
 		int count = 0;
 		for(Window w: stack)
@@ -542,7 +542,7 @@ public class WindowMonitor
 	}
 	
 	
-	private static void doExit()
+	static void doExit()
 	{
 		Platform.exit();
 		System.exit(0);

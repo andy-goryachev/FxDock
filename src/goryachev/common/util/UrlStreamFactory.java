@@ -9,6 +9,7 @@ import java.util.Locale;
 /**
  * Global Url Stream Factory simplifies plugging in multiple custom URLStreamHandlers.
  */
+@Deprecated // not needed since we have data URLs now
 public class UrlStreamFactory
 {
 	private static CMap<String,URLStreamHandler> handlers;
